@@ -1,35 +1,57 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// import { useState } from "react";
+import "./App.css";
+import { default as Workspaces } from "./features/workspaces/View";
+import { default as Workspace } from "./features/workspaces/ViewOne";
+import { default as DataCollections } from "./features/dataCollections/View";
+import { Route, Routes } from "react-router-dom";
+import Login from "./features/auth/Login";
+
+// const user: IUser = {
+//     _id: "1",
+//     firstname: "Omar",
+//     lastname: "Gastelum",
+//     email: "omargastelum@email.com",
+//     password: "somepassword",
+//     workspaces: [
+//         {
+//             _id: "1",
+//             name: "Workspace 1",
+//             description: "This is a sample workspace.",
+//             tools: {
+//                 dataCollections: { access: 2 },
+//                 taskLists: { access: 2 },
+//                 docs: { access: 2 },
+//                 messageBoard: { access: 2 },
+//             },
+//         },
+//         {
+//             _id: "2",
+//             name: "Workspace 2",
+//             description: "This is another sample workspace.",
+//             tools: {
+//                 dataCollections: { access: 1 },
+//                 taskLists: { access: 1 },
+//                 docs: { access: 1 },
+//                 messageBoard: { access: 1 },
+//             },
+//         },
+//     ],
+// };
 
 function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    return (
+        <>
+            <Routes>
+                <Route path="login" element={<Login />} />
+                <Route path="workspaces" element={<Workspaces />} />
+                <Route path="workspaces/:id" element={<Workspace />} />
+                <Route
+                    path="workspaces/:id/dataCollections/:dataCollectionsId"
+                    element={<DataCollections />}
+                />
+            </Routes>
+        </>
+    );
 }
 
-export default App
+export default App;
