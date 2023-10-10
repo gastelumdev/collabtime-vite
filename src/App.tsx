@@ -42,6 +42,7 @@ function App() {
     return (
         <>
             <Routes>
+                <Route path="" element={<Login />} />
                 <Route path="login" element={<Login />} />
                 <Route path="workspaces" element={<Workspaces />} />
                 <Route path="workspaces/:id" element={<Workspace />} />
