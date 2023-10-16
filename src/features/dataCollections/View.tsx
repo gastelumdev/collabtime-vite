@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Breadcrumb, ConfigProvider, Space, Tag } from "antd";
-import Layout from "../../components/Layouts/Layout";
 import {
     Box,
     Container,

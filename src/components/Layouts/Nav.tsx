@@ -1,55 +1,17 @@
 "use client";
-import {
-    AppstoreOutlined,
-    LikeOutlined,
-    MailOutlined,
-    SettingOutlined,
-} from "@ant-design/icons";
+import { LikeOutlined } from "@ant-design/icons";
 
-import {
-    Box,
-    Flex,
-    Avatar,
-    Button,
-    Menu,
-    MenuButton,
-    MenuList,
-    MenuItem,
-    MenuDivider,
-    useColorModeValue,
-    Stack,
-    Center,
-    Text,
-    HStack,
-    VStack,
-    IconButton,
-    CloseButton,
-    FlexProps,
-    Icon,
-    useDisclosure,
-} from "@chakra-ui/react";
-import {
-    FiBell,
-    FiChevronDown,
-    FiCompass,
-    FiHome,
-    FiLogOut,
-    FiSettings,
-    FiStar,
-    FiTrendingUp,
-} from "react-icons/fi";
-import { ConfigProvider, Layout, Menu as SideNav, theme } from "antd";
-import type { MenuProps } from "antd";
-import { Link, useNavigate } from "react-router-dom";
+import { Box, Flex, Center, Text, FlexProps, Icon } from "@chakra-ui/react";
+import { FiLogOut } from "react-icons/fi";
+import { Layout } from "antd";
+// import type { MenuProps } from "antd";
+import { Link } from "react-router-dom";
 import Sider from "antd/es/layout/Sider";
-import { Content, Footer, Header } from "antd/es/layout/layout";
 import { ReactNode, useState } from "react";
 import { IconType } from "react-icons";
-import TopNav from "./TopNav";
 import Divider from "../Divider/Divider";
 import { FaTasks } from "react-icons/fa";
-import { GrDocument } from "react-icons/gr";
-import { BsFiletypeDoc, BsPersonWorkspace, BsTable } from "react-icons/bs";
+import { BsFiletypeDoc, BsPersonWorkspace } from "react-icons/bs";
 import { AiOutlineMessage } from "react-icons/ai";
 import { BiTable } from "react-icons/bi";
 
@@ -76,7 +38,7 @@ interface NavItemProps extends FlexProps {
     children: React.ReactNode;
 }
 
-type MenuItem = Required<MenuProps>["items"][number];
+// type MenuItem = Required<MenuProps>["items"][number];
 
 const LinkItems: Array<LinkItemProps> = [
     { name: "Workspaces", icon: BsPersonWorkspace, path: "/workspaces" },
@@ -131,6 +93,8 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
 
 export default function Nav({ setWidth }: INavProps) {
     const [navWidth, setNavWidth] = useState("270px");
+
+    console.log(navWidth);
 
     return (
         <>

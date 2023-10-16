@@ -1,13 +1,6 @@
-import { ReactNode, useState } from "react";
-import {
-    DeleteOutlined,
-    EyeOutlined,
-    LikeFilled,
-    LikeOutlined,
-} from "@ant-design/icons";
+import { useState } from "react";
+import { LikeFilled } from "@ant-design/icons";
 import {} from "antd";
-import Meta from "antd/es/card/Meta";
-import Layout from "../../components/Layouts/Layout";
 import {
     Box,
     Breadcrumb,
@@ -17,12 +10,9 @@ import {
     Container,
     Flex,
     Heading,
-    Image,
     SimpleGrid,
     Spacer,
     Text,
-    Avatar,
-    IconButton,
     CardFooter,
     Button,
     Center,
@@ -30,12 +20,12 @@ import {
     BreadcrumbLink,
 } from "@chakra-ui/react";
 import Create from "./Create";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { IWorkspace } from "../../types";
 import Edit from "./Edit";
-import { BiLike, BiChat, BiShare, BiEdit, BiEditAlt } from "react-icons/bi";
-import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
-import { BsPersonWorkspace } from "react-icons/bs";
+// import { BiLike, BiChat, BiShare, BiEdit, BiEditAlt } from "react-icons/bi";
+import { AiOutlineDelete } from "react-icons/ai";
+// import { BsPersonWorkspace } from "react-icons/bs";
 import Divider from "../../components/Divider/Divider";
 import TopNav from "../../components/Layouts/TopNav";
 
@@ -66,32 +56,32 @@ const data = [
 
 const View = () => {
     const [workspaces, setWorkspaces] = useState(data);
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
-    const del = (id: string) => {
-        let newData = workspaces.filter((item) => {
-            return item._id !== id;
-        });
+    // const del = (id: string) => {
+    //     let newData = workspaces.filter((item) => {
+    //         return item._id !== id;
+    //     });
 
-        setWorkspaces(newData);
-    };
+    //     setWorkspaces(newData);
+    // };
 
-    const openWorkspace = (_id: string) => {
-        console.log(_id);
-        navigate(`/workspaces/${_id}`);
-    };
+    // const openWorkspace = (_id: string) => {
+    //     console.log(_id);
+    //     navigate(`/workspaces/${_id}`);
+    // };
 
     const addNewWorkspace = (workspace: IWorkspace) => {
         setWorkspaces([...workspaces, workspace]);
     };
 
-    const updateWorkspace = (workspace: IWorkspace) => {
-        const oldData = workspaces.filter((item) => {
-            return workspace._id !== item._id;
-        });
+    // const updateWorkspace = (workspace: IWorkspace) => {
+    //     const oldData = workspaces.filter((item) => {
+    //         return workspace._id !== item._id;
+    //     });
 
-        setWorkspaces([...oldData, workspace]);
-    };
+    //     setWorkspaces([...oldData, workspace]);
+    // };
 
     return (
         <Box>
@@ -153,6 +143,7 @@ const View = () => {
                         {workspaces.map((workspace, index) => {
                             return (
                                 <Card
+                                    key={index}
                                     variant="outline"
                                     boxShadow="rgba(0, 0, 0, 0.1) 0rem 0.25rem 0.375rem -0.0625rem, rgba(0, 0, 0, 0.06) 0rem 0.125rem 0.25rem -0.0625rem"
                                     mb={{ base: 6 }}
