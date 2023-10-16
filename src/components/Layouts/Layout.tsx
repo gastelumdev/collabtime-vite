@@ -1,8 +1,6 @@
 import { ReactNode, useState } from "react";
-import PageHeading from "./PageHeading";
 import { Box, useColorModeValue } from "@chakra-ui/react";
 import Nav from "./Nav";
-import { ConfigProvider } from "antd";
 import { useLocation } from "react-router-dom";
 import ContentSection from "./ContentSection";
 

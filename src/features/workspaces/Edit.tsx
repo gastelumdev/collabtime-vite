@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { EditOutlined } from "@ant-design/icons";
 import { Drawer, Input, Space } from "antd";
 import { Button, Text, Checkbox, Stack } from "@chakra-ui/react";
 import { IWorkspace } from "../../types";

@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import { Button } from "@chakra-ui/react";
 
 interface IButtonProps {

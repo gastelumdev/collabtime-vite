@@ -1,9 +1,6 @@
 import { Layout } from "antd";
-import React, { ReactNode } from "react";
-import TopNav from "./TopNav";
+import { ReactNode } from "react";
 import { Content } from "antd/es/layout/layout";
-import { Box } from "@chakra-ui/react";
-
 interface ContentSectionProps {
     leftMargin: string;
     children: ReactNode;

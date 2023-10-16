@@ -1,10 +1,8 @@
 import {
     Avatar,
     Box,
-    Button,
     Center,
     Flex,
-    Grid,
     Input,
     Menu,
     MenuButton,
@@ -15,21 +13,15 @@ import {
     Spacer,
     Stack,
     Text,
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    Show,
     Container,
     Hide,
 } from "@chakra-ui/react";
 import { theme } from "antd";
 import { Header } from "antd/es/layout/layout";
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import View from "../../features/notifications/View";
-import { BellIcon } from "@chakra-ui/icons";
-import { UserOutlined } from "@ant-design/icons";
-import { FaUserCircle, FaUserPlus } from "react-icons/fa";
+import { FaUserCircle } from "react-icons/fa";
 import { IconContext } from "react-icons";
 interface INavProps {
     logo?: string;
@@ -39,7 +31,7 @@ interface INavProps {
     // children: ReactNode;
 }
 
-const TopNav = ({ logo, firstname, lastname, breadcrumbs }: INavProps) => {
+const TopNav = ({ firstname, lastname, breadcrumbs }: INavProps) => {
     const navigate = useNavigate();
     const logout = () => {
         navigate("/login");

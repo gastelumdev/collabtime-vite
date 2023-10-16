@@ -1,6 +1,4 @@
 import { Box, Container, Stack, Text } from "@chakra-ui/react";
-import Nav from "./Nav";
-import { useColorModeValue } from "@chakra-ui/react";
 
 interface IProps {
     title?: string;
