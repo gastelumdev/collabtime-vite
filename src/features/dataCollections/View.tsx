@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Breadcrumb, ConfigProvider, Space, Tag } from "antd";
-import Layout from "../../components/Layout";
+import Layout from "../../components/Layouts/Layout";
 import {
     Box,
     Container,
@@ -119,69 +119,62 @@ const View = () => {
     // };
 
     return (
-        <Layout
-            title={"Data Collections"}
-            description="Manage your Data Collections!"
+        <Flex
+            minH={"100vh"}
+            // justify={"center"}
+            bg={useColorModeValue("gray.50", "gray.800")}
         >
-            <Flex
-                minH={"100vh"}
-                // justify={"center"}
-                bg={useColorModeValue("gray.50", "gray.800")}
-            >
-                <Container maxW={"10xl"} mt={12}>
-                    <Breadcrumb
-                        style={{ paddingBottom: "30px", fontSize: "16px" }}
-                        items={[
-                            {
-                                title: <a href="/workspaces">Workspaces</a>,
-                            },
-                            {
-                                title: (
-                                    <a href={`/workspaces/${id}`}>
-                                        Workspace 1
-                                    </a>
-                                ),
-                            },
-                            {
-                                title: "Data Collections",
-                            },
-                        ]}
-                    />
+            <Container maxW={"10xl"} mt={12}>
+                <Breadcrumb
+                    style={{ paddingBottom: "30px", fontSize: "16px" }}
+                    items={[
+                        {
+                            title: <a href="/workspaces">Workspaces</a>,
+                        },
+                        {
+                            title: (
+                                <a href={`/workspaces/${id}`}>Workspace 1</a>
+                            ),
+                        },
+                        {
+                            title: "Data Collections",
+                        },
+                    ]}
+                />
 
-                    <Box pb={"20px"}>
-                        {/* <Create
+                <Box pb={"20px"}>
+                    {/* <Create
                         workspaces={workspaces}
                         setWorkspaces={setWorkspaces}
                     /> */}
-                    </Box>
-                    {dataCollections.map((dataCollection, index) => {
-                        return (
-                            <div key={index} style={{ marginBottom: "30px" }}>
-                                <Text fontSize="3x1" mb={"5px"}>
-                                    {dataCollection.name}
-                                </Text>
-                                <ConfigProvider
-                                    theme={{
-                                        components: {
-                                            Table: {
-                                                // headerBg: "gray",
-                                            },
+                </Box>
+                {dataCollections.map((dataCollection, index) => {
+                    return (
+                        <div key={index} style={{ marginBottom: "30px" }}>
+                            <Text fontSize="3x1" mb={"5px"}>
+                                {dataCollection.name}
+                            </Text>
+                            <ConfigProvider
+                                theme={{
+                                    components: {
+                                        Table: {
+                                            // headerBg: "gray",
                                         },
-                                    }}
-                                >
-                                    <Table
-                                        columns={columns}
-                                        dataSource={data}
-                                        bordered
-                                        size={"small"}
-                                    />
-                                </ConfigProvider>
-                            </div>
-                        );
-                    })}
-                </Container>
-            </Flex>
-        </Layout>
+                                    },
+                                }}
+                            >
+                                <Table
+                                    columns={columns}
+                                    dataSource={data}
+                                    bordered
+                                    size={"small"}
+                                />
+                            </ConfigProvider>
+                        </div>
+                    );
+                })}
+            </Container>
+        </Flex>
     );
 };
 

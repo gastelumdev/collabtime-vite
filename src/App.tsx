@@ -5,6 +5,9 @@ import { default as Workspace } from "./features/workspaces/ViewOne";
 import { default as DataCollections } from "./features/dataCollections/View";
 import { Route, Routes } from "react-router-dom";
 import Login from "./features/auth/Login";
+import { Breadcrumb } from "antd";
+import { Box, useColorModeValue } from "@chakra-ui/react";
+import Layout from "./components/Layouts/Layout";
 
 // const user: IUser = {
 //     _id: "1",
@@ -41,15 +44,19 @@ import Login from "./features/auth/Login";
 function App() {
     return (
         <>
+            <Layout>
+                <Routes>
+                    <Route path="workspaces" element={<Workspaces />} />
+                    <Route path="workspaces/:id" element={<Workspace />} />
+                    <Route
+                        path="workspaces/:id/dataCollections/:dataCollectionsId"
+                        element={<DataCollections />}
+                    />
+                </Routes>
+            </Layout>
             <Routes>
                 <Route path="" element={<Login />} />
-                <Route path="login" element={<Login />} />
-                <Route path="workspaces" element={<Workspaces />} />
-                <Route path="workspaces/:id" element={<Workspace />} />
-                <Route
-                    path="workspaces/:id/dataCollections/:dataCollectionsId"
-                    element={<DataCollections />}
-                />
+                <Route path="public/login" element={<Login />} />
             </Routes>
         </>
     );

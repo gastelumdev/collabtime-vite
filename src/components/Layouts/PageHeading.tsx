@@ -10,12 +10,7 @@ interface IProps {
 const PageHeading = ({ description }: IProps) => {
     return (
         <>
-            <Nav logo={"Collabtime"} firstname={"Omar"} lastname={"Gastelum"} />
-            <Box
-                pos={"absolute"}
-                pt={"15px"}
-                bg={useColorModeValue("gray.50", "gray.800")}
-            >
+            <Box pos={"absolute"} pt={"15px"} bg={"#eff2f5"}>
                 <Stack
                     spacing={4}
                     as={Container}

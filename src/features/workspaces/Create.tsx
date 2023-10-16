@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
-import { Button, Drawer, Input, Space } from "antd";
-import { Checkbox, Stack, Text } from "@chakra-ui/react";
+import { Drawer, Input, Space } from "antd";
+import { Button, Checkbox, Stack, Text } from "@chakra-ui/react";
 import { IWorkspace } from "../../types";
+import PrimaryButton from "../../components/Buttons/PrimaryButton";
 
 let defaultValues: IWorkspace = {
     _id: "1",
@@ -71,9 +72,18 @@ const Create = ({ addNewWorkspace }: IProps) => {
 
     return (
         <>
-            <Button type="primary" onClick={showDrawer} icon={<PlusOutlined />}>
+            {/* <Button
+                colorScheme="twitter"
+                onClick={showDrawer}
+                _hover={{
+                    boxShadow: "lg",
+                }}
+                bgGradient="linear(195deg, rgb(73, 163, 241), rgb(26, 115, 232))"
+                boxShadow={"md"}
+            >
                 New Workspace
-            </Button>
+            </Button> */}
+            <PrimaryButton onClick={showDrawer}>NEW WORKSPACE</PrimaryButton>
             <Drawer
                 title="Create a new workspace"
                 width={500}
@@ -83,7 +93,10 @@ const Create = ({ addNewWorkspace }: IProps) => {
                 extra={
                     <Space>
                         <Button onClick={onClose}>Cancel</Button>
-                        <Button type="primary" onClick={createData}>
+                        <Button
+                            onClick={createData}
+                            _hover={{ boxShadow: "lg" }}
+                        >
                             Save
                         </Button>
                     </Space>

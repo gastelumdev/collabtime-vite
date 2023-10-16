@@ -17,8 +17,8 @@ const View = () => {
 
     return (
         <>
-            <MenuButton bg={"white"} onClick={showDrawer}>
-                <BellIcon boxSize={5} color={"#3E505B"} />
+            <MenuButton bg={"#eff2f5"} onClick={showDrawer}>
+                <BellIcon boxSize={5} color={"#7b809a"} />
             </MenuButton>
             <Drawer
                 title="Notifications"

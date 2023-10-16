@@ -1,9 +1,20 @@
-import { Breadcrumb, Card } from "antd";
+import { Card } from "antd";
 import Meta from "antd/es/card/Meta";
-import Layout from "../../components/Layout";
-import { Box, Container, Flex, SimpleGrid } from "@chakra-ui/react";
+import {
+    Box,
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    Container,
+    Flex,
+    Heading,
+    SimpleGrid,
+    Spacer,
+    Text,
+} from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { IWorkspace } from "../../types";
+import TopNav from "../../components/Layouts/TopNav";
 
 const data = [
     {
@@ -47,31 +58,65 @@ const ViewOne = () => {
     })[0];
 
     return (
-        <Layout title={workspace.name} description="">
+        <Box>
+            <TopNav
+                breadcrumbs={
+                    <Breadcrumb fontSize={"16px"} pb={{ sm: "20px" }}>
+                        <BreadcrumbItem>
+                            <BreadcrumbLink href="/workspaces" color="#929dae">
+                                Workspaces
+                            </BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbItem isCurrentPage>
+                            <BreadcrumbLink href="#" color="#929dae">
+                                Workspace 1
+                            </BreadcrumbLink>
+                        </BreadcrumbItem>
+                    </Breadcrumb>
+                }
+            />
             <Flex
                 minH={"100vh"}
                 // justify={"center"}
-                bg={"#f8fafc"}
+                bg={"#eff2f5"}
             >
-                <Container maxW={"6xl"} mt={8}>
-                    <Breadcrumb
-                        style={{ paddingBottom: "30px", fontSize: "16px" }}
-                        separator=">"
-                        items={[
-                            {
-                                title: <a href="/workspaces">Workspaces</a>,
-                            },
-                            {
-                                title: workspace.name,
-                            },
-                        ]}
-                    />
-
-                    <Box pb={"20px"}></Box>
-
+                <Container maxW={"8xl"} mt={{ base: 20, sm: 10 }}>
                     <SimpleGrid
-                        spacing={4}
-                        templateColumns="repeat(auto-fill, minmax(300px, 1fr))"
+                        spacing={6}
+                        // templateColumns="repeat(auto-fill, minmax(300px, 1fr))"
+                        columns={{ base: 1, sm: 2 }}
+                        pb={"50px"}
+                    >
+                        <Flex>
+                            <Box>
+                                <Heading
+                                    size={"sm"}
+                                    mb={"12px"}
+                                    color={"rgb(52, 71, 103)"}
+                                >
+                                    Workspaces
+                                </Heading>
+                                <Text
+                                    color={"rgb(123, 128, 154)"}
+                                    fontSize={"md"}
+                                    fontWeight={300}
+                                >
+                                    Create a new workspace to manage your
+                                    projects and teams.
+                                </Text>
+                            </Box>
+                        </Flex>
+                        <Flex>
+                            <Spacer />
+                            {/* <Box pb={"20px"}>
+                            <Create addNewWorkspace={addNewWorkspace} />
+                        </Box> */}
+                        </Flex>
+                    </SimpleGrid>
+                    <SimpleGrid
+                        spacing={6}
+                        // templateColumns="repeat(auto-fill, minmax(300px, 1fr))"
+                        columns={{ base: 1, sm: 1, md: 3 }}
                     >
                         {workspace.tools.dataCollections.access > 0 ? (
                             <a
@@ -108,7 +153,7 @@ const ViewOne = () => {
                     </SimpleGrid>
                 </Container>
             </Flex>
-        </Layout>
+        </Box>
     );
 };
 

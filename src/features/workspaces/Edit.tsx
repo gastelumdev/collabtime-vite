@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { EditOutlined } from "@ant-design/icons";
-import { Button, Drawer, Input, Space } from "antd";
-import { Text, Checkbox, Stack } from "@chakra-ui/react";
+import { Drawer, Input, Space } from "antd";
+import { Button, Text, Checkbox, Stack } from "@chakra-ui/react";
 import { IWorkspace } from "../../types";
+import { AiOutlineEdit } from "react-icons/ai";
 
 interface IProps {
     workspace: IWorkspace;
@@ -57,7 +58,14 @@ const Edit = ({ workspace, updateWorkspace }: IProps) => {
 
     return (
         <>
-            <EditOutlined key="edit" onClick={showDrawer} />
+            <Button
+                flex="1"
+                variant="ghost"
+                leftIcon={<AiOutlineEdit />}
+                color={"rgb(123, 128, 154)"}
+                onClick={showDrawer}
+                zIndex={10}
+            ></Button>
             <Drawer
                 title="Create a new workspace"
                 width={720}
@@ -67,9 +75,7 @@ const Edit = ({ workspace, updateWorkspace }: IProps) => {
                 extra={
                     <Space>
                         <Button onClick={onClose}>Cancel</Button>
-                        <Button type="primary" onClick={editData}>
-                            Submit
-                        </Button>
+                        <Button onClick={editData}>Submit</Button>
                     </Space>
                 }
             >
