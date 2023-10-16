@@ -5,8 +5,6 @@ import { default as Workspace } from "./features/workspaces/ViewOne";
 import { default as DataCollections } from "./features/dataCollections/View";
 import { Route, Routes } from "react-router-dom";
 import Login from "./features/auth/Login";
-import { Breadcrumb } from "antd";
-import { Box, useColorModeValue } from "@chakra-ui/react";
 import Layout from "./components/Layouts/Layout";
 
 // const user: IUser = {
