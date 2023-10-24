@@ -1,179 +1,327 @@
-import { useState } from "react";
-import { Breadcrumb, ConfigProvider, Space, Tag } from "antd";
 import {
     Box,
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    Button,
+    Card,
+    CardBody,
+    CardFooter,
+    CardHeader,
+    Center,
+    Checkbox,
     Container,
+    Drawer,
+    DrawerBody,
+    DrawerCloseButton,
+    DrawerContent,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerOverlay,
     Flex,
-    useColorModeValue,
+    FormLabel,
+    Heading,
+    Input,
+    InputGroup,
+    InputLeftAddon,
+    InputRightAddon,
+    Select,
+    SimpleGrid,
+    Spacer,
+    Stack,
     Text,
+    Textarea,
+    useDisclosure,
+    useToast,
 } from "@chakra-ui/react";
-// import Create from "./Create";
-import { useParams } from "react-router-dom";
-import Table, { ColumnsType } from "antd/es/table";
+import { default as PrimaryButton } from "../../components/Buttons/PrimaryButton";
+import SideBarLayout from "../../components/Layouts/SideBarLayout";
 
-interface DataType {
-    key: string;
+import { CompactTable } from "@table-library/react-table-library/compact";
+import {
+    Table,
+    Header,
+    HeaderRow,
+    Body,
+    Row,
+    HeaderCell,
+    Cell,
+} from "@table-library/react-table-library/table";
+import { useTheme } from "@table-library/react-table-library/theme";
+import {
+    DEFAULT_OPTIONS,
+    getTheme,
+} from "@table-library/react-table-library/material-ui";
+import { BsFiletypeDoc, BsPersonWorkspace, BsPlusCircle } from "react-icons/bs";
+import { IconContext, IconType } from "react-icons";
+import { useEffect, useState } from "react";
+import React from "react";
+import {
+    AiOutlineCheckCircle,
+    AiOutlineCloseCircle,
+    AiOutlineDelete,
+    AiOutlineMessage,
+} from "react-icons/ai";
+import { LikeFilled } from "@ant-design/icons";
+import Divider from "../../components/Divider/Divider";
+import { BiTable } from "react-icons/bi";
+import Edit from "./Edit";
+import { IDataCollection } from "../../types";
+import Create from "./Create";
+import { FaTasks } from "react-icons/fa";
+
+const dataCollections = [
+    {
+        _id: "1",
+        name: "Data Collection 1",
+        workspace: "1",
+        form: {
+            active: false,
+            type: "null",
+            emails: [],
+        },
+        columns: ["1", "2", "3", "4"],
+        rows: ["1", "2", "3"],
+    },
+];
+
+interface LinkItemProps {
     name: string;
-    age: number;
-    address: string;
-    tags: string[];
+    icon: IconType;
+    path: string;
 }
 
-const columns: ColumnsType<DataType> = [
+const LinkItems: Array<LinkItemProps> = [
+    { name: "Workspaces", icon: BsPersonWorkspace, path: "/workspaces" },
     {
-        title: "Name",
-        dataIndex: "name",
-        key: "name",
-        width: "100px",
-        render: (text) => <a>{text}</a>,
+        name: "Data Collections",
+        icon: BiTable,
+        path: "/workspaces/1/dataCollections",
     },
+    { name: "Tasks", icon: FaTasks, path: "/workspaces/1/taskLists" },
+    { name: "Documents", icon: BsFiletypeDoc, path: "/workspaces/1/documents" },
     {
-        title: "Age",
-        dataIndex: "age",
-        key: "age",
-        width: "100px",
-    },
-    {
-        title: "Address",
-        dataIndex: "address",
-        key: "address",
-        width: "200px",
-    },
-    {
-        title: "Tags",
-        key: "tags",
-        dataIndex: "tags",
-        width: "200px",
-        render: (_, { tags }) => (
-            <>
-                {tags.map((tag) => {
-                    let color = tag.length > 5 ? "geekblue" : "green";
-                    if (tag === "loser") {
-                        color = "volcano";
-                    }
-                    return (
-                        <Tag color={color} key={tag}>
-                            {tag.toUpperCase()}
-                        </Tag>
-                    );
-                })}
-            </>
-        ),
-    },
-    {
-        title: "Action",
-        key: "action",
-        render: (_, record) => (
-            <Space size="middle">
-                <a>Invite {record.name}</a>
-                <a>Delete</a>
-            </Space>
-        ),
+        name: "Message Board",
+        icon: AiOutlineMessage,
+        path: "/workspaces/1/messageBoard",
     },
 ];
-
-const data: DataType[] = [
-    {
-        key: "1",
-        name: "John Brown",
-        age: 32,
-        address: "New York No. 1 Lake Park",
-        tags: ["nice", "developer"],
-    },
-    {
-        key: "2",
-        name: "Jim Green",
-        age: 42,
-        address: "London No. 1 Lake Park",
-        tags: ["loser"],
-    },
-    {
-        key: "3",
-        name: "Joe Black",
-        age: 32,
-        address: "Sydney No. 1 Lake Park",
-        tags: ["cool", "teacher"],
-    },
-];
-
-const dataCollectionSet = {
-    _id: "1",
-    workspace: "1",
-    dataCollections: [
-        { _id: "1", name: "Project 1", workspace: "1" },
-        { _id: "2", name: "Project 2", workspace: "1" },
-    ],
-};
 
 const View = () => {
-    const { id } = useParams();
-    const [dataCollections] = useState(dataCollectionSet.dataCollections);
+    const [data, setData] = useState<IDataCollection[]>(dataCollections);
+    const updateDataCollection = (dataCollection: IDataCollection) => {
+        const dataCopy = data;
 
-    // const del = (id: string) => {
-    //     let newData = dataCollections.filter((item) => {
-    //         return item._id !== id;
-    //     });
+        const filteredData = dataCopy.filter((item) => {
+            return item._id !== dataCollection._id;
+        });
 
-    //     setDataCollections(newData);
-    // };
+        console.log(filteredData);
+        console.log(dataCollection);
 
+        setData([...filteredData, dataCollection]);
+    };
+
+    const addNewDataCollecion = (dataCollection: IDataCollection) => {
+        setData([...data, dataCollection]);
+    };
     return (
-        <Flex
-            minH={"100vh"}
-            // justify={"center"}
-            bg={useColorModeValue("gray.50", "gray.800")}
+        <SideBarLayout
+            linkItems={LinkItems}
+            // breadcrumbs={
+            //     <Breadcrumb fontSize={"16px"}>
+            //         <BreadcrumbItem>
+            //             <BreadcrumbLink href="/workspaces" color="#929dae">
+            //                 Workspaces
+            //             </BreadcrumbLink>
+            //         </BreadcrumbItem>
+            //         <BreadcrumbItem>
+            //             <BreadcrumbLink href="/workspaces/1" color="#929dae">
+            //                 Workspace 1
+            //             </BreadcrumbLink>
+            //         </BreadcrumbItem>
+            //         <BreadcrumbItem isCurrentPage>
+            //             <BreadcrumbLink href="/workspaces/1" color="#929dae">
+            //                 Data Collections
+            //             </BreadcrumbLink>
+            //         </BreadcrumbItem>
+            //     </Breadcrumb>
+            // }
         >
-            <Container maxW={"10xl"} mt={12}>
-                <Breadcrumb
-                    style={{ paddingBottom: "30px", fontSize: "16px" }}
-                    items={[
-                        {
-                            title: <a href="/workspaces">Workspaces</a>,
-                        },
-                        {
-                            title: (
-                                <a href={`/workspaces/${id}`}>Workspace 1</a>
-                            ),
-                        },
-                        {
-                            title: "Data Collections",
-                        },
-                    ]}
-                />
+            <Box>
+                <Flex
+                    minH={"100vh"}
+                    // justify={"center"}
+                    bg={"#eff2f5"}
+                >
+                    <Container maxW={"8xl"} mt={{ base: 4, sm: 0 }}>
+                        <SimpleGrid
+                            spacing={6}
+                            // templateColumns="repeat(auto-fill, minmax(300px, 1fr))"
+                            columns={{ base: 1, sm: 2 }}
+                            pb={"50px"}
+                        >
+                            <Flex>
+                                <Box>
+                                    <Heading
+                                        size={"sm"}
+                                        mb={"12px"}
+                                        color={"rgb(52, 71, 103)"}
+                                    >
+                                        Data Collecions
+                                    </Heading>
+                                    <Text
+                                        color={"rgb(123, 128, 154)"}
+                                        fontSize={"md"}
+                                        fontWeight={300}
+                                    >
+                                        Create data collection tables to
+                                        visualize and manage your data.
+                                    </Text>
+                                </Box>
+                            </Flex>
+                            <Flex>
+                                <Spacer />
+                                <Box pb={"20px"}>
+                                    <Create
+                                        addNewDataCollection={
+                                            addNewDataCollecion
+                                        }
+                                    />
+                                </Box>
+                            </Flex>
+                        </SimpleGrid>
 
-                <Box pb={"20px"}>
-                    {/* <Create
-                        workspaces={workspaces}
-                        setWorkspaces={setWorkspaces}
-                    /> */}
-                </Box>
-                {dataCollections.map((dataCollection, index) => {
-                    return (
-                        <div key={index} style={{ marginBottom: "30px" }}>
-                            <Text fontSize="3x1" mb={"5px"}>
-                                {dataCollection.name}
-                            </Text>
-                            <ConfigProvider
-                                theme={{
-                                    components: {
-                                        Table: {
-                                            // headerBg: "gray",
-                                        },
-                                    },
-                                }}
-                            >
-                                <Table
-                                    columns={columns}
-                                    dataSource={data}
-                                    bordered
-                                    size={"small"}
-                                />
-                            </ConfigProvider>
-                        </div>
-                    );
-                })}
-            </Container>
-        </Flex>
+                        <SimpleGrid
+                            spacing={6}
+                            // templateColumns="repeat(3, minmax(300px, 1fr))"
+                            columns={{ base: 1, sm: 1, md: 2, lg: 2, xl: 3 }}
+                        >
+                            {data.map((dataCollection, index) => {
+                                return (
+                                    <Card
+                                        key={index}
+                                        variant="outline"
+                                        boxShadow="rgba(0, 0, 0, 0.1) 0rem 0.25rem 0.375rem -0.0625rem, rgba(0, 0, 0, 0.06) 0rem 0.125rem 0.25rem -0.0625rem"
+                                        mb={{ base: 6 }}
+                                        h={"250px"}
+                                    >
+                                        <CardHeader
+                                            h={"60px"}
+                                            as={"a"}
+                                            href={`/workspaces/${dataCollection._id}/dataCollections/1`}
+                                        >
+                                            <Flex>
+                                                <Flex
+                                                    flex="1"
+                                                    gap="4"
+                                                    alignItems="center"
+                                                    flexWrap="wrap"
+                                                    position={"relative"}
+                                                    bottom={10}
+                                                >
+                                                    <Box
+                                                        bgImage={
+                                                            // "radial-gradient(circle at center top, rgb(73, 163, 241), rgb(26, 115, 232))"
+                                                            // "radial-gradient(circle at center top, rgb(66, 66, 74), black)"
+                                                            // "radial-gradient(circle at right top, #F26989, #EB1E4E)"
+                                                            "linear-gradient(195deg, rgb(73, 163, 241), rgb(26, 115, 232))"
+                                                        }
+                                                        padding={"20px"}
+                                                        borderRadius={"lg"}
+                                                        // position={"relative"}
+                                                        // bottom={10}
+                                                    >
+                                                        <IconContext.Provider
+                                                            value={{
+                                                                size: "18px",
+                                                                color: "white",
+                                                            }}
+                                                        >
+                                                            <BiTable />
+                                                        </IconContext.Provider>
+                                                    </Box>
+                                                    {/* <Avatar
+                                                    name="Segun Adebayo"
+                                                    src="https://bit.ly/sage-adebayo"
+                                                /> */}
+
+                                                    <Box
+                                                        // position={"relative"}
+                                                        // bottom={7}
+                                                        pt={7}
+                                                    >
+                                                        <Heading
+                                                            size="sm"
+                                                            color={"#575757"}
+                                                        >
+                                                            {
+                                                                dataCollection.name
+                                                            }
+                                                        </Heading>
+                                                        {/* <Text>
+                                                        Creator, Chakra UI
+                                                    </Text> */}
+                                                    </Box>
+                                                </Flex>
+                                                {/* <IconButton
+                                            variant="ghost"
+                                            colorScheme="gray"
+                                            aria-label="See menu"
+                                            icon={<BsThreeDotsVertical />}
+                                        /> */}
+                                            </Flex>
+                                        </CardHeader>
+                                        <CardBody
+                                            py={0}
+                                            as={"a"}
+                                            href={`/workspaces/1/dataCollections/1`}
+                                        >
+                                            <Center>
+                                                <Text
+                                                    color={"rgb(123, 128, 154)"}
+                                                    fontSize={"md"}
+                                                >
+                                                    {/* {dataCollection.description} */}
+                                                </Text>
+                                            </Center>
+                                        </CardBody>
+
+                                        <Divider
+                                            gradient="radial-gradient(#eceef1 40%, white 60%)"
+                                            marginBottom="2px"
+                                        />
+                                        {/* <Image
+                                    objectFit="cover"
+                                    src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
+                                    alt="Chakra UI"
+                                /> */}
+
+                                        <CardFooter p={"5px"}>
+                                            <Edit
+                                                dataCollection={dataCollection}
+                                                updateDataCollection={
+                                                    updateDataCollection
+                                                }
+                                            />
+                                            <Button
+                                                flex="1"
+                                                variant="ghost"
+                                                leftIcon={<AiOutlineDelete />}
+                                                color={"rgb(123, 128, 154)"}
+                                                zIndex={10}
+                                            ></Button>
+                                        </CardFooter>
+                                    </Card>
+                                    // </Box>
+                                );
+                            })}
+                        </SimpleGrid>
+                    </Container>
+                </Flex>
+            </Box>
+        </SideBarLayout>
+        // </Layout>
     );
 };
 

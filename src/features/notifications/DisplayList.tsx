@@ -1,3 +1,7 @@
+/**
+ * This file needs to be moved to ChakraUI
+ * ***************************************
+ */
 import { useState } from "react";
 import { Avatar, Badge, List, Space, Tag } from "antd";
 
@@ -64,13 +68,6 @@ const setPriorityColor = (priority: string) => {
     if (priority === "Medium") return "#ffcb00";
     if (priority === "Low") return "#34a640";
 };
-
-// const IconText = ({ icon, text }: { icon: React.FC; text: string }) => (
-//     <Space>
-//         {React.createElement(icon)}
-//         {text}
-//     </Space>
-// );
 
 const DisplayList = () => {
     const [notifications, setNotifications] = useState(data);

@@ -1,35 +1,31 @@
 import { useState } from "react";
-import { LikeFilled } from "@ant-design/icons";
-import {} from "antd";
 import {
     Box,
-    Breadcrumb,
-    Card,
-    CardHeader,
-    CardBody,
     Container,
     Flex,
     Heading,
     SimpleGrid,
     Spacer,
     Text,
-    CardFooter,
     Button,
     Center,
-    BreadcrumbItem,
-    BreadcrumbLink,
 } from "@chakra-ui/react";
-import Create from "./Create";
-// import { useNavigate } from "react-router-dom";
-import { IWorkspace } from "../../types";
-import Edit from "./Edit";
-// import { BiLike, BiChat, BiShare, BiEdit, BiEditAlt } from "react-icons/bi";
-import { AiOutlineDelete } from "react-icons/ai";
-// import { BsPersonWorkspace } from "react-icons/bs";
-import Divider from "../../components/Divider/Divider";
-import TopNav from "../../components/Layouts/TopNav";
 
-const data = [
+import { IWorkspace, LinkItemProps } from "../../types";
+import Create from "./Create";
+import Edit from "./Edit";
+import SideBarLayout from "../../components/Layouts/SideBarLayout";
+import PrimaryCard from "../../components/PrimaryCard";
+
+import { AiOutlineDelete, AiOutlineLike } from "react-icons/ai";
+import { IconContext } from "react-icons";
+import { BsPersonWorkspace } from "react-icons/bs";
+
+/**
+ * This is dummy data that simulates what will be brought in with RTK
+ * @constant {IWorkspace[]} data
+ */
+const data: IWorkspace[] = [
     {
         _id: "1",
         name: "Workspace 1",
@@ -40,6 +36,7 @@ const data = [
             docs: { access: 1 },
             messageBoard: { access: 1 },
         },
+        invitees: [],
     },
     {
         _id: "2",
@@ -51,218 +48,145 @@ const data = [
             docs: { access: 2 },
             messageBoard: { access: 0 },
         },
+        invitees: [],
     },
 ];
 
+/**
+ * The link items array used for the sidebar navigation
+ * @constant {array}
+ */
+const LinkItems: Array<LinkItemProps> = [
+    { name: "Workspaces", icon: BsPersonWorkspace, path: "/workspaces" },
+];
+
+/**
+ * This is the default workspace view that renders all workspaces
+ * @prop {null}
+ * @returns {JSX}
+ */
 const View = () => {
-    const [workspaces, setWorkspaces] = useState(data);
-    // const navigate = useNavigate();
+    /**
+     * State management for the array of workspaces coming from the backend ***
+     * @constant {IWorkspaces[]} workspaces
+     */
+    const [workspaces, setWorkspaces] = useState<IWorkspace[]>(data);
 
-    // const del = (id: string) => {
-    //     let newData = workspaces.filter((item) => {
-    //         return item._id !== id;
-    //     });
-
-    //     setWorkspaces(newData);
-    // };
-
-    // const openWorkspace = (_id: string) => {
-    //     console.log(_id);
-    //     navigate(`/workspaces/${_id}`);
-    // };
-
+    /**
+     * Adds a new workspace to state.
+     * NOTE: This is where the create request will be called.
+     * This function is passed in as a prop to Create.tsx.
+     * @param {IWorkspace} workspace
+     */
     const addNewWorkspace = (workspace: IWorkspace) => {
         setWorkspaces([...workspaces, workspace]);
     };
 
-    // const updateWorkspace = (workspace: IWorkspace) => {
-    //     const oldData = workspaces.filter((item) => {
-    //         return workspace._id !== item._id;
-    //     });
+    /**
+     * Updates the one workspace to state
+     * NOTE: This is where calling the update request will be called ***
+     * This function is passed in as a prop to Edit.tsx.
+     * @param {IWorkspace} workspace
+     */
+    const updateWorkspace = (workspace: IWorkspace) => {
+        const oldData: IWorkspace[] = workspaces.filter((item) => {
+            return workspace._id !== item._id;
+        });
 
-    //     setWorkspaces([...oldData, workspace]);
-    // };
+        setWorkspaces([...oldData, workspace]);
+    };
 
     return (
-        <Box>
-            <TopNav
-                breadcrumbs={
-                    <Breadcrumb fontSize={"16px"} pb={{ sm: "20px" }}>
-                        <BreadcrumbItem isCurrentPage>
-                            <BreadcrumbLink href="#" color="#929dae">
-                                Workspaces
-                            </BreadcrumbLink>
-                        </BreadcrumbItem>
-                    </Breadcrumb>
-                }
-            />
-            <Flex
-                minH={"100vh"}
-                // justify={"center"}
-                bg={"#eff2f5"}
-            >
-                <Container maxW={"8xl"} mt={{ base: 20, sm: 10 }}>
-                    <SimpleGrid
-                        spacing={6}
-                        // templateColumns="repeat(auto-fill, minmax(300px, 1fr))"
-                        columns={{ base: 1, sm: 2 }}
-                        pb={"50px"}
-                    >
-                        <Flex>
-                            <Box>
-                                <Heading
-                                    size={"sm"}
-                                    mb={"12px"}
-                                    color={"rgb(52, 71, 103)"}
-                                >
-                                    Workspaces
-                                </Heading>
-                                <Text
-                                    color={"rgb(123, 128, 154)"}
-                                    fontSize={"md"}
-                                    fontWeight={300}
-                                >
-                                    Create a new workspace to manage your
-                                    projects and teams.
-                                </Text>
+        <SideBarLayout
+            linkItems={LinkItems}
+            leftContent={
+                <Box pt={"6px"} pb={"4px"}>
+                    <Center>
+                        <IconContext.Provider
+                            value={{ color: "#7b809a", size: "20px" }}
+                        >
+                            <Box display={"inline-block"} mr={"3px"}>
+                                <AiOutlineLike />
                             </Box>
-                        </Flex>
-                        <Flex>
-                            <Spacer />
-                            <Box pb={"20px"}>
-                                <Create addNewWorkspace={addNewWorkspace} />
-                            </Box>
-                        </Flex>
-                    </SimpleGrid>
-
-                    <SimpleGrid
-                        spacing={6}
-                        // templateColumns="repeat(3, minmax(300px, 1fr))"
-                        columns={{ base: 1, sm: 1, md: 3 }}
-                    >
-                        {workspaces.map((workspace, index) => {
-                            return (
-                                <Card
-                                    key={index}
-                                    variant="outline"
-                                    boxShadow="rgba(0, 0, 0, 0.1) 0rem 0.25rem 0.375rem -0.0625rem, rgba(0, 0, 0, 0.06) 0rem 0.125rem 0.25rem -0.0625rem"
-                                    mb={{ base: 6 }}
-                                    h={"250px"}
-                                >
-                                    <CardHeader
-                                        h={"60px"}
-                                        as={"a"}
-                                        href={`/workspaces/${workspace._id}`}
+                        </IconContext.Provider>
+                        <Text as={"b"} fontSize={"16px"} color={"#7b809a"}>
+                            Collabtime
+                        </Text>
+                    </Center>
+                </Box>
+            }
+            sidebar={false}
+        >
+            <Box>
+                <Flex minH={"100vh"} bg={"#eff2f5"}>
+                    <Container maxW={"8xl"} mt={{ base: 4, sm: 0 }}>
+                        <SimpleGrid
+                            spacing={6}
+                            columns={{ base: 1, sm: 2 }}
+                            pb={"50px"}
+                        >
+                            <Flex>
+                                <Box>
+                                    <Heading
+                                        size={"sm"}
+                                        mb={"12px"}
+                                        color={"rgb(52, 71, 103)"}
                                     >
-                                        <Flex>
-                                            <Flex
+                                        Workspaces
+                                    </Heading>
+                                    <Text
+                                        color={"rgb(123, 128, 154)"}
+                                        fontSize={"md"}
+                                        fontWeight={300}
+                                    >
+                                        Create a new workspace to manage your
+                                        projects and teams.
+                                    </Text>
+                                </Box>
+                            </Flex>
+                            <Flex>
+                                <Spacer />
+                                <Box pb={"20px"}>
+                                    <Create addNewWorkspace={addNewWorkspace} />
+                                </Box>
+                            </Flex>
+                        </SimpleGrid>
+
+                        <SimpleGrid
+                            spacing={6}
+                            columns={{ base: 1, sm: 1, md: 2, lg: 2, xl: 3 }}
+                        >
+                            {workspaces.map((workspace, index) => {
+                                return (
+                                    <PrimaryCard
+                                        key={index}
+                                        index={index}
+                                        data={workspace}
+                                        editButton={
+                                            <Edit
+                                                workspace={workspace}
+                                                updateWorkspace={
+                                                    updateWorkspace
+                                                }
+                                            />
+                                        }
+                                        deleteButton={
+                                            <Button
                                                 flex="1"
-                                                gap="4"
-                                                alignItems="center"
-                                                flexWrap="wrap"
-                                                position={"relative"}
-                                                bottom={10}
-                                            >
-                                                <Box
-                                                    bgImage={
-                                                        // "radial-gradient(circle at center top, rgb(73, 163, 241), rgb(26, 115, 232))"
-                                                        // "radial-gradient(circle at center top, rgb(66, 66, 74), black)"
-                                                        // "radial-gradient(circle at right top, #F26989, #EB1E4E)"
-                                                        "radial-gradient(circle at right top, #FF5BA7 , #D32C7A)"
-                                                    }
-                                                    padding={"20px"}
-                                                    borderRadius={"lg"}
-                                                    // position={"relative"}
-                                                    // bottom={10}
-                                                >
-                                                    {/* <BsPersonWorkspace
-                                                    size={"30px"}
-                                                    color={"white"}
-                                                /> */}
-                                                    <LikeFilled
-                                                        style={{
-                                                            marginRight: "4px",
-                                                            fontSize: "20px",
-                                                            color: "white",
-                                                        }}
-                                                    />
-                                                </Box>
-                                                {/* <Avatar
-                                                    name="Segun Adebayo"
-                                                    src="https://bit.ly/sage-adebayo"
-                                                /> */}
-
-                                                <Box
-                                                    // position={"relative"}
-                                                    // bottom={7}
-                                                    pt={7}
-                                                >
-                                                    <Heading
-                                                        size="sm"
-                                                        color={"#575757"}
-                                                    >
-                                                        {workspace.name}
-                                                    </Heading>
-                                                    {/* <Text>
-                                                        Creator, Chakra UI
-                                                    </Text> */}
-                                                </Box>
-                                            </Flex>
-                                            {/* <IconButton
-                                            variant="ghost"
-                                            colorScheme="gray"
-                                            aria-label="See menu"
-                                            icon={<BsThreeDotsVertical />}
-                                        /> */}
-                                        </Flex>
-                                    </CardHeader>
-                                    <CardBody
-                                        py={0}
-                                        as={"a"}
-                                        href={`/workspaces/${workspace._id}`}
-                                    >
-                                        <Center>
-                                            <Text
+                                                variant="ghost"
+                                                leftIcon={<AiOutlineDelete />}
                                                 color={"rgb(123, 128, 154)"}
-                                                fontSize={"md"}
-                                            >
-                                                {workspace.description}
-                                            </Text>
-                                        </Center>
-                                    </CardBody>
-
-                                    <Divider
-                                        gradient="radial-gradient(#eceef1 40%, white 60%)"
-                                        marginBottom="2px"
+                                                zIndex={10}
+                                            ></Button>
+                                        }
                                     />
-                                    {/* <Image
-                                    objectFit="cover"
-                                    src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
-                                    alt="Chakra UI"
-                                /> */}
-
-                                    <CardFooter p={"5px"}>
-                                        <Edit
-                                            workspace={workspace}
-                                            updateWorkspace={setWorkspaces}
-                                        />
-                                        <Button
-                                            flex="1"
-                                            variant="ghost"
-                                            leftIcon={<AiOutlineDelete />}
-                                            color={"rgb(123, 128, 154)"}
-                                            zIndex={10}
-                                        ></Button>
-                                    </CardFooter>
-                                </Card>
-                                // </Box>
-                            );
-                        })}
-                    </SimpleGrid>
-                </Container>
-            </Flex>
-        </Box>
-        // </Layout>
+                                );
+                            })}
+                        </SimpleGrid>
+                    </Container>
+                </Flex>
+            </Box>
+        </SideBarLayout>
     );
 };
 

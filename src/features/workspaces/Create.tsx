@@ -1,9 +1,27 @@
 import React, { useState } from "react";
-import { Drawer, Input, Space } from "antd";
-import { Button, Checkbox, Stack, Text } from "@chakra-ui/react";
+import {
+    Checkbox,
+    Drawer,
+    DrawerBody,
+    DrawerCloseButton,
+    DrawerContent,
+    DrawerHeader,
+    DrawerOverlay,
+    Flex,
+    Input,
+    Spacer,
+    Stack,
+    Text,
+    useDisclosure,
+} from "@chakra-ui/react";
 import { IWorkspace } from "../../types";
-import PrimaryButton from "../../components/Buttons/PrimaryButton";
 
+import PrimaryButton from "../../components/Buttons/PrimaryButton";
+import Divider from "../../components/Divider/Divider";
+
+/**
+ * Workspace default values should be deleted once RTK is implemented
+ */
 let defaultValues: IWorkspace = {
     _id: "1",
     name: "",
@@ -14,39 +32,51 @@ let defaultValues: IWorkspace = {
         docs: { access: 0 },
         messageBoard: { access: 0 },
     },
+    invitees: [],
 };
 
 interface IProps {
     addNewWorkspace: any;
 }
 
+/**
+ * This serves as a view for the create workspace drawer
+ * @param {IProps} {addNewWorkspace}
+ * @returns {JSX}
+ */
 const Create = ({ addNewWorkspace }: IProps) => {
+    /**
+     * ChakraUI drawer disclosure
+     */
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    /**
+     * State management for the tools checkboxes
+     */
     const [checkedItems, setCheckedItems] = React.useState([
         true,
         true,
         true,
         true,
     ]);
-    const [open, setOpen] = useState(false);
+    /**
+     * Workspace data set for creating a new workspace
+     */
     const [data, setData] = useState<IWorkspace>(defaultValues);
 
-    const showDrawer = () => {
-        setOpen(true);
-    };
-
-    const onClose = () => {
-        setOpen(false);
-    };
-
+    /**
+     * This function updates the workspace data and create a new workspace
+     */
     const createData = async () => {
-        const newWorkspace = onCheckboxChange();
-        console.log(newWorkspace);
-        addNewWorkspace(newWorkspace);
+        setTools();
+        addNewWorkspace(data);
         setData(defaultValues);
         onClose();
-        setData(defaultValues);
     };
 
+    /**
+     * Handles input changes
+     * @param event
+     */
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value, name } = event.target;
         setData({
@@ -55,8 +85,11 @@ const Create = ({ addNewWorkspace }: IProps) => {
         });
     };
 
-    const onCheckboxChange = () => {
-        let newWorkspace: IWorkspace = data;
+    /**
+     * Updates the workspace tools based on the checkboxes selected
+     */
+    const setTools = () => {
+        let newWorkspace: IWorkspace;
         newWorkspace = {
             ...data,
             tools: {
@@ -66,113 +99,122 @@ const Create = ({ addNewWorkspace }: IProps) => {
                 messageBoard: { access: checkedItems[3] ? 2 : 0 },
             },
         };
-        return newWorkspace;
+        setData(newWorkspace);
     };
 
     return (
         <>
-            {/* <Button
-                colorScheme="twitter"
-                onClick={showDrawer}
-                _hover={{
-                    boxShadow: "lg",
-                }}
-                bgGradient="linear(195deg, rgb(73, 163, 241), rgb(26, 115, 232))"
-                boxShadow={"md"}
-            >
-                New Workspace
-            </Button> */}
-            <PrimaryButton onClick={showDrawer}>NEW WORKSPACE</PrimaryButton>
+            <PrimaryButton onClick={onOpen}>NEW WORKSPACE</PrimaryButton>
             <Drawer
-                title="Create a new workspace"
-                width={500}
+                isOpen={isOpen}
+                placement="right"
                 onClose={onClose}
-                open={open}
-                bodyStyle={{ paddingBottom: 80 }}
-                extra={
-                    <Space>
-                        <Button onClick={onClose}>Cancel</Button>
-                        <Button
-                            onClick={createData}
-                            _hover={{ boxShadow: "lg" }}
-                        >
-                            Save
-                        </Button>
-                    </Space>
-                }
+                size={"md"}
             >
-                <Text pb={"5px"}>Name</Text>
-                <Input
-                    name="name"
-                    placeholder="Please enter user name"
-                    value={data.name}
-                    required={true}
-                    onChange={handleChange}
-                    style={{ marginBottom: "15px" }}
-                />
-                <Text pb={"5px"}>Description</Text>
-                <Input
-                    name="description"
-                    placeholder="please enter url description"
-                    value={data.description}
-                    onChange={handleChange}
-                    style={{ marginBottom: "15px" }}
-                />
-                <Text pb={"5px"}>Tools</Text>
-                <Stack mt={1} spacing={1}>
-                    <Checkbox
-                        isChecked={checkedItems[0]}
-                        onChange={(e) =>
-                            setCheckedItems([
-                                e.target.checked,
-                                checkedItems[1],
-                                checkedItems[2],
-                                checkedItems[3],
-                            ])
-                        }
-                    >
-                        <Text fontSize={"14px"}>Data Collections</Text>
-                    </Checkbox>
-                    <Checkbox
-                        isChecked={checkedItems[1]}
-                        onChange={(e) =>
-                            setCheckedItems([
-                                checkedItems[0],
-                                e.target.checked,
-                                checkedItems[2],
-                                checkedItems[3],
-                            ])
-                        }
-                    >
-                        <Text fontSize={"14px"}>Tasks</Text>
-                    </Checkbox>
-                    <Checkbox
-                        isChecked={checkedItems[2]}
-                        onChange={(e) =>
-                            setCheckedItems([
-                                checkedItems[0],
-                                checkedItems[1],
-                                e.target.checked,
-                                checkedItems[3],
-                            ])
-                        }
-                    >
-                        <Text fontSize={"14px"}>Docs</Text>
-                    </Checkbox>
-                    <Checkbox
-                        isChecked={checkedItems[3]}
-                        onChange={(e) =>
-                            setCheckedItems([
-                                checkedItems[0],
-                                checkedItems[1],
-                                checkedItems[2],
-                                e.target.checked,
-                            ])
-                        }
-                    >
-                        <Text fontSize={"14px"}>Message Board</Text>
-                    </Checkbox>
-                </Stack>
+                <DrawerOverlay />
+                <DrawerContent>
+                    <DrawerCloseButton />
+                    <DrawerHeader fontSize={"16px"}>
+                        Create a new workspace
+                        <Divider
+                            gradient="radial-gradient(#eceef1 40%, white 60%)"
+                            marginBottom="0"
+                        />
+                    </DrawerHeader>
+                    <DrawerBody>
+                        <Text pb={"5px"} color={"rgb(123, 128, 154)"}>
+                            Name
+                        </Text>
+                        <Input
+                            name="name"
+                            placeholder="Please enter user name"
+                            value={data.name}
+                            required={true}
+                            onChange={handleChange}
+                            style={{ marginBottom: "15px" }}
+                            _placeholder={{ color: "rgb(123, 128, 154)" }}
+                        />
+                        <Text pb={"5px"} color={"rgb(123, 128, 154)"}>
+                            Description
+                        </Text>
+                        <Input
+                            name="description"
+                            placeholder="please enter url description"
+                            value={data.description}
+                            onChange={handleChange}
+                            style={{ marginBottom: "15px" }}
+                        />
+                        <Text pb={"5px"}>Tools</Text>
+                        <Stack mt={1} spacing={1}>
+                            <Checkbox
+                                color={"rgb(123, 128, 154)"}
+                                isChecked={checkedItems[0]}
+                                onChange={(e) =>
+                                    setCheckedItems([
+                                        e.target.checked,
+                                        checkedItems[1],
+                                        checkedItems[2],
+                                        checkedItems[3],
+                                    ])
+                                }
+                            >
+                                <Text fontSize={"14px"}>Data Collections</Text>
+                            </Checkbox>
+                            <Checkbox
+                                color={"rgb(123, 128, 154)"}
+                                isChecked={checkedItems[1]}
+                                onChange={(e) =>
+                                    setCheckedItems([
+                                        checkedItems[0],
+                                        e.target.checked,
+                                        checkedItems[2],
+                                        checkedItems[3],
+                                    ])
+                                }
+                            >
+                                <Text fontSize={"14px"}>Tasks</Text>
+                            </Checkbox>
+                            <Checkbox
+                                color={"rgb(123, 128, 154)"}
+                                isChecked={checkedItems[2]}
+                                onChange={(e) =>
+                                    setCheckedItems([
+                                        checkedItems[0],
+                                        checkedItems[1],
+                                        e.target.checked,
+                                        checkedItems[3],
+                                    ])
+                                }
+                            >
+                                <Text fontSize={"14px"}>Docs</Text>
+                            </Checkbox>
+                            <Checkbox
+                                color={"rgb(123, 128, 154)"}
+                                isChecked={checkedItems[3]}
+                                onChange={(e) =>
+                                    setCheckedItems([
+                                        checkedItems[0],
+                                        checkedItems[1],
+                                        checkedItems[2],
+                                        e.target.checked,
+                                    ])
+                                }
+                            >
+                                <Text fontSize={"14px"}>Message Board</Text>
+                            </Checkbox>
+                            <Divider
+                                gradient="radial-gradient(#eceef1 40%, white 60%)"
+                                marginBottom="0"
+                            />
+                            <Flex mt={"10px"} width={"full"}>
+                                <Spacer />
+                                <PrimaryButton onClick={createData}>
+                                    SAVE
+                                </PrimaryButton>
+                            </Flex>
+                        </Stack>
+                    </DrawerBody>
+                </DrawerContent>
             </Drawer>
         </>
     );

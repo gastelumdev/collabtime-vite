@@ -1,0 +1,466 @@
+import {
+    IconButton,
+    Avatar,
+    Box,
+    CloseButton,
+    Flex,
+    HStack,
+    VStack,
+    Icon,
+    useColorModeValue,
+    Text,
+    Drawer,
+    DrawerContent,
+    useDisclosure,
+    BoxProps,
+    FlexProps,
+    Menu,
+    MenuButton,
+    MenuDivider,
+    MenuItem,
+    MenuList,
+    Center,
+    Container,
+    SimpleGrid,
+    Hide,
+    Spacer,
+    Stack,
+    Input,
+} from "@chakra-ui/react";
+import {
+    FiHome,
+    FiTrendingUp,
+    FiCompass,
+    FiStar,
+    FiSettings,
+    FiMenu,
+    FiBell,
+    FiChevronDown,
+    FiLogOut,
+} from "react-icons/fi";
+import { IconContext, IconType } from "react-icons";
+import { LikeOutlined } from "@ant-design/icons";
+import Divider from "../Divider/Divider";
+import { Link, useNavigate } from "react-router-dom";
+import { BsFiletypeDoc, BsPersonWorkspace } from "react-icons/bs";
+import { BiTable } from "react-icons/bi";
+import { FaTasks, FaUserCircle } from "react-icons/fa";
+import { AiOutlineMessage } from "react-icons/ai";
+import View from "../../features/notifications/View";
+import { ReactNode } from "react";
+
+interface LinkItemProps {
+    name: string;
+    icon: IconType;
+    path: string;
+}
+
+interface NavItemProps extends FlexProps {
+    icon: IconType;
+    children: React.ReactNode;
+}
+
+interface TopNavProps extends FlexProps {
+    sidebar?: boolean;
+    leftContent?: any;
+    onOpen: () => void;
+}
+
+interface SidebarProps extends BoxProps {
+    linkItems: LinkItemProps[];
+    onClose: () => void;
+}
+
+interface SidebarContentProps {
+    sidebar?: boolean;
+    linkItems: LinkItemProps[];
+    leftContent?: any;
+    children: ReactNode;
+}
+
+// const LinkItems: Array<LinkItemProps> = [
+//     { name: "Workspaces", icon: BsPersonWorkspace, path: "/workspaces" },
+//     {
+//         name: "Data Collections",
+//         icon: BiTable,
+//         path: "/workspaces/1/dataCollections",
+//     },
+//     { name: "Tasks", icon: FaTasks, path: "" },
+//     { name: "Documents", icon: BsFiletypeDoc, path: "" },
+//     { name: "Message Board", icon: AiOutlineMessage, path: "" },
+// ];
+
+const SidebarContent = ({ linkItems, onClose, ...rest }: SidebarProps) => {
+    return (
+        <Box
+            transition="3s ease"
+            // bg={useColorModeValue("white", "gray.900")}
+            borderRight="px"
+            borderRightColor={useColorModeValue("gray.200", "gray.700")}
+            w={{ base: "full", md: 60 }}
+            pos="fixed"
+            h="full"
+            {...rest}
+        >
+            <Box bg={"black"} h={"94%"} borderRadius={"xl"}>
+                <Box
+                    pt={"20px"}
+                    bgImage={
+                        "radial-gradient(circle at center top, rgb(66, 66, 74), black)"
+                    }
+                    height={"full"}
+                    borderRadius={"xl"}
+                >
+                    <Box pt={"6px"} pb={"4px"}>
+                        <Center>
+                            <Text as={"b"} fontSize={"16px"} color={"white"}>
+                                <LikeOutlined
+                                    style={{
+                                        marginRight: "4px",
+                                        fontSize: "20px",
+                                    }}
+                                />
+                                Collabtime
+                            </Text>
+                        </Center>
+                    </Box>
+                    <Divider
+                        gradient="radial-gradient(#5e5b5b 40%, #1c1c1c)"
+                        marginBottom="10px"
+                    />
+                    <Box transition="3s ease">
+                        {linkItems.map((link) => (
+                            <Link to={link.path} key={link.name}>
+                                <NavItem key={link.name} icon={link.icon}>
+                                    <Text color={"white"}>{link.name}</Text>
+                                </NavItem>
+                            </Link>
+                        ))}
+                        <Divider
+                            gradient="radial-gradient(#5e5b5b 40%, black)"
+                            marginBottom="10px"
+                            marginTop="10px"
+                        />
+                        <Link to={"/login"}>
+                            <NavItem icon={FiLogOut}>
+                                <Text color={"white"}>Logout</Text>
+                            </NavItem>
+                        </Link>
+                    </Box>
+                </Box>
+            </Box>
+        </Box>
+    );
+};
+
+const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
+    return (
+        // <Box
+        //     as="a"
+        //     href="#"
+        //     style={{ textDecoration: "none" }}
+        //     _focus={{ boxShadow: "none" }}
+        // >
+        <Flex
+            align="center"
+            p="4"
+            mx="4"
+            borderRadius="lg"
+            role="group"
+            cursor="pointer"
+            _hover={{
+                bgImage: "linear(195deg, rgb(73, 163, 241), rgb(26, 115, 232))",
+                color: "white",
+            }}
+            {...rest}
+        >
+            {icon && (
+                <Icon
+                    mr="4"
+                    fontSize="16"
+                    _groupHover={{
+                        color: "white",
+                    }}
+                    as={icon}
+                    color={"white"}
+                />
+            )}
+            {children}
+        </Flex>
+        // </Box>
+    );
+};
+
+const TopNav = ({
+    sidebar = true,
+    onOpen,
+    leftContent,
+    ...rest
+}: TopNavProps) => {
+    const firstname = "Omar";
+    const lastname = "Gastelum";
+    const avatarUrl = `https://api.dicebear.com/7.x/initials/svg?seed=${firstname}%20${lastname}`;
+
+    const navigate = useNavigate();
+    const logout = () => {
+        navigate("/login");
+    };
+
+    return (
+        <Flex
+            ml={{ base: 0, lg: sidebar ? "400px" : "0" }}
+            pl={{ base: 0, lg: 0 }}
+            height="20"
+            alignItems="center"
+            bg={useColorModeValue("gray.100", "gray.900")}
+            // borderBottomWidth="1px"
+            borderBottomColor={useColorModeValue("gray.200", "gray.700")}
+            justifyContent={{ base: "space-between", md: "flex-end" }}
+            {...rest}
+        >
+            {/* <Flex
+                minH={"100vh"}
+                // justify={"center"}
+                bg={"#eff2f5"}
+            > */}
+            <Container maxW={"8xl"} mt={{ base: 0 }}>
+                <Box pb={3} bg={"#eff2f5"}>
+                    <Box bg={"#eff2f5"}>
+                        <SimpleGrid
+                            // spacing={4}
+                            // templateColumns="repeat(auto-fill, minmax(300px, 1fr))"
+                            columns={[1, 2, 2]}
+                            spacingY={{ sm: 3 }}
+                            // minChildWidth={"290px"}
+                        >
+                            <Flex
+                                // h={16}
+                                alignItems={"center"}
+                                justifyContent={"space-between"}
+                            >
+                                <IconButton
+                                    display={{ base: "flex", lg: "none" }}
+                                    onClick={onOpen}
+                                    variant="outline"
+                                    aria-label="open menu"
+                                    icon={<FiMenu />}
+                                />
+                                <Box
+                                    ml={{ base: 3, lg: 0 }}
+                                    // pt={"18px"}
+                                    bg={"#eff2f5"}
+                                >
+                                    {leftContent}
+                                </Box>
+                                <Spacer />
+                            </Flex>
+                            <Flex>
+                                <Hide below="sm">
+                                    <Spacer />
+                                </Hide>
+
+                                <Stack direction={"row"} spacing={6}>
+                                    <Box paddingRight={"0px"} mt={3}>
+                                        <Input
+                                            borderColor={"#c7cadb"}
+                                            placeholder="Search"
+                                            w={{ base: 200, sm: 100, md: 200 }}
+                                        />
+                                    </Box>
+                                    <Menu>
+                                        <View />
+                                    </Menu>
+                                    <Menu>
+                                        <MenuButton
+                                            // as={Button}
+                                            style={{
+                                                backgroundColor: "#eff2f5",
+                                            }}
+                                            // cursor={"pointer"}
+                                            // minW={0}
+                                        >
+                                            {/* <BellIcon
+                                            boxSize={5}
+                                            color={"#3E505B"}
+                                        /> */}
+                                            <Text size={"20px"} pt={1}>
+                                                <IconContext.Provider
+                                                    value={{
+                                                        size: "18px",
+                                                        color: "#7b809a",
+                                                    }}
+                                                >
+                                                    <FaUserCircle />
+                                                </IconContext.Provider>
+                                            </Text>
+                                        </MenuButton>
+                                        <MenuList
+                                            alignItems={"center"}
+                                            zIndex={"10"}
+                                        >
+                                            <br />
+                                            <Center>
+                                                <Avatar
+                                                    size={"lg"}
+                                                    src={avatarUrl}
+                                                />
+                                            </Center>
+                                            <br />
+                                            <Center>
+                                                <p>{`${firstname} ${lastname}`}</p>
+                                            </Center>
+                                            <Center>
+                                                <p
+                                                    style={{
+                                                        fontSize: "12px",
+                                                        color: "gray",
+                                                    }}
+                                                >
+                                                    gastelumdev@gmail.com
+                                                </p>
+                                            </Center>
+                                            <br />
+                                            <MenuDivider />
+                                            {/* <MenuItem>Profile</MenuItem> */}
+                                            <MenuItem onClick={logout}>
+                                                Logout
+                                            </MenuItem>
+                                        </MenuList>
+                                    </Menu>
+                                </Stack>
+                            </Flex>
+                        </SimpleGrid>
+                    </Box>
+                </Box>
+            </Container>
+            {/* </Flex> */}
+        </Flex>
+    );
+};
+
+const SideBarLayout = ({
+    linkItems,
+    leftContent,
+    sidebar = true,
+    children,
+}: SidebarContentProps) => {
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const navigate = useNavigate();
+
+    console.log(sidebar);
+
+    return (
+        <Box
+            minH="100vh"
+            bg={useColorModeValue("gray.100", "gray.900")}
+            pl={{ base: 0, lg: 6 }}
+            pr={0}
+            pt={6}
+        >
+            {sidebar ? (
+                <SidebarContent
+                    linkItems={linkItems}
+                    onClose={() => onClose}
+                    display={{ base: "none", lg: "block" }}
+                />
+            ) : null}
+            <Box mx={"6px"} ml={"6px"}>
+                <Drawer
+                    isOpen={isOpen}
+                    placement="left"
+                    onClose={onClose}
+                    returnFocusOnClose={false}
+                    onOverlayClick={onClose}
+                    size="xs"
+                >
+                    <DrawerContent>
+                        {/* <SidebarContent onClose={onClose} /> */}
+                        <Box
+                            py={6}
+                            pl={6}
+                            height={"full"}
+                            bg={useColorModeValue("gray.100", "gray.900")}
+                        >
+                            <Box
+                                pt={"20px"}
+                                bgImage={
+                                    "radial-gradient(circle at center top, rgb(66, 66, 74), black)"
+                                }
+                                height={"full"}
+                                borderRadius={"xl"}
+                            >
+                                <Box pt={"6px"} pb={"4px"}>
+                                    <Center>
+                                        <Text
+                                            as={"b"}
+                                            fontSize={"16px"}
+                                            color={"white"}
+                                        >
+                                            <LikeOutlined
+                                                style={{
+                                                    marginRight: "4px",
+                                                    fontSize: "20px",
+                                                }}
+                                            />
+                                            Collabtime
+                                        </Text>
+                                    </Center>
+                                </Box>
+                                <Divider
+                                    gradient="radial-gradient(#5e5b5b 40%, #1c1c1c)"
+                                    marginBottom="10px"
+                                />
+                                <Box transition="3s ease">
+                                    {linkItems.map((link) => (
+                                        <Link to={link.path} key={link.name}>
+                                            <NavItem
+                                                key={link.name}
+                                                icon={link.icon}
+                                            >
+                                                <Text color={"#dbdbdb"}>
+                                                    {link.name}
+                                                </Text>
+                                            </NavItem>
+                                        </Link>
+                                    ))}
+                                    <Divider
+                                        gradient="radial-gradient(#5e5b5b 40%, black)"
+                                        marginBottom="10px"
+                                        marginTop="10px"
+                                    />
+                                    <Link to={"/login"}>
+                                        <NavItem icon={FiLogOut}>
+                                            <Text color={"#dbdbdb"}>
+                                                Logout
+                                            </Text>
+                                        </NavItem>
+                                    </Link>
+                                </Box>
+                            </Box>
+                        </Box>
+                    </DrawerContent>
+                </Drawer>
+            </Box>
+            {/* mobilenav */}
+            <Box ml={{ base: 0, lg: sidebar ? "240px" : "0" }} p={{ base: 0 }}>
+                <TopNav
+                    sidebar={false}
+                    onOpen={onOpen}
+                    leftContent={leftContent}
+                />
+            </Box>
+            <Box
+                ml={{ base: 0, lg: sidebar ? "240px" : "0" }}
+                p={{ base: 0 }}
+                pt={{
+                    base: sidebar ? "0px" : "50px",
+                    lg: sidebar ? "0px" : "50px",
+                }}
+            >
+                {children}
+            </Box>
+        </Box>
+    );
+};
+
+export default SideBarLayout;

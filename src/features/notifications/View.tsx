@@ -1,39 +1,20 @@
-import { useState } from "react";
-import { Button, Drawer, Space } from "antd";
-import { MenuButton } from "@chakra-ui/react";
+
+import { MenuButton, useDisclosure } from "@chakra-ui/react";
 import { BellIcon } from "@chakra-ui/icons";
 import DisplayList from "./DisplayList";
+import PrimaryDrawer from "../../components/PrimaryDrawer";
 
 const View = () => {
-    const [open, setOpen] = useState(false);
-
-    const showDrawer = () => {
-        setOpen(true);
-    };
-
-    const onClose = () => {
-        setOpen(false);
-    };
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
     return (
         <>
-            <MenuButton bg={"#eff2f5"} onClick={showDrawer}>
+            <MenuButton bg={"#eff2f5"} onClick={onOpen}>
                 <BellIcon boxSize={5} color={"#7b809a"} />
             </MenuButton>
-            <Drawer
-                title="Notifications"
-                width={720}
-                onClose={onClose}
-                open={open}
-                bodyStyle={{ paddingBottom: 80 }}
-                extra={
-                    <Space>
-                        <Button onClick={onClose}>Cancel</Button>
-                    </Space>
-                }
-            >
+            <PrimaryDrawer title="Notifications" isOpen={isOpen} onClose={onClose} size="lg">
                 <DisplayList />
-            </Drawer>
+            </PrimaryDrawer>
         </>
     );
 };

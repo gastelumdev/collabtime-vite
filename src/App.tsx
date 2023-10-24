@@ -3,9 +3,14 @@ import "./App.css";
 import { default as Workspaces } from "./features/workspaces/View";
 import { default as Workspace } from "./features/workspaces/ViewOne";
 import { default as DataCollections } from "./features/dataCollections/View";
+import { default as DataCollection } from "./features/dataCollections/ViewOne";
+import { default as Documents } from "./features/documents/View";
+import { default as Tasks } from "./features/tasks/View";
+import { default as MessageBoard } from "./features/messageBoard/View";
 import { Route, Routes } from "react-router-dom";
 import Login from "./features/auth/Login";
-import Layout from "./components/Layouts/Layout";
+// import { IUser } from "./types";
+import { PrivateOutlet } from "./utils/PrivateOutlet";
 
 // const user: IUser = {
 //     _id: "1",
@@ -42,19 +47,36 @@ import Layout from "./components/Layouts/Layout";
 function App() {
     return (
         <>
-            <Layout>
-                <Routes>
+            {/* <Layout> */}
+            <Routes>
+                <Route element={<PrivateOutlet isAllowed={true} />}>
                     <Route path="workspaces" element={<Workspaces />} />
                     <Route path="workspaces/:id" element={<Workspace />} />
                     <Route
-                        path="workspaces/:id/dataCollections/:dataCollectionsId"
+                        path="workspaces/:id/dataCollections"
                         element={<DataCollections />}
                     />
-                </Routes>
-            </Layout>
+                    <Route
+                        path="workspaces/:id/dataCollections/:dataCollectionId"
+                        element={<DataCollection />}
+                    />
+                    <Route
+                        path="workspaces/:id/documents"
+                        element={<Documents />}
+                    />
+                    <Route
+                        path="workspaces/:id/taskLists"
+                        element={<Tasks />}
+                    />
+                    <Route
+                        path="workspaces/:id/messageBoard"
+                        element={<MessageBoard />}
+                    />
+                </Route>
+            </Routes>
             <Routes>
                 <Route path="" element={<Login />} />
-                <Route path="public/login" element={<Login />} />
+                <Route path="login" element={<Login />} />
             </Routes>
         </>
     );
