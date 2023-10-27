@@ -31,27 +31,34 @@ export default function Login() {
         email: "",
         password: "",
     });
+    const [emailInputError, setEmailInputError] = useState(false);
+    const [passwordInputError, setPasswordInputError] = useState(false);
 
     const handleSubmit = async () => {
-        try {
-            const user = await login(formState).unwrap();
-            console.log(user);
-            dispatch(setCredentials(user));
-            localStorage.setItem("token", user.accessToken);
-            localStorage.setItem("userId", user.user._id as string);
-            navigate("/workspaces");
-        } catch (err: any) {
-            console.log(err);
-            console.log(err.data.message);
+        if (formState.email !== "" && formState.password !== "") {
+            try {
+                const user = await login(formState).unwrap();
+                console.log(user);
+                dispatch(setCredentials(user));
+                localStorage.setItem("token", user.accessToken);
+                localStorage.setItem("userId", user.user._id as string);
+                navigate("/workspaces");
+            } catch (err: any) {
+                console.log(err);
+                console.log(err.data.message);
 
-            toast({
-                title: "Login Error.",
-                description: err.data.message,
-                status: "error",
-                position: "top",
-                duration: 9000,
-                isClosable: true,
-            });
+                toast({
+                    title: "Login Error.",
+                    description: err.data.message,
+                    status: "error",
+                    position: "top",
+                    duration: 9000,
+                    isClosable: true,
+                });
+            }
+        } else {
+            if (formState.email === "") setEmailInputError(true);
+            if (formState.password === "") setPasswordInputError(true);
         }
     };
 
@@ -63,6 +70,8 @@ export default function Login() {
             [name]: value,
         });
         console.log(formState.email);
+        setEmailInputError(false);
+        setPasswordInputError(false);
     };
 
     return (
@@ -87,7 +96,11 @@ export default function Login() {
                     p={8}
                 >
                     <Stack spacing={4}>
-                        <FormControl id="email">
+                        <FormControl
+                            id="email"
+                            isRequired={true}
+                            isInvalid={emailInputError}
+                        >
                             <FormLabel>Email address</FormLabel>
                             <Input
                                 type="email"
@@ -96,13 +109,18 @@ export default function Login() {
                                 onChange={handleChange}
                             />
                         </FormControl>
-                        <FormControl id="password">
+                        <FormControl
+                            id="password"
+                            isRequired={true}
+                            isInvalid={passwordInputError}
+                        >
                             <FormLabel>Password</FormLabel>
                             <Input
                                 type="password"
                                 name={"password"}
                                 value={formState.password}
                                 onChange={handleChange}
+                                isRequired={true}
                             />
                         </FormControl>
                         <Stack spacing={10}>
