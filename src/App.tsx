@@ -11,6 +11,9 @@ import { Route, Routes } from "react-router-dom";
 import Login from "./features/auth/Login";
 // import { IUser } from "./types";
 import { PrivateOutlet } from "./utils/PrivateOutlet";
+import ResetPasswordRequest from "./features/auth/ResetPasswordRequest";
+import ResetPassword from "./features/auth/ResetPassword";
+import ResetPasswordEmailSent from "./features/auth/ResetPasswordEmailSent";
 
 // const user: IUser = {
 //     _id: "1",
@@ -49,7 +52,7 @@ function App() {
         <>
             {/* <Layout> */}
             <Routes>
-                <Route element={<PrivateOutlet isAllowed={true} />}>
+                <Route element={<PrivateOutlet />}>
                     <Route path="workspaces" element={<Workspaces />} />
                     <Route path="workspaces/:id" element={<Workspace />} />
                     <Route
@@ -77,6 +80,15 @@ function App() {
             <Routes>
                 <Route path="" element={<Login />} />
                 <Route path="login" element={<Login />} />
+                <Route
+                    path="resetPasswordRequest"
+                    element={<ResetPasswordRequest />}
+                />
+                <Route path="passwordReset" element={<ResetPassword />} />
+                <Route
+                    path="resetPasswordEmailSent"
+                    element={<ResetPasswordEmailSent />}
+                />
             </Routes>
         </>
     );

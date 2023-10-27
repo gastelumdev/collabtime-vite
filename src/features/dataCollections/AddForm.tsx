@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Drawer, Input, Space } from "antd";
-import { Button, Checkbox, Stack, Text } from "@chakra-ui/react";
-import { IDataCollection } from "../../types";
+import { Button, Text } from "@chakra-ui/react";
+import { TDataCollection } from "../../types";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 
-let defaultValues: IDataCollection = {
+let defaultValues: TDataCollection = {
     name: "",
     workspace: "",
     form: {
@@ -17,13 +17,13 @@ let defaultValues: IDataCollection = {
 };
 
 interface IProps {
-    dataCollection: IDataCollection;
+    dataCollection: TDataCollection;
     updateDataCollection: any;
 }
 
 const AddForm = ({ dataCollection, updateDataCollection }: IProps) => {
     const [open, setOpen] = useState(false);
-    const [data, setData] = useState<IDataCollection>(dataCollection);
+    const [data, setData] = useState<TDataCollection>(dataCollection);
 
     const showDrawer = () => {
         setOpen(true);

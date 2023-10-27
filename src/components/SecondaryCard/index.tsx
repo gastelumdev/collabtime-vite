@@ -10,11 +10,13 @@ import {
 import { IconType } from "react-icons";
 
 interface IProps {
+    title: string;
     bgImage?: string;
     icon?: IconType;
 }
 
 const SecondaryCard = ({
+    title,
     bgImage = "linear-gradient(195deg, #FF548A, #EC1559)",
     icon,
 }: IProps) => {
@@ -34,11 +36,8 @@ const SecondaryCard = ({
                     <Heading size={"sm"}>
                         <List>
                             <ListItem>
-                                <ListIcon
-                                    as={icon}
-                                    boxSize={7}
-                                />
-                                Message Board
+                                <ListIcon as={icon} boxSize={7} />
+                                {title}
                             </ListItem>
                         </List>
                     </Heading>

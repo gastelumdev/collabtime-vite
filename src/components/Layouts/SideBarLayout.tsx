@@ -2,10 +2,7 @@ import {
     IconButton,
     Avatar,
     Box,
-    CloseButton,
     Flex,
-    HStack,
-    VStack,
     Icon,
     useColorModeValue,
     Text,
@@ -27,25 +24,12 @@ import {
     Stack,
     Input,
 } from "@chakra-ui/react";
-import {
-    FiHome,
-    FiTrendingUp,
-    FiCompass,
-    FiStar,
-    FiSettings,
-    FiMenu,
-    FiBell,
-    FiChevronDown,
-    FiLogOut,
-} from "react-icons/fi";
+import { FiMenu, FiLogOut } from "react-icons/fi";
 import { IconContext, IconType } from "react-icons";
 import { LikeOutlined } from "@ant-design/icons";
 import Divider from "../Divider/Divider";
 import { Link, useNavigate } from "react-router-dom";
-import { BsFiletypeDoc, BsPersonWorkspace } from "react-icons/bs";
-import { BiTable } from "react-icons/bi";
-import { FaTasks, FaUserCircle } from "react-icons/fa";
-import { AiOutlineMessage } from "react-icons/ai";
+import { FaUserCircle } from "react-icons/fa";
 import View from "../../features/notifications/View";
 import { ReactNode } from "react";
 
@@ -203,6 +187,8 @@ const TopNav = ({
 
     const navigate = useNavigate();
     const logout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
         navigate("/login");
     };
 
@@ -270,7 +256,7 @@ const TopNav = ({
                                     <Menu>
                                         <View />
                                     </Menu>
-                                    <Menu>
+                                    <Menu autoSelect={false}>
                                         <MenuButton
                                             // as={Button}
                                             style={{
@@ -321,8 +307,20 @@ const TopNav = ({
                                             </Center>
                                             <br />
                                             <MenuDivider />
-                                            {/* <MenuItem>Profile</MenuItem> */}
-                                            <MenuItem onClick={logout}>
+                                            <MenuItem
+                                                color={"#7b809a"}
+                                                onClick={() =>
+                                                    navigate(
+                                                        "/resetPasswordRequest"
+                                                    )
+                                                }
+                                            >
+                                                Reset Password
+                                            </MenuItem>
+                                            <MenuItem
+                                                onClick={logout}
+                                                color={"#7b809a"}
+                                            >
                                                 Logout
                                             </MenuItem>
                                         </MenuList>
@@ -345,7 +343,6 @@ const SideBarLayout = ({
     children,
 }: SidebarContentProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const navigate = useNavigate();
 
     console.log(sidebar);
 

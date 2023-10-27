@@ -11,7 +11,7 @@ import {
     Center,
 } from "@chakra-ui/react";
 
-import { IWorkspace, LinkItemProps } from "../../types";
+import { TWorkspace, LinkItemProps } from "../../types";
 import Create from "./Create";
 import Edit from "./Edit";
 import SideBarLayout from "../../components/Layouts/SideBarLayout";
@@ -25,7 +25,7 @@ import { BsPersonWorkspace } from "react-icons/bs";
  * This is dummy data that simulates what will be brought in with RTK
  * @constant {IWorkspace[]} data
  */
-const data: IWorkspace[] = [
+const data: TWorkspace[] = [
     {
         _id: "1",
         name: "Workspace 1",
@@ -70,7 +70,7 @@ const View = () => {
      * State management for the array of workspaces coming from the backend ***
      * @constant {IWorkspaces[]} workspaces
      */
-    const [workspaces, setWorkspaces] = useState<IWorkspace[]>(data);
+    const [workspaces, setWorkspaces] = useState<TWorkspace[]>(data);
 
     /**
      * Adds a new workspace to state.
@@ -78,7 +78,7 @@ const View = () => {
      * This function is passed in as a prop to Create.tsx.
      * @param {IWorkspace} workspace
      */
-    const addNewWorkspace = (workspace: IWorkspace) => {
+    const addNewWorkspace = (workspace: TWorkspace) => {
         setWorkspaces([...workspaces, workspace]);
     };
 
@@ -88,8 +88,8 @@ const View = () => {
      * This function is passed in as a prop to Edit.tsx.
      * @param {IWorkspace} workspace
      */
-    const updateWorkspace = (workspace: IWorkspace) => {
-        const oldData: IWorkspace[] = workspaces.filter((item) => {
+    const updateWorkspace = (workspace: TWorkspace) => {
+        const oldData: TWorkspace[] = workspaces.filter((item) => {
             return workspace._id !== item._id;
         });
 

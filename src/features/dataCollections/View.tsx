@@ -1,72 +1,28 @@
 import {
     Box,
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
     Button,
     Card,
     CardBody,
     CardFooter,
     CardHeader,
     Center,
-    Checkbox,
     Container,
-    Drawer,
-    DrawerBody,
-    DrawerCloseButton,
-    DrawerContent,
-    DrawerFooter,
-    DrawerHeader,
-    DrawerOverlay,
     Flex,
-    FormLabel,
     Heading,
-    Input,
-    InputGroup,
-    InputLeftAddon,
-    InputRightAddon,
-    Select,
     SimpleGrid,
     Spacer,
-    Stack,
     Text,
-    Textarea,
-    useDisclosure,
-    useToast,
 } from "@chakra-ui/react";
-import { default as PrimaryButton } from "../../components/Buttons/PrimaryButton";
 import SideBarLayout from "../../components/Layouts/SideBarLayout";
 
-import { CompactTable } from "@table-library/react-table-library/compact";
-import {
-    Table,
-    Header,
-    HeaderRow,
-    Body,
-    Row,
-    HeaderCell,
-    Cell,
-} from "@table-library/react-table-library/table";
-import { useTheme } from "@table-library/react-table-library/theme";
-import {
-    DEFAULT_OPTIONS,
-    getTheme,
-} from "@table-library/react-table-library/material-ui";
-import { BsFiletypeDoc, BsPersonWorkspace, BsPlusCircle } from "react-icons/bs";
+import { BsFiletypeDoc, BsPersonWorkspace } from "react-icons/bs";
 import { IconContext, IconType } from "react-icons";
-import { useEffect, useState } from "react";
-import React from "react";
-import {
-    AiOutlineCheckCircle,
-    AiOutlineCloseCircle,
-    AiOutlineDelete,
-    AiOutlineMessage,
-} from "react-icons/ai";
-import { LikeFilled } from "@ant-design/icons";
+import { useState } from "react";
+import { AiOutlineDelete, AiOutlineMessage } from "react-icons/ai";
 import Divider from "../../components/Divider/Divider";
 import { BiTable } from "react-icons/bi";
 import Edit from "./Edit";
-import { IDataCollection } from "../../types";
+import { TDataCollection } from "../../types";
 import Create from "./Create";
 import { FaTasks } from "react-icons/fa";
 
@@ -108,8 +64,8 @@ const LinkItems: Array<LinkItemProps> = [
 ];
 
 const View = () => {
-    const [data, setData] = useState<IDataCollection[]>(dataCollections);
-    const updateDataCollection = (dataCollection: IDataCollection) => {
+    const [data, setData] = useState<TDataCollection[]>(dataCollections);
+    const updateDataCollection = (dataCollection: TDataCollection) => {
         const dataCopy = data;
 
         const filteredData = dataCopy.filter((item) => {
@@ -122,32 +78,11 @@ const View = () => {
         setData([...filteredData, dataCollection]);
     };
 
-    const addNewDataCollecion = (dataCollection: IDataCollection) => {
+    const addNewDataCollecion = (dataCollection: TDataCollection) => {
         setData([...data, dataCollection]);
     };
     return (
-        <SideBarLayout
-            linkItems={LinkItems}
-            // breadcrumbs={
-            //     <Breadcrumb fontSize={"16px"}>
-            //         <BreadcrumbItem>
-            //             <BreadcrumbLink href="/workspaces" color="#929dae">
-            //                 Workspaces
-            //             </BreadcrumbLink>
-            //         </BreadcrumbItem>
-            //         <BreadcrumbItem>
-            //             <BreadcrumbLink href="/workspaces/1" color="#929dae">
-            //                 Workspace 1
-            //             </BreadcrumbLink>
-            //         </BreadcrumbItem>
-            //         <BreadcrumbItem isCurrentPage>
-            //             <BreadcrumbLink href="/workspaces/1" color="#929dae">
-            //                 Data Collections
-            //             </BreadcrumbLink>
-            //         </BreadcrumbItem>
-            //     </Breadcrumb>
-            // }
-        >
+        <SideBarLayout linkItems={LinkItems}>
             <Box>
                 <Flex
                     minH={"100vh"}

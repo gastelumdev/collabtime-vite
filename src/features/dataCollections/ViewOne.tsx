@@ -1,8 +1,6 @@
+import React, { useEffect, useState } from "react";
 import {
     Box,
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
     Button,
     Card,
     CardBody,
@@ -20,22 +18,13 @@ import {
     FormLabel,
     Heading,
     Input,
-    InputGroup,
-    InputLeftAddon,
-    InputRightAddon,
-    Select,
     SimpleGrid,
     Spacer,
     Stack,
     Text,
-    Textarea,
     useDisclosure,
-    useToast,
 } from "@chakra-ui/react";
-import { default as PrimaryButton } from "../../components/Buttons/PrimaryButton";
-import SideBarLayout from "../../components/Layouts/SideBarLayout";
 
-import { CompactTable } from "@table-library/react-table-library/compact";
 import {
     Table,
     Header,
@@ -45,15 +34,14 @@ import {
     HeaderCell,
     Cell,
 } from "@table-library/react-table-library/table";
-import { useTheme } from "@table-library/react-table-library/theme";
 import {
-    DEFAULT_OPTIONS,
-    getTheme,
-} from "@table-library/react-table-library/material-ui";
-import { BsFiletypeDoc, BsPersonWorkspace, BsPlusCircle } from "react-icons/bs";
+    useSort,
+    HeaderCellSort,
+} from "@table-library/react-table-library/sort";
+import { useTheme } from "@table-library/react-table-library/theme";
+
 import { IconContext, IconType } from "react-icons";
-import { useEffect, useState } from "react";
-import React from "react";
+import { BsFiletypeDoc, BsPersonWorkspace, BsPlusCircle } from "react-icons/bs";
 import {
     AiOutlineCheckCircle,
     AiOutlineCloseCircle,
@@ -61,28 +49,16 @@ import {
 } from "react-icons/ai";
 import { BiTable } from "react-icons/bi";
 import { FaTasks } from "react-icons/fa";
+
 import AddForm from "./AddForm";
-import { IDataCollection } from "../../types";
+import SideBarLayout from "../../components/Layouts/SideBarLayout";
+import { TCell, TColumn, TDataCollection, TRow, TTableData } from "../../types";
 
-const nodes = [
-    {
-        id: "0",
-        name: "Shopping List",
-        type: "TASK",
-    },
-    {
-        id: "1",
-        name: "Shopping List",
-        type: "TASK",
-    },
-    {
-        id: "2",
-        name: "Shopping List",
-        type: "TASK",
-    },
-];
-
-const dataCollection: IDataCollection = {
+/**
+ * This is dummy data that simulates what will be brought in with RTK
+ * @constant {IDataCollection} dataCollection
+ */
+const dataCollection: TDataCollection = {
     _id: "1",
     name: "Data Collection 1",
     workspace: "1",
@@ -95,7 +71,11 @@ const dataCollection: IDataCollection = {
     rows: ["1", "2", "3"],
 };
 
-const columnsData = [
+/**
+ * This is dummy data that simulates what will be brought in with RTK
+ * @constant {IColumn} columnsData
+ */
+const columnsData: TColumn[] = [
     {
         _id: "1",
         dataCollectionId: "1",
@@ -134,7 +114,7 @@ const columnsData = [
     },
 ];
 
-const rowsData = [
+const rowsData: TRow[] = [
     {
         _id: "1",
         dataCollectionId: "1",
@@ -152,13 +132,13 @@ const rowsData = [
     },
 ];
 
-const cellsData = [
+const cellsData: TCell[] = [
     {
         _id: "1",
         rowId: "1",
         name: "assigned_to",
         type: "Person",
-        people: [{ firstname: "String", lastname: "String" }],
+        people: ["1"],
         value: "Omar Gastelum",
     },
     {
@@ -182,7 +162,7 @@ const cellsData = [
         rowId: "2",
         name: "assigned_to",
         type: "Person",
-        people: [{ firstname: "String", lastname: "String" }],
+        people: ["1"],
         value: "Carlos Torres",
     },
     {
@@ -191,7 +171,7 @@ const cellsData = [
         name: "priority",
         type: "Label",
         labels: [{ title: "String", color: "String" }],
-        value: "Low",
+        value: "High",
     },
     {
         _id: "6",
@@ -199,14 +179,14 @@ const cellsData = [
         name: "status",
         type: "Label",
         labels: [{ title: "String", color: "String" }],
-        value: "Complete",
+        value: "Sent",
     },
     {
         _id: "7",
         rowId: "3",
         name: "assigned_to",
         type: "Person",
-        people: [{ firstname: "String", lastname: "String" }],
+        people: ["1"],
         value: "Rick Ruiz",
     },
     {
@@ -215,7 +195,7 @@ const cellsData = [
         name: "priority",
         type: "Label",
         labels: [{ title: "String", color: "String" }],
-        value: "Low",
+        value: "Med",
     },
     {
         _id: "9",
@@ -223,7 +203,7 @@ const cellsData = [
         name: "status",
         type: "Label",
         labels: [{ title: "String", color: "String" }],
-        value: "Complete",
+        value: "Waiting",
     },
 ];
 
@@ -250,22 +230,22 @@ const LinkItems: Array<LinkItemProps> = [
 ];
 
 const ViewOne = () => {
-    const toast = useToast();
-    const toastIdRef = React.useRef();
-    // const data = { nodes };
-    const [data, setData] = useState([]);
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [rows, setRows] = useState<any[]>(rowsData);
-    const [cells, setCells] = useState<any[]>(cellsData);
-    const [columns, setColumns] = useState(columnsData);
-    const [column, setColumn] = useState("");
-    const [checkedItems, setCheckedItems] = useState(
+
+    const [data, setData] = useState<TTableData>([]);
+    const [cells, setCells] = useState<TCell[]>(cellsData);
+    const [columns, setColumns] = useState<TColumn[]>(columnsData);
+    const [columnName, setColumnName] = useState<string>("");
+    const [checkedItems, setCheckedItems] = useState<boolean[]>(
         new Array(rowsData.length).fill(false)
     );
-    const [numberChecked, setNumberChecked] = useState(0);
-    const [showRowForm, setShowRowForm] = useState(false);
-    const firstField = React.useRef();
-    // const materialTheme = getTheme(DEFAULT_OPTIONS);
+    const [numberChecked, setNumberChecked] = useState<number>(0);
+    const [showRowForm, setShowRowForm] = useState<boolean>(false);
+
+    /**
+     * React Table customized theme
+     * @constant theme
+     */
     const theme = useTheme({
         Table: `
             grid-template-columns: 20px repeat(${columns.length - 1}, 1fr) 1fr;
@@ -290,73 +270,51 @@ const ViewOne = () => {
           `,
     });
 
+    /**
+     * This converts data so that the react table can read it before the component
+     * loads.
+     */
     useEffect(() => {
         convertData();
     }, []);
 
-    const openNewColumnDrawer = () => {
-        onOpen();
-    };
-
+    /**
+     * This function converts rows and its cells to a format required by react table
+     * This function also sorts the data
+     * TTableData is set to any since the data is dynamic
+     */
     const convertData = () => {
-        const convertedArray = [];
-        const cellsCopy = cells;
+        const convertedArray: TTableData = [];
+        const cellsCopy: TCell[] = cells;
 
         for (const row of rowsData) {
             let id = row._id;
-            const filteredRows = cellsCopy.filter((cell) => {
+            const filteredRows: TCell[] = cellsCopy.filter((cell) => {
                 return cell.rowId === id;
             });
 
-            let newRow = { id: id };
+            let newRow: TTableData = { id: id };
             for (const filteredRow of filteredRows) {
                 newRow[filteredRow.name as keyof typeof newRow] =
                     filteredRow.value;
             }
-
             convertedArray.push(newRow);
         }
-        // console.log(convertedArray);
-        setData(convertedArray as any);
+        const sortedData: TTableData = convertedArray.sort((a: any, b: any) => {
+            console.log(a["priority"]);
+            return a["priority"].localeCompare(b["priority"]);
+        });
+        setData(sortedData);
     };
 
-    // const COLUMNS = [
-    //     { label: "Task", renderCell: (item: any) => item.name, resize: true },
-    //     { label: "Type", renderCell: (item: any) => item.type, resize: true },
-    //     {
-    //         label: (
-    //             <IconContext.Provider value={{ size: "16" }}>
-    //                 <Button bg={"none"} onClick={openNewColumnDrawer}>
-    //                     <BsPlusCircle />
-    //                 </Button>
-    //             </IconContext.Provider>
-    //         ),
-    //         renderCell: () => null,
-    //         resize: true,
-    //     },
-    // ];
-
-    // const COLUMNS = () => {
-    //     return dataCollection.columns.cells.map((cell: any) => {
-    //         return { label: cell.name, renderCell: (item: any) => item.value };
-    //     });
-    // };
-
+    /**
+     * Creates a new column
+     * This should be replaced by RTK
+     */
     const handleAddColumn = () => {
-        const sampleColumn = {
-            _id: "1",
+        const newColumn: TColumn = {
             dataCollectionId: "1",
-            name: "assigned_to",
-            type: "Person",
-            permanent: true,
-            people: [],
-            includeInForm: true,
-            includeInExport: true,
-        };
-
-        const newColumn = {
-            dataCollectionsId: "1",
-            name: column,
+            name: columnName,
             type: "Person",
             permanent: false,
             people: [],
@@ -364,52 +322,67 @@ const ViewOne = () => {
             includeInExport: true,
         };
 
-        console.log(newColumn);
-        const columnsCopy = columns;
-        columnsCopy.push(newColumn as any);
-        console.log(columnsCopy);
-        // const lastColumn = columnsCopy.pop();
-        // const newColumns = [...columnsCopy, newColumn, lastColumn];
-        // console.log(newColumns);
-        setColumns(columnsCopy as any);
+        // Set column name to a database friendly underscore naming
+        newColumn.name = newColumn.name.toLowerCase().split(" ").join("_");
+
+        const columnsCopy: TColumn[] = columns;
+        columnsCopy.push(newColumn);
+
+        setColumns(columnsCopy);
         onClose();
     };
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    /**
+     * Sets the column name when input changes in create column drawer
+     * @param event
+     */
+    const handleColumnNameChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
         const { value } = event.target;
-        setColumn(value);
+        setColumnName(value);
     };
 
-    const handleUpdate = (value: string, item: any, name: string) => {
+    /**
+     * Updates table data when input changes
+     * @param {string} value
+     * @param {TTableData} item
+     * @param {string} name
+     */
+    const handleUpdate = (value: string, item: TTableData, name: string) => {
         console.log(value);
         console.log(item);
 
-        const dataCopy = data;
+        const dataCopy: TTableData[] = data;
 
-        const changedData = dataCopy.map((dataItem: any) => {
-            if (dataItem.id === item.id) {
-                return { ...dataItem, [name]: value };
-            } else {
-                return dataItem;
+        const changedData: TTableData[] = dataCopy.map(
+            (dataItem: TTableData) => {
+                if (dataItem.id === item.id) {
+                    return { ...dataItem, [name]: value };
+                } else {
+                    return dataItem;
+                }
             }
-        });
+        );
 
-        console.log(changedData);
-
-        setData(changedData as any);
+        setData(changedData);
     };
 
+    /**
+     *
+     * @param {string} value
+     * @param {TTableData} item
+     * @param {string} name
+     */
     const updateCells = (value: string, item: any, name: string) => {
-        console.log(data);
-        console.log(cells);
-        console.log(item);
-        console.log(name);
-
         const rowId = item.id;
 
-        const newCells = cells.map((cell: any) => {
+        const newCells: TCell[] = cells.map((cell: TCell) => {
+            // If the row and column name match, set the updated cell,
+            // update it in data base and return the new cell
+            // else return the cell as it is
             if (cell.rowId === rowId && cell.name === name) {
-                let newCell = { ...cell, value: value };
+                let newCell: TCell = { ...cell, value: value };
                 // Update database cell here *********************************
                 return newCell;
             } else {
@@ -420,35 +393,42 @@ const ViewOne = () => {
         setCells(newCells);
     };
 
+    /**
+     * This function will be replaced by RTK
+     * @param value
+     * @param name
+     */
     const handleAddCell = (value: string, name: string) => {
+        console.log(value);
         console.log(name);
     };
 
-    const handleCheckboxChange = (checked: boolean, index: number) => {
-        console.log(index);
-        console.log(checkedItems);
-        console.log(numberChecked);
-        console.log(checked);
-
-        const checkedItemsCopy = checkedItems;
+    /**
+     * This function tracks the selected row checkboxes
+     * @param checked
+     * @param index
+     */
+    const handleRowCheckboxChange = (checked: boolean, index: number) => {
+        const checkedItemsCopy: boolean[] = checkedItems;
         checkedItemsCopy[index] = !checkedItemsCopy[index];
-        console.log(checkedItemsCopy);
         setCheckedItems(checkedItemsCopy);
 
-        let numberCheckedCopy = numberChecked;
+        let numberCheckedCopy: number = numberChecked;
         if (checked) {
             setNumberChecked(numberCheckedCopy + 1);
         } else {
             setNumberChecked(numberCheckedCopy - 1);
         }
-
-        console.log(numberChecked);
     };
 
+    /**
+     * This function will set data array items to null if the checkbox has been
+     * checked at that index. Those rows will then be filtered and data will set
+     * with new filtered array
+     */
     const deleteItems = () => {
-        let dataCopy: any = data;
+        let dataCopy: TTableData = data;
         for (const index in checkedItems) {
-            console.log(index);
             let checkedItem = checkedItems[index];
             if (checkedItem) {
                 dataCopy[index] = null;
@@ -464,47 +444,58 @@ const ViewOne = () => {
         setNumberChecked(0);
     };
 
-    const updateDataCollection = (dataCollection: IDataCollection) => {
+    const updateDataCollection = (dataCollection: TDataCollection) => {
         console.log("Data Collection updated");
         console.log(dataCollection);
         // Make call to update the data collection *************************************
     };
 
+    /**
+     * Sorts data and is used for React Table sort
+     * @param action
+     * @param state
+     */
+    function onSortChange(action: any, state: any) {
+        const params = {
+            sort: {
+                sortKey: state.sortKey,
+                reverse: state.reverse,
+                action: action,
+            },
+        };
+
+        const sortedData = data.sort((a: any, b: any) => {
+            return a[params.sort.sortKey].localeCompare(b[params.sort.sortKey]);
+        });
+
+        setData(sortedData);
+    }
+
+    /**
+     * React table sort settings
+     */
+    const sort = useSort(
+        { nodes: data },
+        {
+            onChange: onSortChange,
+            state: {
+                sortKey: "priority",
+                reverse: false,
+            },
+        },
+        {
+            sortFns: {},
+            sortIcon: {
+                iconDefault: null,
+                iconUp: null,
+                iconDown: null,
+            },
+        }
+    );
+
     return (
         <>
-            <SideBarLayout
-                linkItems={LinkItems}
-                // breadcrumbs={
-                //     <Breadcrumb fontSize={"14px"}>
-                //         <BreadcrumbItem>
-                //             <BreadcrumbLink href="/workspaces" color="#929dae">
-                //                 Workspaces
-                //             </BreadcrumbLink>
-                //         </BreadcrumbItem>
-                //         <BreadcrumbItem>
-                //             <BreadcrumbLink
-                //                 href="/workspaces/1"
-                //                 color="#929dae"
-                //             >
-                //                 Workspace 1
-                //             </BreadcrumbLink>
-                //         </BreadcrumbItem>
-                //         <BreadcrumbItem>
-                //             <BreadcrumbLink
-                //                 href="/workspaces/1/dataCollections"
-                //                 color="#929dae"
-                //             >
-                //                 Data Collections
-                //             </BreadcrumbLink>
-                //         </BreadcrumbItem>
-                //         <BreadcrumbItem isCurrentPage>
-                //             <BreadcrumbLink href="#" color="#929dae">
-                //                 Data Collection 1
-                //             </BreadcrumbLink>
-                //         </BreadcrumbItem>
-                //     </Breadcrumb>
-                // }
-            >
+            <SideBarLayout linkItems={LinkItems}>
                 <Box>
                     <Flex
                         minH={"100vh"}
@@ -586,11 +577,14 @@ const ViewOne = () => {
                                     >
                                         <BsPlusCircle />
                                     </Button>
+                                    {/**
+                                     * TABLE ********************************************************************************
+                                     */}
                                     <Table
                                         data={{ nodes: data }}
+                                        sort={sort}
                                         layout={{
                                             isDiv: true,
-                                            // custom: true,
                                             horizontalScroll: true,
                                         }}
                                         theme={theme}
@@ -605,16 +599,32 @@ const ViewOne = () => {
                                                         {columns.map(
                                                             (column: any) => {
                                                                 return (
-                                                                    <HeaderCell
+                                                                    <HeaderCellSort
                                                                         key={
                                                                             column.name
                                                                         }
                                                                         resize
-                                                                    >
-                                                                        {
+                                                                        sortKey={
                                                                             column.name
                                                                         }
-                                                                    </HeaderCell>
+                                                                    >
+                                                                        {(
+                                                                            column.name
+                                                                                .charAt(
+                                                                                    0
+                                                                                )
+                                                                                .toUpperCase() +
+                                                                            column.name.slice(
+                                                                                1
+                                                                            )
+                                                                        )
+                                                                            .split(
+                                                                                "_"
+                                                                            )
+                                                                            .join(
+                                                                                " "
+                                                                            )}
+                                                                    </HeaderCellSort>
                                                                 );
                                                             }
                                                         )}
@@ -627,7 +637,6 @@ const ViewOne = () => {
                                                             item: any,
                                                             index: number
                                                         ) => {
-                                                            console.log(index);
                                                             return (
                                                                 <Row
                                                                     key={index}
@@ -646,7 +655,7 @@ const ViewOne = () => {
                                                                             onChange={(
                                                                                 event: React.ChangeEvent<HTMLInputElement>
                                                                             ) =>
-                                                                                handleCheckboxChange(
+                                                                                handleRowCheckboxChange(
                                                                                     event
                                                                                         .target
                                                                                         .checked,
@@ -892,8 +901,8 @@ const ViewOne = () => {
                                     // ref={firstField}
                                     id="columnName"
                                     name="columnName"
-                                    placeholder="Please enter columnName"
-                                    onChange={handleChange}
+                                    placeholder="Please enter column name"
+                                    onChange={handleColumnNameChange}
                                 />
                             </Box>
                         </Stack>

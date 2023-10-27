@@ -9,14 +9,14 @@ import {
     Spacer,
     useDisclosure,
 } from "@chakra-ui/react";
-import { IWorkspace } from "../../types";
+import { TWorkspace } from "../../types";
 import { AiOutlineEdit } from "react-icons/ai";
 import Divider from "../../components/Divider/Divider";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import PrimaryDrawer from "../../components/PrimaryDrawer";
 
 interface IProps {
-    workspace: IWorkspace;
+    workspace: TWorkspace;
     updateWorkspace: any;
 }
 
@@ -43,7 +43,7 @@ const Edit = ({ workspace, updateWorkspace }: IProps) => {
      * This will be updated when the form is updated and then passed back to
      * the main component to be part of the workspace update request.
      */
-    const [data, setData] = useState<IWorkspace>(workspace);
+    const [data, setData] = useState<TWorkspace>(workspace);
 
     /**
      * Sets tools based on the checkboxes and sets updates the workspace with
@@ -71,7 +71,7 @@ const Edit = ({ workspace, updateWorkspace }: IProps) => {
      * Updates the workspace tools based on the checkboxes selected
      */
     const setTools = () => {
-        let newWorkspace: IWorkspace = data;
+        let newWorkspace: TWorkspace = data;
         newWorkspace = {
             ...data,
             tools: {

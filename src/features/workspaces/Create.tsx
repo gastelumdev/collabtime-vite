@@ -14,7 +14,7 @@ import {
     Text,
     useDisclosure,
 } from "@chakra-ui/react";
-import { IWorkspace } from "../../types";
+import { TWorkspace } from "../../types";
 
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import Divider from "../../components/Divider/Divider";
@@ -22,7 +22,7 @@ import Divider from "../../components/Divider/Divider";
 /**
  * Workspace default values should be deleted once RTK is implemented
  */
-let defaultValues: IWorkspace = {
+let defaultValues: TWorkspace = {
     _id: "1",
     name: "",
     description: "",
@@ -61,7 +61,7 @@ const Create = ({ addNewWorkspace }: IProps) => {
     /**
      * Workspace data set for creating a new workspace
      */
-    const [data, setData] = useState<IWorkspace>(defaultValues);
+    const [data, setData] = useState<TWorkspace>(defaultValues);
 
     /**
      * This function updates the workspace data and create a new workspace
@@ -89,7 +89,7 @@ const Create = ({ addNewWorkspace }: IProps) => {
      * Updates the workspace tools based on the checkboxes selected
      */
     const setTools = () => {
-        let newWorkspace: IWorkspace;
+        let newWorkspace: TWorkspace;
         newWorkspace = {
             ...data,
             tools: {

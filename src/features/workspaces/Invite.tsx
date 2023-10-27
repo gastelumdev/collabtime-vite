@@ -16,7 +16,7 @@ import {
 import Divider from "../../components/Divider/Divider";
 import { AiOutlineClose } from "react-icons/ai";
 import { HiPlus } from "react-icons/hi";
-import { IInvitee } from "../../types";
+import { TInvitee } from "../../types";
 import PrimaryDrawer from "../../components/PrimaryDrawer";
 
 interface InviteProps {
@@ -25,11 +25,11 @@ interface InviteProps {
 
 const Invite = ({ getInvitees }: InviteProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [invitee, setInvitee] = useState<IInvitee>({
+    const [invitee, setInvitee] = useState<TInvitee>({
         email: "",
         permissions: 2,
     });
-    const [invitees, setInvitees] = useState<IInvitee[]>([]);
+    const [invitees, setInvitees] = useState<TInvitee[]>([]);
 
     // const sendInvite = (email: string) => {
     //     // Call the invite team members endpoint
@@ -40,9 +40,7 @@ const Invite = ({ getInvitees }: InviteProps) => {
         setInvitee({ ...invitee, email: value });
     };
 
-    const handleRadioChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = event.target;
         console.log(value);
         setInvitee({ ...invitee, permissions: Number(value) });
@@ -59,7 +57,7 @@ const Invite = ({ getInvitees }: InviteProps) => {
     };
 
     const removeEmail = (email: string) => {
-        const newInvitees = invitees.filter((item: IInvitee) => {
+        const newInvitees = invitees.filter((item: TInvitee) => {
             return item.email !== email;
         });
 
@@ -154,7 +152,7 @@ const Invite = ({ getInvitees }: InviteProps) => {
                         />
                     ) : null}
 
-                    {invitees.map((invitee: IInvitee, index: number) => {
+                    {invitees.map((invitee: TInvitee, index: number) => {
                         return (
                             <Box key={index} bg={"gray.100"} pl={"12px"}>
                                 <HStack>

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Drawer, Input, Space } from "antd";
-import { Button, Checkbox, Stack, Text } from "@chakra-ui/react";
-import { IDataCollection } from "../../types";
+import { Button, Text } from "@chakra-ui/react";
+import { TDataCollection } from "../../types";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 
-let defaultValues: IDataCollection = {
+let defaultValues: TDataCollection = {
     name: "",
     workspace: "",
     form: {
@@ -22,7 +22,7 @@ interface IProps {
 
 const Create = ({ addNewDataCollection }: IProps) => {
     const [open, setOpen] = useState(false);
-    const [data, setData] = useState<IDataCollection>(defaultValues);
+    const [data, setData] = useState<TDataCollection>(defaultValues);
 
     const showDrawer = () => {
         setOpen(true);
@@ -50,17 +50,6 @@ const Create = ({ addNewDataCollection }: IProps) => {
 
     return (
         <>
-            {/* <Button
-                colorScheme="twitter"
-                onClick={showDrawer}
-                _hover={{
-                    boxShadow: "lg",
-                }}
-                bgGradient="linear(195deg, rgb(73, 163, 241), rgb(26, 115, 232))"
-                boxShadow={"md"}
-            >
-                New Workspace
-            </Button> */}
             <PrimaryButton onClick={showDrawer}>NEW COLLECTION</PrimaryButton>
             <Drawer
                 title="Create a new workspace"
@@ -89,69 +78,6 @@ const Create = ({ addNewDataCollection }: IProps) => {
                     onChange={handleChange}
                     style={{ marginBottom: "15px" }}
                 />
-                {/* <Text pb={"5px"}>Description</Text>
-                <Input
-                    name="description"
-                    placeholder="please enter url description"
-                    value={data.description}
-                    onChange={handleChange}
-                    style={{ marginBottom: "15px" }}
-                /> */}
-                {/* <Text pb={"5px"}>Tools</Text>
-                <Stack mt={1} spacing={1}>
-                    <Checkbox
-                        isChecked={checkedItems[0]}
-                        onChange={(e) =>
-                            setCheckedItems([
-                                e.target.checked,
-                                checkedItems[1],
-                                checkedItems[2],
-                                checkedItems[3],
-                            ])
-                        }
-                    >
-                        <Text fontSize={"14px"}>Data Collections</Text>
-                    </Checkbox>
-                    <Checkbox
-                        isChecked={checkedItems[1]}
-                        onChange={(e) =>
-                            setCheckedItems([
-                                checkedItems[0],
-                                e.target.checked,
-                                checkedItems[2],
-                                checkedItems[3],
-                            ])
-                        }
-                    >
-                        <Text fontSize={"14px"}>Tasks</Text>
-                    </Checkbox>
-                    <Checkbox
-                        isChecked={checkedItems[2]}
-                        onChange={(e) =>
-                            setCheckedItems([
-                                checkedItems[0],
-                                checkedItems[1],
-                                e.target.checked,
-                                checkedItems[3],
-                            ])
-                        }
-                    >
-                        <Text fontSize={"14px"}>Docs</Text>
-                    </Checkbox>
-                    <Checkbox
-                        isChecked={checkedItems[3]}
-                        onChange={(e) =>
-                            setCheckedItems([
-                                checkedItems[0],
-                                checkedItems[1],
-                                checkedItems[2],
-                                e.target.checked,
-                            ])
-                        }
-                    >
-                        <Text fontSize={"14px"}>Message Board</Text>
-                    </Checkbox>
-                </Stack> */}
             </Drawer>
         </>
     );

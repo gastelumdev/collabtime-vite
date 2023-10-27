@@ -7,20 +7,20 @@ import {
     Flex,
     Spacer,
 } from "@chakra-ui/react";
-import { IDataCollection } from "../../types";
+import { TDataCollection } from "../../types";
 import { AiOutlineEdit } from "react-icons/ai";
 import PrimaryDrawer from "../../components/PrimaryDrawer";
 import Divider from "../../components/Divider/Divider";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 
 interface IProps {
-    dataCollection: IDataCollection;
+    dataCollection: TDataCollection;
     updateDataCollection: any;
 }
 
 const Edit = ({ dataCollection, updateDataCollection }: IProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [data, setData] = useState<IDataCollection>(dataCollection);
+    const [data, setData] = useState<TDataCollection>(dataCollection);
 
     const editData = async () => {
         updateDataCollection(data);

@@ -12,7 +12,7 @@ import {
     Text,
 } from "@chakra-ui/react";
 
-import { IWorkspace, IInvitee, LinkItemProps } from "../../types";
+import { TWorkspace, TInvitee, LinkItemProps } from "../../types";
 
 import SideBarLayout from "../../components/Layouts/SideBarLayout";
 
@@ -27,7 +27,7 @@ import Invite from "./Invite";
  * This is dummy data that simulates what will be brought in with RTK
  * @constant {IWorkspace[]} data
  */
-const data: IWorkspace[] = [
+const data: TWorkspace[] = [
     {
         _id: "1",
         name: "Workspace 1",
@@ -89,7 +89,7 @@ const ViewOne = () => {
      * NOTE: this will come from the backend and should be removed ***
      * @constant {IWorkspace} workspace
      */
-    const workspace: IWorkspace = data.filter((item) => {
+    const workspace: TWorkspace = data.filter((item) => {
         return item._id === id;
     })[0];
 
@@ -98,7 +98,7 @@ const ViewOne = () => {
      * An API call is made that handles the email invites
      * @param {IInvitee} invitees
      */
-    const getInvitees = (invitees: IInvitee[]) => {
+    const getInvitees = (invitees: TInvitee[]) => {
         // Make API call to invite invitees
         console.log(invitees);
     };
@@ -179,6 +179,7 @@ const ViewOne = () => {
                                     href={`/workspaces/${workspace._id}/dataCollections`}
                                 >
                                     <SecondaryCard
+                                        title={"Data Collections"}
                                         icon={AiOutlineTable}
                                         bgImage="linear-gradient(195deg, rgb(73, 163, 241), rgb(26, 115, 232))"
                                     />
@@ -189,6 +190,7 @@ const ViewOne = () => {
                                     href={`/workspaces/${workspace._id}/taskLists`}
                                 >
                                     <SecondaryCard
+                                        title={"Tasks"}
                                         icon={BsListTask}
                                         bgImage="linear-gradient(195deg, rgb(102, 187, 106), rgb(67, 160, 71))"
                                     />
@@ -199,6 +201,7 @@ const ViewOne = () => {
                                     href={`/workspaces/${workspace._id}/documents`}
                                 >
                                     <SecondaryCard
+                                        title={"Documents"}
                                         icon={BsFiletypeDoc}
                                         bgImage="linear-gradient(195deg, rgb(66, 66, 74), black)"
                                     />
@@ -209,6 +212,7 @@ const ViewOne = () => {
                                     href={`/workspaces/${workspace._id}/messageBoard`}
                                 >
                                     <SecondaryCard
+                                        title={"Message Board"}
                                         icon={AiOutlineMessage}
                                         bgImage="linear-gradient(195deg, #FF548A, #EC1559)"
                                     />

@@ -3,6 +3,7 @@ import { Button } from "@chakra-ui/react";
 
 interface IButtonProps {
     type?: string;
+    fontSize?: string | number;
     onClick?: () => void;
     float?: string;
     px?: string;
@@ -11,6 +12,7 @@ interface IButtonProps {
 
 const PrimaryButton = ({
     type = "primary",
+    fontSize = 12,
     float = "none",
     px = "16px",
     onClick,
@@ -19,7 +21,7 @@ const PrimaryButton = ({
     return type === "primary" ? (
         <Button
             colorScheme="twitter"
-            fontSize={12}
+            fontSize={fontSize}
             px={px}
             _hover={{
                 boxShadow: "lg",
