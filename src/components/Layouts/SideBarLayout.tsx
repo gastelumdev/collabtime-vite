@@ -33,6 +33,8 @@ import { FaUserCircle } from "react-icons/fa";
 import View from "../../features/notifications/View";
 import { ReactNode } from "react";
 
+import { useAuth } from "../../hooks/useAuth";
+
 interface LinkItemProps {
     name: string;
     icon: IconType;
@@ -192,6 +194,8 @@ const TopNav = ({
         navigate("/login");
     };
 
+    const user = useAuth();
+
     return (
         <Flex
             ml={{ base: 0, lg: sidebar ? "400px" : "0" }}
@@ -288,12 +292,12 @@ const TopNav = ({
                                             <Center>
                                                 <Avatar
                                                     size={"lg"}
-                                                    src={avatarUrl}
+                                                    src={`https://api.dicebear.com/7.x/initials/svg?seed=${user.user?.firstname}%20${user.user?.lastname}`}
                                                 />
                                             </Center>
                                             <br />
                                             <Center>
-                                                <p>{`${firstname} ${lastname}`}</p>
+                                                <p>{`${user.user?.firstname} ${user.user?.lastname}`}</p>
                                             </Center>
                                             <Center>
                                                 <p
@@ -302,7 +306,7 @@ const TopNav = ({
                                                         color: "gray",
                                                     }}
                                                 >
-                                                    gastelumdev@gmail.com
+                                                    {user.user?.email}
                                                 </p>
                                             </Center>
                                             <br />

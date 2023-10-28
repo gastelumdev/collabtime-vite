@@ -1,11 +1,10 @@
 export interface User {
     _id?: string
     id?: string
-    username: string
+    firstname: string
+    lastname: string
     email: string
-    role: string
     password: string
-    isAuthenticated: boolean
 }
 
 export interface UserResponse {

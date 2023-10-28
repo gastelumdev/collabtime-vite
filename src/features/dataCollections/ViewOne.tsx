@@ -276,6 +276,7 @@ const ViewOne = () => {
      */
     useEffect(() => {
         convertData();
+        console.log(data);
     }, []);
 
     /**
@@ -300,11 +301,11 @@ const ViewOne = () => {
             }
             convertedArray.push(newRow);
         }
-        const sortedData: TTableData = convertedArray.sort((a: any, b: any) => {
-            console.log(a["priority"]);
-            return a["priority"].localeCompare(b["priority"]);
-        });
-        setData(sortedData);
+        // const sortedData: TTableData = convertedArray.sort((a: any, b: any) => {
+        //     console.log(a["priority"]);
+        //     return a["priority"].localeCompare(b["priority"]);
+        // });
+        setData(convertedArray);
     };
 
     /**
@@ -456,6 +457,7 @@ const ViewOne = () => {
      * @param state
      */
     function onSortChange(action: any, state: any) {
+        console.log("There was a change");
         const params = {
             sort: {
                 sortKey: state.sortKey,
@@ -468,6 +470,7 @@ const ViewOne = () => {
             return a[params.sort.sortKey].localeCompare(b[params.sort.sortKey]);
         });
 
+        console.log(sortedData);
         setData(sortedData);
     }
 
@@ -480,7 +483,7 @@ const ViewOne = () => {
             onChange: onSortChange,
             state: {
                 sortKey: "priority",
-                reverse: false,
+                reverse: true,
             },
         },
         {
