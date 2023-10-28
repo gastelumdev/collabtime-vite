@@ -183,10 +183,6 @@ const TopNav = ({
     leftContent,
     ...rest
 }: TopNavProps) => {
-    const firstname = "Omar";
-    const lastname = "Gastelum";
-    const avatarUrl = `https://api.dicebear.com/7.x/initials/svg?seed=${firstname}%20${lastname}`;
-
     const navigate = useNavigate();
     const logout = () => {
         localStorage.removeItem("token");
