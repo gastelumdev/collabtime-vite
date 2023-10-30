@@ -1,5 +1,7 @@
 import { useParams } from "react-router-dom";
 
+import { useGetOneWorkspaceQuery } from "../../app/services/api";
+
 import {
     Avatar,
     AvatarGroup,
@@ -12,7 +14,7 @@ import {
     Text,
 } from "@chakra-ui/react";
 
-import { TWorkspace, TInvitee, LinkItemProps } from "../../types";
+import { TInvitee, LinkItemProps } from "../../types";
 
 import SideBarLayout from "../../components/Layouts/SideBarLayout";
 
@@ -27,32 +29,32 @@ import Invite from "./Invite";
  * This is dummy data that simulates what will be brought in with RTK
  * @constant {IWorkspace[]} data
  */
-const data: TWorkspace[] = [
-    {
-        _id: "1",
-        name: "Workspace 1",
-        description: "This is a sample workspace.",
-        tools: {
-            dataCollections: { access: 2 },
-            taskLists: { access: 2 },
-            docs: { access: 2 },
-            messageBoard: { access: 2 },
-        },
-        invitees: [],
-    },
-    {
-        _id: "2",
-        name: "Workspace 2",
-        description: "This is another sample workspace.",
-        tools: {
-            dataCollections: { access: 1 },
-            taskLists: { access: 1 },
-            docs: { access: 1 },
-            messageBoard: { access: 0 },
-        },
-        invitees: [],
-    },
-];
+// const data: TWorkspace[] = [
+//     {
+//         _id: "1",
+//         name: "Workspace 1",
+//         description: "This is a sample workspace.",
+//         tools: {
+//             dataCollections: { access: 2 },
+//             taskLists: { access: 2 },
+//             docs: { access: 2 },
+//             messageBoard: { access: 2 },
+//         },
+//         invitees: [],
+//     },
+//     {
+//         _id: "2",
+//         name: "Workspace 2",
+//         description: "This is another sample workspace.",
+//         tools: {
+//             dataCollections: { access: 1 },
+//             taskLists: { access: 1 },
+//             docs: { access: 1 },
+//             messageBoard: { access: 0 },
+//         },
+//         invitees: [],
+//     },
+// ];
 
 /**
  * The link items array used for the sidebar navigation
@@ -83,15 +85,16 @@ const LinkItems: Array<LinkItemProps> = [
  */
 const ViewOne = () => {
     const { id } = useParams();
+    const { data } = useGetOneWorkspaceQuery(id as string);
 
     /**
      * Filters the data to get the workspace with the id in the url
      * NOTE: this will come from the backend and should be removed ***
      * @constant {IWorkspace} workspace
      */
-    const workspace: TWorkspace = data.filter((item) => {
-        return item._id === id;
-    })[0];
+    // const workspace: TWorkspace = data.filter((item) => {
+    //     return item._id === id;
+    // })[0];
 
     /**
      * Gets workspace invites from the invite team member drawer
@@ -120,7 +123,7 @@ const ViewOne = () => {
                                         mb={"12px"}
                                         color={"rgb(52, 71, 103)"}
                                     >
-                                        Workspace 1
+                                        {data?.name}
                                     </Heading>
                                     <Text
                                         color={"rgb(123, 128, 154)"}
@@ -174,9 +177,9 @@ const ViewOne = () => {
                             spacingY={12}
                             columns={{ base: 1, sm: 1, md: 3 }}
                         >
-                            {workspace.tools.dataCollections.access > 0 ? (
+                            {(data?.tools.dataCollections.access || 0) > 0 ? (
                                 <a
-                                    href={`/workspaces/${workspace._id}/dataCollections`}
+                                    href={`/workspaces/${data?._id}/dataCollections`}
                                 >
                                     <SecondaryCard
                                         title={"Data Collections"}
@@ -185,10 +188,8 @@ const ViewOne = () => {
                                     />
                                 </a>
                             ) : null}
-                            {workspace.tools.taskLists.access > 0 ? (
-                                <a
-                                    href={`/workspaces/${workspace._id}/taskLists`}
-                                >
+                            {(data?.tools.taskLists.access || 0) > 0 ? (
+                                <a href={`/workspaces/${data?._id}/taskLists`}>
                                     <SecondaryCard
                                         title={"Tasks"}
                                         icon={BsListTask}
@@ -196,10 +197,8 @@ const ViewOne = () => {
                                     />
                                 </a>
                             ) : null}
-                            {workspace.tools.docs.access > 0 ? (
-                                <a
-                                    href={`/workspaces/${workspace._id}/documents`}
-                                >
+                            {(data?.tools.docs.access || 0) > 0 ? (
+                                <a href={`/workspaces/${data?._id}/documents`}>
                                     <SecondaryCard
                                         title={"Documents"}
                                         icon={BsFiletypeDoc}
@@ -207,9 +206,9 @@ const ViewOne = () => {
                                     />
                                 </a>
                             ) : null}
-                            {workspace.tools.messageBoard.access > 0 ? (
+                            {(data?.tools.messageBoard.access || 0) > 0 ? (
                                 <a
-                                    href={`/workspaces/${workspace._id}/messageBoard`}
+                                    href={`/workspaces/${data?._id}/messageBoard`}
                                 >
                                     <SecondaryCard
                                         title={"Message Board"}

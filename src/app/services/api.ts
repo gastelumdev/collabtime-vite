@@ -3,11 +3,6 @@ import { RootState } from "../store";
 import { LoginRequest, UserResponse, ResetPasswordRequestRequest, BasicResponse } from "../../features/auth/types";
 import { TUser, TWorkspace } from "../../types";
 
-interface WorkspaceRequest {
-    name: string;
-
-}
-
 export const api = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: import.meta.env.VITE_API_URL,
@@ -52,6 +47,11 @@ export const api = createApi({
             }),
             providesTags: ["Workspace"]
         }),
+        getOneWorkspace: builder.query<TWorkspace, string>({
+            query: (workspaceId) => ({
+                url: `workspaces/${workspaceId}`
+            })
+        }),
         createWorkspace: builder.mutation<TWorkspace, TWorkspace>({
             query: (workspace) => ({
                 url: "workspaces",
@@ -83,7 +83,8 @@ export const {
     useGetUserQuery,
     useResetPasswordRequestMutation, 
     useResetPasswordMutation, 
-    useGetWorkspacesQuery, 
+    useGetWorkspacesQuery,
+    useGetOneWorkspaceQuery,
     useCreateWorkspaceMutation,
     useUpdateWorkspaceMutation,
     useDeleteWorkspaceMutation

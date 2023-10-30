@@ -51,9 +51,19 @@ const Edit = ({ workspace, updateWorkspace }: IProps) => {
      * the update workspace prop
      */
     const editData = async () => {
-        setTools();
-        console.log(data);
-        updateWorkspace(data);
+        let newWorkspace: TWorkspace = data;
+        console.log(checkedItems);
+        newWorkspace = {
+            ...data,
+            tools: {
+                dataCollections: { access: checkedItems[0] ? 2 : 0 },
+                taskLists: { access: checkedItems[1] ? 2 : 0 },
+                docs: { access: checkedItems[2] ? 2 : 0 },
+                messageBoard: { access: checkedItems[3] ? 2 : 0 },
+            },
+        };
+        console.log(newWorkspace);
+        updateWorkspace(newWorkspace);
         onClose();
     };
 
@@ -67,23 +77,6 @@ const Edit = ({ workspace, updateWorkspace }: IProps) => {
             ...data,
             [name]: value,
         });
-    };
-
-    /**
-     * Updates the workspace tools based on the checkboxes selected
-     */
-    const setTools = () => {
-        let newWorkspace: TWorkspace = data;
-        newWorkspace = {
-            ...data,
-            tools: {
-                dataCollections: { access: checkedItems[0] ? 2 : 0 },
-                taskLists: { access: checkedItems[1] ? 2 : 0 },
-                docs: { access: checkedItems[2] ? 2 : 0 },
-                messageBoard: { access: checkedItems[3] ? 2 : 0 },
-            },
-        };
-        setData(newWorkspace);
     };
 
     return (
