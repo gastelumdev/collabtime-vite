@@ -68,9 +68,17 @@ const Create = ({ addNewWorkspace }: IProps) => {
      * This function updates the workspace data and create a new workspace
      */
     const createData = async () => {
-        setTools();
-        console.log(data);
-        addNewWorkspace(data);
+        let newWorkspace: TWorkspace;
+        newWorkspace = {
+            ...data,
+            tools: {
+                dataCollections: { access: checkedItems[0] ? 2 : 0 },
+                taskLists: { access: checkedItems[1] ? 2 : 0 },
+                docs: { access: checkedItems[2] ? 2 : 0 },
+                messageBoard: { access: checkedItems[3] ? 2 : 0 },
+            },
+        };
+        addNewWorkspace(newWorkspace);
         setData(defaultValues);
         onClose();
     };
@@ -90,19 +98,19 @@ const Create = ({ addNewWorkspace }: IProps) => {
     /**
      * Updates the workspace tools based on the checkboxes selected
      */
-    const setTools = () => {
-        let newWorkspace: TWorkspace;
-        newWorkspace = {
-            ...data,
-            tools: {
-                dataCollections: { access: checkedItems[0] ? 2 : 0 },
-                taskLists: { access: checkedItems[1] ? 2 : 0 },
-                docs: { access: checkedItems[2] ? 2 : 0 },
-                messageBoard: { access: checkedItems[3] ? 2 : 0 },
-            },
-        };
-        setData(newWorkspace);
-    };
+    // const setTools = () => {
+    //     let newWorkspace: TWorkspace;
+    //     newWorkspace = {
+    //         ...data,
+    //         tools: {
+    //             dataCollections: { access: checkedItems[0] ? 2 : 0 },
+    //             taskLists: { access: checkedItems[1] ? 2 : 0 },
+    //             docs: { access: checkedItems[2] ? 2 : 0 },
+    //             messageBoard: { access: checkedItems[3] ? 2 : 0 },
+    //         },
+    //     };
+    //     setData(newWorkspace);
+    // };
 
     return (
         <>
