@@ -1,3 +1,6 @@
+import { ReactNode } from "react";
+import { useGetUserQuery } from "../../app/services/api";
+
 import {
     IconButton,
     Avatar,
@@ -31,9 +34,6 @@ import Divider from "../Divider/Divider";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import View from "../../features/notifications/View";
-import { ReactNode } from "react";
-
-import { useAuth } from "../../hooks/useAuth";
 
 interface LinkItemProps {
     name: string;
@@ -189,8 +189,7 @@ const TopNav = ({
         localStorage.removeItem("userId");
         navigate("/login");
     };
-
-    const user = useAuth();
+    const { data } = useGetUserQuery(localStorage.getItem("userId") as string);
 
     return (
         <Flex
@@ -288,12 +287,12 @@ const TopNav = ({
                                             <Center>
                                                 <Avatar
                                                     size={"lg"}
-                                                    src={`https://api.dicebear.com/7.x/initials/svg?seed=${user.user?.firstname}%20${user.user?.lastname}`}
+                                                    src={`https://api.dicebear.com/7.x/initials/svg?seed=${data?.firstname}%20${data?.lastname}`}
                                                 />
                                             </Center>
                                             <br />
                                             <Center>
-                                                <p>{`${user.user?.firstname} ${user.user?.lastname}`}</p>
+                                                <p>{`${data?.firstname} ${data?.lastname}`}</p>
                                             </Center>
                                             <Center>
                                                 <p
@@ -302,7 +301,7 @@ const TopNav = ({
                                                         color: "gray",
                                                     }}
                                                 >
-                                                    {user.user?.email}
+                                                    {data?.email}
                                                 </p>
                                             </Center>
                                             <br />

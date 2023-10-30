@@ -27,6 +27,7 @@ interface IProps {
  * @returns {JSX}
  */
 const Edit = ({ workspace, updateWorkspace }: IProps) => {
+    console.log(workspace);
     const { isOpen, onOpen, onClose } = useDisclosure();
     /**
      * State management for checked items that turn on and off the
@@ -51,6 +52,7 @@ const Edit = ({ workspace, updateWorkspace }: IProps) => {
      */
     const editData = async () => {
         setTools();
+        console.log(data);
         updateWorkspace(data);
         onClose();
     };

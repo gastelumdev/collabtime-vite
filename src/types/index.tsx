@@ -15,11 +15,12 @@ export type TUser = {
 };
 
 export type TWorkspace = {
-    _id: string;
+    _id?: string;
     name: string;
     description: string;
     tools: TTools;
     invitees: TInvitee[];
+    owner: string;
 };
 
 export type TInvitee = {

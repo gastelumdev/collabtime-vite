@@ -23,14 +23,15 @@ import Divider from "../../components/Divider/Divider";
  * Workspace default values should be deleted once RTK is implemented
  */
 let defaultValues: TWorkspace = {
-    _id: "1",
+    // _id: "1",
     name: "",
     description: "",
+    owner: localStorage.getItem("userId") || "",
     tools: {
-        dataCollections: { access: 0 },
-        taskLists: { access: 0 },
-        docs: { access: 0 },
-        messageBoard: { access: 0 },
+        dataCollections: { access: 2 },
+        taskLists: { access: 2 },
+        docs: { access: 2 },
+        messageBoard: { access: 2 },
     },
     invitees: [],
 };
@@ -68,6 +69,7 @@ const Create = ({ addNewWorkspace }: IProps) => {
      */
     const createData = async () => {
         setTools();
+        console.log(data);
         addNewWorkspace(data);
         setData(defaultValues);
         onClose();
