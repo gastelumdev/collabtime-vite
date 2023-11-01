@@ -14,6 +14,7 @@ import { PrivateOutlet } from "./utils/PrivateOutlet";
 import ResetPasswordRequest from "./features/auth/ResetPasswordRequest";
 import ResetPassword from "./features/auth/ResetPassword";
 import ResetPasswordEmailSent from "./features/auth/ResetPasswordEmailSent";
+import Join from "./features/workspaces/Join";
 
 // const user: IUser = {
 //     _id: "1",
@@ -89,6 +90,7 @@ function App() {
                     path="resetPasswordEmailSent"
                     element={<ResetPasswordEmailSent />}
                 />
+                <Route path="joinWorkspace" element={<Join />} />
             </Routes>
         </>
     );

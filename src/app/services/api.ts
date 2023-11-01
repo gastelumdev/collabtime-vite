@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store";
 import { LoginRequest, UserResponse, ResetPasswordRequestRequest, BasicResponse } from "../../features/auth/types";
-import { TUser, TWorkspace } from "../../types";
+import { TJoinWorkspace, TUser, TWorkspace, TWorkspaceUsers } from "../../types";
 
 export const api = createApi({
     baseQuery: fetchBaseQuery({
@@ -74,6 +74,28 @@ export const api = createApi({
                 method: "POST"
             }),
             invalidatesTags: ["Workspace"]
+        }),
+        getWorkspaceUsers: builder.query<TWorkspaceUsers, string>({
+            query: (workspaceId) => ({
+                url: `workspaces/${workspaceId}/users`
+            }),
+            providesTags: ["Workspace"]
+        }),
+        inviteTeamMember: builder.mutation<TWorkspace, TWorkspace>({
+            query: (workspace) => ({
+                url: `workspaces/${workspace._id}/inviteTeamMembers`,
+                method: "POST",
+                body: workspace
+            }),
+            invalidatesTags: ["Workspace"]
+        }),
+        joinWorkspace: builder.mutation<TWorkspace, TJoinWorkspace>({
+            query: (params) => ({
+                url: `workspaces/${params.workspaceId}/joinWorkspace`,
+                method: "POST",
+                body: params,
+            }),
+            invalidatesTags: ["Workspace"]
         })
     })
 })
@@ -87,5 +109,8 @@ export const {
     useGetOneWorkspaceQuery,
     useCreateWorkspaceMutation,
     useUpdateWorkspaceMutation,
-    useDeleteWorkspaceMutation
+    useDeleteWorkspaceMutation,
+    useGetWorkspaceUsersQuery,
+    useInviteTeamMemberMutation,
+    useJoinWorkspaceMutation,
 } = api

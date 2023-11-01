@@ -1,6 +1,9 @@
 import { useParams } from "react-router-dom";
 
-import { useGetOneWorkspaceQuery } from "../../app/services/api";
+import {
+    useGetOneWorkspaceQuery,
+    useGetWorkspaceUsersQuery,
+} from "../../app/services/api";
 
 import {
     Avatar,
@@ -14,7 +17,7 @@ import {
     Text,
 } from "@chakra-ui/react";
 
-import { TInvitee, LinkItemProps } from "../../types";
+import { LinkItemProps, TUser } from "../../types";
 
 import SideBarLayout from "../../components/Layouts/SideBarLayout";
 
@@ -86,6 +89,7 @@ const LinkItems: Array<LinkItemProps> = [
 const ViewOne = () => {
     const { id } = useParams();
     const { data } = useGetOneWorkspaceQuery(id as string);
+    const { data: workspaceUser } = useGetWorkspaceUsersQuery(id as string);
 
     /**
      * Filters the data to get the workspace with the id in the url
@@ -95,16 +99,6 @@ const ViewOne = () => {
     // const workspace: TWorkspace = data.filter((item) => {
     //     return item._id === id;
     // })[0];
-
-    /**
-     * Gets workspace invites from the invite team member drawer
-     * An API call is made that handles the email invites
-     * @param {IInvitee} invitees
-     */
-    const getInvitees = (invitees: TInvitee[]) => {
-        // Make API call to invite invitees
-        console.log(invitees);
-    };
 
     return (
         <SideBarLayout linkItems={LinkItems}>
@@ -146,11 +140,19 @@ const ViewOne = () => {
                                     </Text>
                                 </Box>
                                 <AvatarGroup size="sm" max={5} mr={"18px"}>
-                                    <Avatar
-                                        name="Ryan Florence"
-                                        src="https://bit.ly/ryan-florence"
-                                    />
-                                    <Avatar
+                                    {workspaceUser?.members.map(
+                                        (member: TUser, index: number) => {
+                                            return (
+                                                <Avatar
+                                                    key={index}
+                                                    name={`${member.firstname} ${member.lastname}`}
+                                                    src="https://bit.ly/broken-link"
+                                                />
+                                            );
+                                        }
+                                    )}
+
+                                    {/* <Avatar
                                         name="Segun Adebayo"
                                         src="https://bit.ly/sage-adebayo"
                                     />
@@ -165,10 +167,10 @@ const ViewOne = () => {
                                     <Avatar
                                         name="Christian Nwamba"
                                         src="https://bit.ly/code-beast"
-                                    />
+                                    /> */}
                                 </AvatarGroup>
                                 <Box mt={"18px"}>
-                                    <Invite getInvitees={getInvitees} />
+                                    <Invite />
                                 </Box>
                             </Flex>
                         </SimpleGrid>

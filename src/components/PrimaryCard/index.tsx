@@ -15,11 +15,18 @@ import Divider from "../Divider/Divider";
 interface IProps {
     index: number;
     data: any;
+    divider: boolean;
     editButton?: any;
     deleteButton?: any;
 }
 
-const PrimaryCard = ({ index, data, editButton, deleteButton }: IProps) => {
+const PrimaryCard = ({
+    index,
+    data,
+    divider = true,
+    editButton,
+    deleteButton,
+}: IProps) => {
     return (
         <Card
             key={index}
@@ -72,11 +79,12 @@ const PrimaryCard = ({ index, data, editButton, deleteButton }: IProps) => {
                     </Text>
                 </Center>
             </CardBody>
-
-            <Divider
-                gradient="radial-gradient(#eceef1 40%, white 60%)"
-                marginBottom="2px"
-            />
+            {divider ? (
+                <Divider
+                    gradient="radial-gradient(#eceef1 40%, white 60%)"
+                    marginBottom="2px"
+                />
+            ) : null}
 
             <CardFooter p={"5px"}>
                 {editButton}

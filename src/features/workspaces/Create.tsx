@@ -34,6 +34,7 @@ let defaultValues: TWorkspace = {
         messageBoard: { access: 2 },
     },
     invitees: [],
+    members: [],
 };
 
 interface IProps {
@@ -137,7 +138,7 @@ const Create = ({ addNewWorkspace }: IProps) => {
                         </Text>
                         <Input
                             name="name"
-                            placeholder="Please enter user name"
+                            placeholder="Please enter workspace name"
                             value={data.name}
                             required={true}
                             onChange={handleChange}
@@ -149,7 +150,7 @@ const Create = ({ addNewWorkspace }: IProps) => {
                         </Text>
                         <Input
                             name="description"
-                            placeholder="please enter url description"
+                            placeholder="Please enter a description"
                             value={data.description}
                             onChange={handleChange}
                             style={{ marginBottom: "15px" }}

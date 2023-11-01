@@ -5,13 +5,18 @@ export type TProps = {
     setWorkspaces: any;
 };
 
+export type TUserWorkspace = {
+    id: string;
+    permissions: number;
+};
+
 export type TUser = {
     _id: string;
     firstname: string;
     lastname: string;
     email: string;
     password: string;
-    workspaces: string[];
+    workspaces: TUserWorkspace[];
 };
 
 export type TWorkspace = {
@@ -20,12 +25,30 @@ export type TWorkspace = {
     description: string;
     tools: TTools;
     invitees: TInvitee[];
+    members: TInvitee[];
     owner: string;
 };
 
 export type TInvitee = {
     email: string;
     permissions: number;
+};
+
+export type TReactSelectOptions = {
+    value: string;
+    label: string;
+};
+
+export type TWorkspaceUsers = {
+    members: TUser[];
+    invitees: TUser[];
+    nonMembers: TUser[];
+    reactSelectOptions: TReactSelectOptions[];
+};
+
+export type TJoinWorkspace = {
+    workspaceId: string;
+    userId: string;
 };
 
 export type TDataCollection = {

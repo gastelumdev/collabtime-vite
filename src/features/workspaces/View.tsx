@@ -77,6 +77,7 @@ const View = () => {
     const [createWorkspace] = useCreateWorkspaceMutation();
     const [deleteWorkspace] = useDeleteWorkspaceMutation();
     const [updateWorkspace] = useUpdateWorkspaceMutation();
+    console.log(data);
     /**
      * State management for the array of workspaces coming from the backend ***
      * @constant {IWorkspaces[]} workspaces
@@ -178,8 +179,12 @@ const View = () => {
                                             key={index}
                                             index={index}
                                             data={workspace}
+                                            divider={
+                                                workspace?.owner ===
+                                                localStorage.getItem("userId")
+                                            }
                                             editButton={
-                                                workspace.owner ===
+                                                workspace?.owner ===
                                                 localStorage.getItem(
                                                     "userId"
                                                 ) ? (
@@ -192,7 +197,7 @@ const View = () => {
                                                 ) : null
                                             }
                                             deleteButton={
-                                                workspace.owner ===
+                                                workspace?.owner ===
                                                 localStorage.getItem(
                                                     "userId"
                                                 ) ? (
