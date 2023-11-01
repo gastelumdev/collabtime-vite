@@ -15,6 +15,8 @@ const View = () => {
 
     socket.on("con", (item) => console.log(item.message));
 
+    socket.on("login", (item) => console.log(item.success));
+
     return (
         <>
             <MenuButton bg={"#eff2f5"} onClick={onOpen}>
