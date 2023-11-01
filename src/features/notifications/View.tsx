@@ -7,13 +7,13 @@ import { useEffect } from "react";
 
 const View = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const socket = io("http://localhost:9000");
+    const socket = io(import.meta.env.VITE_API_URL);
 
     useEffect(() => {
-        socket.on("connection", () => console.log(socket.id));
+        socket.on("connection", () => console.log("Success"));
     });
 
-    socket.on("login", (item) => console.log(item.success));
+    socket.on("con", (item) => console.log(item.message));
 
     return (
         <>
