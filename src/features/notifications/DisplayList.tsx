@@ -48,13 +48,13 @@ const data = [
 
 const priorityColors = ["gray", "#c91919", "#ff642a", "#ffcb00", "#34a640"];
 
-const setPriorityColor = (priority: string) => {
-    if (priority === "none") return priorityColors[0];
-    if (priority === "Critical") return priorityColors[1];
-    if (priority === "High") return priorityColors[2];
-    if (priority === "Medium") return priorityColors[3];
-    if (priority === "Low") return priorityColors[4];
-};
+// const setPriorityColor = (priority: string) => {
+//     if (priority === "none") return priorityColors[0];
+//     if (priority === "Critical") return priorityColors[1];
+//     if (priority === "High") return priorityColors[2];
+//     if (priority === "Medium") return priorityColors[3];
+//     if (priority === "Low") return priorityColors[4];
+// };
 
 const DisplayList = () => {
     const [notifications, setNotifications] = useState(data);
