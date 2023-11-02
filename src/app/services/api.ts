@@ -96,6 +96,13 @@ export const api = createApi({
                 body: params,
             }),
             invalidatesTags: ["Workspace"]
+        }),
+        callUpdate: builder.mutation<{success: Boolean}, null>({
+            query: () => ({
+                url: "workspaces/callUpdate",
+                method: "POST"
+            }),
+            invalidatesTags: ["Workspace"]
         })
     })
 })
@@ -113,4 +120,5 @@ export const {
     useGetWorkspaceUsersQuery,
     useInviteTeamMemberMutation,
     useJoinWorkspaceMutation,
+    useCallUpdateMutation,
 } = api

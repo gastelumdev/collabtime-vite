@@ -2,20 +2,9 @@ import { MenuButton, useDisclosure } from "@chakra-ui/react";
 import { BellIcon } from "@chakra-ui/icons";
 import DisplayList from "./DisplayList";
 import PrimaryDrawer from "../../components/PrimaryDrawer";
-import { io } from "socket.io-client";
-import { useEffect } from "react";
 
 const View = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const socket = io(import.meta.env.VITE_API_URL);
-
-    useEffect(() => {
-        socket.on("connection", () => console.log("Success"));
-    });
-
-    socket.on("con", (item) => console.log(item.message));
-
-    socket.on("login", (item) => console.log(item.success));
 
     return (
         <>

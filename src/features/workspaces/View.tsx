@@ -1,9 +1,13 @@
+import { useEffect } from "react";
 import {
     useGetWorkspacesQuery,
     useCreateWorkspaceMutation,
     useDeleteWorkspaceMutation,
     useUpdateWorkspaceMutation,
+    useCallUpdateMutation,
 } from "../../app/services/api";
+
+import { io } from "socket.io-client";
 
 import {
     Box,
@@ -77,7 +81,18 @@ const View = () => {
     const [createWorkspace] = useCreateWorkspaceMutation();
     const [deleteWorkspace] = useDeleteWorkspaceMutation();
     const [updateWorkspace] = useUpdateWorkspaceMutation();
+    const [callUpdate] = useCallUpdateMutation();
     console.log(data);
+
+    const socket = io(import.meta.env.VITE_API_URL);
+
+    useEffect(() => {}, []);
+
+    // socket.on("connection", () => console.log("Success"));
+    socket.on("update", () => {
+        console.log("Workspace created");
+        callUpdate(null);
+    });
     /**
      * State management for the array of workspaces coming from the backend ***
      * @constant {IWorkspaces[]} workspaces

@@ -139,36 +139,25 @@ const ViewOne = () => {
                                         Team Members:
                                     </Text>
                                 </Box>
-                                <AvatarGroup size="sm" max={5} mr={"18px"}>
-                                    {workspaceUser?.members.map(
-                                        (member: TUser, index: number) => {
-                                            return (
-                                                <Avatar
-                                                    key={index}
-                                                    name={`${member.firstname} ${member.lastname}`}
-                                                    src="https://bit.ly/broken-link"
-                                                />
-                                            );
-                                        }
-                                    )}
-
-                                    {/* <Avatar
-                                        name="Segun Adebayo"
-                                        src="https://bit.ly/sage-adebayo"
-                                    />
-                                    <Avatar
-                                        name="Kent Dodds"
-                                        src="https://bit.ly/kent-c-dodds"
-                                    />
-                                    <Avatar
-                                        name="Prosper Otemuyiwa"
-                                        src="https://bit.ly/prosper-baba"
-                                    />
-                                    <Avatar
-                                        name="Christian Nwamba"
-                                        src="https://bit.ly/code-beast"
-                                    /> */}
-                                </AvatarGroup>
+                                <Box pt={"22px"}>
+                                    <AvatarGroup size="sm" max={5} mr={"18px"}>
+                                        {workspaceUser?.members.map(
+                                            (member: TUser, index: number) => {
+                                                return (
+                                                    <Avatar
+                                                        key={index}
+                                                        name={`${member.firstname[0]}${member.lastname[0]}`}
+                                                        getInitials={(
+                                                            name: string
+                                                        ) => {
+                                                            return name;
+                                                        }}
+                                                    />
+                                                );
+                                            }
+                                        )}
+                                    </AvatarGroup>
+                                </Box>
                                 <Box mt={"18px"}>
                                     <Invite />
                                 </Box>

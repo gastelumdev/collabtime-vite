@@ -265,7 +265,7 @@ const Invite = ({}: InviteProps) => {
                                         color={"rgb(123, 128, 154)"}
                                         fontSize={"14px"}
                                     >
-                                        {item.email}
+                                        {`${item.firstname} ${item.lastname}`}
                                     </Text>
                                 );
                             }
@@ -289,7 +289,7 @@ const Invite = ({}: InviteProps) => {
                                         color={"rgb(123, 128, 154)"}
                                         fontSize={"14px"}
                                     >
-                                        {item.email}
+                                        {`${item.firstname} ${item.lastname}`}
                                     </Text>
                                 );
                             }
