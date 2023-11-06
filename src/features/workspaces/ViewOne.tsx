@@ -152,6 +152,8 @@ const ViewOne = () => {
                                                         ) => {
                                                             return name;
                                                         }}
+                                                        _hover={{ zIndex: 10 }}
+                                                        cursor={"default"}
                                                     />
                                                 );
                                             }

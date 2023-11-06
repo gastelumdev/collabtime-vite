@@ -16,6 +16,7 @@ export type TUser = {
     lastname: string;
     email: string;
     password: string;
+    role: number;
     workspaces: TUserWorkspace[];
 };
 
@@ -49,6 +50,14 @@ export type TWorkspaceUsers = {
 export type TJoinWorkspace = {
     workspaceId: string;
     userId: string;
+};
+
+export type TNotification = {
+    message: string;
+    workspaceId: string;
+    createdAt: Date;
+    dataSource: string;
+    priority: string;
 };
 
 export type TDataCollection = {

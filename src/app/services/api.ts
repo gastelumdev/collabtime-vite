@@ -1,19 +1,18 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store";
 import { LoginRequest, UserResponse, ResetPasswordRequestRequest, BasicResponse } from "../../features/auth/types";
-import { TJoinWorkspace, TUser, TWorkspace, TWorkspaceUsers } from "../../types";
+import { TJoinWorkspace, TNotification, TUser, TWorkspace, TWorkspaceUsers } from "../../types";
 
 export const api = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: import.meta.env.VITE_API_URL,
         prepareHeaders: (headers, { getState }) => {
             const token = (getState() as RootState).auth.token as string || localStorage.getItem("token");
-            console.log(token)
             if (token) headers.set("authorization", `JWT ${token}`);
             return headers;
         }
     }),
-    tagTypes: ["auth", "Workspace"],
+    tagTypes: ["auth", "Workspace", "Notification"],
     endpoints: (builder) => ({
         login: builder.mutation<UserResponse, LoginRequest>({
             query: (credentials) => ({
@@ -103,6 +102,19 @@ export const api = createApi({
                 method: "POST"
             }),
             invalidatesTags: ["Workspace"]
+        }),
+        getNotifications: builder.query<TNotification[], null>({
+            query: () => ({
+                url: `notifications/${localStorage.getItem("notificationsFilter")}`,
+            }),
+            providesTags: ["Notification"]
+        }),
+        callNotificationsUpdate: builder.mutation<{success: Boolean}, string>({
+            query: (priority) => ({
+                url: `notifications/callUpdate/${priority}`,
+                method: "POST"
+            }),
+            invalidatesTags: ["Notification"]
         })
     })
 })
@@ -121,4 +133,6 @@ export const {
     useInviteTeamMemberMutation,
     useJoinWorkspaceMutation,
     useCallUpdateMutation,
+    useGetNotificationsQuery,
+    useCallNotificationsUpdateMutation
 } = api

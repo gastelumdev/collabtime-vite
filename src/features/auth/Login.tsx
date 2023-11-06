@@ -42,6 +42,7 @@ export default function Login() {
                 dispatch(setCredentials(user));
                 localStorage.setItem("token", user.accessToken);
                 localStorage.setItem("userId", user.user._id as string);
+                localStorage.setItem("notificationsFilter", "All");
                 navigate("/workspaces");
             } catch (err: any) {
                 console.log(err);

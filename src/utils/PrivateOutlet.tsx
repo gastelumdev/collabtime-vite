@@ -4,16 +4,9 @@ import { useAuth } from "../hooks/useAuth";
 
 interface PrivateOutletProps {
     redirectPath?: string;
-    // children?: ReactNode;
 }
 
-export function PrivateOutlet({
-    redirectPath = "/login",
-}: // children,
-PrivateOutletProps) {
-    // const auth = useAuth();
-    // const location = useLocation();
-
+export function PrivateOutlet({ redirectPath = "/login" }: PrivateOutletProps) {
     const user = useAuth();
 
     console.log(user.user);

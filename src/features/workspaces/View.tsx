@@ -19,6 +19,7 @@ import {
     Text,
     Button,
     Center,
+    useToast,
 } from "@chakra-ui/react";
 
 import { TWorkspace, LinkItemProps } from "../../types";
@@ -32,41 +33,6 @@ import { AiOutlineDelete, AiOutlineLike } from "react-icons/ai";
 import { IconContext } from "react-icons";
 import { BsPersonWorkspace } from "react-icons/bs";
 
-/**
- * This is dummy data that simulates what will be brought in with RTK
- * @constant {IWorkspace[]} data
- */
-// const data: TWorkspace[] = [
-//     {
-//         _id: "1",
-//         name: "Workspace 1",
-//         description: "This is a sample workspace.",
-//         tools: {
-//             dataCollections: { access: 1 },
-//             taskLists: { access: 1 },
-//             docs: { access: 1 },
-//             messageBoard: { access: 1 },
-//         },
-//         invitees: [],
-//     },
-//     {
-//         _id: "2",
-//         name: "Workspace 2",
-//         description: "This is another sample workspace.",
-//         tools: {
-//             dataCollections: { access: 2 },
-//             taskLists: { access: 0 },
-//             docs: { access: 2 },
-//             messageBoard: { access: 0 },
-//         },
-//         invitees: [],
-//     },
-// ];
-
-/**
- * The link items array used for the sidebar navigation
- * @constant {array}
- */
 const LinkItems: Array<LinkItemProps> = [
     { name: "Workspaces", icon: BsPersonWorkspace, path: "/workspaces" },
 ];
@@ -78,54 +44,39 @@ const LinkItems: Array<LinkItemProps> = [
  */
 const View = () => {
     const { data } = useGetWorkspacesQuery(null);
-    const [createWorkspace] = useCreateWorkspaceMutation();
-    const [deleteWorkspace] = useDeleteWorkspaceMutation();
+    const [
+        createWorkspace,
+        { isError: createWorkspaceIsError, error: createWorkspaceError },
+    ] = useCreateWorkspaceMutation();
     const [updateWorkspace] = useUpdateWorkspaceMutation();
+    const [deleteWorkspace] = useDeleteWorkspaceMutation();
     const [callUpdate] = useCallUpdateMutation();
-    console.log(data);
 
-    const socket = io(import.meta.env.VITE_API_URL);
-
-    useEffect(() => {}, []);
-
-    // socket.on("connection", () => console.log("Success"));
-    socket.on("update", () => {
-        console.log("Workspace created");
-        callUpdate(null);
-    });
-    /**
-     * State management for the array of workspaces coming from the backend ***
-     * @constant {IWorkspaces[]} workspaces
-     */
-    // const [workspaces, setWorkspaces] = useState<TWorkspace[]>(data);
+    const toast = useToast();
 
     /**
-     * Adds a new workspace to state.
-     * NOTE: This is where the create request will be called.
-     * This function is passed in as a prop to Create.tsx.
-     * @param {IWorkspace} workspace
+     * Socket.io listening for update to refetch data
      */
-    const addNewWorkspace = (workspace: TWorkspace) => {
-        // setWorkspaces([...workspaces, workspace]);
-        console.log(workspace);
-        createWorkspace(workspace);
-    };
+    useEffect(() => {
+        const socket = io(import.meta.env.VITE_API_URL);
+        socket.connect();
 
-    /**
-     * Updates the one workspace to state
-     * NOTE: This is where calling the update request will be called ***
-     * This function is passed in as a prop to Edit.tsx.
-     * @param {IWorkspace} workspace
-     */
-    // const updateWorkspace = (workspace: TWorkspace) => {
-    //     // const oldData: TWorkspace[] = workspaces.filter((item) => {
-    //     //     return workspace._id !== item._id;
-    //     // });
+        socket.on("update", () => {
+            callUpdate(null);
+        });
 
-    //     // setWorkspaces([...oldData, workspace]);
-    //     console.log(workspace);
-    //     updateWorkspace(workspace);
-    // };
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
+
+    if (createWorkspaceIsError) {
+        toast({
+            title: "Create Workspace Error",
+            description: (createWorkspaceError as any)?.data.error._message,
+            status: "error",
+        });
+    }
 
     return (
         <SideBarLayout
@@ -178,67 +129,84 @@ const View = () => {
                             <Flex>
                                 <Spacer />
                                 <Box pb={"20px"}>
-                                    <Create addNewWorkspace={addNewWorkspace} />
+                                    <Create addNewWorkspace={createWorkspace} />
                                 </Box>
                             </Flex>
                         </SimpleGrid>
-
-                        <SimpleGrid
-                            spacing={6}
-                            columns={{ base: 1, sm: 1, md: 2, lg: 2, xl: 3 }}
-                        >
-                            {data?.map(
-                                (workspace: TWorkspace, index: number) => {
-                                    return (
-                                        <PrimaryCard
-                                            key={index}
-                                            index={index}
-                                            data={workspace}
-                                            divider={
-                                                workspace?.owner ===
-                                                localStorage.getItem("userId")
-                                            }
-                                            editButton={
-                                                workspace?.owner ===
-                                                localStorage.getItem(
-                                                    "userId"
-                                                ) ? (
-                                                    <Edit
-                                                        workspace={workspace}
-                                                        updateWorkspace={
-                                                            updateWorkspace
-                                                        }
-                                                    />
-                                                ) : null
-                                            }
-                                            deleteButton={
-                                                workspace?.owner ===
-                                                localStorage.getItem(
-                                                    "userId"
-                                                ) ? (
-                                                    <Button
-                                                        flex="1"
-                                                        variant="ghost"
-                                                        leftIcon={
-                                                            <AiOutlineDelete />
-                                                        }
-                                                        color={
-                                                            "rgb(123, 128, 154)"
-                                                        }
-                                                        zIndex={10}
-                                                        onClick={() =>
-                                                            deleteWorkspace(
-                                                                workspace._id as string
-                                                            )
-                                                        }
-                                                    ></Button>
-                                                ) : null
-                                            }
-                                        />
-                                    );
-                                }
-                            )}
-                        </SimpleGrid>
+                        {data?.length || 0 > 0 ? (
+                            <SimpleGrid
+                                spacing={6}
+                                columns={{
+                                    base: 1,
+                                    sm: 1,
+                                    md: 2,
+                                    lg: 2,
+                                    xl: 3,
+                                }}
+                            >
+                                {data?.map(
+                                    (workspace: TWorkspace, index: number) => {
+                                        return (
+                                            <PrimaryCard
+                                                key={index}
+                                                index={index}
+                                                data={workspace}
+                                                divider={
+                                                    workspace?.owner ===
+                                                    localStorage.getItem(
+                                                        "userId"
+                                                    )
+                                                }
+                                                editButton={
+                                                    workspace?.owner ===
+                                                    localStorage.getItem(
+                                                        "userId"
+                                                    ) ? (
+                                                        <Edit
+                                                            workspace={
+                                                                workspace
+                                                            }
+                                                            updateWorkspace={
+                                                                updateWorkspace
+                                                            }
+                                                        />
+                                                    ) : null
+                                                }
+                                                deleteButton={
+                                                    workspace?.owner ===
+                                                    localStorage.getItem(
+                                                        "userId"
+                                                    ) ? (
+                                                        <Button
+                                                            flex="1"
+                                                            variant="ghost"
+                                                            leftIcon={
+                                                                <AiOutlineDelete />
+                                                            }
+                                                            color={
+                                                                "rgb(123, 128, 154)"
+                                                            }
+                                                            zIndex={10}
+                                                            onClick={() =>
+                                                                deleteWorkspace(
+                                                                    workspace._id as string
+                                                                )
+                                                            }
+                                                        ></Button>
+                                                    ) : null
+                                                }
+                                            />
+                                        );
+                                    }
+                                )}
+                            </SimpleGrid>
+                        ) : (
+                            <Center>
+                                <Text color={"rgb(123, 128, 154)"}>
+                                    Your workspaces list is empty.
+                                </Text>
+                            </Center>
+                        )}
                     </Container>
                 </Flex>
             </Box>
