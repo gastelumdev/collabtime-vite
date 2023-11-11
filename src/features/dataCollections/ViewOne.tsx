@@ -1,10 +1,22 @@
 import React, { useEffect, useState } from "react";
 import {
+    useGetColumnsQuery,
+    useCreateColumnMutation,
+    // useUpdateColumnMutation,
+    useDeleteColumnMutation,
+    useGetRowsQuery,
+    useCreateRowMutation,
+    useDeleteRowMutation,
+    useUpdateCellMutation,
+    useGetDataCollectionQuery,
+} from "../../app/services/api";
+import {
     Box,
     Button,
     Card,
     CardBody,
     CardHeader,
+    Center,
     Checkbox,
     Container,
     Drawer,
@@ -17,195 +29,41 @@ import {
     Flex,
     FormLabel,
     Heading,
+    IconButton,
     Input,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
+    Progress,
     SimpleGrid,
     Spacer,
     Stack,
+    Table,
+    TableContainer,
+    Tbody,
+    Td,
     Text,
+    Th,
+    Thead,
+    Tr,
     useDisclosure,
 } from "@chakra-ui/react";
 
-import {
-    Table,
-    Header,
-    HeaderRow,
-    Body,
-    Row,
-    HeaderCell,
-    Cell,
-} from "@table-library/react-table-library/table";
-import {
-    useSort,
-    HeaderCellSort,
-} from "@table-library/react-table-library/sort";
-import { useTheme } from "@table-library/react-table-library/theme";
-
-import { IconContext, IconType } from "react-icons";
+import { IconType } from "react-icons";
 import { BsFiletypeDoc, BsPersonWorkspace, BsPlusCircle } from "react-icons/bs";
 import {
-    AiOutlineCheckCircle,
-    AiOutlineCloseCircle,
+    AiOutlineCheck,
+    AiOutlineClose,
     AiOutlineMessage,
+    AiOutlinePlus,
 } from "react-icons/ai";
 import { BiTable } from "react-icons/bi";
 import { FaTasks } from "react-icons/fa";
 
-import AddForm from "./AddForm";
 import SideBarLayout from "../../components/Layouts/SideBarLayout";
-import { TCell, TColumn, TDataCollection, TRow, TTableData } from "../../types";
-
-/**
- * This is dummy data that simulates what will be brought in with RTK
- * @constant {IDataCollection} dataCollection
- */
-const dataCollection: TDataCollection = {
-    _id: "1",
-    name: "Data Collection 1",
-    workspace: "1",
-    form: {
-        active: false,
-        type: "",
-        emails: [],
-    },
-    columns: ["1", "2", "3", "4"],
-    rows: ["1", "2", "3"],
-};
-
-/**
- * This is dummy data that simulates what will be brought in with RTK
- * @constant {IColumn} columnsData
- */
-const columnsData: TColumn[] = [
-    {
-        _id: "1",
-        dataCollectionId: "1",
-        name: "assigned_to",
-        type: "Person",
-        permanent: true,
-        people: [],
-        includeInForm: true,
-        includeInExport: true,
-    },
-    {
-        _id: "2",
-        dataCollectionId: "1",
-        name: "priority",
-        type: "Label",
-        permanent: true,
-        labels: [
-            { title: "Low", color: "blue" },
-            { title: "High", color: "orange" },
-        ],
-        includeInForm: true,
-        includeInExport: true,
-    },
-    {
-        _id: "3",
-        dataCollectionId: "1",
-        name: "status",
-        type: "Label",
-        permanent: true,
-        labels: [
-            { title: "In-Progress", color: "green" },
-            { title: "Complete", color: "yellow" },
-        ],
-        includeInForm: true,
-        includeInExport: true,
-    },
-];
-
-const rowsData: TRow[] = [
-    {
-        _id: "1",
-        dataCollectionId: "1",
-        cells: ["1", "2", "3"],
-    },
-    {
-        _id: "2",
-        dataCollectionId: "1",
-        cells: ["4", "5", "6"],
-    },
-    {
-        _id: "3",
-        dataCollectionId: "1",
-        cells: ["7", "8", "9"],
-    },
-];
-
-const cellsData: TCell[] = [
-    {
-        _id: "1",
-        rowId: "1",
-        name: "assigned_to",
-        type: "Person",
-        people: ["1"],
-        value: "Omar Gastelum",
-    },
-    {
-        _id: "2",
-        rowId: "1",
-        name: "priority",
-        type: "Label",
-        labels: [{ title: "String", color: "String" }],
-        value: "Low",
-    },
-    {
-        _id: "3",
-        rowId: "1",
-        name: "status",
-        type: "Label",
-        labels: [{ title: "String", color: "String" }],
-        value: "Complete",
-    },
-    {
-        _id: "4",
-        rowId: "2",
-        name: "assigned_to",
-        type: "Person",
-        people: ["1"],
-        value: "Carlos Torres",
-    },
-    {
-        _id: "5",
-        rowId: "2",
-        name: "priority",
-        type: "Label",
-        labels: [{ title: "String", color: "String" }],
-        value: "High",
-    },
-    {
-        _id: "6",
-        rowId: "2",
-        name: "status",
-        type: "Label",
-        labels: [{ title: "String", color: "String" }],
-        value: "Sent",
-    },
-    {
-        _id: "7",
-        rowId: "3",
-        name: "assigned_to",
-        type: "Person",
-        people: ["1"],
-        value: "Rick Ruiz",
-    },
-    {
-        _id: "8",
-        rowId: "3",
-        name: "priority",
-        type: "Label",
-        labels: [{ title: "String", color: "String" }],
-        value: "Med",
-    },
-    {
-        _id: "9",
-        rowId: "3",
-        name: "status",
-        type: "Label",
-        labels: [{ title: "String", color: "String" }],
-        value: "Waiting",
-    },
-];
+import { TCell, TColumn, TRow } from "../../types";
+import { useParams } from "react-router-dom";
 
 interface LinkItemProps {
     name: string;
@@ -218,95 +76,106 @@ const LinkItems: Array<LinkItemProps> = [
     {
         name: "Data Collections",
         icon: BiTable,
-        path: "/workspaces/1/dataCollections",
+        path: `/workspaces/${localStorage.getItem(
+            "workspaceId"
+        )}/dataCollections`,
     },
-    { name: "Tasks", icon: FaTasks, path: "/workspaces/1/taskLists" },
-    { name: "Documents", icon: BsFiletypeDoc, path: "/workspaces/1/documents" },
+    {
+        name: "Tasks",
+        icon: FaTasks,
+        path: `/workspaces/${localStorage.getItem("workspaceId")}/taskLists`,
+    },
+    {
+        name: "Documents",
+        icon: BsFiletypeDoc,
+        path: `/workspaces/${localStorage.getItem("workspaceId")}/documents`,
+    },
     {
         name: "Message Board",
         icon: AiOutlineMessage,
-        path: "/workspaces/1/messageBoard",
+        path: `/workspaces/${localStorage.getItem("workspaceId")}/messageBoard`,
     },
 ];
 
 const ViewOne = () => {
+    const { dataCollectionId } = useParams();
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const [data, setData] = useState<TTableData>([]);
-    const [cells, setCells] = useState<TCell[]>(cellsData);
-    const [columns, setColumns] = useState<TColumn[]>(columnsData);
-    const [columnName, setColumnName] = useState<string>("");
-    const [checkedItems, setCheckedItems] = useState<boolean[]>(
-        new Array(rowsData.length).fill(false)
+    const { data: dataCollection } = useGetDataCollectionQuery(null);
+
+    const { data: columns } = useGetColumnsQuery(null);
+    const [createColumn] = useCreateColumnMutation();
+    const [deleteColumn] = useDeleteColumnMutation();
+    const {
+        data: rows,
+        isLoading: rowsLoading,
+        isFetching: rowsFetching,
+        isSuccess: rowsSuccess,
+    } = useGetRowsQuery(null);
+    const [createRow, { isLoading: creatingRow }] = useCreateRowMutation();
+    const [deleteRow, { isLoading: deletingRows }] = useDeleteRowMutation();
+    const [updateCell] = useUpdateCellMutation();
+    const [headerMenuIsOpen, setHeaderMenuIsOpen] = useState(
+        new Array(columns?.length).fill(null).map(() => {
+            console.log("column");
+            return false;
+        })
     );
+
+    const [row, setRow] = useState<any>({});
+    const [data, setData] = useState<TRow[]>(rows || []);
+    // const [cells, setCells] = useState<TCell[]>(cellsData);
+    const [columnName, setColumnName] = useState<string>("");
     const [numberChecked, setNumberChecked] = useState<number>(0);
     const [showRowForm, setShowRowForm] = useState<boolean>(false);
 
-    /**
-     * React Table customized theme
-     * @constant theme
-     */
-    const theme = useTheme({
-        Table: `
-            grid-template-columns: 20px repeat(${columns.length - 1}, 1fr) 1fr;
-        `,
-        Cell: `&:nth-of-type(1) {
-            width: 60px
-          }`,
-        HeaderRow: `
-            .th {
-                color: rgb(123, 128, 154);
-                padding: 12px 16px 12px 26px;
-                border-bottom: 0.0625rem solid rgb(240, 242, 245);
-                font-size: 12px;
-            }
-          `,
-        BaseCell: `
-            color: rgb(123, 128, 154);
-            padding: 10px 16px;
-            border-bottom: 0.0625rem solid rgb(240, 242, 245);
-            font-size: 14px;
+    const [editMode, setEditMode] = useState<string[]>([]);
+    const [tempValue, setTempValue] = useState("");
+    const [initialValue, setInitialValue] = useState("");
 
-          `,
-    });
+    const [deleteRowIds, setDeleteRowIds] = useState<string[]>([]);
+    const [showDeleteBox, setShowDeleteBox] = useState<boolean>(false);
+
+    const [firstInputFocus, setFirstInputFocus] = useState(true);
+
+    useEffect(() => {
+        localStorage.setItem("dataCollectionId", dataCollectionId || "");
+        console.log(rows);
+        setData(rows as TRow[]);
+        console.log(data);
+    }, [rowsSuccess, rows]);
 
     /**
      * This converts data so that the react table can read it before the component
      * loads.
      */
     useEffect(() => {
-        convertData();
-        console.log(data);
+        setDefaultRow();
     }, []);
+
+    const setDefaultRow = () => {
+        let temp = {};
+        for (const column of columns || []) {
+            temp = { ...temp, [column.name]: "" };
+        }
+        setRow(temp);
+    };
 
     /**
      * This function converts rows and its cells to a format required by react table
      * This function also sorts the data
      * TTableData is set to any since the data is dynamic
      */
-    const convertData = () => {
-        const convertedArray: TTableData = [];
-        const cellsCopy: TCell[] = cells;
-
-        for (const row of rowsData) {
-            let id = row._id;
-            const filteredRows: TCell[] = cellsCopy.filter((cell) => {
-                return cell.rowId === id;
-            });
-
-            let newRow: TTableData = { id: id };
-            for (const filteredRow of filteredRows) {
-                newRow[filteredRow.name as keyof typeof newRow] =
-                    filteredRow.value;
-            }
-            convertedArray.push(newRow);
-        }
-        // const sortedData: TTableData = convertedArray.sort((a: any, b: any) => {
-        //     console.log(a["priority"]);
-        //     return a["priority"].localeCompare(b["priority"]);
-        // });
-        setData(convertedArray);
-    };
+    // const convertData = () => {
+    //     let cellsArray = [];
+    //     for (const row of rows || []) {
+    //         for (const c of row.cells) {
+    //             cellsArray.push(c);
+    //         }
+    //     }
+    //     setCells(cellsArray);
+    //     console.log(cells);
+    // };
 
     /**
      * Creates a new column
@@ -314,9 +183,9 @@ const ViewOne = () => {
      */
     const handleAddColumn = () => {
         const newColumn: TColumn = {
-            dataCollectionId: "1",
+            dataCollectionId: localStorage.getItem("dataCollectionId") || "",
             name: columnName,
-            type: "Person",
+            type: "Text",
             permanent: false,
             people: [],
             includeInForm: true,
@@ -326,10 +195,7 @@ const ViewOne = () => {
         // Set column name to a database friendly underscore naming
         newColumn.name = newColumn.name.toLowerCase().split(" ").join("_");
 
-        const columnsCopy: TColumn[] = columns;
-        columnsCopy.push(newColumn);
-
-        setColumns(columnsCopy);
+        createColumn(newColumn);
         onClose();
     };
 
@@ -344,157 +210,102 @@ const ViewOne = () => {
         setColumnName(value);
     };
 
-    /**
-     * Updates table data when input changes
-     * @param {string} value
-     * @param {TTableData} item
-     * @param {string} name
-     */
-    const handleUpdate = (value: string, item: TTableData, name: string) => {
-        console.log(value);
-        console.log(item);
-
-        const dataCopy: TTableData[] = data;
-
-        const changedData: TTableData[] = dataCopy.map(
-            (dataItem: TTableData) => {
-                if (dataItem.id === item.id) {
-                    return { ...dataItem, [name]: value };
-                } else {
-                    return dataItem;
-                }
-            }
-        );
-
-        setData(changedData);
+    const handleAddRowInputChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        console.log(event.target.value);
+        setRow({ ...row, [event.target.name]: event.target.value });
     };
 
-    /**
-     *
-     * @param {string} value
-     * @param {TTableData} item
-     * @param {string} name
-     */
-    const updateCells = (value: string, item: any, name: string) => {
-        const rowId = item.id;
-
-        const newCells: TCell[] = cells.map((cell: TCell) => {
-            // If the row and column name match, set the updated cell,
-            // update it in data base and return the new cell
-            // else return the cell as it is
-            if (cell.rowId === rowId && cell.name === name) {
-                let newCell: TCell = { ...cell, value: value };
-                // Update database cell here *********************************
-                return newCell;
-            } else {
-                return cell;
-            }
-        });
-
-        setCells(newCells);
+    const handleUpdateRowInputChange = (
+        event: React.ChangeEvent<HTMLInputElement>,
+        rowItem: TRow,
+        cellItem: TCell
+    ) => {
+        console.log(rowItem);
+        console.log(cellItem);
+        setTempValue(event.target.value);
     };
 
-    /**
-     * This function will be replaced by RTK
-     * @param value
-     * @param name
-     */
-    const handleAddCell = (value: string, name: string) => {
-        console.log(value);
-        console.log(name);
+    const handleUpdateRowOnFocus = (
+        event: React.FocusEvent<HTMLInputElement, Element>,
+        cell: any
+    ) => {
+        setInitialValue(event.target.value);
+        const em: string[] = [];
+        em.push(cell._id);
+        setEditMode(em as any);
+        setTempValue(event.target.value);
     };
 
-    /**
-     * This function tracks the selected row checkboxes
-     * @param checked
-     * @param index
-     */
-    const handleRowCheckboxChange = (checked: boolean, index: number) => {
-        const checkedItemsCopy: boolean[] = checkedItems;
-        checkedItemsCopy[index] = !checkedItemsCopy[index];
-        setCheckedItems(checkedItemsCopy);
+    const handleUpdateRowOnBlur = async (
+        event: React.FocusEvent<HTMLInputElement, Element>,
+        cell: any
+    ) => {
+        let newCell = cell;
+        newCell = { ...newCell, value: event.target.value };
+        if (initialValue != event.target.value) await updateCell(newCell);
 
-        let numberCheckedCopy: number = numberChecked;
-        if (checked) {
-            setNumberChecked(numberCheckedCopy + 1);
+        let tempEditMode = editMode;
+        tempEditMode.pop();
+        setEditMode(tempEditMode);
+    };
+
+    const handleSaveRowClick = async () => {
+        console.log(row);
+        await createRow(row);
+        setShowRowForm(false);
+        setDefaultRow();
+    };
+
+    const onDeleteRowCheckboxChange = (
+        event: React.ChangeEvent<HTMLInputElement>,
+        row: any
+    ) => {
+        const deleteRowIdsCopy = deleteRowIds;
+
+        if (event.target.checked) {
+            deleteRowIdsCopy.push(row._id);
+            setNumberChecked(numberChecked + 1);
         } else {
-            setNumberChecked(numberCheckedCopy - 1);
+            let index = deleteRowIdsCopy.indexOf(row._id);
+            deleteRowIdsCopy.splice(index, 1);
+            setNumberChecked(numberChecked - 1);
+        }
+
+        setDeleteRowIds(deleteRowIdsCopy);
+
+        if (deleteRowIdsCopy.length > 0) {
+            setShowDeleteBox(true);
+        } else {
+            setShowDeleteBox(false);
         }
     };
 
-    /**
-     * This function will set data array items to null if the checkbox has been
-     * checked at that index. Those rows will then be filtered and data will set
-     * with new filtered array
-     */
-    const deleteItems = () => {
-        let dataCopy: TTableData = data;
-        for (const index in checkedItems) {
-            let checkedItem = checkedItems[index];
-            if (checkedItem) {
-                dataCopy[index] = null;
-            }
+    const deleteItems = async () => {
+        for (const rowId of deleteRowIds) {
+            deleteRow(rowId);
         }
 
-        const newRows = dataCopy.filter((item: any) => {
-            return item !== null;
-        });
-
-        setData(newRows);
-        setCheckedItems(new Array(data.length).fill(false));
-        setNumberChecked(0);
+        setShowDeleteBox(false);
+        setDeleteRowIds([]);
     };
 
-    const updateDataCollection = (dataCollection: TDataCollection) => {
-        console.log("Data Collection updated");
-        console.log(dataCollection);
-        // Make call to update the data collection *************************************
+    const handleColumnHover = (index: number) => {
+        const headerMenuIsOpenCopy = headerMenuIsOpen;
+        headerMenuIsOpenCopy[index] = true;
+        setHeaderMenuIsOpen(headerMenuIsOpenCopy);
     };
 
-    /**
-     * Sorts data and is used for React Table sort
-     * @param action
-     * @param state
-     */
-    function onSortChange(action: any, state: any) {
-        console.log("There was a change");
-        const params = {
-            sort: {
-                sortKey: state.sortKey,
-                reverse: state.reverse,
-                action: action,
-            },
-        };
-
-        const sortedData = data.sort((a: any, b: any) => {
-            return a[params.sort.sortKey].localeCompare(b[params.sort.sortKey]);
-        });
-
-        console.log(sortedData);
-        setData(sortedData);
-    }
-
-    /**
-     * React table sort settings
-     */
-    const sort = useSort(
-        { nodes: data },
-        {
-            onChange: onSortChange,
-            state: {
-                sortKey: "priority",
-                reverse: true,
-            },
-        },
-        {
-            sortFns: {},
-            sortIcon: {
-                iconDefault: null,
-                iconUp: null,
-                iconDown: null,
-            },
+    const handleAddRowOnKeyUp = async (
+        event: React.KeyboardEvent<HTMLInputElement>
+    ) => {
+        if (event.key == "Enter") {
+            await createRow(row);
+            setFirstInputFocus(true);
+            setDefaultRow();
         }
-    );
+    };
 
     return (
         <>
@@ -538,7 +349,7 @@ const ViewOne = () => {
                                     </Box>
                                 </Flex>
                             </SimpleGrid>
-                            <Card>
+                            <Card mb={"60px"}>
                                 <CardHeader>
                                     <Flex>
                                         <Box>
@@ -547,14 +358,13 @@ const ViewOne = () => {
                                                 mt={"5px"}
                                                 mb={"4px"}
                                             >
-                                                Data Collection 1
+                                                {dataCollection?.name}
                                             </Heading>
                                             <Text
                                                 fontSize={"md"}
                                                 color={"rgb(123, 128, 154)"}
                                             >
-                                                This is a description for this
-                                                data collection.
+                                                {dataCollection?.description}
                                             </Text>
                                         </Box>
                                         <Spacer />
@@ -564,249 +374,351 @@ const ViewOne = () => {
                                         >
                                             ADD FORM
                                         </PrimaryButton> */}
-                                        <AddForm
+                                        {/* <AddForm
                                             updateDataCollection={
                                                 updateDataCollection
                                             }
                                             dataCollection={dataCollection}
-                                        />
+                                        /> */}
                                     </Flex>
+                                    {rowsLoading ||
+                                    deletingRows ||
+                                    creatingRow ||
+                                    rowsFetching ? (
+                                        <Progress size="xs" isIndeterminate />
+                                    ) : null}
                                 </CardHeader>
                                 <CardBody>
-                                    <Button
-                                        onClick={onOpen}
-                                        variant={"unstyled"}
-                                        float={"right"}
-                                    >
-                                        <BsPlusCircle />
-                                    </Button>
-                                    {/**
-                                     * TABLE ********************************************************************************
-                                     */}
-                                    <Table
-                                        data={{ nodes: data }}
-                                        sort={sort}
-                                        layout={{
-                                            isDiv: true,
-                                            horizontalScroll: true,
-                                        }}
-                                        theme={theme}
-                                    >
-                                        {(tableList: any) => (
-                                            <>
-                                                <Header>
-                                                    <HeaderRow>
-                                                        <HeaderCell
-                                                            resize
-                                                        ></HeaderCell>
-                                                        {columns.map(
-                                                            (column: any) => {
-                                                                return (
-                                                                    <HeaderCellSort
-                                                                        key={
-                                                                            column.name
-                                                                        }
-                                                                        resize
-                                                                        sortKey={
-                                                                            column.name
-                                                                        }
-                                                                    >
-                                                                        {(
-                                                                            column.name
-                                                                                .charAt(
-                                                                                    0
-                                                                                )
-                                                                                .toUpperCase() +
-                                                                            column.name.slice(
-                                                                                1
-                                                                            )
-                                                                        )
-                                                                            .split(
-                                                                                "_"
-                                                                            )
-                                                                            .join(
-                                                                                " "
-                                                                            )}
-                                                                    </HeaderCellSort>
-                                                                );
-                                                            }
-                                                        )}
-                                                    </HeaderRow>
-                                                </Header>
-
-                                                <Body>
-                                                    {tableList.map(
+                                    <TableContainer>
+                                        <Table size="sm">
+                                            <Thead>
+                                                <Tr>
+                                                    <Th w={"5px"}></Th>
+                                                    {columns?.map(
                                                         (
-                                                            item: any,
+                                                            column: TColumn,
                                                             index: number
                                                         ) => {
                                                             return (
-                                                                <Row
-                                                                    key={index}
-                                                                    item={item}
-                                                                >
-                                                                    <Cell>
-                                                                        <Checkbox
-                                                                            isChecked={
-                                                                                checkedItems[
-                                                                                    index
-                                                                                ]
-                                                                            }
-                                                                            mt={
-                                                                                "5px"
-                                                                            }
-                                                                            onChange={(
-                                                                                event: React.ChangeEvent<HTMLInputElement>
-                                                                            ) =>
-                                                                                handleRowCheckboxChange(
-                                                                                    event
-                                                                                        .target
-                                                                                        .checked,
+                                                                <Th key={index}>
+                                                                    <Menu>
+                                                                        <MenuButton
+                                                                            onClick={() =>
+                                                                                handleColumnHover(
                                                                                     index
                                                                                 )
                                                                             }
-                                                                        />
-                                                                    </Cell>
-                                                                    {columns.map(
-                                                                        (
-                                                                            cell: any,
-                                                                            index: number
-                                                                        ) => {
-                                                                            return (
-                                                                                <Cell
-                                                                                    key={
-                                                                                        index
-                                                                                    }
-                                                                                >
-                                                                                    <Input
-                                                                                        size={
-                                                                                            "xs"
-                                                                                        }
-                                                                                        border={
-                                                                                            "none"
-                                                                                        }
-                                                                                        m={
-                                                                                            "1px"
-                                                                                        }
-                                                                                        w={
-                                                                                            "95%"
-                                                                                        }
-                                                                                        fontSize={
-                                                                                            "14px"
-                                                                                        }
-                                                                                        focusBorderColor="blue"
-                                                                                        value={
-                                                                                            item[
-                                                                                                cell
-                                                                                                    .name
-                                                                                            ]
-                                                                                        }
-                                                                                        onChange={(
-                                                                                            event: React.ChangeEvent<HTMLInputElement>
-                                                                                        ) =>
-                                                                                            handleUpdate(
-                                                                                                event
-                                                                                                    .target
-                                                                                                    .value,
-                                                                                                item,
-                                                                                                cell.name
-                                                                                            )
-                                                                                        }
-                                                                                        onBlur={(
-                                                                                            event: React.ChangeEvent<HTMLInputElement>
-                                                                                        ) =>
-                                                                                            updateCells(
-                                                                                                event
-                                                                                                    .target
-                                                                                                    .value,
-                                                                                                item,
-                                                                                                cell.name
-                                                                                            )
-                                                                                        }
-                                                                                    />
-                                                                                </Cell>
-                                                                            );
-                                                                        }
-                                                                    )}
-                                                                    {/* <Cell></Cell> */}
-                                                                </Row>
+                                                                        >
+                                                                            <Text
+                                                                                as={
+                                                                                    "b"
+                                                                                }
+                                                                            >
+                                                                                {column.name
+                                                                                    .split(
+                                                                                        "_"
+                                                                                    )
+                                                                                    .join(
+                                                                                        " "
+                                                                                    )
+                                                                                    .toUpperCase()}
+                                                                            </Text>
+                                                                        </MenuButton>
+                                                                        <MenuList>
+                                                                            <MenuItem
+                                                                                onClick={() =>
+                                                                                    deleteColumn(
+                                                                                        column?._id as any
+                                                                                    )
+                                                                                }
+                                                                            >
+                                                                                Delete
+                                                                                Column
+                                                                            </MenuItem>
+                                                                        </MenuList>
+                                                                    </Menu>
+                                                                </Th>
                                                             );
                                                         }
                                                     )}
-                                                    {showRowForm ? (
-                                                        <>
-                                                            <Row
-                                                                item={{
-                                                                    id: "",
-                                                                    nodes: undefined,
-                                                                }}
-                                                            >
-                                                                <Cell></Cell>
-                                                                {columns.map(
+                                                    <Th>
+                                                        <Button
+                                                            onClick={onOpen}
+                                                            variant={"unstyled"}
+                                                            float={"right"}
+                                                        >
+                                                            <BsPlusCircle />
+                                                        </Button>
+                                                    </Th>
+                                                </Tr>
+                                            </Thead>
+
+                                            <Tbody>
+                                                {showRowForm ||
+                                                rows?.length ||
+                                                0 > 0 ? null : (
+                                                    <Tr>
+                                                        <Td
+                                                            colSpan={
+                                                                (columns?.length ||
+                                                                    0) + 2
+                                                            }
+                                                        >
+                                                            <Center m={6}>
+                                                                <Text
+                                                                    color={
+                                                                        "rgb(123, 128, 154)"
+                                                                    }
+                                                                >
+                                                                    This data
+                                                                    collection
+                                                                    is empty.
+                                                                </Text>
+                                                            </Center>
+                                                        </Td>
+                                                    </Tr>
+                                                )}
+                                                {data?.map(
+                                                    (
+                                                        row: any,
+                                                        index: number
+                                                    ) => {
+                                                        return (
+                                                            <Tr key={index}>
+                                                                <Td>
+                                                                    <Checkbox
+                                                                        onChange={(
+                                                                            event: React.ChangeEvent<HTMLInputElement>
+                                                                        ) =>
+                                                                            onDeleteRowCheckboxChange(
+                                                                                event,
+                                                                                row
+                                                                            )
+                                                                        }
+                                                                    />
+                                                                </Td>
+                                                                {row.cells.map(
                                                                     (
-                                                                        cell: any,
+                                                                        cell: TCell,
                                                                         index: number
                                                                     ) => {
                                                                         return (
-                                                                            <Cell
+                                                                            <Td
                                                                                 key={
                                                                                     index
                                                                                 }
                                                                             >
                                                                                 <Input
+                                                                                    value={
+                                                                                        editMode.includes(
+                                                                                            cell?._id
+                                                                                        )
+                                                                                            ? tempValue
+                                                                                            : cell.value
+                                                                                    }
                                                                                     size={
-                                                                                        "xs"
+                                                                                        "sm"
                                                                                     }
-                                                                                    m={
-                                                                                        "1px"
-                                                                                    }
-                                                                                    w={
-                                                                                        "95%"
+                                                                                    variant={
+                                                                                        "unstyled"
                                                                                     }
                                                                                     onChange={(
                                                                                         event: React.ChangeEvent<HTMLInputElement>
                                                                                     ) =>
-                                                                                        handleAddCell(
-                                                                                            event
-                                                                                                .target
-                                                                                                .value,
-                                                                                            cell.name
+                                                                                        handleUpdateRowInputChange(
+                                                                                            event,
+                                                                                            row,
+                                                                                            cell
                                                                                         )
                                                                                     }
+                                                                                    onFocus={(
+                                                                                        event: React.FocusEvent<
+                                                                                            HTMLInputElement,
+                                                                                            Element
+                                                                                        >
+                                                                                    ) =>
+                                                                                        handleUpdateRowOnFocus(
+                                                                                            event,
+                                                                                            cell
+                                                                                        )
+                                                                                    }
+                                                                                    onBlur={(
+                                                                                        event: React.FocusEvent<
+                                                                                            HTMLInputElement,
+                                                                                            Element
+                                                                                        >
+                                                                                    ) =>
+                                                                                        handleUpdateRowOnBlur(
+                                                                                            event,
+                                                                                            cell
+                                                                                        )
+                                                                                    }
+                                                                                    isDisabled={
+                                                                                        rowsLoading ||
+                                                                                        deletingRows ||
+                                                                                        creatingRow ||
+                                                                                        rowsFetching
+                                                                                    }
                                                                                 />
-                                                                            </Cell>
+                                                                            </Td>
                                                                         );
                                                                     }
                                                                 )}
-                                                            </Row>
-                                                        </>
-                                                    ) : (
+                                                            </Tr>
+                                                        );
+                                                    }
+                                                )}
+                                                {/* <Tr>
+                                                    <Td>inches</Td>
+                                                    <Td>millimetres (mm)</Td>
+                                                    <Td>25.4</Td>
+                                                </Tr>
+                                                <Tr>
+                                                    <Td>feet</Td>
+                                                    <Td>centimetres (cm)</Td>
+                                                    <Td>30.48</Td>
+                                                </Tr> */}
+
+                                                {showRowForm ? (
+                                                    <Tr>
+                                                        <Td
+                                                            borderBottom={
+                                                                "none"
+                                                            }
+                                                            pl={"2px"}
+                                                        >
+                                                            <IconButton
+                                                                onClick={
+                                                                    handleSaveRowClick
+                                                                }
+                                                                size={"xs"}
+                                                                variant={
+                                                                    "unstyled"
+                                                                }
+                                                                aria-label=""
+                                                                icon={
+                                                                    <AiOutlineCheck
+                                                                        size={
+                                                                            "15px"
+                                                                        }
+                                                                    />
+                                                                }
+                                                            ></IconButton>
+                                                            <IconButton
+                                                                onClick={() =>
+                                                                    setShowRowForm(
+                                                                        false
+                                                                    )
+                                                                }
+                                                                size={"xs"}
+                                                                variant={
+                                                                    "unstyled"
+                                                                }
+                                                                aria-label=""
+                                                                icon={
+                                                                    <AiOutlineClose
+                                                                        size={
+                                                                            "15px"
+                                                                        }
+                                                                    />
+                                                                }
+                                                            ></IconButton>
+                                                        </Td>
+                                                        {columns?.map(
+                                                            (
+                                                                column: TColumn,
+                                                                index: number
+                                                            ) => {
+                                                                return (
+                                                                    <Td
+                                                                        key={
+                                                                            index
+                                                                        }
+                                                                        borderBottom={
+                                                                            "none"
+                                                                        }
+                                                                    >
+                                                                        <Box>
+                                                                            <Input
+                                                                                name={
+                                                                                    column.name
+                                                                                }
+                                                                                onChange={
+                                                                                    handleAddRowInputChange
+                                                                                }
+                                                                                value={
+                                                                                    row[
+                                                                                        column
+                                                                                            .name
+                                                                                    ]
+                                                                                }
+                                                                                size={
+                                                                                    "sm"
+                                                                                }
+                                                                                autoFocus={
+                                                                                    index ==
+                                                                                    0
+                                                                                }
+                                                                                ref={(
+                                                                                    el
+                                                                                ) => {
+                                                                                    if (
+                                                                                        index ==
+                                                                                            0 &&
+                                                                                        firstInputFocus
+                                                                                    ) {
+                                                                                        el?.focus();
+                                                                                        el?.scrollIntoView();
+                                                                                    } else {
+                                                                                        setFirstInputFocus(
+                                                                                            false
+                                                                                        );
+                                                                                    }
+                                                                                }}
+                                                                                onKeyUp={(
+                                                                                    event: React.KeyboardEvent<HTMLInputElement>
+                                                                                ) =>
+                                                                                    handleAddRowOnKeyUp(
+                                                                                        event
+                                                                                    )
+                                                                                }
+                                                                            />
+                                                                        </Box>
+                                                                    </Td>
+                                                                );
+                                                            }
+                                                        )}
+                                                    </Tr>
+                                                ) : (
+                                                    <Tr>
                                                         <Button
-                                                            onClick={() =>
+                                                            variant={"unstyled"}
+                                                            onClick={() => {
                                                                 setShowRowForm(
                                                                     true
-                                                                )
+                                                                );
+                                                            }}
+                                                            leftIcon={
+                                                                <AiOutlinePlus />
                                                             }
-                                                            size={"xs"}
-                                                            margin={"10px"}
-                                                            marginLeft={"14px"}
-                                                            bg={"none"}
+                                                            w={"10px"}
+                                                            size={"sm"}
+                                                            m={"10px"}
                                                             color={
                                                                 "rgb(123, 128, 154)"
                                                             }
-                                                            p={"0"}
-                                                            w={"100px"}
                                                         >
-                                                            + Add Row
+                                                            Add Row
                                                         </Button>
-                                                    )}
-                                                </Body>
-                                            </>
-                                        )}
-                                    </Table>
+                                                    </Tr>
+                                                )}
+                                            </Tbody>
+                                        </Table>
+                                    </TableContainer>
+
                                     {showRowForm ? (
                                         <>
-                                            <IconContext.Provider
+                                            {/* <IconContext.Provider
                                                 value={{ size: "18" }}
                                             >
                                                 <Button
@@ -820,9 +732,10 @@ const ViewOne = () => {
                                                     position={"relative"}
                                                     bottom={"40px"}
                                                     right={"15px"}
-                                                    onClick={() =>
-                                                        setShowRowForm(false)
-                                                    }
+                                                    onClick={() => {
+                                                        createRow(row);
+                                                        setShowRowForm(false);
+                                                    }}
                                                 >
                                                     <AiOutlineCheckCircle />
                                                 </Button>
@@ -843,40 +756,51 @@ const ViewOne = () => {
                                                 >
                                                     <AiOutlineCloseCircle />
                                                 </Button>
-                                            </IconContext.Provider>
+                                            </IconContext.Provider> */}
                                         </>
                                     ) : null}
                                 </CardBody>
                             </Card>
-                            {numberChecked > 0 ? (
-                                <Card position={"relative"}>
-                                    <Card
+                            {showDeleteBox ? (
+                                <Box position={"relative"}>
+                                    <Box
                                         position={"fixed"}
                                         bottom={30}
-                                        left={{ base: 30, lg: 300 }}
-                                        w={{ sm: "300px", md: "500px" }}
+                                        left={{ base: 0, lg: 280 }}
+                                        w={{
+                                            sm: "100%",
+                                            md: "100%",
+                                            lg: "70%",
+                                        }}
+                                        p={"18px"}
                                     >
-                                        <CardBody>
-                                            <Flex>
-                                                <Text mt={"10px"}>
-                                                    You've selected{" "}
-                                                    {numberChecked}{" "}
-                                                    {numberChecked === 1
-                                                        ? "item"
-                                                        : "items"}
-                                                    . Click to delete them.
-                                                </Text>
-                                                <Spacer />
-                                                <Button
-                                                    colorScheme="red"
-                                                    onClick={deleteItems}
-                                                >
-                                                    Delete
-                                                </Button>
-                                            </Flex>
-                                        </CardBody>
-                                    </Card>
-                                </Card>
+                                        <Card
+                                            variant={"elevated"}
+                                            borderWidth={"1px"}
+                                            borderColor={"lightgray"}
+                                        >
+                                            <CardBody>
+                                                <Flex>
+                                                    <Text mt={"10px"}>
+                                                        You've selected{" "}
+                                                        {deleteRowIds.length}{" "}
+                                                        {numberChecked === 1
+                                                            ? "item"
+                                                            : "items"}
+                                                        . Click to delete them.
+                                                    </Text>
+                                                    <Spacer />
+                                                    <Button
+                                                        colorScheme="red"
+                                                        onClick={deleteItems}
+                                                    >
+                                                        Delete
+                                                    </Button>
+                                                </Flex>
+                                            </CardBody>
+                                        </Card>
+                                    </Box>
+                                </Box>
                             ) : null}
                             {/* </SimpleGrid> */}
                         </Container>

@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store";
 import { LoginRequest, UserResponse, ResetPasswordRequestRequest, BasicResponse } from "../../features/auth/types";
-import { TJoinWorkspace, TNotification, TUser, TWorkspace, TWorkspaceUsers } from "../../types";
+import { TCell, TColumn, TDataCollection, TJoinWorkspace, TNotification, TRow, TTableData, TUser, TWorkspace, TWorkspaceUsers } from "../../types";
 
 export const api = createApi({
     baseQuery: fetchBaseQuery({
@@ -12,7 +12,7 @@ export const api = createApi({
             return headers;
         }
     }),
-    tagTypes: ["auth", "Workspace", "Notification"],
+    tagTypes: ["auth", "Workspace", "Notification", "DataCollection", "Column", "Rows"],
     endpoints: (builder) => ({
         login: builder.mutation<UserResponse, LoginRequest>({
             query: (credentials) => ({
@@ -115,6 +115,99 @@ export const api = createApi({
                 method: "POST"
             }),
             invalidatesTags: ["Notification"]
+        }),
+        getDataCollections: builder.query<TDataCollection[], null>({
+            query: () => ({
+                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections`,
+            }),
+            providesTags: ["DataCollection"]
+        }),
+        createDataCollecion: builder.mutation<TDataCollection, TDataCollection>({
+            query: (dataCollection) => ({
+                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections`,
+                method: "POST",
+                body: dataCollection
+            }),
+            invalidatesTags: ["DataCollection"]
+        }),
+        updateDataCollection: builder.mutation<TDataCollection, TDataCollection>({
+            query: (dataCollection) => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/updateDataCollections/${dataCollection._id}`,
+                method: "POST",
+                body: dataCollection
+            }),
+            invalidatesTags: ["DataCollection"]
+        }),
+        deleteDataCollection: builder.mutation<{success: boolean}, string>({
+            query: (dataCollectionId) => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/deleteDataCollections/${dataCollectionId}`,
+                method: "POST"
+            }),
+            invalidatesTags: ["DataCollection"]
+        }),
+        getDataCollection: builder.query<TDataCollection, null>({
+            query: () => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${localStorage.getItem("dataCollectionId")}`,
+            }),
+            providesTags: ["DataCollection"],
+        }),
+        getColumns: builder.query<TColumn[], null>({
+            query: () => ({
+                url: `/dataCollections/${localStorage.getItem("dataCollectionId")}/columns`
+            }),
+            providesTags: ["Column"]
+        }),
+        createColumn: builder.mutation<TColumn, TColumn>({
+            query: (column) => ({
+                url: `/dataCollections/${localStorage.getItem("dataCollectionId")}/columns`,
+                method: "POST",
+                body: column
+            }),
+            invalidatesTags: ["Column", "Rows"]
+        }),
+        updateColumn: builder.mutation<TColumn, TColumn>({
+            query: (column) => ({
+                url: `/dataCollections/${localStorage.getItem("dataCollectionId")}/columns/update/${column._id}`,
+                method: "POST",
+                body: column
+            }),
+            invalidatesTags: ["Column"],
+        }),
+        deleteColumn: builder.mutation<TColumn, string>({
+            query: (columnId) => ({
+                url: `/dataCollections/${localStorage.getItem("dataCollectionId")}/columns/delete/${columnId}`,
+                method: "POST",
+            }),
+            invalidatesTags: ["Column"],
+        }),
+        getRows: builder.query<any[], null>({
+            query: () => ({
+                url: `/dataCollections/${localStorage.getItem("dataCollectionId")}/rows`
+            }),
+            providesTags: ["Rows"]
+        }),
+        createRow: builder.mutation<TTableData, TTableData>({
+            query: (row) => ({
+                url: `/dataCollections/${localStorage.getItem("dataCollectionId")}/rows`,
+                method: "POST",
+                body: row
+            }),
+            invalidatesTags: ["Rows"]
+        }),
+        deleteRow: builder.mutation<TRow, string>({
+            query: (rowId) => ({
+                url: `/dataCollections/${localStorage.getItem("dataCollectionId")}/rows/delete/${rowId}`,
+                method: "POST"
+            }),
+            invalidatesTags: ["Rows"]
+        }),
+        updateCell: builder.mutation<TCell, TCell>({
+            query: (cell) => ({
+                url: `/dataCollections/${localStorage.getItem("dataCollectionId")}/cells/${cell._id}`,
+                method: "POST",
+                body: cell,
+            }),
+            invalidatesTags: ["Rows"],
         })
     })
 })
@@ -134,5 +227,18 @@ export const {
     useJoinWorkspaceMutation,
     useCallUpdateMutation,
     useGetNotificationsQuery,
-    useCallNotificationsUpdateMutation
+    useCallNotificationsUpdateMutation,
+    useGetDataCollectionsQuery,
+    useCreateDataCollecionMutation,
+    useUpdateDataCollectionMutation,
+    useDeleteDataCollectionMutation,
+    useGetDataCollectionQuery,
+    useGetColumnsQuery,
+    useCreateColumnMutation,
+    useUpdateColumnMutation,
+    useDeleteColumnMutation,
+    useGetRowsQuery,
+    useCreateRowMutation,
+    useDeleteRowMutation,
+    useUpdateCellMutation
 } = api

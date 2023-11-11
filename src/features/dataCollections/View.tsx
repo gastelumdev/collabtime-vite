@@ -1,4 +1,11 @@
 import {
+    useGetDataCollectionsQuery,
+    useCreateDataCollecionMutation,
+    useDeleteDataCollectionMutation,
+    useUpdateDataCollectionMutation,
+} from "../../app/services/api";
+
+import {
     Box,
     Button,
     Card,
@@ -17,29 +24,12 @@ import SideBarLayout from "../../components/Layouts/SideBarLayout";
 
 import { BsFiletypeDoc, BsPersonWorkspace } from "react-icons/bs";
 import { IconContext, IconType } from "react-icons";
-import { useState } from "react";
 import { AiOutlineDelete, AiOutlineMessage } from "react-icons/ai";
 import Divider from "../../components/Divider/Divider";
 import { BiTable } from "react-icons/bi";
 import Edit from "./Edit";
-import { TDataCollection } from "../../types";
 import Create from "./Create";
 import { FaTasks } from "react-icons/fa";
-
-const dataCollections = [
-    {
-        _id: "1",
-        name: "Data Collection 1",
-        workspace: "1",
-        form: {
-            active: false,
-            type: "null",
-            emails: [],
-        },
-        columns: ["1", "2", "3", "4"],
-        rows: ["1", "2", "3"],
-    },
-];
 
 interface LinkItemProps {
     name: string;
@@ -52,35 +42,50 @@ const LinkItems: Array<LinkItemProps> = [
     {
         name: "Data Collections",
         icon: BiTable,
-        path: "/workspaces/1/dataCollections",
+        path: `/workspaces/${localStorage.getItem(
+            "workspaceId"
+        )}/dataCollections`,
     },
-    { name: "Tasks", icon: FaTasks, path: "/workspaces/1/taskLists" },
-    { name: "Documents", icon: BsFiletypeDoc, path: "/workspaces/1/documents" },
+    {
+        name: "Tasks",
+        icon: FaTasks,
+        path: `/workspaces/${localStorage.getItem("workspaceId")}/taskLists`,
+    },
+    {
+        name: "Documents",
+        icon: BsFiletypeDoc,
+        path: `/workspaces/${localStorage.getItem("workspaceId")}/documents`,
+    },
     {
         name: "Message Board",
         icon: AiOutlineMessage,
-        path: "/workspaces/1/messageBoard",
+        path: `/workspaces/${localStorage.getItem("workspaceId")}/messageBoard`,
     },
 ];
 
 const View = () => {
-    const [data, setData] = useState<TDataCollection[]>(dataCollections);
-    const updateDataCollection = (dataCollection: TDataCollection) => {
-        const dataCopy = data;
+    // const [data, setData] = useState<TDataCollection[]>(dataCollections);
+    const { data } = useGetDataCollectionsQuery(null);
+    const [createDataCollection] = useCreateDataCollecionMutation();
+    const [updateDataCollection] = useUpdateDataCollectionMutation();
+    const [deleteDataCollection] = useDeleteDataCollectionMutation();
 
-        const filteredData = dataCopy.filter((item) => {
-            return item._id !== dataCollection._id;
-        });
+    // const updateDataCollection = (dataCollection: TDataCollection) => {
+    //     const dataCopy = data;
 
-        console.log(filteredData);
-        console.log(dataCollection);
+    //     const filteredData = dataCopy.filter((item) => {
+    //         return item._id !== dataCollection._id;
+    //     });
 
-        setData([...filteredData, dataCollection]);
-    };
+    //     console.log(filteredData);
+    //     console.log(dataCollection);
 
-    const addNewDataCollecion = (dataCollection: TDataCollection) => {
-        setData([...data, dataCollection]);
-    };
+    //     setData([...filteredData, dataCollection]);
+    // };
+
+    // const addNewDataCollecion = (dataCollection: TDataCollection) => {
+    //     setData([...data, dataCollection]);
+    // };
     return (
         <SideBarLayout linkItems={LinkItems}>
             <Box>
@@ -120,7 +125,7 @@ const View = () => {
                                 <Box pb={"20px"}>
                                     <Create
                                         addNewDataCollection={
-                                            addNewDataCollecion
+                                            createDataCollection
                                         }
                                     />
                                 </Box>
@@ -132,7 +137,7 @@ const View = () => {
                             // templateColumns="repeat(3, minmax(300px, 1fr))"
                             columns={{ base: 1, sm: 1, md: 2, lg: 2, xl: 3 }}
                         >
-                            {data.map((dataCollection, index) => {
+                            {data?.map((dataCollection, index) => {
                                 return (
                                     <Card
                                         key={index}
@@ -144,7 +149,17 @@ const View = () => {
                                         <CardHeader
                                             h={"60px"}
                                             as={"a"}
-                                            href={`/workspaces/${dataCollection._id}/dataCollections/1`}
+                                            href={`/workspaces/${localStorage.getItem(
+                                                "workspaceId"
+                                            )}/dataCollections/${
+                                                dataCollection._id
+                                            }`}
+                                            onClick={() =>
+                                                localStorage.setItem(
+                                                    "dataCollectionId",
+                                                    dataCollection?._id || ""
+                                                )
+                                            }
                                         >
                                             <Flex>
                                                 <Flex
@@ -210,7 +225,17 @@ const View = () => {
                                         <CardBody
                                             py={0}
                                             as={"a"}
-                                            href={`/workspaces/1/dataCollections/1`}
+                                            href={`/workspaces/${localStorage.getItem(
+                                                "workspaceId"
+                                            )}/dataCollections/${
+                                                dataCollection._id
+                                            }`}
+                                            onClick={() =>
+                                                localStorage.setItem(
+                                                    "dataCollectionId",
+                                                    dataCollection?._id || ""
+                                                )
+                                            }
                                         >
                                             <Center>
                                                 <Text
@@ -245,6 +270,12 @@ const View = () => {
                                                 leftIcon={<AiOutlineDelete />}
                                                 color={"rgb(123, 128, 154)"}
                                                 zIndex={10}
+                                                onClick={() =>
+                                                    deleteDataCollection(
+                                                        dataCollection?._id ||
+                                                            ""
+                                                    )
+                                                }
                                             ></Button>
                                         </CardFooter>
                                     </Card>

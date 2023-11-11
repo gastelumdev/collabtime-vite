@@ -6,6 +6,7 @@ import PrimaryButton from "../../components/Buttons/PrimaryButton";
 
 let defaultValues: TDataCollection = {
     name: "",
+    description: "",
     workspace: "",
     form: {
         active: false,

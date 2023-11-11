@@ -6,6 +6,7 @@ import PrimaryButton from "../../components/Buttons/PrimaryButton";
 
 let defaultValues: TDataCollection = {
     name: "",
+    description: "",
     workspace: "",
     form: {
         active: false,
@@ -52,7 +53,7 @@ const Create = ({ addNewDataCollection }: IProps) => {
         <>
             <PrimaryButton onClick={showDrawer}>NEW COLLECTION</PrimaryButton>
             <Drawer
-                title="Create a new workspace"
+                title="Create a new data collection"
                 width={500}
                 onClose={onClose}
                 open={open}

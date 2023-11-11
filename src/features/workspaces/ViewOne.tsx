@@ -27,6 +27,7 @@ import { BsFiletypeDoc, BsListTask, BsPersonWorkspace } from "react-icons/bs";
 import { AiOutlineMessage, AiOutlineTable } from "react-icons/ai";
 import SecondaryCard from "../../components/SecondaryCard";
 import Invite from "./Invite";
+import { useEffect } from "react";
 
 /**
  * This is dummy data that simulates what will be brought in with RTK
@@ -90,6 +91,10 @@ const ViewOne = () => {
     const { id } = useParams();
     const { data } = useGetOneWorkspaceQuery(id as string);
     const { data: workspaceUser } = useGetWorkspaceUsersQuery(id as string);
+
+    useEffect(() => {
+        localStorage.setItem("workspaceId", id || "");
+    }, []);
 
     /**
      * Filters the data to get the workspace with the id in the url

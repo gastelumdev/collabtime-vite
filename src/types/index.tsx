@@ -63,6 +63,7 @@ export type TNotification = {
 export type TDataCollection = {
     _id?: string;
     name: string;
+    description: string;
     workspace: string;
     form: TForm;
     columns: string[];
@@ -84,12 +85,12 @@ export type TColumn = {
 export type TRow = {
     _id?: string;
     dataCollectionId: string;
-    cells: string[];
+    cells: string[] | TCell;
 };
 
 export type TCell = {
     _id: string;
-    rowId: string;
+    row: string;
     name: string;
     type: string;
     people?: string[];
