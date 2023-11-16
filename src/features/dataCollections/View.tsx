@@ -3,6 +3,7 @@ import {
     useCreateDataCollecionMutation,
     useDeleteDataCollectionMutation,
     useUpdateDataCollectionMutation,
+    useGetUserQuery,
 } from "../../app/services/api";
 
 import {
@@ -30,6 +31,7 @@ import { BiTable } from "react-icons/bi";
 import Edit from "./Edit";
 import Create from "./Create";
 import { FaTasks } from "react-icons/fa";
+import { useEffect, useState } from "react";
 
 interface LinkItemProps {
     name: string;
@@ -42,9 +44,7 @@ const LinkItems: Array<LinkItemProps> = [
     {
         name: "Data Collections",
         icon: BiTable,
-        path: `/workspaces/${localStorage.getItem(
-            "workspaceId"
-        )}/dataCollections`,
+        path: `/workspaces/${localStorage.getItem("workspaceId")}/dataCollections`,
     },
     {
         name: "Tasks",
@@ -65,27 +65,26 @@ const LinkItems: Array<LinkItemProps> = [
 
 const View = () => {
     // const [data, setData] = useState<TDataCollection[]>(dataCollections);
+    const { data: user } = useGetUserQuery(localStorage.getItem("userId") || "");
     const { data } = useGetDataCollectionsQuery(null);
     const [createDataCollection] = useCreateDataCollecionMutation();
     const [updateDataCollection] = useUpdateDataCollectionMutation();
     const [deleteDataCollection] = useDeleteDataCollectionMutation();
 
-    // const updateDataCollection = (dataCollection: TDataCollection) => {
-    //     const dataCopy = data;
+    const [permissions, setPermissions] = useState<number>();
 
-    //     const filteredData = dataCopy.filter((item) => {
-    //         return item._id !== dataCollection._id;
-    //     });
+    useEffect(() => {
+        getPermissions();
+    }, [user]);
 
-    //     console.log(filteredData);
-    //     console.log(dataCollection);
+    const getPermissions = () => {
+        for (const workspace of user?.workspaces || []) {
+            if (workspace.id == localStorage.getItem("workspaceId")) {
+                setPermissions(workspace.permissions);
+            }
+        }
+    };
 
-    //     setData([...filteredData, dataCollection]);
-    // };
-
-    // const addNewDataCollecion = (dataCollection: TDataCollection) => {
-    //     setData([...data, dataCollection]);
-    // };
     return (
         <SideBarLayout linkItems={LinkItems}>
             <Box>
@@ -103,31 +102,18 @@ const View = () => {
                         >
                             <Flex>
                                 <Box>
-                                    <Heading
-                                        size={"sm"}
-                                        mb={"12px"}
-                                        color={"rgb(52, 71, 103)"}
-                                    >
+                                    <Heading size={"sm"} mb={"12px"} color={"rgb(52, 71, 103)"}>
                                         Data Collecions
                                     </Heading>
-                                    <Text
-                                        color={"rgb(123, 128, 154)"}
-                                        fontSize={"md"}
-                                        fontWeight={300}
-                                    >
-                                        Create data collection tables to
-                                        visualize and manage your data.
+                                    <Text color={"rgb(123, 128, 154)"} fontSize={"md"} fontWeight={300}>
+                                        Create data collection tables to visualize and manage your data.
                                     </Text>
                                 </Box>
                             </Flex>
                             <Flex>
                                 <Spacer />
                                 <Box pb={"20px"}>
-                                    <Create
-                                        addNewDataCollection={
-                                            createDataCollection
-                                        }
-                                    />
+                                    <Create addNewDataCollection={createDataCollection} />
                                 </Box>
                             </Flex>
                         </SimpleGrid>
@@ -149,16 +135,11 @@ const View = () => {
                                         <CardHeader
                                             h={"60px"}
                                             as={"a"}
-                                            href={`/workspaces/${localStorage.getItem(
-                                                "workspaceId"
-                                            )}/dataCollections/${
+                                            href={`/workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${
                                                 dataCollection._id
                                             }`}
                                             onClick={() =>
-                                                localStorage.setItem(
-                                                    "dataCollectionId",
-                                                    dataCollection?._id || ""
-                                                )
+                                                localStorage.setItem("dataCollectionId", dataCollection?._id || "")
                                             }
                                         >
                                             <Flex>
@@ -201,13 +182,8 @@ const View = () => {
                                                         // bottom={7}
                                                         pt={7}
                                                     >
-                                                        <Heading
-                                                            size="sm"
-                                                            color={"#575757"}
-                                                        >
-                                                            {
-                                                                dataCollection.name
-                                                            }
+                                                        <Heading size="sm" color={"#575757"}>
+                                                            {dataCollection.name}
                                                         </Heading>
                                                         {/* <Text>
                                                         Creator, Chakra UI
@@ -225,23 +201,15 @@ const View = () => {
                                         <CardBody
                                             py={0}
                                             as={"a"}
-                                            href={`/workspaces/${localStorage.getItem(
-                                                "workspaceId"
-                                            )}/dataCollections/${
+                                            href={`/workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${
                                                 dataCollection._id
                                             }`}
                                             onClick={() =>
-                                                localStorage.setItem(
-                                                    "dataCollectionId",
-                                                    dataCollection?._id || ""
-                                                )
+                                                localStorage.setItem("dataCollectionId", dataCollection?._id || "")
                                             }
                                         >
                                             <Center>
-                                                <Text
-                                                    color={"rgb(123, 128, 154)"}
-                                                    fontSize={"md"}
-                                                >
+                                                <Text color={"rgb(123, 128, 154)"} fontSize={"md"}>
                                                     {/* {dataCollection.description} */}
                                                 </Text>
                                             </Center>
@@ -256,28 +224,22 @@ const View = () => {
                                     src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
                                     alt="Chakra UI"
                                 /> */}
-
-                                        <CardFooter p={"5px"}>
-                                            <Edit
-                                                dataCollection={dataCollection}
-                                                updateDataCollection={
-                                                    updateDataCollection
-                                                }
-                                            />
-                                            <Button
-                                                flex="1"
-                                                variant="ghost"
-                                                leftIcon={<AiOutlineDelete />}
-                                                color={"rgb(123, 128, 154)"}
-                                                zIndex={10}
-                                                onClick={() =>
-                                                    deleteDataCollection(
-                                                        dataCollection?._id ||
-                                                            ""
-                                                    )
-                                                }
-                                            ></Button>
-                                        </CardFooter>
+                                        {(permissions || 0) > 1 ? (
+                                            <CardFooter p={"5px"}>
+                                                <Edit
+                                                    dataCollection={dataCollection}
+                                                    updateDataCollection={updateDataCollection}
+                                                />
+                                                <Button
+                                                    flex="1"
+                                                    variant="ghost"
+                                                    leftIcon={<AiOutlineDelete />}
+                                                    color={"rgb(123, 128, 154)"}
+                                                    zIndex={10}
+                                                    onClick={() => deleteDataCollection(dataCollection?._id || "")}
+                                                ></Button>
+                                            </CardFooter>
+                                        ) : null}
                                     </Card>
                                     // </Box>
                                 );

@@ -9,11 +9,5 @@ interface PrivateOutletProps {
 export function PrivateOutlet({ redirectPath = "/login" }: PrivateOutletProps) {
     const user = useAuth();
 
-    console.log(user.user);
-
-    return localStorage.getItem("token") || user.user ? (
-        <Outlet />
-    ) : (
-        <Navigate to={redirectPath} />
-    );
+    return localStorage.getItem("token") || user.user ? <Outlet /> : <Navigate to={redirectPath} />;
 }

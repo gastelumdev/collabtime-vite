@@ -9,6 +9,7 @@ import {
     useDeleteRowMutation,
     useUpdateCellMutation,
     useGetDataCollectionQuery,
+    useGetUserQuery,
 } from "../../app/services/api";
 import {
     Box,
@@ -100,6 +101,8 @@ const ViewOne = () => {
     const { dataCollectionId } = useParams();
     const { isOpen, onOpen, onClose } = useDisclosure();
 
+    const { data: user } = useGetUserQuery(localStorage.getItem("userId") || "");
+
     const { data: dataCollection } = useGetDataCollectionQuery(null);
 
     const { data: columns } = useGetColumnsQuery(null);
@@ -149,6 +152,20 @@ const ViewOne = () => {
     const [showDeleteBox, setShowDeleteBox] = useState<boolean>(false);
 
     const [firstInputFocus, setFirstInputFocus] = useState(true);
+
+    const [permissions, setPermissions] = useState<number>();
+
+    useEffect(() => {
+        getPermissions();
+    }, [user]);
+
+    const getPermissions = () => {
+        for (const workspace of user?.workspaces || []) {
+            if (workspace.id == localStorage.getItem("workspaceId")) {
+                setPermissions(workspace.permissions);
+            }
+        }
+    };
 
     useEffect(() => {
         localStorage.setItem("dataCollectionId", dataCollectionId || "");
@@ -423,37 +440,49 @@ const ViewOne = () => {
                                         <Table size="sm">
                                             <Thead>
                                                 <Tr>
-                                                    <Th w={"5px"}></Th>
+                                                    {(permissions || 0) > 1 ? <Th w={"5px"}></Th> : null}
                                                     {columns?.map((column: TColumn, index: number) => {
                                                         return (
                                                             <Th key={index}>
-                                                                <Menu>
-                                                                    <MenuButton
-                                                                        onClick={() => handleColumnHover(index)}
-                                                                    >
-                                                                        <Text as={"b"}>
-                                                                            {column.name
-                                                                                .split("_")
-                                                                                .join(" ")
-                                                                                .toUpperCase()}
-                                                                        </Text>
-                                                                    </MenuButton>
-                                                                    <MenuList>
-                                                                        <MenuItem
-                                                                            onClick={() => handleDeleteColumn(column)}
+                                                                {(permissions || 0) > 1 ? (
+                                                                    <Menu>
+                                                                        <MenuButton
+                                                                            onClick={() => handleColumnHover(index)}
                                                                         >
-                                                                            Delete Column
-                                                                        </MenuItem>
-                                                                    </MenuList>
-                                                                </Menu>
+                                                                            <Text as={"b"}>
+                                                                                {column.name
+                                                                                    .split("_")
+                                                                                    .join(" ")
+                                                                                    .toUpperCase()}
+                                                                            </Text>
+                                                                        </MenuButton>
+                                                                        <MenuList>
+                                                                            <MenuItem
+                                                                                onClick={() =>
+                                                                                    handleDeleteColumn(column)
+                                                                                }
+                                                                            >
+                                                                                Delete Column
+                                                                            </MenuItem>
+                                                                        </MenuList>
+                                                                    </Menu>
+                                                                ) : (
+                                                                    column.name
+                                                                )}
                                                             </Th>
                                                         );
                                                     })}
-                                                    <Th>
-                                                        <Button onClick={onOpen} variant={"unstyled"} float={"right"}>
-                                                            <BsPlusCircle />
-                                                        </Button>
-                                                    </Th>
+                                                    {(permissions || 0) > 1 ? (
+                                                        <Th>
+                                                            <Button
+                                                                onClick={onOpen}
+                                                                variant={"unstyled"}
+                                                                float={"right"}
+                                                            >
+                                                                <BsPlusCircle />
+                                                            </Button>
+                                                        </Th>
+                                                    ) : null}
                                                 </Tr>
                                             </Thead>
 
@@ -473,13 +502,15 @@ const ViewOne = () => {
                                                     console.log("ROW", row);
                                                     return (
                                                         <Tr key={index}>
-                                                            <Td>
-                                                                <Checkbox
-                                                                    onChange={(
-                                                                        event: React.ChangeEvent<HTMLInputElement>
-                                                                    ) => onDeleteRowCheckboxChange(event, row)}
-                                                                />
-                                                            </Td>
+                                                            {(permissions || 0) > 1 ? (
+                                                                <Td>
+                                                                    <Checkbox
+                                                                        onChange={(
+                                                                            event: React.ChangeEvent<HTMLInputElement>
+                                                                        ) => onDeleteRowCheckboxChange(event, row)}
+                                                                    />
+                                                                </Td>
+                                                            ) : null}
                                                             {row.cells.map((cell: TCell, index: number) => {
                                                                 console.log(cell.value);
                                                                 let bgColor: string = "";
@@ -589,7 +620,11 @@ const ViewOne = () => {
                                                                                         cell
                                                                                     )
                                                                                 }
-                                                                                isDisabled={rowsLoading || rowsFetching}
+                                                                                isDisabled={
+                                                                                    rowsLoading ||
+                                                                                    rowsFetching ||
+                                                                                    !((permissions || 0) > 1)
+                                                                                }
                                                                             />
                                                                         ) : (
                                                                             <Input
@@ -624,6 +659,7 @@ const ViewOne = () => {
                                                                                     creatingRow ||
                                                                                     rowsFetching
                                                                                 }
+                                                                                isReadOnly={!((permissions || 0) > 1)}
                                                                             />
                                                                         )}
                                                                     </Td>
@@ -758,7 +794,10 @@ const ViewOne = () => {
                                                     </Tr>
                                                 ) : (
                                                     <Tr>
-                                                        <Td p={"0"}>
+                                                        <Td
+                                                            p={"0"}
+                                                            display={(permissions || 0) > 1 ? "contents" : "none"}
+                                                        >
                                                             <Box position={"relative"}>
                                                                 <Box position={"absolute"} bottom={"-12"}>
                                                                     <Button

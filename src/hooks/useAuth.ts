@@ -7,3 +7,11 @@ export const useAuth = () => {
 
   return useMemo(() => ({ user }), [user])
 }
+
+export const usePermissions = () => {
+  const user = useSelector(selectCurrentUser);
+
+  if (localStorage.getItem("workspaceId")) {
+    console.log(user);
+  }
+}

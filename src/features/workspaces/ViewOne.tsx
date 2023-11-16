@@ -1,21 +1,8 @@
 import { useParams } from "react-router-dom";
 
-import {
-    useGetOneWorkspaceQuery,
-    useGetWorkspaceUsersQuery,
-} from "../../app/services/api";
+import { useGetOneWorkspaceQuery, useGetWorkspaceUsersQuery, useGetUserQuery } from "../../app/services/api";
 
-import {
-    Avatar,
-    AvatarGroup,
-    Box,
-    Container,
-    Flex,
-    Heading,
-    SimpleGrid,
-    Spacer,
-    Text,
-} from "@chakra-ui/react";
+import { Avatar, AvatarGroup, Box, Container, Flex, Heading, SimpleGrid, Spacer, Text } from "@chakra-ui/react";
 
 import { LinkItemProps, TUser } from "../../types";
 
@@ -27,7 +14,7 @@ import { BsFiletypeDoc, BsListTask, BsPersonWorkspace } from "react-icons/bs";
 import { AiOutlineMessage, AiOutlineTable } from "react-icons/ai";
 import SecondaryCard from "../../components/SecondaryCard";
 import Invite from "./Invite";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 /**
  * This is dummy data that simulates what will be brought in with RTK
@@ -89,96 +76,79 @@ const LinkItems: Array<LinkItemProps> = [
  */
 const ViewOne = () => {
     const { id } = useParams();
+    const { data: user } = useGetUserQuery(localStorage.getItem("userId") || "");
     const { data } = useGetOneWorkspaceQuery(id as string);
     const { data: workspaceUser } = useGetWorkspaceUsersQuery(id as string);
 
+    const [permissions, setPermissions] = useState<number>();
+
     useEffect(() => {
         localStorage.setItem("workspaceId", id || "");
-    }, []);
 
-    /**
-     * Filters the data to get the workspace with the id in the url
-     * NOTE: this will come from the backend and should be removed ***
-     * @constant {IWorkspace} workspace
-     */
-    // const workspace: TWorkspace = data.filter((item) => {
-    //     return item._id === id;
-    // })[0];
+        getPermissions();
+        console.log(permissions);
+    }, [user]);
+
+    const getPermissions = () => {
+        for (const workspace of user?.workspaces || []) {
+            if (workspace.id == localStorage.getItem("workspaceId")) {
+                console.log(workspace.id, localStorage.getItem("workspaceId"));
+                console.log(workspace.permissions);
+                setPermissions(workspace.permissions);
+            }
+        }
+    };
 
     return (
         <SideBarLayout linkItems={LinkItems}>
             <Box>
                 <Flex minH={"100vh"} bg={"#eff2f5"}>
                     <Container maxW={"8xl"} mt={{ base: 4, sm: 0 }}>
-                        <SimpleGrid
-                            spacing={6}
-                            columns={{ base: 1, sm: 2 }}
-                            pb={"50px"}
-                        >
+                        <SimpleGrid spacing={6} columns={{ base: 1, sm: 2 }} pb={"50px"}>
                             <Flex>
                                 <Box>
-                                    <Heading
-                                        size={"sm"}
-                                        mb={"12px"}
-                                        color={"rgb(52, 71, 103)"}
-                                    >
+                                    <Heading size={"sm"} mb={"12px"} color={"rgb(52, 71, 103)"}>
                                         {data?.name}
                                     </Heading>
-                                    <Text
-                                        color={"rgb(123, 128, 154)"}
-                                        fontSize={"md"}
-                                        fontWeight={300}
-                                    >
-                                        The tools below will help manage your
-                                        projects and teams.
+                                    <Text color={"rgb(123, 128, 154)"} fontSize={"md"} fontWeight={300}>
+                                        The tools below will help manage your projects and teams.
                                     </Text>
                                 </Box>
                             </Flex>
                             <Flex>
                                 <Spacer />
                                 <Box pt={"30px"} mr={"10px"}>
-                                    <Text
-                                        color={"rgb(123, 128, 154)"}
-                                        fontSize={"14px"}
-                                    >
+                                    <Text color={"rgb(123, 128, 154)"} fontSize={"14px"}>
                                         Team Members:
                                     </Text>
                                 </Box>
                                 <Box pt={"22px"}>
                                     <AvatarGroup size="sm" max={5} mr={"18px"}>
-                                        {workspaceUser?.members.map(
-                                            (member: TUser, index: number) => {
-                                                return (
-                                                    <Avatar
-                                                        key={index}
-                                                        name={`${member.firstname[0]}${member.lastname[0]}`}
-                                                        getInitials={(
-                                                            name: string
-                                                        ) => {
-                                                            return name;
-                                                        }}
-                                                        _hover={{ zIndex: 10 }}
-                                                        cursor={"default"}
-                                                    />
-                                                );
-                                            }
-                                        )}
+                                        {workspaceUser?.members.map((member: TUser, index: number) => {
+                                            return (
+                                                <Avatar
+                                                    key={index}
+                                                    name={`${member.firstname[0]}${member.lastname[0]}`}
+                                                    getInitials={(name: string) => {
+                                                        return name;
+                                                    }}
+                                                    _hover={{ zIndex: 10 }}
+                                                    cursor={"default"}
+                                                />
+                                            );
+                                        })}
                                     </AvatarGroup>
                                 </Box>
-                                <Box mt={"18px"}>
-                                    <Invite />
-                                </Box>
+                                {(permissions || 1) > 1 ? (
+                                    <Box mt={"18px"}>
+                                        <Invite />
+                                    </Box>
+                                ) : null}
                             </Flex>
                         </SimpleGrid>
-                        <SimpleGrid
-                            spacing={6}
-                            spacingY={12}
-                            columns={{ base: 1, sm: 1, md: 3 }}
-                        >
+                        <SimpleGrid spacing={6} spacingY={12} columns={{ base: 1, sm: 1, md: 3 }}>
                             {(data?.tools.dataCollections.access || 0) > 0 ? (
-                                <a
-                                    href={`/workspaces/${data?._id}/dataCollections`}
-                                >
+                                <a href={`/workspaces/${data?._id}/dataCollections`}>
                                     <SecondaryCard
                                         title={"Data Collections"}
                                         icon={AiOutlineTable}
@@ -205,9 +175,7 @@ const ViewOne = () => {
                                 </a>
                             ) : null}
                             {(data?.tools.messageBoard.access || 0) > 0 ? (
-                                <a
-                                    href={`/workspaces/${data?._id}/messageBoard`}
-                                >
+                                <a href={`/workspaces/${data?._id}/messageBoard`}>
                                     <SecondaryCard
                                         title={"Message Board"}
                                         icon={AiOutlineMessage}
