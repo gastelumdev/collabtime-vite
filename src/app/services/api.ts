@@ -178,7 +178,7 @@ export const api = createApi({
                 url: `/dataCollections/${localStorage.getItem("dataCollectionId")}/columns/delete/${columnId}`,
                 method: "POST",
             }),
-            invalidatesTags: ["Column"],
+            invalidatesTags: ["Column", "Rows"],
         }),
         getRows: builder.query<any[], null>({
             query: () => ({

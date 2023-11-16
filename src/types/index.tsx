@@ -90,6 +90,7 @@ export type TRow = {
 
 export type TCell = {
     _id: string;
+    dataCollection: string;
     row: string;
     name: string;
     type: string;

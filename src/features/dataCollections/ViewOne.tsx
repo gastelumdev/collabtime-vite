@@ -28,6 +28,7 @@ import {
     DrawerOverlay,
     Flex,
     FormLabel,
+    HStack,
     Heading,
     IconButton,
     Input,
@@ -49,21 +50,21 @@ import {
     Tr,
     useDisclosure,
 } from "@chakra-ui/react";
+import Select, { StylesConfig } from "react-select";
 
 import { IconType } from "react-icons";
 import { BsFiletypeDoc, BsPersonWorkspace, BsPlusCircle } from "react-icons/bs";
-import {
-    AiOutlineCheck,
-    AiOutlineClose,
-    AiOutlineMessage,
-    AiOutlinePlus,
-} from "react-icons/ai";
+import { AiOutlineCheck, AiOutlineClose, AiOutlineMessage, AiOutlinePlus } from "react-icons/ai";
 import { BiTable } from "react-icons/bi";
 import { FaTasks } from "react-icons/fa";
 
 import SideBarLayout from "../../components/Layouts/SideBarLayout";
-import { TCell, TColumn, TRow } from "../../types";
+import { TCell, TColumn, TLabel, TRow } from "../../types";
 import { useParams } from "react-router-dom";
+import Divider from "../../components/Divider/Divider";
+
+import getTextColor from "../../utils/helpers";
+import PrimaryButton from "../../components/Buttons/PrimaryButton";
 
 interface LinkItemProps {
     name: string;
@@ -76,9 +77,7 @@ const LinkItems: Array<LinkItemProps> = [
     {
         name: "Data Collections",
         icon: BiTable,
-        path: `/workspaces/${localStorage.getItem(
-            "workspaceId"
-        )}/dataCollections`,
+        path: `/workspaces/${localStorage.getItem("workspaceId")}/dataCollections`,
     },
     {
         name: "Tasks",
@@ -126,6 +125,19 @@ const ViewOne = () => {
     const [data, setData] = useState<TRow[]>(rows || []);
     // const [cells, setCells] = useState<TCell[]>(cellsData);
     const [columnName, setColumnName] = useState<string>("");
+    const [columnType, setColumnType] = useState<string>("");
+    const [showLabelForm, setShowLabelForm] = useState(false);
+    const [labelOptions, setLabelOptions] = useState<TLabel>({
+        title: "",
+        color: "",
+    });
+    const [labels, setLabels] = useState<TLabel[]>([
+        { title: "Label 1", color: "#005796" },
+        { title: "Label 2", color: "#4FAD00" },
+        { title: "Label 3", color: "#ffa507" },
+    ]);
+    const [labelStyles, setLabelStyles] = useState<any>({});
+    const [labelValue, setLabelValue] = useState<any>({});
     const [numberChecked, setNumberChecked] = useState<number>(0);
     const [showRowForm, setShowRowForm] = useState<boolean>(false);
 
@@ -151,6 +163,14 @@ const ViewOne = () => {
      */
     useEffect(() => {
         setDefaultRow();
+    }, []);
+
+    useEffect(() => {
+        for (const column of columns || []) {
+            if (column.type === "label") {
+                setLabelStyles({ ...labelStyles, [column.name]: "" });
+            }
+        }
     }, []);
 
     const setDefaultRow = () => {
@@ -185,8 +205,9 @@ const ViewOne = () => {
         const newColumn: TColumn = {
             dataCollectionId: localStorage.getItem("dataCollectionId") || "",
             name: columnName,
-            type: "Text",
+            type: columnType,
             permanent: false,
+            labels: labels,
             people: [],
             includeInForm: true,
             includeInExport: true,
@@ -203,34 +224,64 @@ const ViewOne = () => {
      * Sets the column name when input changes in create column drawer
      * @param event
      */
-    const handleColumnNameChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    const handleColumnNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = event.target;
         setColumnName(value);
     };
 
-    const handleAddRowInputChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        console.log(event.target.value);
+    const handleDeleteColumn = (column: TColumn) => {
+        deleteColumn(column?._id as any);
+        setData(rows || []);
+        console.log("DATA********", data);
+    };
+
+    const handleSelectType = (selectedOption: any) => {
+        setColumnType(selectedOption.value);
+
+        if (selectedOption.value === "label") {
+            setShowLabelForm(true);
+        } else {
+            setShowLabelForm(false);
+        }
+    };
+
+    const handleLabelOptionsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setLabelOptions({
+            ...labelOptions,
+            [event.target.name]: event.target.value,
+        });
+    };
+
+    const removeLabel = (label: TLabel) => {
+        const newLabels = labels.filter((item: TLabel) => {
+            return label.title !== item.title;
+        });
+
+        setLabels(newLabels);
+    };
+
+    const addLabel = () => {
+        //  labelsCopy = labels;
+        const labelsCopy = [...labels, labelOptions];
+        setLabels(labelsCopy);
+        setLabelOptions({ title: "", color: "" });
+    };
+
+    const handleLabelChange = (selectedValue: any, columnName: string) => {
+        setLabelValue({ ...labelValue, [columnName]: selectedValue.value });
+        let rowCopy = row;
+        setRow({ ...rowCopy, [columnName]: selectedValue.value });
+    };
+
+    const handleAddRowInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRow({ ...row, [event.target.name]: event.target.value });
     };
 
-    const handleUpdateRowInputChange = (
-        event: React.ChangeEvent<HTMLInputElement>,
-        rowItem: TRow,
-        cellItem: TCell
-    ) => {
-        console.log(rowItem);
-        console.log(cellItem);
+    const handleUpdateRowInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTempValue(event.target.value);
     };
 
-    const handleUpdateRowOnFocus = (
-        event: React.FocusEvent<HTMLInputElement, Element>,
-        cell: any
-    ) => {
+    const handleUpdateRowOnFocus = (event: React.FocusEvent<HTMLInputElement, Element>, cell: any) => {
         setInitialValue(event.target.value);
         const em: string[] = [];
         em.push(cell._id);
@@ -238,10 +289,7 @@ const ViewOne = () => {
         setTempValue(event.target.value);
     };
 
-    const handleUpdateRowOnBlur = async (
-        event: React.FocusEvent<HTMLInputElement, Element>,
-        cell: any
-    ) => {
+    const handleUpdateRowOnBlur = async (event: React.FocusEvent<HTMLInputElement, Element>, cell: any) => {
         let newCell = cell;
         newCell = { ...newCell, value: event.target.value };
         if (initialValue != event.target.value) await updateCell(newCell);
@@ -252,16 +300,12 @@ const ViewOne = () => {
     };
 
     const handleSaveRowClick = async () => {
-        console.log(row);
         await createRow(row);
         setShowRowForm(false);
         setDefaultRow();
     };
 
-    const onDeleteRowCheckboxChange = (
-        event: React.ChangeEvent<HTMLInputElement>,
-        row: any
-    ) => {
+    const onDeleteRowCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>, row: any) => {
         const deleteRowIdsCopy = deleteRowIds;
 
         if (event.target.checked) {
@@ -297,14 +341,19 @@ const ViewOne = () => {
         setHeaderMenuIsOpen(headerMenuIsOpenCopy);
     };
 
-    const handleAddRowOnKeyUp = async (
-        event: React.KeyboardEvent<HTMLInputElement>
-    ) => {
+    const handleAddRowOnKeyUp = async (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key == "Enter") {
             await createRow(row);
             setFirstInputFocus(true);
             setDefaultRow();
         }
+    };
+
+    const handleLabelSelectChange = async (newValue: any, cell: TCell) => {
+        let newCell = cell;
+        newCell = { ...newCell, value: newValue.value };
+        console.log("NEW CELL", newCell);
+        await updateCell(newCell);
     };
 
     return (
@@ -325,45 +374,27 @@ const ViewOne = () => {
                             >
                                 <Flex>
                                     <Box>
-                                        <Heading
-                                            size={"sm"}
-                                            mb={"12px"}
-                                            color={"rgb(52, 71, 103)"}
-                                        >
+                                        <Heading size={"sm"} mb={"12px"} color={"rgb(52, 71, 103)"}>
                                             Data Collections
                                         </Heading>
-                                        <Text
-                                            color={"rgb(123, 128, 154)"}
-                                            fontSize={"md"}
-                                            fontWeight={300}
-                                        >
-                                            Create data collection tables to
-                                            visualize and manage your data.
+                                        <Text color={"rgb(123, 128, 154)"} fontSize={"md"} fontWeight={300}>
+                                            Create data collection tables to visualize and manage your data.
                                         </Text>
                                     </Box>
                                 </Flex>
                                 <Flex>
                                     <Spacer />
-                                    <Box pb={"20px"}>
-                                        {/* <Create addNewWorkspace={addNewWorkspace} /> */}
-                                    </Box>
+                                    <Box pb={"20px"}>{/* <Create addNewWorkspace={addNewWorkspace} /> */}</Box>
                                 </Flex>
                             </SimpleGrid>
                             <Card mb={"60px"}>
                                 <CardHeader>
                                     <Flex>
                                         <Box>
-                                            <Heading
-                                                size={"sm"}
-                                                mt={"5px"}
-                                                mb={"4px"}
-                                            >
+                                            <Heading size={"sm"} mt={"5px"} mb={"4px"}>
                                                 {dataCollection?.name}
                                             </Heading>
-                                            <Text
-                                                fontSize={"md"}
-                                                color={"rgb(123, 128, 154)"}
-                                            >
+                                            <Text fontSize={"md"} color={"rgb(123, 128, 154)"}>
                                                 {dataCollection?.description}
                                             </Text>
                                         </Box>
@@ -381,72 +412,45 @@ const ViewOne = () => {
                                             dataCollection={dataCollection}
                                         /> */}
                                     </Flex>
-                                    {rowsLoading ||
-                                    deletingRows ||
-                                    creatingRow ||
-                                    rowsFetching ? (
-                                        <Progress size="xs" isIndeterminate />
-                                    ) : null}
+                                    <Box h={"20px"}>
+                                        {rowsLoading || deletingRows || creatingRow || rowsFetching ? (
+                                            <Progress size="xs" isIndeterminate />
+                                        ) : null}
+                                    </Box>
                                 </CardHeader>
                                 <CardBody>
-                                    <TableContainer>
+                                    <TableContainer pb={"300px"}>
                                         <Table size="sm">
                                             <Thead>
                                                 <Tr>
                                                     <Th w={"5px"}></Th>
-                                                    {columns?.map(
-                                                        (
-                                                            column: TColumn,
-                                                            index: number
-                                                        ) => {
-                                                            return (
-                                                                <Th key={index}>
-                                                                    <Menu>
-                                                                        <MenuButton
-                                                                            onClick={() =>
-                                                                                handleColumnHover(
-                                                                                    index
-                                                                                )
-                                                                            }
+                                                    {columns?.map((column: TColumn, index: number) => {
+                                                        return (
+                                                            <Th key={index}>
+                                                                <Menu>
+                                                                    <MenuButton
+                                                                        onClick={() => handleColumnHover(index)}
+                                                                    >
+                                                                        <Text as={"b"}>
+                                                                            {column.name
+                                                                                .split("_")
+                                                                                .join(" ")
+                                                                                .toUpperCase()}
+                                                                        </Text>
+                                                                    </MenuButton>
+                                                                    <MenuList>
+                                                                        <MenuItem
+                                                                            onClick={() => handleDeleteColumn(column)}
                                                                         >
-                                                                            <Text
-                                                                                as={
-                                                                                    "b"
-                                                                                }
-                                                                            >
-                                                                                {column.name
-                                                                                    .split(
-                                                                                        "_"
-                                                                                    )
-                                                                                    .join(
-                                                                                        " "
-                                                                                    )
-                                                                                    .toUpperCase()}
-                                                                            </Text>
-                                                                        </MenuButton>
-                                                                        <MenuList>
-                                                                            <MenuItem
-                                                                                onClick={() =>
-                                                                                    deleteColumn(
-                                                                                        column?._id as any
-                                                                                    )
-                                                                                }
-                                                                            >
-                                                                                Delete
-                                                                                Column
-                                                                            </MenuItem>
-                                                                        </MenuList>
-                                                                    </Menu>
-                                                                </Th>
-                                                            );
-                                                        }
-                                                    )}
+                                                                            Delete Column
+                                                                        </MenuItem>
+                                                                    </MenuList>
+                                                                </Menu>
+                                                            </Th>
+                                                        );
+                                                    })}
                                                     <Th>
-                                                        <Button
-                                                            onClick={onOpen}
-                                                            variant={"unstyled"}
-                                                            float={"right"}
-                                                        >
+                                                        <Button onClick={onOpen} variant={"unstyled"} float={"right"}>
                                                             <BsPlusCircle />
                                                         </Button>
                                                     </Th>
@@ -454,120 +458,180 @@ const ViewOne = () => {
                                             </Thead>
 
                                             <Tbody>
-                                                {showRowForm ||
-                                                rows?.length ||
-                                                0 > 0 ? null : (
+                                                {showRowForm || rows?.length || 0 > 0 ? null : (
                                                     <Tr>
-                                                        <Td
-                                                            colSpan={
-                                                                (columns?.length ||
-                                                                    0) + 2
-                                                            }
-                                                        >
+                                                        <Td colSpan={(columns?.length || 0) + 2}>
                                                             <Center m={6}>
-                                                                <Text
-                                                                    color={
-                                                                        "rgb(123, 128, 154)"
-                                                                    }
-                                                                >
-                                                                    This data
-                                                                    collection
-                                                                    is empty.
+                                                                <Text color={"rgb(123, 128, 154)"}>
+                                                                    This data collection is empty.
                                                                 </Text>
                                                             </Center>
                                                         </Td>
                                                     </Tr>
                                                 )}
-                                                {data?.map(
-                                                    (
-                                                        row: any,
-                                                        index: number
-                                                    ) => {
-                                                        return (
-                                                            <Tr key={index}>
-                                                                <Td>
-                                                                    <Checkbox
-                                                                        onChange={(
-                                                                            event: React.ChangeEvent<HTMLInputElement>
-                                                                        ) =>
-                                                                            onDeleteRowCheckboxChange(
-                                                                                event,
-                                                                                row
-                                                                            )
-                                                                        }
-                                                                    />
-                                                                </Td>
-                                                                {row.cells.map(
-                                                                    (
-                                                                        cell: TCell,
-                                                                        index: number
-                                                                    ) => {
-                                                                        return (
-                                                                            <Td
-                                                                                key={
-                                                                                    index
-                                                                                }
-                                                                            >
-                                                                                <Input
-                                                                                    value={
-                                                                                        editMode.includes(
-                                                                                            cell?._id
-                                                                                        )
-                                                                                            ? tempValue
-                                                                                            : cell.value
-                                                                                    }
-                                                                                    size={
-                                                                                        "sm"
-                                                                                    }
-                                                                                    variant={
-                                                                                        "unstyled"
-                                                                                    }
-                                                                                    onChange={(
-                                                                                        event: React.ChangeEvent<HTMLInputElement>
-                                                                                    ) =>
-                                                                                        handleUpdateRowInputChange(
-                                                                                            event,
-                                                                                            row,
-                                                                                            cell
-                                                                                        )
-                                                                                    }
-                                                                                    onFocus={(
-                                                                                        event: React.FocusEvent<
-                                                                                            HTMLInputElement,
-                                                                                            Element
-                                                                                        >
-                                                                                    ) =>
-                                                                                        handleUpdateRowOnFocus(
-                                                                                            event,
-                                                                                            cell
-                                                                                        )
-                                                                                    }
-                                                                                    onBlur={(
-                                                                                        event: React.FocusEvent<
-                                                                                            HTMLInputElement,
-                                                                                            Element
-                                                                                        >
-                                                                                    ) =>
-                                                                                        handleUpdateRowOnBlur(
-                                                                                            event,
-                                                                                            cell
-                                                                                        )
-                                                                                    }
-                                                                                    isDisabled={
-                                                                                        rowsLoading ||
-                                                                                        deletingRows ||
-                                                                                        creatingRow ||
-                                                                                        rowsFetching
-                                                                                    }
-                                                                                />
-                                                                            </Td>
-                                                                        );
+                                                {rows?.map((row: any, index: number) => {
+                                                    console.log("ROW", row);
+                                                    return (
+                                                        <Tr key={index}>
+                                                            <Td>
+                                                                <Checkbox
+                                                                    onChange={(
+                                                                        event: React.ChangeEvent<HTMLInputElement>
+                                                                    ) => onDeleteRowCheckboxChange(event, row)}
+                                                                />
+                                                            </Td>
+                                                            {row.cells.map((cell: TCell, index: number) => {
+                                                                console.log(cell.value);
+                                                                let bgColor: string = "";
+                                                                for (const label of cell.labels || []) {
+                                                                    if (cell.value == label.title) {
+                                                                        bgColor = label.color;
                                                                     }
-                                                                )}
-                                                            </Tr>
-                                                        );
-                                                    }
-                                                )}
+                                                                }
+                                                                const options = cell.labels?.map((item) => {
+                                                                    return {
+                                                                        value: item.title,
+                                                                        label: item.title,
+                                                                        color: item.color,
+                                                                    };
+                                                                });
+                                                                const colorStyles: any = {
+                                                                    control: (styles: any, { data }: any) => {
+                                                                        console.log(data);
+                                                                        return {
+                                                                            ...styles,
+                                                                            border: "none",
+                                                                            padding: "none",
+                                                                            margin: "0",
+                                                                            outline: "none",
+                                                                            boxShadow: "none",
+                                                                        };
+                                                                    },
+                                                                    input: (styles: any) => {
+                                                                        return {
+                                                                            ...styles,
+                                                                            outline: "none",
+                                                                            margin: "0",
+                                                                        };
+                                                                    },
+                                                                    option: (styles: any, { data }: any) => {
+                                                                        console.log(data.color);
+                                                                        return {
+                                                                            ...styles,
+                                                                            backgroundColor: data.color,
+                                                                            color: getTextColor(data.color),
+                                                                        };
+                                                                    },
+                                                                    valueContainer: (styles: any) => {
+                                                                        return {
+                                                                            ...styles,
+                                                                            padding: "0",
+                                                                            margin: "0",
+                                                                            width: "120px",
+                                                                        };
+                                                                    },
+                                                                    indicatorsContainer: (styles: any) => {
+                                                                        return {
+                                                                            ...styles,
+                                                                            display: "none",
+                                                                        };
+                                                                    },
+                                                                    singleValue: (styles: any) => {
+                                                                        return {
+                                                                            ...styles,
+                                                                            backgroundColor: bgColor,
+                                                                            color: getTextColor(bgColor),
+                                                                            padding: "10px",
+                                                                            margin: "0",
+                                                                        };
+                                                                    },
+                                                                    menu: (styles: any) => {
+                                                                        return {
+                                                                            ...styles,
+                                                                            margin: "0",
+                                                                            borderRadius: "0",
+                                                                            border: "none",
+                                                                            padding: "0",
+                                                                        };
+                                                                    },
+                                                                    menuList: (styles: any) => {
+                                                                        return {
+                                                                            ...styles,
+                                                                            padding: "0",
+                                                                        };
+                                                                    },
+                                                                };
+                                                                return (
+                                                                    <Td
+                                                                        key={index}
+                                                                        // p={
+                                                                        //     cell.type == "label" ? "0" : "inherit"
+                                                                        // }
+                                                                        // pr={"5px"}
+                                                                        px={cell.type == "label" ? "1px" : "10px"}
+                                                                        py={"0"}
+                                                                        m={"0"}
+                                                                    >
+                                                                        {cell.type === "label" ? (
+                                                                            <Select
+                                                                                options={options}
+                                                                                styles={colorStyles}
+                                                                                defaultValue={{
+                                                                                    value: cell.value,
+                                                                                    label:
+                                                                                        cell.value == ""
+                                                                                            ? "Select..."
+                                                                                            : cell.value,
+                                                                                }}
+                                                                                onChange={(newValue) =>
+                                                                                    handleLabelSelectChange(
+                                                                                        newValue,
+                                                                                        cell
+                                                                                    )
+                                                                                }
+                                                                                isDisabled={rowsLoading || rowsFetching}
+                                                                            />
+                                                                        ) : (
+                                                                            <Input
+                                                                                value={
+                                                                                    editMode.includes(cell?._id)
+                                                                                        ? tempValue
+                                                                                        : cell.value
+                                                                                }
+                                                                                size={"sm"}
+                                                                                w={"120px"}
+                                                                                variant={"unstyled"}
+                                                                                onChange={(
+                                                                                    event: React.ChangeEvent<HTMLInputElement>
+                                                                                ) => handleUpdateRowInputChange(event)}
+                                                                                onFocus={(
+                                                                                    event: React.FocusEvent<
+                                                                                        HTMLInputElement,
+                                                                                        Element
+                                                                                    >
+                                                                                ) =>
+                                                                                    handleUpdateRowOnFocus(event, cell)
+                                                                                }
+                                                                                onBlur={(
+                                                                                    event: React.FocusEvent<
+                                                                                        HTMLInputElement,
+                                                                                        Element
+                                                                                    >
+                                                                                ) => handleUpdateRowOnBlur(event, cell)}
+                                                                                isDisabled={
+                                                                                    rowsLoading ||
+                                                                                    deletingRows ||
+                                                                                    creatingRow ||
+                                                                                    rowsFetching
+                                                                                }
+                                                                            />
+                                                                        )}
+                                                                    </Td>
+                                                                );
+                                                            })}
+                                                        </Tr>
+                                                    );
+                                                })}
                                                 {/* <Tr>
                                                     <Td>inches</Td>
                                                     <Td>millimetres (mm)</Td>
@@ -581,184 +645,143 @@ const ViewOne = () => {
 
                                                 {showRowForm ? (
                                                     <Tr>
-                                                        <Td
-                                                            borderBottom={
-                                                                "none"
-                                                            }
-                                                            pl={"2px"}
-                                                        >
-                                                            <IconButton
-                                                                onClick={
-                                                                    handleSaveRowClick
-                                                                }
-                                                                size={"xs"}
-                                                                variant={
-                                                                    "unstyled"
-                                                                }
-                                                                aria-label=""
-                                                                icon={
-                                                                    <AiOutlineCheck
-                                                                        size={
-                                                                            "15px"
-                                                                        }
-                                                                    />
-                                                                }
-                                                            ></IconButton>
-                                                            <IconButton
-                                                                onClick={() =>
-                                                                    setShowRowForm(
-                                                                        false
-                                                                    )
-                                                                }
-                                                                size={"xs"}
-                                                                variant={
-                                                                    "unstyled"
-                                                                }
-                                                                aria-label=""
-                                                                icon={
-                                                                    <AiOutlineClose
-                                                                        size={
-                                                                            "15px"
-                                                                        }
-                                                                    />
-                                                                }
-                                                            ></IconButton>
+                                                        <Td borderBottom={"none"} pl={"2px"}>
+                                                            <Box position={"relative"}>
+                                                                <Box
+                                                                    position={"absolute"}
+                                                                    bottom={"-12px"}
+                                                                    right={"-14px"}
+                                                                >
+                                                                    <IconButton
+                                                                        onClick={handleSaveRowClick}
+                                                                        size={"xs"}
+                                                                        variant={"unstyled"}
+                                                                        aria-label=""
+                                                                        icon={<AiOutlineCheck size={"15px"} />}
+                                                                    ></IconButton>
+                                                                    <IconButton
+                                                                        onClick={() => setShowRowForm(false)}
+                                                                        size={"xs"}
+                                                                        variant={"unstyled"}
+                                                                        aria-label=""
+                                                                        icon={<AiOutlineClose size={"15px"} />}
+                                                                    ></IconButton>
+                                                                </Box>
+                                                            </Box>
                                                         </Td>
-                                                        {columns?.map(
-                                                            (
-                                                                column: TColumn,
-                                                                index: number
-                                                            ) => {
-                                                                return (
-                                                                    <Td
-                                                                        key={
-                                                                            index
-                                                                        }
-                                                                        borderBottom={
-                                                                            "none"
-                                                                        }
-                                                                    >
+                                                        {columns?.map((column: TColumn, index: number) => {
+                                                            const options = column.labels?.map((item) => {
+                                                                return {
+                                                                    value: item.title,
+                                                                    label: item.title,
+                                                                    color: item.color,
+                                                                };
+                                                            });
+                                                            const colorStyles: StylesConfig = {
+                                                                control: (styles: any, { data }: any) => {
+                                                                    console.log(data);
+                                                                    return {
+                                                                        ...styles,
+                                                                        paddingTop: "0",
+                                                                    };
+                                                                },
+                                                                option: (styles: any, { data }: any) => {
+                                                                    console.log(data.color);
+                                                                    return {
+                                                                        ...styles,
+                                                                        backgroundColor: data.color,
+                                                                        color: getTextColor(data.color),
+                                                                    };
+                                                                },
+                                                                singleValue: (styles: any, { data }: any) => {
+                                                                    return {
+                                                                        ...styles,
+                                                                        backgroundColor: data.color,
+                                                                        color: getTextColor(data.color),
+                                                                        padding: "7px",
+                                                                    };
+                                                                },
+                                                                indicatorsContainer: (styles: any) => {
+                                                                    return { ...styles, padding: "0" };
+                                                                },
+                                                                dropdownIndicator: (styles: any) => {
+                                                                    return { ...styles, padding: "4px" };
+                                                                },
+                                                            };
+                                                            return (
+                                                                <Td
+                                                                    key={index}
+                                                                    p={column.type == "label" ? "0" : "inherit"}
+                                                                    pr={"5px"}
+                                                                    borderBottom={"none"}
+                                                                    overflow={"visible"}
+                                                                >
+                                                                    {column.type == "label" ? (
+                                                                        <Box>
+                                                                            <Select
+                                                                                // name={column.name}
+                                                                                options={options}
+                                                                                onChange={(selectedOption) =>
+                                                                                    handleLabelChange(
+                                                                                        selectedOption,
+                                                                                        column.name
+                                                                                    )
+                                                                                }
+                                                                                styles={colorStyles}
+                                                                            />
+                                                                        </Box>
+                                                                    ) : (
                                                                         <Box>
                                                                             <Input
-                                                                                name={
-                                                                                    column.name
-                                                                                }
-                                                                                onChange={
-                                                                                    handleAddRowInputChange
-                                                                                }
-                                                                                value={
-                                                                                    row[
-                                                                                        column
-                                                                                            .name
-                                                                                    ]
-                                                                                }
-                                                                                size={
-                                                                                    "sm"
-                                                                                }
-                                                                                autoFocus={
-                                                                                    index ==
-                                                                                    0
-                                                                                }
-                                                                                ref={(
-                                                                                    el
-                                                                                ) => {
-                                                                                    if (
-                                                                                        index ==
-                                                                                            0 &&
-                                                                                        firstInputFocus
-                                                                                    ) {
+                                                                                name={column.name}
+                                                                                onChange={handleAddRowInputChange}
+                                                                                value={row[column.name]}
+                                                                                size={"md"}
+                                                                                autoFocus={index == 0}
+                                                                                ref={(el) => {
+                                                                                    if (index == 0 && firstInputFocus) {
                                                                                         el?.focus();
                                                                                         el?.scrollIntoView();
                                                                                     } else {
-                                                                                        setFirstInputFocus(
-                                                                                            false
-                                                                                        );
+                                                                                        setFirstInputFocus(false);
                                                                                     }
                                                                                 }}
                                                                                 onKeyUp={(
                                                                                     event: React.KeyboardEvent<HTMLInputElement>
-                                                                                ) =>
-                                                                                    handleAddRowOnKeyUp(
-                                                                                        event
-                                                                                    )
-                                                                                }
+                                                                                ) => handleAddRowOnKeyUp(event)}
                                                                             />
                                                                         </Box>
-                                                                    </Td>
-                                                                );
-                                                            }
-                                                        )}
+                                                                    )}
+                                                                </Td>
+                                                            );
+                                                        })}
                                                     </Tr>
                                                 ) : (
                                                     <Tr>
-                                                        <Button
-                                                            variant={"unstyled"}
-                                                            onClick={() => {
-                                                                setShowRowForm(
-                                                                    true
-                                                                );
-                                                            }}
-                                                            leftIcon={
-                                                                <AiOutlinePlus />
-                                                            }
-                                                            w={"10px"}
-                                                            size={"sm"}
-                                                            m={"10px"}
-                                                            color={
-                                                                "rgb(123, 128, 154)"
-                                                            }
-                                                        >
-                                                            Add Row
-                                                        </Button>
+                                                        <Td p={"0"}>
+                                                            <Box position={"relative"}>
+                                                                <Box position={"absolute"} bottom={"-12"}>
+                                                                    <Button
+                                                                        variant={"unstyled"}
+                                                                        onClick={() => {
+                                                                            setShowRowForm(true);
+                                                                        }}
+                                                                        leftIcon={<AiOutlinePlus />}
+                                                                        w={"10px"}
+                                                                        size={"sm"}
+                                                                        m={"10px"}
+                                                                        color={"rgb(123, 128, 154)"}
+                                                                    >
+                                                                        Add Row
+                                                                    </Button>
+                                                                </Box>
+                                                            </Box>
+                                                        </Td>
                                                     </Tr>
                                                 )}
                                             </Tbody>
                                         </Table>
                                     </TableContainer>
-
-                                    {showRowForm ? (
-                                        <>
-                                            {/* <IconContext.Provider
-                                                value={{ size: "18" }}
-                                            >
-                                                <Button
-                                                    size={"xs"}
-                                                    variant={"unstyled"}
-                                                    fontSize={"14px"}
-                                                    fontWeight={"bold"}
-                                                    color={"green"}
-                                                    p={0}
-                                                    bg={"transparent"}
-                                                    position={"relative"}
-                                                    bottom={"40px"}
-                                                    right={"15px"}
-                                                    onClick={() => {
-                                                        createRow(row);
-                                                        setShowRowForm(false);
-                                                    }}
-                                                >
-                                                    <AiOutlineCheckCircle />
-                                                </Button>
-                                                <Button
-                                                    size={"xs"}
-                                                    variant={"unstyled"}
-                                                    fontSize={"14px"}
-                                                    fontWeight={"bold"}
-                                                    color={"rgb(233, 30, 99)"}
-                                                    p={0}
-                                                    bg={"transparent"}
-                                                    position={"relative"}
-                                                    bottom={"40px"}
-                                                    right={"15px"}
-                                                    onClick={() =>
-                                                        setShowRowForm(false)
-                                                    }
-                                                >
-                                                    <AiOutlineCloseCircle />
-                                                </Button>
-                                            </IconContext.Provider> */}
-                                        </>
-                                    ) : null}
                                 </CardBody>
                             </Card>
                             {showDeleteBox ? (
@@ -774,26 +797,15 @@ const ViewOne = () => {
                                         }}
                                         p={"18px"}
                                     >
-                                        <Card
-                                            variant={"elevated"}
-                                            borderWidth={"1px"}
-                                            borderColor={"lightgray"}
-                                        >
+                                        <Card variant={"elevated"} borderWidth={"1px"} borderColor={"lightgray"}>
                                             <CardBody>
                                                 <Flex>
                                                     <Text mt={"10px"}>
-                                                        You've selected{" "}
-                                                        {deleteRowIds.length}{" "}
-                                                        {numberChecked === 1
-                                                            ? "item"
-                                                            : "items"}
-                                                        . Click to delete them.
+                                                        You've selected {deleteRowIds.length}{" "}
+                                                        {numberChecked === 1 ? "item" : "items"}. Click to delete them.
                                                     </Text>
                                                     <Spacer />
-                                                    <Button
-                                                        colorScheme="red"
-                                                        onClick={deleteItems}
-                                                    >
+                                                    <Button colorScheme="red" onClick={deleteItems}>
                                                         Delete
                                                     </Button>
                                                 </Flex>
@@ -816,9 +828,7 @@ const ViewOne = () => {
                 <DrawerOverlay />
                 <DrawerContent>
                     <DrawerCloseButton />
-                    <DrawerHeader borderBottomWidth="1px">
-                        Add a new column
-                    </DrawerHeader>
+                    <DrawerHeader borderBottomWidth="1px">Add a new column</DrawerHeader>
 
                     <DrawerBody>
                         <Stack spacing="24px">
@@ -832,6 +842,71 @@ const ViewOne = () => {
                                     onChange={handleColumnNameChange}
                                 />
                             </Box>
+                            <Box>
+                                <FormLabel htmlFor="columnType">Type</FormLabel>
+                                <Select
+                                    id="columnType"
+                                    name="columnType"
+                                    placeholder="Please select column type"
+                                    onChange={(selectedOption: any) => handleSelectType(selectedOption)}
+                                    options={[
+                                        { value: "text", label: "Text" },
+                                        { value: "label", label: "Label" },
+                                    ]}
+                                />
+                            </Box>
+                            {showLabelForm ? (
+                                <>
+                                    <Divider
+                                        gradient="radial-gradient(#eceef1 40%, white 60%)"
+                                        marginBottom="0"
+                                        marginTop="0"
+                                    />
+                                    <Box>
+                                        <FormLabel htmlFor="labelName">Label name</FormLabel>
+                                        <Input
+                                            // ref={firstField}
+                                            id="labelName"
+                                            name="title"
+                                            value={labelOptions.title}
+                                            placeholder="Please enter label name"
+                                            onChange={handleLabelOptionsChange}
+                                        />
+                                    </Box>
+                                    <Box>
+                                        <FormLabel htmlFor="labelColor">Select label color</FormLabel>
+                                        <input
+                                            type={"color"}
+                                            // ref={firstField}
+                                            id="labelColor"
+                                            name="color"
+                                            onChange={handleLabelOptionsChange}
+                                        />
+                                    </Box>
+                                    <PrimaryButton onClick={addLabel}>Add label</PrimaryButton>
+                                    <Divider
+                                        gradient="radial-gradient(#eceef1 40%, white 60%)"
+                                        marginBottom="0"
+                                        marginTop="0"
+                                    />
+                                    <Box>
+                                        {labels.map((label: TLabel, index: number) => {
+                                            console.log(label);
+                                            return (
+                                                <Box key={index} bg={label.color} p={"5px"} m={"5px"}>
+                                                    <HStack>
+                                                        <AiOutlineClose
+                                                            color={getTextColor(label.color)}
+                                                            onClick={() => removeLabel(label)}
+                                                        />
+                                                        <Text color={getTextColor(label.color)}>{label.title}</Text>
+                                                    </HStack>
+                                                </Box>
+                                            );
+                                        })}
+                                    </Box>
+                                </>
+                            ) : null}
                         </Stack>
                     </DrawerBody>
 
