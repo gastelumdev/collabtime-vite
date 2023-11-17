@@ -440,7 +440,7 @@ const ViewOne = () => {
                                         <Table size="sm">
                                             <Thead>
                                                 <Tr>
-                                                    {(permissions || 0) > 1 ? <Th w={"5px"}></Th> : null}
+                                                    {(permissions || 0) > 1 ? <Th w={"60px"}></Th> : null}
                                                     {columns?.map((column: TColumn, index: number) => {
                                                         return (
                                                             <Th key={index}>

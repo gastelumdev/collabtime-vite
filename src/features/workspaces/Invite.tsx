@@ -3,12 +3,21 @@ import {
     useGetOneWorkspaceQuery,
     useGetWorkspaceUsersQuery,
     useInviteTeamMemberMutation,
+    useRemoveMemberMutation,
 } from "../../app/services/api";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import {
     Box,
     Flex,
     HStack,
+    IconButton,
+    Popover,
+    PopoverArrow,
+    PopoverBody,
+    PopoverCloseButton,
+    PopoverContent,
+    PopoverHeader,
+    PopoverTrigger,
     Radio,
     RadioGroup,
     Spacer,
@@ -22,6 +31,7 @@ import { TInvitee, TUser, TWorkspace } from "../../types";
 import PrimaryDrawer from "../../components/PrimaryDrawer";
 import { useParams } from "react-router-dom";
 import Select, { ActionMeta } from "react-select";
+import { AiOutlineClose } from "react-icons/ai";
 
 interface InviteProps {
     getInvitees?: any;
@@ -38,6 +48,7 @@ const Invite = ({}: InviteProps) => {
     const { data: workspaceUsers } = useGetWorkspaceUsersQuery(id as string);
     const { data: workspace } = useGetOneWorkspaceQuery(id as string);
     const [inviteTeamMember] = useInviteTeamMemberMutation();
+    const [removeMember] = useRemoveMemberMutation();
     const [newWorkspace, setNewWorkspace] = useState<TWorkspace>();
 
     // const sendInvite = (email: string) => {
@@ -79,10 +90,7 @@ const Invite = ({}: InviteProps) => {
     //     onClose();
     // };
 
-    const handleSelectChange = async (
-        option: readonly any[],
-        actionMeta: ActionMeta<any>
-    ) => {
+    const handleSelectChange = async (option: readonly any[], actionMeta: ActionMeta<any>) => {
         console.log(option);
         console.log(actionMeta);
         let inviteesCopy = invitees;
@@ -120,7 +128,12 @@ const Invite = ({}: InviteProps) => {
 
     const handleSubmit = () => {
         inviteTeamMember(newWorkspace as TWorkspace);
-        onClose();
+        // onClose();
+    };
+
+    const confirmRemoveMember = (userId: string) => {
+        console.log(userId);
+        removeMember({ userId });
     };
 
     return (
@@ -128,11 +141,7 @@ const Invite = ({}: InviteProps) => {
             <PrimaryButton onClick={onOpen} px="0">
                 <HiPlus size={"18px"} />
             </PrimaryButton>
-            <PrimaryDrawer
-                isOpen={isOpen}
-                onClose={onClose}
-                title="Invite a team member"
-            >
+            <PrimaryDrawer isOpen={isOpen} onClose={onClose} title="Invite a team member">
                 <Text pb={"5px"} color={"rgb(123, 128, 154)"} fontSize={"14px"}>
                     Team Members
                 </Text>
@@ -166,23 +175,15 @@ const Invite = ({}: InviteProps) => {
                         Allow the selected team members to
                     </Text>
                 </Box>
-                <RadioGroup
-                    defaultValue={String(invitee.permissions)}
-                    pt={"5px"}
-                >
+                <RadioGroup defaultValue={String(invitee.permissions)} pt={"5px"}>
                     <Stack direction={"row"} spacing={5} mb={"5px"}>
                         <Radio
                             colorScheme="blue"
                             value="2"
                             size={"sm"}
-                            onChange={(
-                                event: React.ChangeEvent<HTMLInputElement>
-                            ) => handleRadioChange(event)}
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleRadioChange(event)}
                         >
-                            <Text
-                                fontSize={"14px"}
-                                color={"rgb(123, 128, 154)"}
-                            >
+                            <Text fontSize={"14px"} color={"rgb(123, 128, 154)"}>
                                 Read/Write
                             </Text>
                         </Radio>
@@ -190,14 +191,9 @@ const Invite = ({}: InviteProps) => {
                             colorScheme="blue"
                             value="1"
                             size={"sm"}
-                            onChange={(
-                                event: React.ChangeEvent<HTMLInputElement>
-                            ) => handleRadioChange(event)}
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleRadioChange(event)}
                         >
-                            <Text
-                                fontSize={"14px"}
-                                color={"rgb(123, 128, 154)"}
-                            >
+                            <Text fontSize={"14px"} color={"rgb(123, 128, 154)"}>
                                 Read-Only
                             </Text>
                         </Radio>
@@ -240,60 +236,68 @@ const Invite = ({}: InviteProps) => {
                             </Box>
                         );
                     })} */}
-                    <Divider
-                        gradient="radial-gradient(#eceef1 40%, white 60%)"
-                        marginBottom="0"
-                    />
+                    <Divider gradient="radial-gradient(#eceef1 40%, white 60%)" marginBottom="0" />
 
                     <Flex mt={"10px"} width={"full"}>
                         <Spacer />
-                        <PrimaryButton onClick={handleSubmit}>
-                            INVITE
-                        </PrimaryButton>
+                        <PrimaryButton onClick={handleSubmit}>INVITE</PrimaryButton>
                     </Flex>
-                    <Divider
-                        gradient="radial-gradient(#eceef1 40%, white 60%)"
-                        marginBottom="0"
-                    />
+                    <Divider gradient="radial-gradient(#eceef1 40%, white 60%)" marginBottom="0" />
                     <Text fontSize={"16px"}>Team members</Text>
                     {workspaceUsers?.members.length || 0 > 0 ? (
-                        workspaceUsers?.members.map(
-                            (item: TUser, index: number) => {
-                                return (
-                                    <Text
-                                        key={index}
-                                        color={"rgb(123, 128, 154)"}
-                                        fontSize={"14px"}
-                                    >
-                                        {`${item.firstname} ${item.lastname}`}
-                                    </Text>
-                                );
-                            }
-                        )
+                        workspaceUsers?.members.map((item: TUser, index: number) => {
+                            return (
+                                <Box key={index}>
+                                    <Flex>
+                                        <Popover>
+                                            <PopoverTrigger>
+                                                <IconButton
+                                                    size={"xs"}
+                                                    variant={"unstyled"}
+                                                    aria-label=""
+                                                    icon={<AiOutlineClose size={"12px"} />}
+                                                ></IconButton>
+                                            </PopoverTrigger>
+                                            <PopoverContent>
+                                                <PopoverArrow />
+                                                <PopoverCloseButton />
+                                                <PopoverHeader>
+                                                    Are you sure you want to delete{" "}
+                                                    {`${item.firstname} ${item.lastname}`}?
+                                                </PopoverHeader>
+                                                <PopoverBody>
+                                                    <Flex>
+                                                        <Spacer />
+                                                        <PrimaryButton onClick={() => confirmRemoveMember(item._id)}>
+                                                            Delete
+                                                        </PrimaryButton>
+                                                    </Flex>
+                                                </PopoverBody>
+                                            </PopoverContent>
+                                        </Popover>
+
+                                        <Text color={"rgb(123, 128, 154)"} fontSize={"14px"}>
+                                            {`${item.firstname} ${item.lastname}`}
+                                        </Text>
+                                    </Flex>
+                                </Box>
+                            );
+                        })
                     ) : (
                         <Text color={"rgb(123, 128, 154)"} fontSize={"14px"}>
                             You have no team members at this time.
                         </Text>
                     )}
-                    <Divider
-                        gradient="radial-gradient(#eceef1 40%, white 60%)"
-                        marginBottom="0"
-                    />
+                    <Divider gradient="radial-gradient(#eceef1 40%, white 60%)" marginBottom="0" />
                     <Text fontSize={"16px"}>Invited team members</Text>
                     {workspaceUsers?.invitees.length || 0 > 0 ? (
-                        workspaceUsers?.invitees.map(
-                            (item: TUser, index: number) => {
-                                return (
-                                    <Text
-                                        key={index}
-                                        color={"rgb(123, 128, 154)"}
-                                        fontSize={"14px"}
-                                    >
-                                        {`${item.firstname} ${item.lastname}`}
-                                    </Text>
-                                );
-                            }
-                        )
+                        workspaceUsers?.invitees.map((item: TUser, index: number) => {
+                            return (
+                                <Text key={index} color={"rgb(123, 128, 154)"} fontSize={"14px"}>
+                                    {`${item.firstname} ${item.lastname}`}
+                                </Text>
+                            );
+                        })
                     ) : (
                         <Text color={"rgb(123, 128, 154)"} fontSize={"14px"}>
                             There is no one invited to this workspace.

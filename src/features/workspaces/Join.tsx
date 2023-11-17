@@ -13,7 +13,7 @@ export default function Join() {
             workspaceId: queryParameters.get("workspaceId") || "",
             userId: queryParameters.get("id") || "",
         });
-        navigate("/workspaces");
+        navigate(`/workspaces/${queryParameters.get("workspaceId")}`);
     };
 
     return (

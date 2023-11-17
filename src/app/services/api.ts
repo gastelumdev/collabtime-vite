@@ -49,7 +49,8 @@ export const api = createApi({
         getOneWorkspace: builder.query<TWorkspace, string>({
             query: (workspaceId) => ({
                 url: `workspaces/${workspaceId}`
-            })
+            }),
+            providesTags: ["Workspace"]
         }),
         createWorkspace: builder.mutation<TWorkspace, TWorkspace>({
             query: (workspace) => ({
@@ -93,6 +94,14 @@ export const api = createApi({
                 url: `workspaces/${params.workspaceId}/joinWorkspace`,
                 method: "POST",
                 body: params,
+            }),
+            invalidatesTags: ["Workspace"]
+        }),
+        removeMember: builder.mutation<{success: boolean}, {userId: string} >({
+            query: (userId) => ({
+                url: `workspaces/${localStorage.getItem("workspaceId")}/removeMember`,
+                method: "POST",
+                body: userId,
             }),
             invalidatesTags: ["Workspace"]
         }),
@@ -225,6 +234,7 @@ export const {
     useGetWorkspaceUsersQuery,
     useInviteTeamMemberMutation,
     useJoinWorkspaceMutation,
+    useRemoveMemberMutation,
     useCallUpdateMutation,
     useGetNotificationsQuery,
     useCallNotificationsUpdateMutation,
