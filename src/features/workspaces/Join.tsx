@@ -1,15 +1,24 @@
-import { useJoinWorkspaceMutation } from "../../app/services/api";
+import { useJoinWorkspaceMutation, useGetWorkspaceUsersQuery } from "../../app/services/api";
 import { Box, Text } from "@chakra-ui/react";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function Join() {
     const navigate = useNavigate();
     const [queryParameters] = useSearchParams();
     const [joinWorkspace] = useJoinWorkspaceMutation();
+    const { data: workspaceUsers } = useGetWorkspaceUsersQuery(queryParameters.get("workspaceId") || "");
 
-    const handleJoinWorkspace = () => {
-        joinWorkspace({
+    useEffect(() => {
+        console.log(workspaceUsers);
+        for (const member of workspaceUsers?.members || []) {
+            if (member._id === queryParameters.get("id")) navigate(`/workspaces/${queryParameters.get("workspaceId")}`);
+        }
+    }, [workspaceUsers]);
+
+    const handleJoinWorkspace = async () => {
+        await joinWorkspace({
             workspaceId: queryParameters.get("workspaceId") || "",
             userId: queryParameters.get("id") || "",
         });

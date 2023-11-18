@@ -9,7 +9,6 @@ import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import {
     Box,
     Flex,
-    HStack,
     IconButton,
     Popover,
     PopoverArrow,
@@ -30,8 +29,9 @@ import { HiPlus } from "react-icons/hi";
 import { TInvitee, TUser, TWorkspace } from "../../types";
 import PrimaryDrawer from "../../components/PrimaryDrawer";
 import { useParams } from "react-router-dom";
-import Select, { ActionMeta } from "react-select";
+import Select, { ActionMeta, MultiValue } from "react-select";
 import { AiOutlineClose } from "react-icons/ai";
+import { LockIcon } from "@chakra-ui/icons";
 
 interface InviteProps {
     getInvitees?: any;
@@ -40,63 +40,34 @@ interface InviteProps {
 const Invite = ({}: InviteProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { id } = useParams();
-    const [invitee, setInvitee] = useState<TInvitee>({
-        email: "",
-        permissions: 2,
-    });
+    const [permissions, setPermissions] = useState<number>(1);
     const [invitees] = useState<TInvitee[]>([]);
     const { data: workspaceUsers } = useGetWorkspaceUsersQuery(id as string);
     const { data: workspace } = useGetOneWorkspaceQuery(id as string);
     const [inviteTeamMember] = useInviteTeamMemberMutation();
     const [removeMember] = useRemoveMemberMutation();
     const [newWorkspace, setNewWorkspace] = useState<TWorkspace>();
-
-    // const sendInvite = (email: string) => {
-    //     // Call the invite team members endpoint
-    // }
-
-    // const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    //     const { value } = event.target;
-    //     setInvitee({ ...invitee, email: value });
-    // };
+    const [selectedOptions, setSelectedOptions] = useState<MultiValue<{ value: string; label: string }>>([]);
 
     const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = event.target;
         console.log(value);
-        setInvitee({ ...invitee, permissions: Number(value) });
+        setPermissions(Number(value));
     };
 
-    // const handleKeyPress = (event: React.KeyboardEvent<HTMLElement>) => {
-    //     console.log(event.key);
-    //     if (event.key === "Enter") addEmail();
-    // };
-
-    // const addEmail = () => {
-    //     setInvitees([...invitees, invitee]);
-    //     setInvitee({ email: "", permissions: 2 });
-    // };
-
-    // const removeEmail = (email: string) => {
-    //     const newInvitees = invitees.filter((item: TInvitee) => {
-    //         return item.email !== email;
-    //     });
-
-    //     setInvitees(newInvitees);
-    // };
-
-    // const handleGetInvitees = () => {
-    //     getInvitees(invitees);
-    //     setInvitees([]);
-    //     onClose();
-    // };
-
-    const handleSelectChange = async (option: readonly any[], actionMeta: ActionMeta<any>) => {
-        console.log(option);
+    const handleSelectChange = async (
+        newValue: MultiValue<{ value: string; label: string }>,
+        actionMeta: ActionMeta<any>
+    ) => {
+        console.log(newValue);
         console.log(actionMeta);
+        setSelectedOptions(newValue);
         let inviteesCopy = invitees;
 
+        console.log(permissions);
+
         if (actionMeta.action === "select-option") {
-            inviteesCopy.push({ ...invitee, email: actionMeta.option.value });
+            inviteesCopy.push({ email: actionMeta.option.value, permissions: permissions || 1 });
         }
 
         if (actionMeta.action === "remove-value") {
@@ -114,20 +85,20 @@ const Invite = ({}: InviteProps) => {
         }
 
         const workspaceCopy = workspace;
-        const existingInvitess = workspaceCopy?.invitees;
+        const existingInvitees = workspaceCopy?.invitees;
 
         const _newWorkspace = {
             ...workspaceCopy,
-            invitees: existingInvitess?.concat(inviteesCopy),
+            invitees: existingInvitees?.concat(inviteesCopy),
         };
-
-        console.log(_newWorkspace);
 
         setNewWorkspace(_newWorkspace as TWorkspace);
     };
 
     const handleSubmit = () => {
+        console.log(newWorkspace);
         inviteTeamMember(newWorkspace as TWorkspace);
+        setSelectedOptions([]);
         // onClose();
     };
 
@@ -136,57 +107,28 @@ const Invite = ({}: InviteProps) => {
         removeMember({ userId });
     };
 
+    const getPermissions = (user: TUser) => {
+        for (const workspace of user.workspaces) {
+            if (workspace.id === localStorage.getItem("workspaceId")) {
+                return workspace.permissions;
+            }
+        }
+        return 0;
+    };
+
     return (
         <>
             <PrimaryButton onClick={onOpen} px="0">
                 <HiPlus size={"18px"} />
             </PrimaryButton>
             <PrimaryDrawer isOpen={isOpen} onClose={onClose} title="Invite a team member">
-                <Text pb={"5px"} color={"rgb(123, 128, 154)"} fontSize={"14px"}>
-                    Team Members
-                </Text>
-                <Select
-                    options={workspaceUsers?.reactSelectOptions}
-                    isMulti
-                    name="invitees"
-                    onChange={handleSelectChange}
-                />
-                <HStack>
-                    {/* <Input
-                        type="email"
-                        placeholder="Please enter email"
-                        value={invitee.email}
-                        required={true}
-                        onChange={handleChange}
-                        onKeyUp={handleKeyPress}
-                        _placeholder={{ color: "rgb(123, 128, 154)" }}
-                        mb={"0"}
-                        size={"sm"}
-                    /> */}
-
-                    {/* <Button size={"sm"} onClick={addEmail}>
-                        <Text fontSize={"12px"} color={"rgb(123, 128, 154)"}>
-                            ADD
-                        </Text>
-                    </Button> */}
-                </HStack>
-                <Box mt={"15px"}>
+                <Box>
                     <Text color={"rgb(123, 128, 154)"} fontSize={"14px"}>
                         Allow the selected team members to
                     </Text>
                 </Box>
-                <RadioGroup defaultValue={String(invitee.permissions)} pt={"5px"}>
+                <RadioGroup defaultValue={String(permissions)} pt={"5px"}>
                     <Stack direction={"row"} spacing={5} mb={"5px"}>
-                        <Radio
-                            colorScheme="blue"
-                            value="2"
-                            size={"sm"}
-                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleRadioChange(event)}
-                        >
-                            <Text fontSize={"14px"} color={"rgb(123, 128, 154)"}>
-                                Read/Write
-                            </Text>
-                        </Radio>
                         <Radio
                             colorScheme="blue"
                             value="1"
@@ -197,45 +139,30 @@ const Invite = ({}: InviteProps) => {
                                 Read-Only
                             </Text>
                         </Radio>
+                        <Radio
+                            colorScheme="blue"
+                            value="2"
+                            size={"sm"}
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleRadioChange(event)}
+                        >
+                            <Text fontSize={"14px"} color={"rgb(123, 128, 154)"}>
+                                Read/Write
+                            </Text>
+                        </Radio>
                     </Stack>
                 </RadioGroup>
-                <Stack>
-                    {/* {invitees.length > 0 ? (
-                        <Divider
-                            gradient="radial-gradient(#eceef1 40%, white 60%)"
-                            marginBottom="0"
-                        />
-                    ) : null} */}
+                <Text pb={"5px"} mt={"15px"} color={"rgb(123, 128, 154)"} fontSize={"14px"}>
+                    Team Members
+                </Text>
+                <Select
+                    options={workspaceUsers?.reactSelectOptions}
+                    isMulti
+                    name="invitees"
+                    onChange={handleSelectChange}
+                    value={selectedOptions}
+                />
 
-                    {/* {invitees.map((invitee: TInvitee, index: number) => {
-                        return (
-                            <Box key={index} bg={"gray.100"} pl={"12px"}>
-                                <HStack>
-                                    <Button
-                                        variant={"unstyled"}
-                                        p={"0"}
-                                        h={"30px"}
-                                        minW={"20px"}
-                                        onClick={() =>
-                                            removeEmail(invitee.email)
-                                        }
-                                    >
-                                        <AiOutlineClose
-                                            style={{
-                                                color: "rgb(123, 128, 154)",
-                                            }}
-                                        />
-                                    </Button>
-                                    <Text
-                                        color={"rgb(123, 128, 154)"}
-                                        fontSize={"14px"}
-                                    >
-                                        {invitee.email}
-                                    </Text>
-                                </HStack>
-                            </Box>
-                        );
-                    })} */}
+                <Stack>
                     <Divider gradient="radial-gradient(#eceef1 40%, white 60%)" marginBottom="0" />
 
                     <Flex mt={"10px"} width={"full"}>
@@ -249,35 +176,50 @@ const Invite = ({}: InviteProps) => {
                             return (
                                 <Box key={index}>
                                     <Flex>
-                                        <Popover>
-                                            <PopoverTrigger>
-                                                <IconButton
-                                                    size={"xs"}
-                                                    variant={"unstyled"}
-                                                    aria-label=""
-                                                    icon={<AiOutlineClose size={"12px"} />}
-                                                ></IconButton>
-                                            </PopoverTrigger>
-                                            <PopoverContent>
-                                                <PopoverArrow />
-                                                <PopoverCloseButton />
-                                                <PopoverHeader>
-                                                    Are you sure you want to delete{" "}
-                                                    {`${item.firstname} ${item.lastname}`}?
-                                                </PopoverHeader>
-                                                <PopoverBody>
-                                                    <Flex>
-                                                        <Spacer />
-                                                        <PrimaryButton onClick={() => confirmRemoveMember(item._id)}>
-                                                            Delete
-                                                        </PrimaryButton>
-                                                    </Flex>
-                                                </PopoverBody>
-                                            </PopoverContent>
-                                        </Popover>
-
+                                        {item._id == localStorage.getItem("userId") ? (
+                                            <Box w={"25px"}>
+                                                <LockIcon
+                                                    fontSize={"11px"}
+                                                    mb={"7px"}
+                                                    ml={"1px"}
+                                                    color={"rgb(123, 128, 154)"}
+                                                />
+                                            </Box>
+                                        ) : (
+                                            <Popover>
+                                                <PopoverTrigger>
+                                                    <IconButton
+                                                        size={"xs"}
+                                                        variant={"unstyled"}
+                                                        aria-label=""
+                                                        icon={<AiOutlineClose size={"12px"} />}
+                                                    ></IconButton>
+                                                </PopoverTrigger>
+                                                <PopoverContent>
+                                                    <PopoverArrow />
+                                                    <PopoverCloseButton />
+                                                    <PopoverHeader>
+                                                        Are you sure you want to delete{" "}
+                                                        {`${item.firstname} ${item.lastname}`}?
+                                                    </PopoverHeader>
+                                                    <PopoverBody>
+                                                        <Flex>
+                                                            <Spacer />
+                                                            <PrimaryButton
+                                                                onClick={() => confirmRemoveMember(item._id)}
+                                                            >
+                                                                Delete
+                                                            </PrimaryButton>
+                                                        </Flex>
+                                                    </PopoverBody>
+                                                </PopoverContent>
+                                            </Popover>
+                                        )}
                                         <Text color={"rgb(123, 128, 154)"} fontSize={"14px"}>
                                             {`${item.firstname} ${item.lastname}`}
+                                        </Text>
+                                        <Text ml={"10px"} pt={"2px"} color={"#afb3c9"} fontSize={"12px"}>
+                                            {getPermissions(item) > 1 ? "Read/Write" : "Read-Only"}
                                         </Text>
                                     </Flex>
                                 </Box>
