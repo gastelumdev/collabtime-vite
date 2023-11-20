@@ -25,7 +25,6 @@ import {
     Hide,
     Spacer,
     Stack,
-    Input,
 } from "@chakra-ui/react";
 import { FiMenu, FiLogOut } from "react-icons/fi";
 import { IconContext, IconType } from "react-icons";
@@ -64,23 +63,10 @@ interface SidebarContentProps {
     children: ReactNode;
 }
 
-// const LinkItems: Array<LinkItemProps> = [
-//     { name: "Workspaces", icon: BsPersonWorkspace, path: "/workspaces" },
-//     {
-//         name: "Data Collections",
-//         icon: BiTable,
-//         path: "/workspaces/1/dataCollections",
-//     },
-//     { name: "Tasks", icon: FaTasks, path: "" },
-//     { name: "Documents", icon: BsFiletypeDoc, path: "" },
-//     { name: "Message Board", icon: AiOutlineMessage, path: "" },
-// ];
-
 const SidebarContent = ({ linkItems, onClose, ...rest }: SidebarProps) => {
     return (
         <Box
             transition="3s ease"
-            // bg={useColorModeValue("white", "gray.900")}
             borderRight="px"
             borderRightColor={useColorModeValue("gray.200", "gray.700")}
             w={{ base: "full", md: 60 }}
@@ -91,9 +77,7 @@ const SidebarContent = ({ linkItems, onClose, ...rest }: SidebarProps) => {
             <Box bg={"black"} h={"94%"} borderRadius={"xl"}>
                 <Box
                     pt={"20px"}
-                    bgImage={
-                        "radial-gradient(circle at center top, rgb(66, 66, 74), black)"
-                    }
+                    bgImage={"radial-gradient(circle at center top, rgb(66, 66, 74), black)"}
                     height={"full"}
                     borderRadius={"xl"}
                 >
@@ -110,10 +94,7 @@ const SidebarContent = ({ linkItems, onClose, ...rest }: SidebarProps) => {
                             </Text>
                         </Center>
                     </Box>
-                    <Divider
-                        gradient="radial-gradient(#5e5b5b 40%, #1c1c1c)"
-                        marginBottom="10px"
-                    />
+                    <Divider gradient="radial-gradient(#5e5b5b 40%, #1c1c1c)" marginBottom="10px" />
                     <Box transition="3s ease">
                         {linkItems.map((link) => (
                             <Link to={link.path} key={link.name}>
@@ -122,11 +103,7 @@ const SidebarContent = ({ linkItems, onClose, ...rest }: SidebarProps) => {
                                 </NavItem>
                             </Link>
                         ))}
-                        <Divider
-                            gradient="radial-gradient(#5e5b5b 40%, black)"
-                            marginBottom="10px"
-                            marginTop="10px"
-                        />
+                        <Divider gradient="radial-gradient(#5e5b5b 40%, black)" marginBottom="10px" marginTop="10px" />
                         <Link to={"/login"}>
                             <NavItem icon={FiLogOut}>
                                 <Text color={"white"}>Logout</Text>
@@ -141,12 +118,6 @@ const SidebarContent = ({ linkItems, onClose, ...rest }: SidebarProps) => {
 
 const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
     return (
-        // <Box
-        //     as="a"
-        //     href="#"
-        //     style={{ textDecoration: "none" }}
-        //     _focus={{ boxShadow: "none" }}
-        // >
         <Flex
             align="center"
             p="4"
@@ -173,16 +144,10 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
             )}
             {children}
         </Flex>
-        // </Box>
     );
 };
 
-const TopNav = ({
-    sidebar = true,
-    onOpen,
-    leftContent,
-    ...rest
-}: TopNavProps) => {
+const TopNav = ({ sidebar = true, onOpen, leftContent, ...rest }: TopNavProps) => {
     const navigate = useNavigate();
     const logout = () => {
         localStorage.removeItem("token");
@@ -198,31 +163,15 @@ const TopNav = ({
             height="20"
             alignItems="center"
             bg={useColorModeValue("gray.100", "gray.900")}
-            // borderBottomWidth="1px"
             borderBottomColor={useColorModeValue("gray.200", "gray.700")}
             justifyContent={{ base: "space-between", md: "flex-end" }}
             {...rest}
         >
-            {/* <Flex
-                minH={"100vh"}
-                // justify={"center"}
-                bg={"#eff2f5"}
-            > */}
             <Container maxW={"8xl"} mt={{ base: 0 }}>
                 <Box pb={3} bg={"#eff2f5"}>
                     <Box bg={"#eff2f5"}>
-                        <SimpleGrid
-                            // spacing={4}
-                            // templateColumns="repeat(auto-fill, minmax(300px, 1fr))"
-                            columns={[1, 2, 2]}
-                            spacingY={{ sm: 3 }}
-                            // minChildWidth={"290px"}
-                        >
-                            <Flex
-                                // h={16}
-                                alignItems={"center"}
-                                justifyContent={"space-between"}
-                            >
+                        <SimpleGrid columns={[1, 2, 2]} spacingY={{ sm: 3 }}>
+                            <Flex alignItems={"center"} justifyContent={"space-between"}>
                                 <IconButton
                                     display={{ base: "flex", lg: "none" }}
                                     onClick={onOpen}
@@ -245,29 +194,15 @@ const TopNav = ({
                                 </Hide>
 
                                 <Stack direction={"row"} spacing={6}>
-                                    <Box paddingRight={"0px"} mt={3}>
-                                        <Input
-                                            borderColor={"#c7cadb"}
-                                            placeholder="Search"
-                                            w={{ base: 200, sm: 100, md: 200 }}
-                                        />
-                                    </Box>
                                     <Menu>
                                         <View />
                                     </Menu>
                                     <Menu autoSelect={false}>
                                         <MenuButton
-                                            // as={Button}
                                             style={{
                                                 backgroundColor: "#eff2f5",
                                             }}
-                                            // cursor={"pointer"}
-                                            // minW={0}
                                         >
-                                            {/* <BellIcon
-                                            boxSize={5}
-                                            color={"#3E505B"}
-                                        /> */}
                                             <Text size={"20px"} pt={1}>
                                                 <IconContext.Provider
                                                     value={{
@@ -279,10 +214,7 @@ const TopNav = ({
                                                 </IconContext.Provider>
                                             </Text>
                                         </MenuButton>
-                                        <MenuList
-                                            alignItems={"center"}
-                                            zIndex={"10"}
-                                        >
+                                        <MenuList alignItems={"center"} zIndex={"10"}>
                                             <br />
                                             <Center>
                                                 <Avatar
@@ -308,18 +240,11 @@ const TopNav = ({
                                             <MenuDivider />
                                             <MenuItem
                                                 color={"#7b809a"}
-                                                onClick={() =>
-                                                    navigate(
-                                                        "/resetPasswordRequest"
-                                                    )
-                                                }
+                                                onClick={() => navigate("/resetPasswordRequest")}
                                             >
                                                 Reset Password
                                             </MenuItem>
-                                            <MenuItem
-                                                onClick={logout}
-                                                color={"#7b809a"}
-                                            >
+                                            <MenuItem onClick={logout} color={"#7b809a"}>
                                                 Logout
                                             </MenuItem>
                                         </MenuList>
@@ -335,30 +260,15 @@ const TopNav = ({
     );
 };
 
-const SideBarLayout = ({
-    linkItems,
-    leftContent,
-    sidebar = true,
-    children,
-}: SidebarContentProps) => {
+const SideBarLayout = ({ linkItems, leftContent, sidebar = true, children }: SidebarContentProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     console.log(sidebar);
 
     return (
-        <Box
-            minH="100vh"
-            bg={useColorModeValue("gray.100", "gray.900")}
-            pl={{ base: 0, lg: 6 }}
-            pr={0}
-            pt={6}
-        >
+        <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")} pl={{ base: 0, lg: 6 }} pr={0} pt={6}>
             {sidebar ? (
-                <SidebarContent
-                    linkItems={linkItems}
-                    onClose={() => onClose}
-                    display={{ base: "none", lg: "block" }}
-                />
+                <SidebarContent linkItems={linkItems} onClose={() => onClose} display={{ base: "none", lg: "block" }} />
             ) : null}
             <Box mx={"6px"} ml={"6px"}>
                 <Drawer
@@ -370,28 +280,16 @@ const SideBarLayout = ({
                     size="xs"
                 >
                     <DrawerContent>
-                        {/* <SidebarContent onClose={onClose} /> */}
-                        <Box
-                            py={6}
-                            pl={6}
-                            height={"full"}
-                            bg={useColorModeValue("gray.100", "gray.900")}
-                        >
+                        <Box py={6} pl={6} height={"full"} bg={useColorModeValue("gray.100", "gray.900")}>
                             <Box
                                 pt={"20px"}
-                                bgImage={
-                                    "radial-gradient(circle at center top, rgb(66, 66, 74), black)"
-                                }
+                                bgImage={"radial-gradient(circle at center top, rgb(66, 66, 74), black)"}
                                 height={"full"}
                                 borderRadius={"xl"}
                             >
                                 <Box pt={"6px"} pb={"4px"}>
                                     <Center>
-                                        <Text
-                                            as={"b"}
-                                            fontSize={"16px"}
-                                            color={"white"}
-                                        >
+                                        <Text as={"b"} fontSize={"16px"} color={"white"}>
                                             <LikeOutlined
                                                 style={{
                                                     marginRight: "4px",
@@ -402,20 +300,12 @@ const SideBarLayout = ({
                                         </Text>
                                     </Center>
                                 </Box>
-                                <Divider
-                                    gradient="radial-gradient(#5e5b5b 40%, #1c1c1c)"
-                                    marginBottom="10px"
-                                />
+                                <Divider gradient="radial-gradient(#5e5b5b 40%, #1c1c1c)" marginBottom="10px" />
                                 <Box transition="3s ease">
                                     {linkItems.map((link) => (
                                         <Link to={link.path} key={link.name}>
-                                            <NavItem
-                                                key={link.name}
-                                                icon={link.icon}
-                                            >
-                                                <Text color={"#dbdbdb"}>
-                                                    {link.name}
-                                                </Text>
+                                            <NavItem key={link.name} icon={link.icon}>
+                                                <Text color={"#dbdbdb"}>{link.name}</Text>
                                             </NavItem>
                                         </Link>
                                     ))}
@@ -426,9 +316,7 @@ const SideBarLayout = ({
                                     />
                                     <Link to={"/login"}>
                                         <NavItem icon={FiLogOut}>
-                                            <Text color={"#dbdbdb"}>
-                                                Logout
-                                            </Text>
+                                            <Text color={"#dbdbdb"}>Logout</Text>
                                         </NavItem>
                                     </Link>
                                 </Box>
@@ -439,11 +327,7 @@ const SideBarLayout = ({
             </Box>
             {/* mobilenav */}
             <Box ml={{ base: 0, lg: sidebar ? "240px" : "0" }} p={{ base: 0 }}>
-                <TopNav
-                    sidebar={false}
-                    onOpen={onOpen}
-                    leftContent={leftContent}
-                />
+                <TopNav sidebar={false} onOpen={onOpen} leftContent={leftContent} />
             </Box>
             <Box
                 ml={{ base: 0, lg: sidebar ? "240px" : "0" }}

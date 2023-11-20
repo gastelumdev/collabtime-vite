@@ -20,15 +20,7 @@ import {
     Center,
     Checkbox,
     Container,
-    Drawer,
-    DrawerBody,
-    DrawerCloseButton,
-    DrawerContent,
-    DrawerFooter,
-    DrawerHeader,
-    DrawerOverlay,
     Flex,
-    FormLabel,
     HStack,
     Heading,
     IconButton,
@@ -66,6 +58,7 @@ import Divider from "../../components/Divider/Divider";
 
 import getTextColor from "../../utils/helpers";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
+import PrimaryDrawer from "../../components/PrimaryDrawer";
 
 interface LinkItemProps {
     name: string;
@@ -371,6 +364,15 @@ const ViewOne = () => {
         newCell = { ...newCell, value: newValue.value };
         console.log("NEW CELL", newCell);
         await updateCell(newCell);
+    };
+
+    const closeDrawer = () => {
+        onClose();
+        setShowLabelForm(false);
+        setLabelOptions({
+            title: "",
+            color: "",
+        });
     };
 
     return (
@@ -858,107 +860,96 @@ const ViewOne = () => {
                     </Flex>
                 </Box>
             </SideBarLayout>
-            <Drawer
-                isOpen={isOpen}
-                placement="right"
-                // initialFocusRef={firstField}
-                onClose={onClose}
-            >
-                <DrawerOverlay />
-                <DrawerContent>
-                    <DrawerCloseButton />
-                    <DrawerHeader borderBottomWidth="1px">Add a new column</DrawerHeader>
-
-                    <DrawerBody>
-                        <Stack spacing="24px">
+            <PrimaryDrawer isOpen={isOpen} onClose={closeDrawer} title={"Create a new column"}>
+                <Stack spacing="24px">
+                    <Box>
+                        <Text mb={"5px"}>Name</Text>
+                        <Input
+                            // ref={firstField}
+                            id="columnName"
+                            name="columnName"
+                            placeholder="Please enter column name"
+                            onChange={handleColumnNameChange}
+                        />
+                    </Box>
+                    <Box>
+                        <Text mb={"5px"}>Type</Text>
+                        <Select
+                            id="columnType"
+                            name="columnType"
+                            placeholder="Please select column type"
+                            onChange={(selectedOption: any) => handleSelectType(selectedOption)}
+                            options={[
+                                { value: "text", label: "Text" },
+                                { value: "label", label: "Label" },
+                            ]}
+                            styles={
+                                {
+                                    control: (styles: any) => {
+                                        return { ...styles, borderColor: "#e2e8f0" };
+                                    },
+                                } as any
+                            }
+                        />
+                    </Box>
+                    {showLabelForm ? (
+                        <>
+                            <Divider
+                                gradient="radial-gradient(#eceef1 40%, white 60%)"
+                                marginBottom="0"
+                                marginTop="0"
+                            />
                             <Box>
-                                <FormLabel htmlFor="columnName">Name</FormLabel>
+                                <Text mb={"5px"}>Label name</Text>
                                 <Input
                                     // ref={firstField}
-                                    id="columnName"
-                                    name="columnName"
-                                    placeholder="Please enter column name"
-                                    onChange={handleColumnNameChange}
+                                    id="labelName"
+                                    name="title"
+                                    value={labelOptions.title}
+                                    placeholder="Please enter label name"
+                                    onChange={handleLabelOptionsChange}
                                 />
                             </Box>
                             <Box>
-                                <FormLabel htmlFor="columnType">Type</FormLabel>
-                                <Select
-                                    id="columnType"
-                                    name="columnType"
-                                    placeholder="Please select column type"
-                                    onChange={(selectedOption: any) => handleSelectType(selectedOption)}
-                                    options={[
-                                        { value: "text", label: "Text" },
-                                        { value: "label", label: "Label" },
-                                    ]}
+                                <Text mb={"5px"}>Select label color</Text>
+                                <input
+                                    type={"color"}
+                                    // ref={firstField}
+                                    id="labelColor"
+                                    name="color"
+                                    onChange={handleLabelOptionsChange}
                                 />
                             </Box>
-                            {showLabelForm ? (
-                                <>
-                                    <Divider
-                                        gradient="radial-gradient(#eceef1 40%, white 60%)"
-                                        marginBottom="0"
-                                        marginTop="0"
-                                    />
-                                    <Box>
-                                        <FormLabel htmlFor="labelName">Label name</FormLabel>
-                                        <Input
-                                            // ref={firstField}
-                                            id="labelName"
-                                            name="title"
-                                            value={labelOptions.title}
-                                            placeholder="Please enter label name"
-                                            onChange={handleLabelOptionsChange}
-                                        />
-                                    </Box>
-                                    <Box>
-                                        <FormLabel htmlFor="labelColor">Select label color</FormLabel>
-                                        <input
-                                            type={"color"}
-                                            // ref={firstField}
-                                            id="labelColor"
-                                            name="color"
-                                            onChange={handleLabelOptionsChange}
-                                        />
-                                    </Box>
-                                    <PrimaryButton onClick={addLabel}>Add label</PrimaryButton>
-                                    <Divider
-                                        gradient="radial-gradient(#eceef1 40%, white 60%)"
-                                        marginBottom="0"
-                                        marginTop="0"
-                                    />
-                                    <Box>
-                                        {labels.map((label: TLabel, index: number) => {
-                                            console.log(label);
-                                            return (
-                                                <Box key={index} bg={label.color} p={"5px"} m={"5px"}>
-                                                    <HStack>
-                                                        <AiOutlineClose
-                                                            color={getTextColor(label.color)}
-                                                            onClick={() => removeLabel(label)}
-                                                        />
-                                                        <Text color={getTextColor(label.color)}>{label.title}</Text>
-                                                    </HStack>
-                                                </Box>
-                                            );
-                                        })}
-                                    </Box>
-                                </>
-                            ) : null}
-                        </Stack>
-                    </DrawerBody>
-
-                    <DrawerFooter borderTopWidth="1px">
-                        <Button variant="outline" mr={3} onClick={onClose}>
-                            Cancel
-                        </Button>
-                        <Button colorScheme="blue" onClick={handleAddColumn}>
-                            Submit
-                        </Button>
-                    </DrawerFooter>
-                </DrawerContent>
-            </Drawer>
+                            <PrimaryButton onClick={addLabel}>Add label</PrimaryButton>
+                            <Divider
+                                gradient="radial-gradient(#eceef1 40%, white 60%)"
+                                marginBottom="0"
+                                marginTop="0"
+                            />
+                            <Box>
+                                {labels.map((label: TLabel, index: number) => {
+                                    console.log(label);
+                                    return (
+                                        <Box key={index} bg={label.color} p={"5px"} m={"5px"}>
+                                            <HStack>
+                                                <AiOutlineClose
+                                                    color={getTextColor(label.color)}
+                                                    onClick={() => removeLabel(label)}
+                                                />
+                                                <Text color={getTextColor(label.color)}>{label.title}</Text>
+                                            </HStack>
+                                        </Box>
+                                    );
+                                })}
+                            </Box>
+                        </>
+                    ) : null}
+                </Stack>
+                <Flex mt={"20px"}>
+                    <Spacer />
+                    <PrimaryButton onClick={handleAddColumn}>SAVE</PrimaryButton>
+                </Flex>
+            </PrimaryDrawer>
         </>
         // </Layout>
     );

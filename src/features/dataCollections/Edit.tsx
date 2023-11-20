@@ -1,16 +1,8 @@
 import React, { useState } from "react";
-import {
-    Button,
-    Input,
-    Text,
-    useDisclosure,
-    Flex,
-    Spacer,
-} from "@chakra-ui/react";
+import { Button, Input, Text, useDisclosure, Flex, Spacer } from "@chakra-ui/react";
 import { TDataCollection } from "../../types";
 import { AiOutlineEdit } from "react-icons/ai";
 import PrimaryDrawer from "../../components/PrimaryDrawer";
-import Divider from "../../components/Divider/Divider";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 
 interface IProps {
@@ -45,11 +37,7 @@ const Edit = ({ dataCollection, updateDataCollection }: IProps) => {
                 onClick={onOpen}
                 zIndex={10}
             ></Button>
-            <PrimaryDrawer
-                onClose={onClose}
-                isOpen={isOpen}
-                title={"Create a new workspace"}
-            >
+            <PrimaryDrawer onClose={onClose} isOpen={isOpen} title={"Create a new workspace"}>
                 <Text pb={"5px"}>Name</Text>
                 <Input
                     name="name"
@@ -58,10 +46,6 @@ const Edit = ({ dataCollection, updateDataCollection }: IProps) => {
                     required={true}
                     onChange={handleChange}
                     style={{ marginBottom: "15px" }}
-                />
-                <Divider
-                    gradient="radial-gradient(#eceef1 40%, white 60%)"
-                    marginBottom="0"
                 />
                 <Flex mt={"10px"} width={"full"}>
                     <Spacer />

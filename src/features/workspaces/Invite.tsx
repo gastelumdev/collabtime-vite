@@ -41,7 +41,7 @@ const Invite = ({}: InviteProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { id } = useParams();
     const [permissions, setPermissions] = useState<number>(1);
-    const [invitees] = useState<TInvitee[]>([]);
+    const [invitees, setInvitees] = useState<TInvitee[]>([]);
     const { data: workspaceUsers } = useGetWorkspaceUsersQuery(id as string);
     const { data: workspace } = useGetOneWorkspaceQuery(id as string);
     const [inviteTeamMember] = useInviteTeamMemberMutation();
@@ -51,20 +51,25 @@ const Invite = ({}: InviteProps) => {
 
     const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = event.target;
-        console.log(value);
         setPermissions(Number(value));
+
+        const inviteesCopy = invitees.map((item) => {
+            return { ...item, permissions: Number(value) };
+        });
+
+        setInvitees(inviteesCopy);
+
+        const newWorkspaceCopy = { ...newWorkspace };
+        newWorkspaceCopy.invitees = invitees;
+        setNewWorkspace(newWorkspaceCopy as TWorkspace);
     };
 
     const handleSelectChange = async (
         newValue: MultiValue<{ value: string; label: string }>,
         actionMeta: ActionMeta<any>
     ) => {
-        console.log(newValue);
-        console.log(actionMeta);
         setSelectedOptions(newValue);
         let inviteesCopy = invitees;
-
-        console.log(permissions);
 
         if (actionMeta.action === "select-option") {
             inviteesCopy.push({ email: actionMeta.option.value, permissions: permissions || 1 });
@@ -96,14 +101,12 @@ const Invite = ({}: InviteProps) => {
     };
 
     const handleSubmit = () => {
-        console.log(newWorkspace);
         inviteTeamMember(newWorkspace as TWorkspace);
         setSelectedOptions([]);
         // onClose();
     };
 
     const confirmRemoveMember = (userId: string) => {
-        console.log(userId);
         removeMember({ userId });
     };
 
@@ -163,13 +166,13 @@ const Invite = ({}: InviteProps) => {
                 />
 
                 <Stack>
-                    <Divider gradient="radial-gradient(#eceef1 40%, white 60%)" marginBottom="0" />
+                    {/* <Divider gradient="radial-gradient(#eceef1 40%, white 60%)" marginBottom="0" /> */}
 
                     <Flex mt={"10px"} width={"full"}>
                         <Spacer />
                         <PrimaryButton onClick={handleSubmit}>INVITE</PrimaryButton>
                     </Flex>
-                    <Divider gradient="radial-gradient(#eceef1 40%, white 60%)" marginBottom="0" />
+                    <Divider gradient="radial-gradient(#eceef1 40%, white 60%)" marginBottom="20px" />
                     <Text fontSize={"16px"}>Team members</Text>
                     {workspaceUsers?.members.length || 0 > 0 ? (
                         workspaceUsers?.members.map((item: TUser, index: number) => {
@@ -230,7 +233,7 @@ const Invite = ({}: InviteProps) => {
                             You have no team members at this time.
                         </Text>
                     )}
-                    <Divider gradient="radial-gradient(#eceef1 40%, white 60%)" marginBottom="0" />
+                    <Divider gradient="radial-gradient(#eceef1 40%, white 60%)" marginBottom="20px" />
                     <Text fontSize={"16px"}>Invited team members</Text>
                     {workspaceUsers?.invitees.length || 0 > 0 ? (
                         workspaceUsers?.invitees.map((item: TUser, index: number) => {

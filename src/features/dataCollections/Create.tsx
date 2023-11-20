@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Drawer, Input, Space } from "antd";
-import { Button, Text } from "@chakra-ui/react";
+import { Input, Text, Flex, Spacer } from "@chakra-ui/react";
 import { TDataCollection } from "../../types";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
+import PrimaryDrawer from "../../components/PrimaryDrawer";
 
 let defaultValues: TDataCollection = {
     name: "",
@@ -52,24 +52,7 @@ const Create = ({ addNewDataCollection }: IProps) => {
     return (
         <>
             <PrimaryButton onClick={showDrawer}>NEW COLLECTION</PrimaryButton>
-            <Drawer
-                title="Create a new data collection"
-                width={500}
-                onClose={onClose}
-                open={open}
-                bodyStyle={{ paddingBottom: 80 }}
-                extra={
-                    <Space>
-                        <Button onClick={onClose}>Cancel</Button>
-                        <Button
-                            onClick={createData}
-                            _hover={{ boxShadow: "lg" }}
-                        >
-                            Save
-                        </Button>
-                    </Space>
-                }
-            >
+            <PrimaryDrawer title="Create a new data collection" onClose={onClose} isOpen={open}>
                 <Text pb={"5px"}>Name</Text>
                 <Input
                     name="name"
@@ -79,7 +62,11 @@ const Create = ({ addNewDataCollection }: IProps) => {
                     onChange={handleChange}
                     style={{ marginBottom: "15px" }}
                 />
-            </Drawer>
+                <Flex>
+                    <Spacer />
+                    <PrimaryButton onClick={createData}>SAVE</PrimaryButton>
+                </Flex>
+            </PrimaryDrawer>
         </>
     );
 };

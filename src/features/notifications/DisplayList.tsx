@@ -4,21 +4,8 @@
  */
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
-import {
-    Box,
-    Center,
-    Flex,
-    HStack,
-    Spacer,
-    Spinner,
-    Stack,
-    Text,
-    useToast,
-} from "@chakra-ui/react";
-import {
-    useGetNotificationsQuery,
-    useCallNotificationsUpdateMutation,
-} from "../../app/services/api";
+import { Box, Center, Flex, HStack, Spacer, Spinner, Stack, Text, useToast } from "@chakra-ui/react";
+import { useGetNotificationsQuery, useCallNotificationsUpdateMutation } from "../../app/services/api";
 
 // const data = [
 //     {
@@ -94,10 +81,7 @@ const DisplayList = () => {
 
     useEffect(() => {
         console.log(priority);
-        setNotificationsFilter(
-            localStorage.getItem("notificationsFilter") as string,
-            0
-        );
+        setNotificationsFilter(localStorage.getItem("notificationsFilter") as string, 0);
     }, [priority]);
 
     const setNotificationsFilter = (priority: string, index: number) => {
@@ -122,7 +106,7 @@ const DisplayList = () => {
 
     const formatTime = (date: Date) => {
         let newDate = new Date(date);
-        let formattedDate = `${newDate.getDay()}/${newDate.getMonth()}/${newDate.getFullYear()} ${formatHours(
+        let formattedDate = `${newDate.getMonth()}/${newDate.getDay()}/${newDate.getFullYear()} ${formatHours(
             newDate.getHours()
         )}:${newDate.getUTCMinutes()} ${getMeridian(newDate.getHours())}`;
         return (
@@ -177,17 +161,9 @@ const DisplayList = () => {
                     <HStack spacing={4}>
                         <Box
                             w={priorityButtonWidth}
-                            bg={
-                                activeTab === 0
-                                    ? setPriorityColor("All")?.active
-                                    : setPriorityColor("All")?.inactive
-                            }
+                            bg={activeTab === 0 ? setPriorityColor("All")?.active : setPriorityColor("All")?.inactive}
                             borderRadius={"base"}
-                            boxShadow={
-                                activeTab === 0
-                                    ? priorityButtonBoxShadow
-                                    : "none"
-                            }
+                            boxShadow={activeTab === 0 ? priorityButtonBoxShadow : "none"}
                             p={"2px"}
                             cursor={"pointer"}
                             onClick={() => setNotificationsFilter("All", 0)}
@@ -204,16 +180,10 @@ const DisplayList = () => {
                                     : setPriorityColor("Critical")?.inactive
                             }
                             borderRadius={"base"}
-                            boxShadow={
-                                activeTab === 1
-                                    ? priorityButtonBoxShadow
-                                    : "none"
-                            }
+                            boxShadow={activeTab === 1 ? priorityButtonBoxShadow : "none"}
                             p={"2px"}
                             cursor={"pointer"}
-                            onClick={() =>
-                                setNotificationsFilter("Critical", 1)
-                            }
+                            onClick={() => setNotificationsFilter("Critical", 1)}
                         >
                             <Center>
                                 <Text color={"white"}>Critical</Text>
@@ -221,17 +191,9 @@ const DisplayList = () => {
                         </Box>
                         <Box
                             w={priorityButtonWidth}
-                            bg={
-                                activeTab === 2
-                                    ? setPriorityColor("High")?.active
-                                    : setPriorityColor("High")?.inactive
-                            }
+                            bg={activeTab === 2 ? setPriorityColor("High")?.active : setPriorityColor("High")?.inactive}
                             borderRadius={"base"}
-                            boxShadow={
-                                activeTab === 2
-                                    ? priorityButtonBoxShadow
-                                    : "none"
-                            }
+                            boxShadow={activeTab === 2 ? priorityButtonBoxShadow : "none"}
                             p={"2px"}
                             cursor={"pointer"}
                             onClick={() => setNotificationsFilter("High", 2)}
@@ -242,17 +204,9 @@ const DisplayList = () => {
                         </Box>
                         <Box
                             w={priorityButtonWidth}
-                            bg={
-                                activeTab === 3
-                                    ? setPriorityColor("Mid")?.active
-                                    : setPriorityColor("Mid")?.inactive
-                            }
+                            bg={activeTab === 3 ? setPriorityColor("Mid")?.active : setPriorityColor("Mid")?.inactive}
                             borderRadius={"base"}
-                            boxShadow={
-                                activeTab === 3
-                                    ? priorityButtonBoxShadow
-                                    : "none"
-                            }
+                            boxShadow={activeTab === 3 ? priorityButtonBoxShadow : "none"}
                             p={"2px"}
                             cursor={"pointer"}
                             onClick={() => setNotificationsFilter("Mid", 3)}
@@ -263,17 +217,9 @@ const DisplayList = () => {
                         </Box>
                         <Box
                             w={priorityButtonWidth}
-                            bg={
-                                activeTab === 4
-                                    ? setPriorityColor("Low")?.active
-                                    : setPriorityColor("Low")?.inactive
-                            }
+                            bg={activeTab === 4 ? setPriorityColor("Low")?.active : setPriorityColor("Low")?.inactive}
                             borderRadius={"base"}
-                            boxShadow={
-                                activeTab === 4
-                                    ? priorityButtonBoxShadow
-                                    : "none"
-                            }
+                            boxShadow={activeTab === 4 ? priorityButtonBoxShadow : "none"}
                             p={"2px"}
                             cursor={"pointer"}
                             onClick={() => setNotificationsFilter("Low", 4)}
@@ -301,16 +247,11 @@ const DisplayList = () => {
                                     borderTop={"1px"}
                                     borderTopColor={"#edf2f7"}
                                     borderBottom={"1px"}
-                                    borderBottomColor={
-                                        setPriorityColor(item.priority)?.active
-                                    }
+                                    borderBottomColor={setPriorityColor(item.priority)?.active}
                                     boxShadow={"md"}
                                 >
                                     <Flex>
-                                        <Text
-                                            color={"#7b809a"}
-                                            fontSize={"14px"}
-                                        >
+                                        <Text color={"#7b809a"} fontSize={"14px"}>
                                             {item.message}
                                         </Text>
                                         <Spacer />

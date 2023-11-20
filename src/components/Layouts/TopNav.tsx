@@ -3,7 +3,6 @@ import {
     Box,
     Center,
     Flex,
-    Input,
     Menu,
     MenuButton,
     MenuDivider,
@@ -63,11 +62,7 @@ const TopNav = ({ firstname, lastname, breadcrumbs }: INavProps) => {
                                 // templateColumns="repeat(auto-fill, minmax(300px, 1fr))"
                                 columns={[1, 2, 2]}
                             >
-                                <Flex
-                                    h={16}
-                                    alignItems={"center"}
-                                    justifyContent={"space-between"}
-                                >
+                                <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
                                     <Box pt={"18px"} bg={"#eff2f5"}>
                                         {breadcrumbs}
                                     </Box>
@@ -78,13 +73,13 @@ const TopNav = ({ firstname, lastname, breadcrumbs }: INavProps) => {
                                     </Hide>
 
                                     <Stack direction={"row"} spacing={6}>
-                                        <Box paddingRight={"0px"}>
+                                        {/* <Box paddingRight={"0px"}>
                                             <Input
                                                 borderColor={"#c7cadb"}
                                                 placeholder="Search here..."
                                                 w={200}
                                             />
-                                        </Box>
+                                        </Box> */}
                                         <Menu>
                                             <View />
                                         </Menu>
@@ -115,10 +110,7 @@ const TopNav = ({ firstname, lastname, breadcrumbs }: INavProps) => {
                                             <MenuList alignItems={"center"}>
                                                 <br />
                                                 <Center>
-                                                    <Avatar
-                                                        size={"lg"}
-                                                        src={avatarUrl}
-                                                    />
+                                                    <Avatar size={"lg"} src={avatarUrl} />
                                                 </Center>
                                                 <br />
                                                 <Center>
@@ -137,9 +129,7 @@ const TopNav = ({ firstname, lastname, breadcrumbs }: INavProps) => {
                                                 <br />
                                                 <MenuDivider />
                                                 {/* <MenuItem>Profile</MenuItem> */}
-                                                <MenuItem onClick={logout}>
-                                                    Logout
-                                                </MenuItem>
+                                                <MenuItem onClick={logout}>Logout</MenuItem>
                                             </MenuList>
                                         </Menu>
                                     </Stack>
