@@ -1,5 +1,5 @@
 import { useJoinWorkspaceMutation, useGetWorkspaceUsersQuery } from "../../app/services/api";
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Text, useToast } from "@chakra-ui/react";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
@@ -10,6 +10,8 @@ export default function Join() {
     const [joinWorkspace] = useJoinWorkspaceMutation();
     const { data: workspaceUsers } = useGetWorkspaceUsersQuery(queryParameters.get("workspaceId") || "");
 
+    const toast = useToast();
+
     useEffect(() => {
         console.log(workspaceUsers);
         for (const member of workspaceUsers?.members || []) {
@@ -18,11 +20,21 @@ export default function Join() {
     }, [workspaceUsers]);
 
     const handleJoinWorkspace = async () => {
-        await joinWorkspace({
+        const res: any = await joinWorkspace({
             workspaceId: queryParameters.get("workspaceId") || "",
             userId: queryParameters.get("id") || "",
         });
-        navigate(`/workspaces/${queryParameters.get("workspaceId")}`);
+
+        if (res.error) {
+            toast({
+                title: "Invitation Error",
+                description: "Your invitation was removed. Please contact the workspace admin.",
+                status: "info",
+                position: "top",
+            });
+        } else {
+            navigate(`/workspaces/${queryParameters.get("workspaceId")}`);
+        }
     };
 
     return (

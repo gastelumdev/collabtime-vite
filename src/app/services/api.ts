@@ -89,7 +89,7 @@ export const api = createApi({
             }),
             invalidatesTags: ["Workspace"]
         }),
-        joinWorkspace: builder.mutation<TWorkspace, TJoinWorkspace>({
+        joinWorkspace: builder.mutation<{success: boolean}, TJoinWorkspace>({
             query: (params) => ({
                 url: `workspaces/${params.workspaceId}/joinWorkspace`,
                 method: "POST",
