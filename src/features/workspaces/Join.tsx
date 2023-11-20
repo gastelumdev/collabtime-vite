@@ -28,9 +28,11 @@ export default function Join() {
         if (res.error) {
             toast({
                 title: "Invitation Error",
-                description: "Your invitation was removed. Please contact the workspace admin.",
+                description:
+                    "Either you are already a member or your invitation was removed. Please contact the workspace admin for more information.",
                 status: "info",
                 position: "top",
+                duration: 9000,
             });
         } else {
             navigate(`/workspaces/${queryParameters.get("workspaceId")}`);

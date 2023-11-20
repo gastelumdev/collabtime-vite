@@ -401,10 +401,10 @@ const ViewOne = () => {
                                         </Text>
                                     </Box>
                                 </Flex>
-                                <Flex>
+                                {/* <Flex>
                                     <Spacer />
-                                    <Box pb={"20px"}>{/* <Create addNewWorkspace={addNewWorkspace} /> */}</Box>
-                                </Flex>
+                                    <Box pb={"20px"}><Create addNewWorkspace={addNewWorkspace} /></Box>
+                                </Flex> */}
                             </SimpleGrid>
                             <Card mb={"60px"}>
                                 <CardHeader>
@@ -418,18 +418,6 @@ const ViewOne = () => {
                                             </Text>
                                         </Box>
                                         <Spacer />
-                                        {/* <PrimaryButton
-                                            onClick={onOpen}
-                                            float={"right"}
-                                        >
-                                            ADD FORM
-                                        </PrimaryButton> */}
-                                        {/* <AddForm
-                                            updateDataCollection={
-                                                updateDataCollection
-                                            }
-                                            dataCollection={dataCollection}
-                                        /> */}
                                     </Flex>
                                     <Box h={"20px"}>
                                         {rowsLoading || deletingRows || creatingRow || rowsFetching ? (
@@ -469,7 +457,7 @@ const ViewOne = () => {
                                                                         </MenuList>
                                                                     </Menu>
                                                                 ) : (
-                                                                    column.name
+                                                                    column.name.split("_").join(" ").toUpperCase()
                                                                 )}
                                                             </Th>
                                                         );
@@ -597,10 +585,6 @@ const ViewOne = () => {
                                                                 return (
                                                                     <Td
                                                                         key={index}
-                                                                        // p={
-                                                                        //     cell.type == "label" ? "0" : "inherit"
-                                                                        // }
-                                                                        // pr={"5px"}
                                                                         px={cell.type == "label" ? "1px" : "10px"}
                                                                         py={"0"}
                                                                         m={"0"}
@@ -670,16 +654,6 @@ const ViewOne = () => {
                                                         </Tr>
                                                     );
                                                 })}
-                                                {/* <Tr>
-                                                    <Td>inches</Td>
-                                                    <Td>millimetres (mm)</Td>
-                                                    <Td>25.4</Td>
-                                                </Tr>
-                                                <Tr>
-                                                    <Td>feet</Td>
-                                                    <Td>centimetres (cm)</Td>
-                                                    <Td>30.48</Td>
-                                                </Tr> */}
 
                                                 {showRowForm ? (
                                                     <Tr>
