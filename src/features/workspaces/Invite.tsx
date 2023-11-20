@@ -4,6 +4,7 @@ import {
     useGetWorkspaceUsersQuery,
     useInviteTeamMemberMutation,
     useRemoveMemberMutation,
+    useRemoveInviteeMutation,
 } from "../../app/services/api";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import {
@@ -46,6 +47,7 @@ const Invite = ({}: InviteProps) => {
     const { data: workspace } = useGetOneWorkspaceQuery(id as string);
     const [inviteTeamMember] = useInviteTeamMemberMutation();
     const [removeMember] = useRemoveMemberMutation();
+    const [removeInvitee] = useRemoveInviteeMutation();
     const [newWorkspace, setNewWorkspace] = useState<TWorkspace>();
     const [selectedOptions, setSelectedOptions] = useState<MultiValue<{ value: string; label: string }>>([]);
 
@@ -110,6 +112,10 @@ const Invite = ({}: InviteProps) => {
         removeMember({ userId });
     };
 
+    const confirmRemoveInvitee = (userId: string) => {
+        removeInvitee({ userId });
+    };
+
     const getPermissions = (user: TUser) => {
         for (const workspace of user.workspaces) {
             if (workspace.id === localStorage.getItem("workspaceId")) {
@@ -117,6 +123,10 @@ const Invite = ({}: InviteProps) => {
             }
         }
         return 0;
+    };
+
+    const isOwner = (user: TUser) => {
+        return user._id == workspace?.owner;
     };
 
     return (
@@ -222,7 +232,11 @@ const Invite = ({}: InviteProps) => {
                                             {`${item.firstname} ${item.lastname}`}
                                         </Text>
                                         <Text ml={"10px"} pt={"2px"} color={"#afb3c9"} fontSize={"12px"}>
-                                            {getPermissions(item) > 1 ? "Read/Write" : "Read-Only"}
+                                            {isOwner(item)
+                                                ? "Owner"
+                                                : getPermissions(item) > 1
+                                                ? "Read/Write"
+                                                : "Read-Only"}
                                         </Text>
                                     </Flex>
                                 </Box>
@@ -238,9 +252,40 @@ const Invite = ({}: InviteProps) => {
                     {workspaceUsers?.invitees.length || 0 > 0 ? (
                         workspaceUsers?.invitees.map((item: TUser, index: number) => {
                             return (
-                                <Text key={index} color={"rgb(123, 128, 154)"} fontSize={"14px"}>
-                                    {`${item.firstname} ${item.lastname}`}
-                                </Text>
+                                <Flex key={index}>
+                                    <Popover>
+                                        <PopoverTrigger>
+                                            <IconButton
+                                                size={"xs"}
+                                                variant={"unstyled"}
+                                                aria-label=""
+                                                icon={<AiOutlineClose size={"12px"} />}
+                                            ></IconButton>
+                                        </PopoverTrigger>
+                                        <PopoverContent>
+                                            <PopoverArrow />
+                                            <PopoverCloseButton />
+                                            <PopoverHeader>
+                                                Are you sure you want to remove your invitation to{" "}
+                                                {`${item.firstname} ${item.lastname}`}?
+                                            </PopoverHeader>
+                                            <PopoverBody>
+                                                <Flex>
+                                                    <Spacer />
+                                                    <PrimaryButton onClick={() => confirmRemoveInvitee(item._id)}>
+                                                        Remove
+                                                    </PrimaryButton>
+                                                </Flex>
+                                            </PopoverBody>
+                                        </PopoverContent>
+                                    </Popover>
+                                    <Text color={"rgb(123, 128, 154)"} fontSize={"14px"}>
+                                        {`${item.firstname} ${item.lastname}`}
+                                    </Text>
+                                    <Text ml={"10px"} pt={"2px"} color={"#afb3c9"} fontSize={"12px"}>
+                                        {getPermissions(item) > 1 ? "Read/Write" : "Read-Only"}
+                                    </Text>
+                                </Flex>
                             );
                         })
                     ) : (

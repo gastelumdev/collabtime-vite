@@ -105,6 +105,14 @@ export const api = createApi({
             }),
             invalidatesTags: ["Workspace"]
         }),
+        removeInvitee: builder.mutation<{success: Boolean}, {userId: string}>({
+            query: (userId) => ({
+                url: `workspaces/${localStorage.getItem("workspaceId")}/removeInvitee`,
+                method: "POST",
+                body: userId
+            }),
+            invalidatesTags: ["Workspace"]
+        }),
         callUpdate: builder.mutation<{success: Boolean}, null>({
             query: () => ({
                 url: "workspaces/callUpdate",
@@ -235,6 +243,7 @@ export const {
     useInviteTeamMemberMutation,
     useJoinWorkspaceMutation,
     useRemoveMemberMutation,
+    useRemoveInviteeMutation,
     useCallUpdateMutation,
     useGetNotificationsQuery,
     useCallNotificationsUpdateMutation,
