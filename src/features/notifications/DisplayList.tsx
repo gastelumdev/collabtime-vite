@@ -108,7 +108,7 @@ const DisplayList = () => {
         let newDate = new Date(date);
         let formattedDate = `${newDate.getMonth()}/${newDate.getDay()}/${newDate.getFullYear()} ${formatHours(
             newDate.getHours()
-        )}:${newDate.getUTCMinutes()} ${getMeridian(newDate.getHours())}`;
+        )}:${newDate.getUTCMinutes() > 9 ? "" : "0"}${newDate.getUTCMinutes()} ${getMeridian(newDate.getHours())}`;
         return (
             <Text fontSize={"12px"} color={"#7b809a"}>
                 {formattedDate}

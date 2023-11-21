@@ -1,25 +1,14 @@
-import {
-    Box,
-    Card,
-    Heading,
-    List,
-    ListIcon,
-    ListItem,
-    Text,
-} from "@chakra-ui/react";
+import { Box, Card, Heading, List, ListIcon, ListItem, Text } from "@chakra-ui/react";
 import { IconType } from "react-icons";
 
 interface IProps {
     title: string;
+    description?: string;
     bgImage?: string;
     icon?: IconType;
 }
 
-const SecondaryCard = ({
-    title,
-    bgImage = "linear-gradient(195deg, #FF548A, #EC1559)",
-    icon,
-}: IProps) => {
+const SecondaryCard = ({ title, description, bgImage = "linear-gradient(195deg, #FF548A, #EC1559)", icon }: IProps) => {
     return (
         <Card border={"none"} boxShadow={"lg"}>
             <Box px={"10px"}>
@@ -44,7 +33,7 @@ const SecondaryCard = ({
                 </Box>
             </Box>
             <Box h={"100px"} p={"24px"}>
-                <Text color={"rgb(150 156 189)"}>Message your team.</Text>
+                <Text color={"rgb(150 156 189)"}>{description}</Text>
             </Box>
         </Card>
     );

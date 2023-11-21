@@ -1,13 +1,17 @@
 // import { ReactNode } from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
 
 interface PrivateOutletProps {
     redirectPath?: string;
 }
 
 export function PrivateOutlet({ redirectPath = "/login" }: PrivateOutletProps) {
-    const user = useAuth();
+    if (!localStorage.getItem("workspaceId")) localStorage.setItem("workspaceId", "none");
 
-    return localStorage.getItem("token") || user.user ? <Outlet /> : <Navigate to={redirectPath} />;
+    if (!localStorage.getItem("token")) {
+        localStorage.removeItem("userId");
+        localStorage.removeItem("dataCollectionId");
+    }
+
+    return localStorage.getItem("token") ? <Outlet /> : <Navigate to={redirectPath} />;
 }

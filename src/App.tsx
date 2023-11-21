@@ -55,41 +55,22 @@ function App() {
             <Routes>
                 <Route element={<PrivateOutlet />}>
                     <Route path="workspaces" element={<Workspaces />} />
+                    {/* <Route element={<WorkspaceOutlet />}> */}
                     <Route path="workspaces/:id" element={<Workspace />} />
-                    <Route
-                        path="workspaces/:id/dataCollections"
-                        element={<DataCollections />}
-                    />
-                    <Route
-                        path="workspaces/:id/dataCollections/:dataCollectionId"
-                        element={<DataCollection />}
-                    />
-                    <Route
-                        path="workspaces/:id/documents"
-                        element={<Documents />}
-                    />
-                    <Route
-                        path="workspaces/:id/taskLists"
-                        element={<Tasks />}
-                    />
-                    <Route
-                        path="workspaces/:id/messageBoard"
-                        element={<MessageBoard />}
-                    />
+                    <Route path="workspaces/:id/dataCollections" element={<DataCollections />} />
+                    <Route path="workspaces/:id/dataCollections/:dataCollectionId" element={<DataCollection />} />
+                    <Route path="workspaces/:id/documents" element={<Documents />} />
+                    <Route path="workspaces/:id/taskLists" element={<Tasks />} />
+                    <Route path="workspaces/:id/messageBoard" element={<MessageBoard />} />
+                    {/* </Route> */}
                 </Route>
             </Routes>
             <Routes>
                 <Route path="" element={<Login />} />
                 <Route path="login" element={<Login />} />
-                <Route
-                    path="resetPasswordRequest"
-                    element={<ResetPasswordRequest />}
-                />
+                <Route path="resetPasswordRequest" element={<ResetPasswordRequest />} />
                 <Route path="passwordReset" element={<ResetPassword />} />
-                <Route
-                    path="resetPasswordEmailSent"
-                    element={<ResetPasswordEmailSent />}
-                />
+                <Route path="resetPasswordEmailSent" element={<ResetPasswordEmailSent />} />
                 <Route path="joinWorkspace" element={<Join />} />
             </Routes>
         </>

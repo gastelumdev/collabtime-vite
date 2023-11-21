@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, Navigate } from "react-router-dom";
 
 import { useGetOneWorkspaceQuery, useGetWorkspaceUsersQuery, useGetUserQuery } from "../../app/services/api";
 
@@ -15,37 +15,6 @@ import { AiOutlineMessage, AiOutlineTable } from "react-icons/ai";
 import SecondaryCard from "../../components/SecondaryCard";
 import Invite from "./Invite";
 import { useEffect, useState } from "react";
-
-/**
- * This is dummy data that simulates what will be brought in with RTK
- * @constant {IWorkspace[]} data
- */
-// const data: TWorkspace[] = [
-//     {
-//         _id: "1",
-//         name: "Workspace 1",
-//         description: "This is a sample workspace.",
-//         tools: {
-//             dataCollections: { access: 2 },
-//             taskLists: { access: 2 },
-//             docs: { access: 2 },
-//             messageBoard: { access: 2 },
-//         },
-//         invitees: [],
-//     },
-//     {
-//         _id: "2",
-//         name: "Workspace 2",
-//         description: "This is another sample workspace.",
-//         tools: {
-//             dataCollections: { access: 1 },
-//             taskLists: { access: 1 },
-//             docs: { access: 1 },
-//             messageBoard: { access: 0 },
-//         },
-//         invitees: [],
-//     },
-// ];
 
 /**
  * The link items array used for the sidebar navigation
@@ -77,7 +46,7 @@ const LinkItems: Array<LinkItemProps> = [
 const ViewOne = () => {
     const { id } = useParams();
     const { data: user } = useGetUserQuery(localStorage.getItem("userId") || "");
-    const { data } = useGetOneWorkspaceQuery(id as string);
+    const { data: workspace, isError, error } = useGetOneWorkspaceQuery(id as string);
     const { data: workspaceUser } = useGetWorkspaceUsersQuery(id as string);
 
     const [permissions, setPermissions] = useState<number>();
@@ -86,18 +55,17 @@ const ViewOne = () => {
         localStorage.setItem("workspaceId", id || "");
 
         getPermissions();
-        console.log(permissions);
-    }, [user]);
+    }, [user, error]);
 
     const getPermissions = () => {
         for (const workspace of user?.workspaces || []) {
             if (workspace.id == localStorage.getItem("workspaceId")) {
-                console.log(workspace.id, localStorage.getItem("workspaceId"));
-                console.log(workspace.permissions);
                 setPermissions(workspace.permissions);
             }
         }
     };
+
+    if (isError) return <Navigate to={"/workspaces"} />;
 
     return (
         <SideBarLayout linkItems={LinkItems}>
@@ -108,7 +76,7 @@ const ViewOne = () => {
                             <Flex>
                                 <Box>
                                     <Heading size={"sm"} mb={"12px"} color={"rgb(52, 71, 103)"}>
-                                        {data?.name}
+                                        {workspace?.name}
                                     </Heading>
                                     <Text color={"rgb(123, 128, 154)"} fontSize={"md"} fontWeight={300}>
                                         The tools below will help manage your projects and teams.
@@ -147,37 +115,41 @@ const ViewOne = () => {
                             </Flex>
                         </SimpleGrid>
                         <SimpleGrid spacing={6} spacingY={12} columns={{ base: 1, sm: 1, md: 3 }}>
-                            {(data?.tools.dataCollections.access || 0) > 0 ? (
-                                <a href={`/workspaces/${data?._id}/dataCollections`}>
+                            {(workspace?.tools.dataCollections.access || 0) > 0 ? (
+                                <a href={`/workspaces/${workspace?._id}/dataCollections`}>
                                     <SecondaryCard
                                         title={"Data Collections"}
+                                        description={"Create and manage data."}
                                         icon={AiOutlineTable}
                                         bgImage="linear-gradient(195deg, rgb(73, 163, 241), rgb(26, 115, 232))"
                                     />
                                 </a>
                             ) : null}
-                            {(data?.tools.taskLists.access || 0) > 0 ? (
-                                <a href={`/workspaces/${data?._id}/taskLists`}>
+                            {(workspace?.tools.taskLists.access || 0) > 0 ? (
+                                <a href={`/workspaces/${workspace?._id}/taskLists`}>
                                     <SecondaryCard
                                         title={"Tasks"}
+                                        description={"Create and assign tasks."}
                                         icon={BsListTask}
                                         bgImage="linear-gradient(195deg, rgb(102, 187, 106), rgb(67, 160, 71))"
                                     />
                                 </a>
                             ) : null}
-                            {(data?.tools.docs.access || 0) > 0 ? (
-                                <a href={`/workspaces/${data?._id}/documents`}>
+                            {(workspace?.tools.docs.access || 0) > 0 ? (
+                                <a href={`/workspaces/${workspace?._id}/documents`}>
                                     <SecondaryCard
                                         title={"Documents"}
+                                        description={"Create and upload docs."}
                                         icon={BsFiletypeDoc}
                                         bgImage="linear-gradient(195deg, rgb(66, 66, 74), black)"
                                     />
                                 </a>
                             ) : null}
-                            {(data?.tools.messageBoard.access || 0) > 0 ? (
-                                <a href={`/workspaces/${data?._id}/messageBoard`}>
+                            {(workspace?.tools.messageBoard.access || 0) > 0 ? (
+                                <a href={`/workspaces/${workspace?._id}/messageBoard`}>
                                     <SecondaryCard
                                         title={"Message Board"}
+                                        description={"Message your team."}
                                         icon={AiOutlineMessage}
                                         bgImage="linear-gradient(195deg, #FF548A, #EC1559)"
                                     />

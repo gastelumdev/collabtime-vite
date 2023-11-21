@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     useGetOneWorkspaceQuery,
     useGetWorkspaceUsersQuery,
     useInviteTeamMemberMutation,
     useRemoveMemberMutation,
     useRemoveInviteeMutation,
+    useCallUpdateMutation,
 } from "../../app/services/api";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import {
@@ -33,6 +34,7 @@ import { useParams } from "react-router-dom";
 import Select, { ActionMeta, MultiValue } from "react-select";
 import { AiOutlineClose } from "react-icons/ai";
 import { LockIcon } from "@chakra-ui/icons";
+import { io } from "socket.io-client";
 
 interface InviteProps {
     getInvitees?: any;
@@ -48,8 +50,23 @@ const Invite = ({}: InviteProps) => {
     const [inviteTeamMember] = useInviteTeamMemberMutation();
     const [removeMember] = useRemoveMemberMutation();
     const [removeInvitee] = useRemoveInviteeMutation();
+    const [callUpdate] = useCallUpdateMutation();
     const [newWorkspace, setNewWorkspace] = useState<TWorkspace>();
     const [selectedOptions, setSelectedOptions] = useState<MultiValue<{ value: string; label: string }>>([]);
+
+    useEffect(() => {
+        const socket = io(import.meta.env.VITE_API_URL);
+        socket.connect();
+        socket.on("update", () => {
+            console.log("Notifications called for update");
+            callUpdate(null);
+            // setNotifications(callNotificationsUpdate(priority) as any);
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
 
     const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = event.target;

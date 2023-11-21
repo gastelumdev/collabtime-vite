@@ -1,14 +1,4 @@
-import {
-    Box,
-    Card,
-    CardBody,
-    CardFooter,
-    CardHeader,
-    Center,
-    Flex,
-    Heading,
-    Text,
-} from "@chakra-ui/react";
+import { Box, Card, CardBody, CardFooter, CardHeader, Center, Flex, Heading, Text } from "@chakra-ui/react";
 import { AiOutlineLike } from "react-icons/ai";
 import Divider from "../Divider/Divider";
 
@@ -20,13 +10,7 @@ interface IProps {
     deleteButton?: any;
 }
 
-const PrimaryCard = ({
-    index,
-    data,
-    divider = true,
-    editButton,
-    deleteButton,
-}: IProps) => {
+const PrimaryCard = ({ index, data, divider = true, editButton, deleteButton }: IProps) => {
     return (
         <Card
             key={index}
@@ -35,16 +19,14 @@ const PrimaryCard = ({
             mb={{ base: 6 }}
             h={"250px"}
         >
-            <CardHeader h={"60px"} as={"a"} href={`/workspaces/${data._id}`}>
+            <CardHeader
+                h={"60px"}
+                as={"a"}
+                href={`/workspaces/${data._id}`}
+                onClick={() => localStorage.setItem("workspaceId", data._id)}
+            >
                 <Flex>
-                    <Flex
-                        flex="1"
-                        gap="4"
-                        alignItems="center"
-                        flexWrap="wrap"
-                        position={"relative"}
-                        bottom={10}
-                    >
+                    <Flex flex="1" gap="4" alignItems="center" flexWrap="wrap" position={"relative"} bottom={10}>
                         <Box
                             bgImage={
                                 "radial-gradient(circle at center top, rgb(73, 163, 241), rgb(26, 115, 232))"
@@ -72,19 +54,19 @@ const PrimaryCard = ({
                     </Flex>
                 </Flex>
             </CardHeader>
-            <CardBody py={0} as={"a"} href={`/workspaces/${data._id}`}>
+            <CardBody
+                py={0}
+                as={"a"}
+                href={`/workspaces/${data._id}`}
+                onClick={() => localStorage.setItem("workspaceId", data._id)}
+            >
                 <Center>
                     <Text color={"rgb(123, 128, 154)"} fontSize={"md"}>
                         {data.description}
                     </Text>
                 </Center>
             </CardBody>
-            {divider ? (
-                <Divider
-                    gradient="radial-gradient(#eceef1 40%, white 60%)"
-                    marginBottom="2px"
-                />
-            ) : null}
+            {divider ? <Divider gradient="radial-gradient(#eceef1 40%, white 60%)" marginBottom="2px" /> : null}
 
             <CardFooter p={"5px"}>
                 {editButton}
