@@ -122,13 +122,13 @@ export const api = createApi({
         }),
         getNotifications: builder.query<TNotification[], null>({
             query: () => ({
-                url: `notifications/${localStorage.getItem("notificationsFilter")}`,
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/notifications/${localStorage.getItem("notificationsFilter")}`,
             }),
             providesTags: ["Notification"]
         }),
         callNotificationsUpdate: builder.mutation<{success: Boolean}, string>({
             query: (priority) => ({
-                url: `notifications/callUpdate/${priority}`,
+                url: `workspaces/${localStorage.getItem("workspaceId")}/notifications/callUpdate/${priority}`,
                 method: "POST"
             }),
             invalidatesTags: ["Notification"]
@@ -170,13 +170,13 @@ export const api = createApi({
         }),
         getColumns: builder.query<TColumn[], null>({
             query: () => ({
-                url: `/dataCollections/${localStorage.getItem("dataCollectionId")}/columns`
+                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${localStorage.getItem("dataCollectionId")}/columns`
             }),
             providesTags: ["Column"]
         }),
         createColumn: builder.mutation<TColumn, TColumn>({
             query: (column) => ({
-                url: `/dataCollections/${localStorage.getItem("dataCollectionId")}/columns`,
+                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${localStorage.getItem("dataCollectionId")}/columns`,
                 method: "POST",
                 body: column
             }),
@@ -184,7 +184,7 @@ export const api = createApi({
         }),
         updateColumn: builder.mutation<TColumn, TColumn>({
             query: (column) => ({
-                url: `/dataCollections/${localStorage.getItem("dataCollectionId")}/columns/update/${column._id}`,
+                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${localStorage.getItem("dataCollectionId")}/columns/update/${column._id}`,
                 method: "POST",
                 body: column
             }),
@@ -192,20 +192,20 @@ export const api = createApi({
         }),
         deleteColumn: builder.mutation<TColumn, string>({
             query: (columnId) => ({
-                url: `/dataCollections/${localStorage.getItem("dataCollectionId")}/columns/delete/${columnId}`,
+                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${localStorage.getItem("dataCollectionId")}/columns/delete/${columnId}`,
                 method: "POST",
             }),
             invalidatesTags: ["Column", "Rows"],
         }),
         getRows: builder.query<any[], null>({
             query: () => ({
-                url: `/dataCollections/${localStorage.getItem("dataCollectionId")}/rows`
+                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${localStorage.getItem("dataCollectionId")}/rows`
             }),
             providesTags: ["Rows"]
         }),
         createRow: builder.mutation<TTableData, TTableData>({
             query: (row) => ({
-                url: `/dataCollections/${localStorage.getItem("dataCollectionId")}/rows`,
+                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${localStorage.getItem("dataCollectionId")}/rows`,
                 method: "POST",
                 body: row
             }),
@@ -213,14 +213,14 @@ export const api = createApi({
         }),
         deleteRow: builder.mutation<TRow, string>({
             query: (rowId) => ({
-                url: `/dataCollections/${localStorage.getItem("dataCollectionId")}/rows/delete/${rowId}`,
+                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${localStorage.getItem("dataCollectionId")}/rows/delete/${rowId}`,
                 method: "POST"
             }),
             invalidatesTags: ["Rows"]
         }),
         updateCell: builder.mutation<TCell, TCell>({
             query: (cell) => ({
-                url: `/dataCollections/${localStorage.getItem("dataCollectionId")}/cells/${cell._id}`,
+                url: `workspaces/${localStorage.getItem("workspaceId")}//dataCollections/${localStorage.getItem("dataCollectionId")}/cells/${cell._id}`,
                 method: "POST",
                 body: cell,
             }),

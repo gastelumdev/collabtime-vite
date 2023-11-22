@@ -9,18 +9,7 @@ import {
 
 import { io } from "socket.io-client";
 
-import {
-    Box,
-    Container,
-    Flex,
-    Heading,
-    SimpleGrid,
-    Spacer,
-    Text,
-    Button,
-    Center,
-    useToast,
-} from "@chakra-ui/react";
+import { Box, Container, Flex, Heading, SimpleGrid, Spacer, Text, Button, Center, useToast } from "@chakra-ui/react";
 
 import { TWorkspace, LinkItemProps } from "../../types";
 import Create from "./Create";
@@ -33,9 +22,7 @@ import { AiOutlineDelete, AiOutlineLike } from "react-icons/ai";
 import { IconContext } from "react-icons";
 import { BsPersonWorkspace } from "react-icons/bs";
 
-const LinkItems: Array<LinkItemProps> = [
-    { name: "Workspaces", icon: BsPersonWorkspace, path: "/workspaces" },
-];
+const LinkItems: Array<LinkItemProps> = [{ name: "Workspaces", icon: BsPersonWorkspace, path: "/workspaces" }];
 
 /**
  * This is the default workspace view that renders all workspaces
@@ -44,10 +31,8 @@ const LinkItems: Array<LinkItemProps> = [
  */
 const View = () => {
     const { data } = useGetWorkspacesQuery(null);
-    const [
-        createWorkspace,
-        { isError: createWorkspaceIsError, error: createWorkspaceError },
-    ] = useCreateWorkspaceMutation();
+    const [createWorkspace, { isError: createWorkspaceIsError, error: createWorkspaceError }] =
+        useCreateWorkspaceMutation();
     const [updateWorkspace] = useUpdateWorkspaceMutation();
     const [deleteWorkspace] = useDeleteWorkspaceMutation();
     const [callUpdate] = useCallUpdateMutation();
@@ -63,6 +48,10 @@ const View = () => {
 
         socket.on("update", () => {
             callUpdate(null);
+        });
+
+        socket.on("getWorkspaces-" + localStorage.getItem("userId"), (item) => {
+            console.log(item);
         });
 
         return () => {
@@ -84,9 +73,7 @@ const View = () => {
             leftContent={
                 <Box pt={"6px"} pb={"4px"}>
                     <Center>
-                        <IconContext.Provider
-                            value={{ color: "#7b809a", size: "20px" }}
-                        >
+                        <IconContext.Provider value={{ color: "#7b809a", size: "20px" }}>
                             <Box display={"inline-block"} mr={"3px"}>
                                 <AiOutlineLike />
                             </Box>
@@ -102,27 +89,14 @@ const View = () => {
             <Box>
                 <Flex minH={"100vh"} bg={"#eff2f5"}>
                     <Container maxW={"8xl"} mt={{ base: 4, sm: 0 }}>
-                        <SimpleGrid
-                            spacing={6}
-                            columns={{ base: 1, sm: 2 }}
-                            pb={"50px"}
-                        >
+                        <SimpleGrid spacing={6} columns={{ base: 1, sm: 2 }} pb={"50px"}>
                             <Flex>
                                 <Box>
-                                    <Heading
-                                        size={"sm"}
-                                        mb={"12px"}
-                                        color={"rgb(52, 71, 103)"}
-                                    >
+                                    <Heading size={"sm"} mb={"12px"} color={"rgb(52, 71, 103)"}>
                                         Workspaces
                                     </Heading>
-                                    <Text
-                                        color={"rgb(123, 128, 154)"}
-                                        fontSize={"md"}
-                                        fontWeight={300}
-                                    >
-                                        Create a new workspace to manage your
-                                        projects and teams.
+                                    <Text color={"rgb(123, 128, 154)"} fontSize={"md"} fontWeight={300}>
+                                        Create a new workspace to manage your projects and teams.
                                     </Text>
                                 </Box>
                             </Flex>
@@ -144,67 +118,37 @@ const View = () => {
                                     xl: 3,
                                 }}
                             >
-                                {data?.map(
-                                    (workspace: TWorkspace, index: number) => {
-                                        return (
-                                            <PrimaryCard
-                                                key={index}
-                                                index={index}
-                                                data={workspace}
-                                                divider={
-                                                    workspace?.owner ===
-                                                    localStorage.getItem(
-                                                        "userId"
-                                                    )
-                                                }
-                                                editButton={
-                                                    workspace?.owner ===
-                                                    localStorage.getItem(
-                                                        "userId"
-                                                    ) ? (
-                                                        <Edit
-                                                            workspace={
-                                                                workspace
-                                                            }
-                                                            updateWorkspace={
-                                                                updateWorkspace
-                                                            }
-                                                        />
-                                                    ) : null
-                                                }
-                                                deleteButton={
-                                                    workspace?.owner ===
-                                                    localStorage.getItem(
-                                                        "userId"
-                                                    ) ? (
-                                                        <Button
-                                                            flex="1"
-                                                            variant="ghost"
-                                                            leftIcon={
-                                                                <AiOutlineDelete />
-                                                            }
-                                                            color={
-                                                                "rgb(123, 128, 154)"
-                                                            }
-                                                            zIndex={10}
-                                                            onClick={() =>
-                                                                deleteWorkspace(
-                                                                    workspace._id as string
-                                                                )
-                                                            }
-                                                        ></Button>
-                                                    ) : null
-                                                }
-                                            />
-                                        );
-                                    }
-                                )}
+                                {data?.map((workspace: TWorkspace, index: number) => {
+                                    return (
+                                        <PrimaryCard
+                                            key={index}
+                                            index={index}
+                                            data={workspace}
+                                            divider={workspace?.owner === localStorage.getItem("userId")}
+                                            editButton={
+                                                workspace?.owner === localStorage.getItem("userId") ? (
+                                                    <Edit workspace={workspace} updateWorkspace={updateWorkspace} />
+                                                ) : null
+                                            }
+                                            deleteButton={
+                                                workspace?.owner === localStorage.getItem("userId") ? (
+                                                    <Button
+                                                        flex="1"
+                                                        variant="ghost"
+                                                        leftIcon={<AiOutlineDelete />}
+                                                        color={"rgb(123, 128, 154)"}
+                                                        zIndex={10}
+                                                        onClick={() => deleteWorkspace(workspace._id as string)}
+                                                    ></Button>
+                                                ) : null
+                                            }
+                                        />
+                                    );
+                                })}
                             </SimpleGrid>
                         ) : (
                             <Center>
-                                <Text color={"rgb(123, 128, 154)"}>
-                                    Your workspaces list is empty.
-                                </Text>
+                                <Text color={"rgb(123, 128, 154)"}>Your workspaces list is empty.</Text>
                             </Center>
                         )}
                     </Container>

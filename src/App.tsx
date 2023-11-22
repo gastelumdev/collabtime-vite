@@ -9,46 +9,36 @@ import { default as Tasks } from "./features/tasks/View";
 import { default as MessageBoard } from "./features/messageBoard/View";
 import { Route, Routes } from "react-router-dom";
 import Login from "./features/auth/Login";
-// import { IUser } from "./types";
 import { PrivateOutlet } from "./utils/PrivateOutlet";
 import ResetPasswordRequest from "./features/auth/ResetPasswordRequest";
 import ResetPassword from "./features/auth/ResetPassword";
 import ResetPasswordEmailSent from "./features/auth/ResetPasswordEmailSent";
 import Join from "./features/workspaces/Join";
 
-// const user: IUser = {
-//     _id: "1",
-//     firstname: "Omar",
-//     lastname: "Gastelum",
-//     email: "omargastelum@email.com",
-//     password: "somepassword",
-//     workspaces: [
-//         {
-//             _id: "1",
-//             name: "Workspace 1",
-//             description: "This is a sample workspace.",
-//             tools: {
-//                 dataCollections: { access: 2 },
-//                 taskLists: { access: 2 },
-//                 docs: { access: 2 },
-//                 messageBoard: { access: 2 },
-//             },
-//         },
-//         {
-//             _id: "2",
-//             name: "Workspace 2",
-//             description: "This is another sample workspace.",
-//             tools: {
-//                 dataCollections: { access: 1 },
-//                 taskLists: { access: 1 },
-//                 docs: { access: 1 },
-//                 messageBoard: { access: 1 },
-//             },
-//         },
-//     ],
-// };
+import { useToast } from "@chakra-ui/react";
+import { io } from "socket.io-client";
+import { useEffect } from "react";
 
 function App() {
+    const toast = useToast();
+    useEffect(() => {
+        const socket = io(import.meta.env.VITE_API_URL);
+        socket.connect();
+        socket.on("update", (item) => {
+            console.log("Notifications called for update");
+
+            toast({
+                title: "Notification",
+                description: item,
+                status: "info",
+            });
+            // setNotifications(callNotificationsUpdate(priority) as any);
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
     return (
         <>
             {/* <Layout> */}

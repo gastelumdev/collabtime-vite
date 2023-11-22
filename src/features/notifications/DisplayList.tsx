@@ -68,9 +68,15 @@ const DisplayList = () => {
     useEffect(() => {
         const socket = io(import.meta.env.VITE_API_URL);
         socket.connect();
-        socket.on("update", () => {
+        socket.on("update", (item) => {
             console.log("Notifications called for update");
             callNotificationsUpdate(priority);
+
+            toast({
+                title: "Notification",
+                description: item,
+                status: "info",
+            });
             // setNotifications(callNotificationsUpdate(priority) as any);
         });
 
