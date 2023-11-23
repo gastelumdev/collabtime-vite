@@ -1,4 +1,3 @@
-// import { useState } from "react";
 import "./App.css";
 import { default as Workspaces } from "./features/workspaces/View";
 import { default as Workspace } from "./features/workspaces/ViewOne";
@@ -33,6 +32,14 @@ function App() {
                 status: "info",
             });
             // setNotifications(callNotificationsUpdate(priority) as any);
+        });
+
+        socket.on(localStorage.getItem("userId") || "", (item) => {
+            toast({
+                title: "Notification",
+                description: item,
+                status: "info",
+            });
         });
 
         return () => {

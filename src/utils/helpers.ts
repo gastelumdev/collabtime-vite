@@ -25,8 +25,6 @@ function getRGB(c: string) {
   function getTextColor(bgColor: string) {
     const whiteContrast = getContrast(bgColor, '#ffffff')
     const blackContrast = getContrast(bgColor, '#000000')
-
-    console.log("COLOR")
   
     return whiteContrast > blackContrast ? '#ffffff' : '#000000'
   }

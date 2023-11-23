@@ -237,6 +237,7 @@ const ViewOne = () => {
                             options={[
                                 { value: "text", label: "Text" },
                                 { value: "label", label: "Label" },
+                                { value: "people", label: "Assign To" },
                             ]}
                             styles={
                                 {

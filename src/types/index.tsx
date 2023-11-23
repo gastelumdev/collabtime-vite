@@ -55,6 +55,7 @@ export type TJoinWorkspace = {
 export type TNotification = {
     message: string;
     workspaceId: string;
+    assignedTo: string;
     createdAt: Date;
     dataSource: string;
     priority: string;
@@ -76,7 +77,7 @@ export type TColumn = {
     name: string;
     type: string;
     permanent: boolean;
-    people?: string[];
+    people?: TUser[];
     labels?: TLabel[];
     includeInForm: boolean;
     includeInExport: boolean;
@@ -94,7 +95,7 @@ export type TCell = {
     row: string;
     name: string;
     type: string;
-    people?: string[];
+    people?: TUser[];
     labels?: TLabel[];
     value: string;
 };

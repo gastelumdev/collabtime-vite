@@ -220,7 +220,7 @@ export const api = createApi({
         }),
         updateCell: builder.mutation<TCell, TCell>({
             query: (cell) => ({
-                url: `workspaces/${localStorage.getItem("workspaceId")}//dataCollections/${localStorage.getItem("dataCollectionId")}/cells/${cell._id}`,
+                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${localStorage.getItem("dataCollectionId")}/cells/${cell._id}`,
                 method: "POST",
                 body: cell,
             }),

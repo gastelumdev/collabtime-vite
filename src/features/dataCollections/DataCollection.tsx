@@ -33,14 +33,14 @@ import {
     Thead,
     Tr,
 } from "@chakra-ui/react";
-import Select, { StylesConfig } from "react-select";
+import Select from "react-select";
 
 import { BsPlusCircle } from "react-icons/bs";
 import { AiOutlineCheck, AiOutlineClose, AiOutlinePlus } from "react-icons/ai";
-import { TCell, TColumn, TRow } from "../../types";
+import { TCell, TColumn } from "../../types";
 import { useParams } from "react-router-dom";
 
-import getTextColor from "../../utils/helpers";
+import { cellColorStyles, createRowColorStyles } from "./select.styles";
 
 const DataCollection = ({ onOpen }: { onOpen: any }) => {
     const { dataCollectionId } = useParams();
@@ -60,13 +60,12 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
     const [updateCell] = useUpdateCellMutation();
     const [headerMenuIsOpen, setHeaderMenuIsOpen] = useState(
         new Array(columns?.length).fill(null).map(() => {
-            console.log("column");
             return false;
         })
     );
 
     const [row, setRow] = useState<any>({});
-    const [data, setData] = useState<TRow[]>(rows || []);
+    // const [data, setData] = useState<TRow[]>(rows || []);
     const [labelStyles, setLabelStyles] = useState<any>({});
     const [labelValue, setLabelValue] = useState<any>({});
     const [numberChecked, setNumberChecked] = useState<number>(0);
@@ -97,9 +96,7 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
 
     useEffect(() => {
         localStorage.setItem("dataCollectionId", dataCollectionId || "");
-        console.log(rows);
-        setData(rows as TRow[]);
-        console.log(data);
+        // setData(rows as TRow[]);
     }, [rowsSuccess, rows]);
 
     /**
@@ -128,12 +125,12 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
 
     const handleDeleteColumn = (column: TColumn) => {
         deleteColumn(column?._id as any);
-        setData(rows || []);
-        console.log("DATA********", data);
+        // setData(rows || []);
     };
 
     const handleLabelChange = (selectedValue: any, columnName: string) => {
         setLabelValue({ ...labelValue, [columnName]: selectedValue.value });
+        console.log(selectedValue);
         let rowCopy = row;
         setRow({ ...rowCopy, [columnName]: selectedValue.value });
     };
@@ -217,7 +214,6 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
     const handleLabelSelectChange = async (newValue: any, cell: TCell) => {
         let newCell = cell;
         newCell = { ...newCell, value: newValue.value };
-        console.log("NEW CELL", newCell);
         await updateCell(newCell);
     };
 
@@ -231,6 +227,8 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
             <TableContainer pb={"300px"}>
                 <Table size="sm">
                     <Thead>
+                        {/* ******** COLUMNS ******** */}
+                        {/* ************************* */}
                         <Tr>
                             {(permissions || 0) > 1 ? <Th w={"60px"}></Th> : null}
                             {columns?.map((column: TColumn, index: number) => {
@@ -266,6 +264,8 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                     </Thead>
 
                     <Tbody>
+                        {/* ******** ROWS *********** */}
+                        {/* ************************* */}
                         {showRowForm || rows?.length || 0 > 0 ? null : (
                             <Tr>
                                 <Td colSpan={(columns?.length || 0) + 2}>
@@ -275,8 +275,8 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                                 </Td>
                             </Tr>
                         )}
+
                         {rows?.map((row: any, index: number) => {
-                            console.log("ROW", row);
                             return (
                                 <Tr key={index}>
                                     {(permissions || 0) > 1 ? (
@@ -289,7 +289,6 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                                         </Td>
                                     ) : null}
                                     {row.cells.map((cell: TCell, index: number) => {
-                                        console.log(cell.value);
                                         let bgColor: string = "";
                                         for (const label of cell.labels || []) {
                                             if (cell.value == label.title) {
@@ -303,78 +302,33 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                                                 color: item.color,
                                             };
                                         });
-                                        const colorStyles: any = {
-                                            control: (styles: any, { data }: any) => {
-                                                console.log(data);
-                                                return {
-                                                    ...styles,
-                                                    border: "none",
-                                                    padding: "none",
-                                                    margin: "0",
-                                                    outline: "none",
-                                                    boxShadow: "none",
-                                                };
-                                            },
-                                            input: (styles: any) => {
-                                                return {
-                                                    ...styles,
-                                                    outline: "none",
-                                                    margin: "0",
-                                                };
-                                            },
-                                            option: (styles: any, { data }: any) => {
-                                                console.log(data.color);
-                                                return {
-                                                    ...styles,
-                                                    backgroundColor: data.color,
-                                                    color: getTextColor(data.color),
-                                                };
-                                            },
-                                            valueContainer: (styles: any) => {
-                                                return {
-                                                    ...styles,
-                                                    padding: "0",
-                                                    margin: "0",
-                                                    width: "120px",
-                                                };
-                                            },
-                                            indicatorsContainer: (styles: any) => {
-                                                return {
-                                                    ...styles,
-                                                    display: "none",
-                                                };
-                                            },
-                                            singleValue: (styles: any) => {
-                                                return {
-                                                    ...styles,
-                                                    backgroundColor: bgColor,
-                                                    color: getTextColor(bgColor),
-                                                    padding: "10px",
-                                                    margin: "0",
-                                                };
-                                            },
-                                            menu: (styles: any) => {
-                                                return {
-                                                    ...styles,
-                                                    margin: "0",
-                                                    borderRadius: "0",
-                                                    border: "none",
-                                                    padding: "0",
-                                                };
-                                            },
-                                            menuList: (styles: any) => {
-                                                return {
-                                                    ...styles,
-                                                    padding: "0",
-                                                };
-                                            },
-                                        };
+                                        const peopleOptions = cell.people?.map((item) => {
+                                            return {
+                                                value: item._id,
+                                                label: `${item.firstname} ${item.lastname}`,
+                                                color: "#ffffff",
+                                            };
+                                        });
+                                        console.log(options);
                                         return (
                                             <Td key={index} px={cell.type == "label" ? "1px" : "10px"} py={"0"} m={"0"}>
                                                 {cell.type === "label" ? (
                                                     <Select
                                                         options={options}
-                                                        styles={colorStyles}
+                                                        styles={cellColorStyles(bgColor)}
+                                                        defaultValue={{
+                                                            value: cell.value,
+                                                            label: cell.value == "" ? "Select..." : cell.value,
+                                                        }}
+                                                        onChange={(newValue) => handleLabelSelectChange(newValue, cell)}
+                                                        isDisabled={
+                                                            rowsLoading || rowsFetching || !((permissions || 0) > 1)
+                                                        }
+                                                    />
+                                                ) : cell.type === "people" ? (
+                                                    <Select
+                                                        options={peopleOptions}
+                                                        styles={cellColorStyles("#ffffff")}
                                                         defaultValue={{
                                                             value: cell.value,
                                                             label: cell.value == "" ? "Select..." : cell.value,
@@ -411,7 +365,8 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                                 </Tr>
                             );
                         })}
-
+                        {/* ********** CREATE ROW ********* */}
+                        {/* ******************************* */}
                         {showRowForm ? (
                             <Tr>
                                 <Td borderBottom={"none"} pl={"2px"}>
@@ -442,37 +397,13 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                                             color: item.color,
                                         };
                                     });
-                                    const colorStyles: StylesConfig = {
-                                        control: (styles: any, { data }: any) => {
-                                            console.log(data);
-                                            return {
-                                                ...styles,
-                                                paddingTop: "0",
-                                            };
-                                        },
-                                        option: (styles: any, { data }: any) => {
-                                            console.log(data.color);
-                                            return {
-                                                ...styles,
-                                                backgroundColor: data.color,
-                                                color: getTextColor(data.color),
-                                            };
-                                        },
-                                        singleValue: (styles: any, { data }: any) => {
-                                            return {
-                                                ...styles,
-                                                backgroundColor: data.color,
-                                                color: getTextColor(data.color),
-                                                padding: "7px",
-                                            };
-                                        },
-                                        indicatorsContainer: (styles: any) => {
-                                            return { ...styles, padding: "0" };
-                                        },
-                                        dropdownIndicator: (styles: any) => {
-                                            return { ...styles, padding: "4px" };
-                                        },
-                                    };
+                                    const peopleOptions = column.people?.map((item) => {
+                                        return {
+                                            value: item._id,
+                                            label: `${item.firstname} ${item.lastname}`,
+                                            color: "#ffffff",
+                                        };
+                                    });
                                     return (
                                         <Td
                                             key={index}
@@ -489,9 +420,18 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                                                         onChange={(selectedOption) =>
                                                             handleLabelChange(selectedOption, column.name)
                                                         }
-                                                        styles={colorStyles}
+                                                        styles={createRowColorStyles()}
                                                     />
                                                 </Box>
+                                            ) : column.type == "people" ? (
+                                                <Select
+                                                    // name={column.name}
+                                                    options={peopleOptions}
+                                                    onChange={(selectedOption) =>
+                                                        handleLabelChange(selectedOption, column.name)
+                                                    }
+                                                    styles={createRowColorStyles()}
+                                                />
                                             ) : (
                                                 <Box>
                                                     <Input
