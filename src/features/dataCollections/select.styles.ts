@@ -1,7 +1,7 @@
 import getTextColor from "../../utils/helpers";
 
 export const cellColorStyles: any = (bgColor: string) => ({
-    control: (styles: any, { data }: any) => {
+    control: (styles: any,) => {
         return {
             ...styles,
             border: "none",
@@ -66,7 +66,7 @@ export const cellColorStyles: any = (bgColor: string) => ({
 });
 
 export const createRowColorStyles: any = () => ({
-    control: (styles: any, { data }: any) => {
+    control: (styles: any,) => {
         return {
             ...styles,
             paddingTop: "0",
