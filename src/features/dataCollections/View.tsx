@@ -103,7 +103,7 @@ const View = () => {
                             <Flex>
                                 <Box>
                                     <Heading size={"sm"} mb={"12px"} color={"rgb(52, 71, 103)"}>
-                                        Data Collecions
+                                        Data Collections
                                     </Heading>
                                     <Text color={"rgb(123, 128, 154)"} fontSize={"md"} fontWeight={300}>
                                         Create data collection tables to visualize and manage your data.

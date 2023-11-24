@@ -28,7 +28,7 @@ function App() {
 
             toast({
                 title: "Notification",
-                description: item,
+                description: item.message,
                 status: "info",
             });
             // setNotifications(callNotificationsUpdate(priority) as any);
@@ -37,8 +37,8 @@ function App() {
         socket.on(localStorage.getItem("userId") || "", (item) => {
             toast({
                 title: "Notification",
-                description: item,
-                status: "info",
+                description: item.message,
+                status: item.priority === "Low" ? "success" : item.priority === "Critical" ? "error" : "warning",
             });
         });
 

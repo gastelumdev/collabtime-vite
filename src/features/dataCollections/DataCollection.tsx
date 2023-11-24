@@ -312,7 +312,7 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                                         console.log(options);
                                         return (
                                             <Td key={index} px={cell.type == "label" ? "1px" : "10px"} py={"0"} m={"0"}>
-                                                {cell.type === "label" ? (
+                                                {cell.type === "label" || cell.type === "priority" ? (
                                                     <Select
                                                         options={options}
                                                         styles={cellColorStyles(bgColor)}

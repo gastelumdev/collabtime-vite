@@ -86,6 +86,7 @@ export type TColumn = {
 export type TRow = {
     _id?: string;
     dataCollectionId: string;
+    assignedTo?: string;
     cells: string[] | TCell;
 };
 

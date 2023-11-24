@@ -132,6 +132,14 @@ const ViewOne = () => {
         } else {
             setShowLabelForm(false);
         }
+
+        if (selectedOption.value === "priority") {
+            setLabels([
+                { title: "Low", color: "#28B542" },
+                { title: "High", color: "#FFA500" },
+                { title: "Critical", color: "#FF0000" },
+            ]);
+        }
     };
 
     const handleLabelOptionsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -180,7 +188,7 @@ const ViewOne = () => {
                                 columns={{ base: 1, sm: 2 }}
                                 pb={"30px"}
                             >
-                                <Flex>
+                                {/* <Flex>
                                     <Box>
                                         <Heading size={"sm"} mb={"12px"} color={"rgb(52, 71, 103)"}>
                                             Data Collections
@@ -189,7 +197,7 @@ const ViewOne = () => {
                                             Create data collection tables to visualize and manage your data.
                                         </Text>
                                     </Box>
-                                </Flex>
+                                </Flex> */}
                             </SimpleGrid>
                             <Card mb={"60px"}>
                                 <CardHeader>
@@ -238,6 +246,7 @@ const ViewOne = () => {
                                 { value: "text", label: "Text" },
                                 { value: "label", label: "Label" },
                                 { value: "people", label: "Assign To" },
+                                { value: "priority", label: "Priority" },
                             ]}
                             styles={
                                 {
