@@ -7,6 +7,7 @@ import {
     useDeleteRowMutation,
     useUpdateCellMutation,
     useGetUserQuery,
+    useUpdateRowMutation,
 } from "../../app/services/api";
 import {
     Box,
@@ -41,6 +42,7 @@ import { TCell, TColumn } from "../../types";
 import { useParams } from "react-router-dom";
 
 import { cellColorStyles, createRowColorStyles } from "./select.styles";
+import NoteModal from "./NoteModal";
 
 const DataCollection = ({ onOpen }: { onOpen: any }) => {
     const { dataCollectionId } = useParams();
@@ -56,6 +58,7 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
         isSuccess: rowsSuccess,
     } = useGetRowsQuery(null);
     const [createRow, { isLoading: creatingRow }] = useCreateRowMutation();
+    const [updateRow] = useUpdateRowMutation();
     const [deleteRow, { isLoading: deletingRows }] = useDeleteRowMutation();
     const [updateCell] = useUpdateCellMutation();
     const [headerMenuIsOpen, setHeaderMenuIsOpen] = useState(
@@ -65,7 +68,6 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
     );
 
     const [row, setRow] = useState<any>({});
-    // const [data, setData] = useState<TRow[]>(rows || []);
     const [labelStyles, setLabelStyles] = useState<any>({});
     const [labelValue, setLabelValue] = useState<any>({});
     const [numberChecked, setNumberChecked] = useState<number>(0);
@@ -140,6 +142,7 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
     };
 
     const handleUpdateRowInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        console.log(event.target.value);
         setTempValue(event.target.value);
     };
 
@@ -152,6 +155,7 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
     };
 
     const handleUpdateRowOnBlur = async (event: React.FocusEvent<HTMLInputElement, Element>, cell: any) => {
+        console.log("******ON BLUR", event.target.value);
         let newCell = cell;
         newCell = { ...newCell, value: event.target.value };
         if (initialValue != event.target.value) await updateCell(newCell);
@@ -230,7 +234,11 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                         {/* ******** COLUMNS ******** */}
                         {/* ************************* */}
                         <Tr>
-                            {(permissions || 0) > 1 ? <Th w={"60px"}></Th> : null}
+                            {(permissions || 0) > 1 ? (
+                                <Th w={"60px"}>
+                                    <Text visibility={"hidden"}>Wor</Text>
+                                </Th>
+                            ) : null}
                             {columns?.map((column: TColumn, index: number) => {
                                 return (
                                     <Th key={index}>
@@ -281,11 +289,14 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                                 <Tr key={index}>
                                     {(permissions || 0) > 1 ? (
                                         <Td>
-                                            <Checkbox
-                                                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                                                    onDeleteRowCheckboxChange(event, row)
-                                                }
-                                            />
+                                            <Flex>
+                                                <Checkbox
+                                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                                                        onDeleteRowCheckboxChange(event, row)
+                                                    }
+                                                />
+                                                <NoteModal row={row} updateRow={updateRow} />
+                                            </Flex>
                                         </Td>
                                     ) : null}
                                     {row.cells.map((cell: TCell, index: number) => {
@@ -309,7 +320,6 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                                                 color: "#ffffff",
                                             };
                                         });
-                                        console.log(options);
                                         return (
                                             <Td key={index} px={cell.type == "label" ? "1px" : "10px"} py={"0"} m={"0"}>
                                                 {cell.type === "label" || cell.type === "priority" ? (
@@ -336,6 +346,22 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                                                         onChange={(newValue) => handleLabelSelectChange(newValue, cell)}
                                                         isDisabled={
                                                             rowsLoading || rowsFetching || !((permissions || 0) > 1)
+                                                        }
+                                                    />
+                                                ) : cell.type === "date" ? (
+                                                    <input
+                                                        type="datetime-local"
+                                                        defaultValue={cell.value.slice(0, 16)}
+                                                        name={cell.name}
+                                                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                            console.log(event);
+                                                            handleUpdateRowInputChange(event);
+                                                        }}
+                                                        onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) =>
+                                                            handleUpdateRowOnFocus(event, cell)
+                                                        }
+                                                        onBlur={(event: React.FocusEvent<HTMLInputElement, Element>) =>
+                                                            handleUpdateRowOnBlur(event, cell)
                                                         }
                                                     />
                                                 ) : (
@@ -412,8 +438,8 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                                             borderBottom={"none"}
                                             overflow={"visible"}
                                         >
-                                            {column.type == "label" ? (
-                                                <Box>
+                                            {column.type == "label" || column.type == "priority" ? (
+                                                <Box w={rows?.length || 0 > 0 ? "unset" : "150px"}>
                                                     <Select
                                                         // name={column.name}
                                                         options={options}
@@ -424,19 +450,36 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                                                     />
                                                 </Box>
                                             ) : column.type == "people" ? (
-                                                <Select
-                                                    // name={column.name}
-                                                    options={peopleOptions}
-                                                    onChange={(selectedOption) =>
-                                                        handleLabelChange(selectedOption, column.name)
-                                                    }
-                                                    styles={createRowColorStyles()}
-                                                />
+                                                <Box w={rows?.length || 0 > 0 ? "unset" : "150px"}>
+                                                    <Select
+                                                        // name={column.name}
+                                                        options={peopleOptions}
+                                                        onChange={(selectedOption) =>
+                                                            handleLabelChange(selectedOption, column.name)
+                                                        }
+                                                        styles={createRowColorStyles()}
+                                                    />
+                                                </Box>
+                                            ) : column.type == "date" ? (
+                                                <Box w={rows?.length || 0 > 0 ? "unset" : "150px"}>
+                                                    <input
+                                                        type="datetime-local"
+                                                        name={column.name}
+                                                        onChange={handleAddRowInputChange}
+                                                        style={{
+                                                            border: "1px solid #cccccc",
+                                                            padding: "9px",
+                                                            borderRadius: "4px",
+                                                            color: "#828282",
+                                                        }}
+                                                    />
+                                                </Box>
                                             ) : (
-                                                <Box>
+                                                <Box w={rows?.length || 0 > 0 ? "unset" : "150px"}>
                                                     <Input
                                                         name={column.name}
                                                         onChange={handleAddRowInputChange}
+                                                        placeholder="Enter text"
                                                         value={row[column.name]}
                                                         size={"md"}
                                                         autoFocus={index == 0}

@@ -70,6 +70,7 @@ const ViewOne = () => {
 
     const { data: columns } = useGetColumnsQuery(null);
     const [createColumn] = useCreateColumnMutation();
+
     const [columnName, setColumnName] = useState<string>("");
     const [columnType, setColumnType] = useState<string>("");
     const [showLabelForm, setShowLabelForm] = useState(false);
@@ -244,6 +245,7 @@ const ViewOne = () => {
                             onChange={(selectedOption: any) => handleSelectType(selectedOption)}
                             options={[
                                 { value: "text", label: "Text" },
+                                { value: "date", label: "Date" },
                                 { value: "label", label: "Label" },
                                 { value: "people", label: "Assign To" },
                                 { value: "priority", label: "Priority" },
