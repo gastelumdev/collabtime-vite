@@ -73,6 +73,7 @@ const ViewOne = () => {
 
     const [columnName, setColumnName] = useState<string>("");
     const [columnType, setColumnType] = useState<string>("");
+    const [columnNameError, setColumnNameError] = useState<boolean>(false);
     const [showLabelForm, setShowLabelForm] = useState(false);
     const [labelOptions, setLabelOptions] = useState<TLabel>({
         title: "",
@@ -122,7 +123,19 @@ const ViewOne = () => {
      */
     const handleColumnNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = event.target;
-        setColumnName(value);
+
+        const columnNamesMap: any = {};
+
+        for (const column of columns || []) {
+            if (columnNamesMap[column.name] == undefined) columnNamesMap[column.name] = column.name;
+        }
+
+        if (columnNamesMap[value.toLowerCase().split(" ").join("_")]) {
+            setColumnNameError(true);
+        } else {
+            setColumnNameError(false);
+            setColumnName(value);
+        }
     };
 
     const handleSelectType = (selectedOption: any) => {
@@ -144,6 +157,7 @@ const ViewOne = () => {
 
         if (selectedOption.value === "status") {
             setLabels([
+                { title: "Ready to start", color: "#121f82" },
                 { title: "Working on it", color: "#146c96" },
                 { title: "Pending review", color: "#FFA500" },
                 { title: "Done", color: "#28B542" },
@@ -235,13 +249,19 @@ const ViewOne = () => {
             <PrimaryDrawer isOpen={isOpen} onClose={closeDrawer} title={"Create a new column"}>
                 <Stack spacing="24px">
                     <Box>
-                        <Text mb={"5px"}>Name</Text>
+                        <Flex>
+                            <Text mb={"5px"}>Name</Text>
+                            <Text ml={"8px"} pt={"2px"} fontSize={"14px"} color={"#e53e3e"}>
+                                {columnNameError ? "* Column already exists." : ""}
+                            </Text>
+                        </Flex>
                         <Input
                             // ref={firstField}
                             id="columnName"
                             name="columnName"
                             placeholder="Please enter column name"
                             onChange={handleColumnNameChange}
+                            isInvalid={columnNameError}
                         />
                     </Box>
                     <Box>
@@ -323,7 +343,9 @@ const ViewOne = () => {
                 </Stack>
                 <Flex mt={"20px"}>
                     <Spacer />
-                    <PrimaryButton onClick={handleAddColumn}>SAVE</PrimaryButton>
+                    <PrimaryButton onClick={handleAddColumn} isDisabled={columnNameError}>
+                        SAVE
+                    </PrimaryButton>
                 </Flex>
             </PrimaryDrawer>
         </>

@@ -15,6 +15,7 @@ export const cellColorStyles: any = ({bgColor, padding, border}: TProps) => ({
             margin: "0",
             outline: "none",
             boxShadow: "none",
+            color: getTextColor(bgColor),
         };
     },
     input: (styles: any) => {
@@ -28,7 +29,8 @@ export const cellColorStyles: any = ({bgColor, padding, border}: TProps) => ({
         return {
             ...styles,
             backgroundColor: data.color,
-            color: getTextColor(data.color),
+            // color: getTextColor(data.color),
+            color: "white"
         };
     },
     valueContainer: (styles: any) => {
@@ -37,6 +39,7 @@ export const cellColorStyles: any = ({bgColor, padding, border}: TProps) => ({
             padding: "0",
             margin: "0",
             width: "120px",
+            color: getTextColor(bgColor),
         };
     },
     indicatorsContainer: (styles: any) => {
@@ -59,7 +62,7 @@ export const cellColorStyles: any = ({bgColor, padding, border}: TProps) => ({
             ...styles,
             margin: "0",
             borderRadius: "0",
-            border: "none",
+            border: "1px solid #cccccc",
             padding: "0",
         };
     },
@@ -67,6 +70,7 @@ export const cellColorStyles: any = ({bgColor, padding, border}: TProps) => ({
         return {
             ...styles,
             padding: "0",
+            boxShadow: "8px 12px 26px 2px rgba(0,0,0,0.29)"
         };
     },
 });
@@ -89,7 +93,7 @@ export const createRowColorStyles: any = () => ({
         return {
             ...styles,
             backgroundColor: data.color,
-            color: getTextColor(data.color),
+            color: "white",
             padding: "7px",
         };
     },

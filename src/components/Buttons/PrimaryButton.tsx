@@ -7,6 +7,7 @@ interface IButtonProps {
     onClick?: () => void;
     float?: string;
     px?: string;
+    isDisabled?: boolean;
     children: ReactNode;
 }
 
@@ -15,6 +16,7 @@ const PrimaryButton = ({
     fontSize = 12,
     float = "none",
     px = "16px",
+    isDisabled = false,
     onClick,
     children,
 }: IButtonProps) => {
@@ -30,6 +32,7 @@ const PrimaryButton = ({
             boxShadow={"md"}
             onClick={onClick}
             float={float as any}
+            isDisabled={isDisabled}
         >
             {children}
         </Button>
