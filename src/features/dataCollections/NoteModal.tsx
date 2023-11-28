@@ -38,8 +38,8 @@ const NoteModal = ({ row, updateRow }: IProps) => {
     return (
         <>
             <Box ml={"10px"} pt={"1px"} onClick={notesOnOpen}>
-                <IconContext.Provider value={{ color: "#cccccc", size: "16px" }}>
-                    <FaRegStickyNote style={{ color: "#cccccc", size: "30px" }} />
+                <IconContext.Provider value={{ color: data.notes == "" ? "#cccccc" : "#16b2fc", size: "16px" }}>
+                    <FaRegStickyNote style={{ color: data.notes == "" ? "#cccccc" : "#16b2fc", size: "30px" }} />
                 </IconContext.Provider>
             </Box>
             <Modal isOpen={notesIsOpen} onClose={notesOnClose}>
