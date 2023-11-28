@@ -38,11 +38,14 @@ import Select from "react-select";
 
 import { BsPlusCircle } from "react-icons/bs";
 import { AiOutlineCheck, AiOutlineClose, AiOutlinePlus } from "react-icons/ai";
+
 import { TCell, TColumn } from "../../types";
 import { useParams } from "react-router-dom";
 
 import { cellColorStyles, createRowColorStyles } from "./select.styles";
 import NoteModal from "./NoteModal";
+import RenameColumn from "./RenameColumn";
+import EditRow from "./EditRow";
 
 const DataCollection = ({ onOpen }: { onOpen: any }) => {
     const { dataCollectionId } = useParams();
@@ -88,6 +91,10 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
         getPermissions();
     }, [user]);
 
+    useEffect(() => {
+        console.log(columns);
+    }, [columns]);
+
     const getPermissions = () => {
         for (const workspace of user?.workspaces || []) {
             if (workspace.id == localStorage.getItem("workspaceId")) {
@@ -115,6 +122,8 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                 setLabelStyles({ ...labelStyles, [column.name]: "" });
             }
         }
+        console.log(columns);
+        console.log();
     }, []);
 
     const setDefaultRow = () => {
@@ -135,6 +144,7 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
         console.log(selectedValue);
         let rowCopy = row;
         setRow({ ...rowCopy, [columnName]: selectedValue.value });
+        setFirstInputFocus(false);
     };
 
     const handleAddRowInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -253,6 +263,7 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                                                     <MenuItem onClick={() => handleDeleteColumn(column)}>
                                                         Delete Column
                                                     </MenuItem>
+                                                    <RenameColumn column={column} />
                                                 </MenuList>
                                             </Menu>
                                         ) : (
@@ -295,6 +306,7 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                                                         onDeleteRowCheckboxChange(event, row)
                                                     }
                                                 />
+                                                <EditRow cells={row.cells} />
                                                 <NoteModal row={row} updateRow={updateRow} />
                                             </Flex>
                                         </Td>
@@ -322,10 +334,16 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                                         });
                                         return (
                                             <Td key={index} px={cell.type == "label" ? "1px" : "10px"} py={"0"} m={"0"}>
-                                                {cell.type === "label" || cell.type === "priority" ? (
+                                                {cell.type === "label" ||
+                                                cell.type === "priority" ||
+                                                cell.type === "status" ? (
                                                     <Select
                                                         options={options}
-                                                        styles={cellColorStyles(bgColor)}
+                                                        styles={cellColorStyles({
+                                                            bgColor,
+                                                            padding: "10px",
+                                                            border: "none",
+                                                        })}
                                                         defaultValue={{
                                                             value: cell.value,
                                                             label: cell.value == "" ? "Select..." : cell.value,
@@ -338,7 +356,11 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                                                 ) : cell.type === "people" ? (
                                                     <Select
                                                         options={peopleOptions}
-                                                        styles={cellColorStyles("#ffffff")}
+                                                        styles={cellColorStyles({
+                                                            bgColor: "#ffffff",
+                                                            padding: "7px",
+                                                            border: "none",
+                                                        })}
                                                         defaultValue={{
                                                             value: cell.value,
                                                             label: cell.value == "" ? "Select..." : cell.value,
@@ -438,7 +460,9 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                                             borderBottom={"none"}
                                             overflow={"visible"}
                                         >
-                                            {column.type == "label" || column.type == "priority" ? (
+                                            {column.type == "label" ||
+                                            column.type == "priority" ||
+                                            column.type == "status" ? (
                                                 <Box w={rows?.length || 0 > 0 ? "unset" : "150px"}>
                                                     <Select
                                                         // name={column.name}
@@ -461,7 +485,7 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                                                     />
                                                 </Box>
                                             ) : column.type == "date" ? (
-                                                <Box w={rows?.length || 0 > 0 ? "unset" : "150px"}>
+                                                <Box w={rows?.length || 0 > 0 ? "unset" : "200px"}>
                                                     <input
                                                         type="datetime-local"
                                                         name={column.name}

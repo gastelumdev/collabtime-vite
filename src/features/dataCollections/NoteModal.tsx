@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { FaRegStickyNote } from "react-icons/fa";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
+import { IconContext } from "react-icons";
 
 interface IProps {
     row: TRow;
@@ -36,8 +37,10 @@ const NoteModal = ({ row, updateRow }: IProps) => {
 
     return (
         <>
-            <Box ml={"10px"} onClick={notesOnOpen}>
-                <FaRegStickyNote style={{ color: "#cccccc" }} />
+            <Box ml={"10px"} pt={"1px"} onClick={notesOnOpen}>
+                <IconContext.Provider value={{ color: "#cccccc", size: "16px" }}>
+                    <FaRegStickyNote style={{ color: "#cccccc", size: "30px" }} />
+                </IconContext.Provider>
             </Box>
             <Modal isOpen={notesIsOpen} onClose={notesOnClose}>
                 <ModalOverlay />

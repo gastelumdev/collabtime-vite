@@ -8,6 +8,7 @@ let defaultValues: TDataCollection = {
     name: "",
     description: "",
     workspace: "",
+    template: "default",
     form: {
         active: false,
         type: "null",
@@ -73,10 +74,7 @@ const AddForm = ({ dataCollection, updateDataCollection }: IProps) => {
                 extra={
                     <Space>
                         <Button onClick={onClose}>Cancel</Button>
-                        <Button
-                            onClick={updateData}
-                            _hover={{ boxShadow: "lg" }}
-                        >
+                        <Button onClick={updateData} _hover={{ boxShadow: "lg" }}>
                             Save
                         </Button>
                     </Space>

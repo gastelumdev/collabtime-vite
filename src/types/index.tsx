@@ -66,6 +66,7 @@ export type TDataCollection = {
     name: string;
     description: string;
     workspace: string;
+    template: string;
     form: TForm;
     columns: string[];
     rows: string[];

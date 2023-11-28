@@ -1,10 +1,16 @@
 import getTextColor from "../../utils/helpers";
 
-export const cellColorStyles: any = (bgColor: string) => ({
+interface TProps {
+    bgColor: string;
+    padding: string;
+    border: string;
+}
+
+export const cellColorStyles: any = ({bgColor, padding, border}: TProps) => ({
     control: (styles: any,) => {
         return {
             ...styles,
-            border: "none",
+            border: border,
             padding: "none",
             margin: "0",
             outline: "none",
@@ -44,7 +50,7 @@ export const cellColorStyles: any = (bgColor: string) => ({
             ...styles,
             backgroundColor: bgColor,
             color: getTextColor(bgColor),
-            padding: "10px",
+            padding: padding,
             margin: "0",
         };
     },
