@@ -112,7 +112,9 @@ const DisplayList = () => {
 
     const formatTime = (date: Date) => {
         let newDate = new Date(date);
-        let formattedDate = `${newDate.getMonth()}/${newDate.getDay()}/${newDate.getFullYear()} ${formatHours(
+        console.log(date);
+        console.log(newDate.getDay());
+        let formattedDate = `${newDate.getMonth()}/${newDate.getDate()}/${newDate.getFullYear()} ${formatHours(
             newDate.getHours()
         )}:${newDate.getUTCMinutes() > 9 ? "" : "0"}${newDate.getUTCMinutes()} ${getMeridian(newDate.getHours())}`;
         return (
@@ -257,7 +259,7 @@ const DisplayList = () => {
                                     boxShadow={"md"}
                                 >
                                     <Flex>
-                                        <Text color={"#7b809a"} fontSize={"14px"}>
+                                        <Text color={"#7b809a"} fontSize={"14px"} w={"400px"}>
                                             {item.message}
                                         </Text>
                                         <Spacer />
