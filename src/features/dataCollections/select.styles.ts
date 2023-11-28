@@ -29,8 +29,8 @@ export const cellColorStyles: any = ({bgColor, padding, border}: TProps) => ({
         return {
             ...styles,
             backgroundColor: data.color,
-            // color: getTextColor(data.color),
-            color: "white"
+            color: getTextColor(data.color),
+            // color: "white"
         };
     },
     valueContainer: (styles: any) => {
