@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Input, Text, useDisclosure, Flex, Spacer } from "@chakra-ui/react";
 import { TDataCollection } from "../../types";
 import { AiOutlineEdit } from "react-icons/ai";
@@ -13,6 +13,10 @@ interface IProps {
 const Edit = ({ dataCollection, updateDataCollection }: IProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [data, setData] = useState<TDataCollection>(dataCollection);
+
+    useEffect(() => {
+        setData(dataCollection);
+    }, [dataCollection]);
 
     const editData = async () => {
         updateDataCollection(data);
