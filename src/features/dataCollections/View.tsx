@@ -172,30 +172,17 @@ const View = () => {
                                                             <BiTable />
                                                         </IconContext.Provider>
                                                     </Box>
-                                                    {/* <Avatar
-                                                    name="Segun Adebayo"
-                                                    src="https://bit.ly/sage-adebayo"
-                                                /> */}
 
                                                     <Box
                                                         // position={"relative"}
                                                         // bottom={7}
                                                         pt={7}
                                                     >
-                                                        <Heading size="sm" color={"#575757"}>
+                                                        <Heading size="xs" color={"#575757"}>
                                                             {dataCollection.name}
                                                         </Heading>
-                                                        {/* <Text>
-                                                        Creator, Chakra UI
-                                                    </Text> */}
                                                     </Box>
                                                 </Flex>
-                                                {/* <IconButton
-                                            variant="ghost"
-                                            colorScheme="gray"
-                                            aria-label="See menu"
-                                            icon={<BsThreeDotsVertical />}
-                                        /> */}
                                             </Flex>
                                         </CardHeader>
                                         <CardBody

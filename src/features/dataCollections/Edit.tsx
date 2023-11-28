@@ -13,6 +13,7 @@ interface IProps {
 const Edit = ({ dataCollection, updateDataCollection }: IProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [data, setData] = useState<TDataCollection>(dataCollection);
+    const [inputError, setInputError] = useState<boolean>(false);
 
     useEffect(() => {
         setData(dataCollection);
@@ -25,6 +26,11 @@ const Edit = ({ dataCollection, updateDataCollection }: IProps) => {
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value, name } = event.target;
+        if (value.length > 30) {
+            setInputError(true);
+        } else {
+            setInputError(false);
+        }
         setData({
             ...data,
             [name]: value,
@@ -42,7 +48,12 @@ const Edit = ({ dataCollection, updateDataCollection }: IProps) => {
                 zIndex={10}
             ></Button>
             <PrimaryDrawer onClose={onClose} isOpen={isOpen} title={"Create a new workspace"}>
-                <Text pb={"5px"}>Name</Text>
+                <Flex>
+                    <Text pb={"5px"}>Name</Text>
+                    <Text ml={"8px"} pt={"2px"} fontSize={"14px"} color={"#e53e3e"}>
+                        {inputError ? "* Name exceeds character limit" : ""}
+                    </Text>
+                </Flex>
                 <Input
                     name="name"
                     value={data.name}
@@ -53,7 +64,9 @@ const Edit = ({ dataCollection, updateDataCollection }: IProps) => {
                 />
                 <Flex mt={"10px"} width={"full"}>
                     <Spacer />
-                    <PrimaryButton onClick={editData}>SAVE</PrimaryButton>
+                    <PrimaryButton onClick={editData} isDisabled={inputError}>
+                        SAVE
+                    </PrimaryButton>
                 </Flex>
             </PrimaryDrawer>
         </>

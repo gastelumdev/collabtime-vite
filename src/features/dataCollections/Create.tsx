@@ -26,6 +26,7 @@ interface IProps {
 const Create = ({ addNewDataCollection }: IProps) => {
     const [open, setOpen] = useState(false);
     const [data, setData] = useState<TDataCollection>(defaultValues);
+    const [inputError, setInputError] = useState<boolean>(false);
 
     const showDrawer = () => {
         setOpen(true);
@@ -45,6 +46,11 @@ const Create = ({ addNewDataCollection }: IProps) => {
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value, name } = event.target;
+        if (value.length > 30) {
+            setInputError(true);
+        } else {
+            setInputError(false);
+        }
         setData({
             ...data,
             [name]: value,
@@ -62,7 +68,12 @@ const Create = ({ addNewDataCollection }: IProps) => {
         <>
             <PrimaryButton onClick={showDrawer}>NEW COLLECTION</PrimaryButton>
             <PrimaryDrawer title="Create a new data collection" onClose={onClose} isOpen={open}>
-                <Text pb={"5px"}>Name</Text>
+                <Flex>
+                    <Text pb={"5px"}>Name</Text>
+                    <Text ml={"8px"} pt={"2px"} fontSize={"14px"} color={"#e53e3e"}>
+                        {inputError ? "* Name exceeds character limit" : ""}
+                    </Text>
+                </Flex>
                 <Input
                     name="name"
                     placeholder="Please enter user name"
@@ -91,7 +102,9 @@ const Create = ({ addNewDataCollection }: IProps) => {
                 />
                 <Flex>
                     <Spacer />
-                    <PrimaryButton onClick={createData}>SAVE</PrimaryButton>
+                    <PrimaryButton onClick={createData} isDisabled={inputError}>
+                        SAVE
+                    </PrimaryButton>
                 </Flex>
             </PrimaryDrawer>
         </>
