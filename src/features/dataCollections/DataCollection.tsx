@@ -32,6 +32,7 @@ import {
     Text,
     Th,
     Thead,
+    Tooltip,
     Tr,
 } from "@chakra-ui/react";
 import Select from "react-select";
@@ -77,6 +78,7 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
     const [showRowForm, setShowRowForm] = useState<boolean>(false);
 
     const [editMode, setEditMode] = useState<string[]>([]);
+    const [isFocused, setIsFocused] = useState<boolean>(false);
     const [tempValue, setTempValue] = useState("");
     const [initialValue, setInitialValue] = useState("");
 
@@ -162,6 +164,7 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
         em.push(cell._id);
         setEditMode(em as any);
         setTempValue(event.target.value);
+        setIsFocused(true);
     };
 
     const handleUpdateRowOnBlur = async (event: React.FocusEvent<HTMLInputElement, Element>, cell: any) => {
@@ -173,6 +176,7 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
         let tempEditMode = editMode;
         tempEditMode.pop();
         setEditMode(tempEditMode);
+        setIsFocused(false);
     };
 
     const handleSaveRowClick = async () => {
@@ -387,25 +391,37 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                                                         }
                                                     />
                                                 ) : (
-                                                    <Input
-                                                        value={editMode.includes(cell?._id) ? tempValue : cell.value}
-                                                        size={"sm"}
-                                                        w={"180px"}
-                                                        variant={"unstyled"}
-                                                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                                                            handleUpdateRowInputChange(event)
-                                                        }
-                                                        onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) =>
-                                                            handleUpdateRowOnFocus(event, cell)
-                                                        }
-                                                        onBlur={(event: React.FocusEvent<HTMLInputElement, Element>) =>
-                                                            handleUpdateRowOnBlur(event, cell)
-                                                        }
-                                                        isDisabled={
-                                                            rowsLoading || deletingRows || creatingRow || rowsFetching
-                                                        }
-                                                        isReadOnly={!((permissions || 0) > 1)}
-                                                    />
+                                                    <Tooltip
+                                                        label={cell.value}
+                                                        openDelay={500}
+                                                        isDisabled={isFocused}
+                                                        placement={"top"}
+                                                    >
+                                                        <Input
+                                                            value={
+                                                                editMode.includes(cell?._id) ? tempValue : cell.value
+                                                            }
+                                                            size={"sm"}
+                                                            w={"180px"}
+                                                            variant={"unstyled"}
+                                                            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                                                                handleUpdateRowInputChange(event)
+                                                            }
+                                                            onFocus={(
+                                                                event: React.FocusEvent<HTMLInputElement, Element>
+                                                            ) => handleUpdateRowOnFocus(event, cell)}
+                                                            onBlur={(
+                                                                event: React.FocusEvent<HTMLInputElement, Element>
+                                                            ) => handleUpdateRowOnBlur(event, cell)}
+                                                            isDisabled={
+                                                                rowsLoading ||
+                                                                deletingRows ||
+                                                                creatingRow ||
+                                                                rowsFetching
+                                                            }
+                                                            isReadOnly={!((permissions || 0) > 1)}
+                                                        />
+                                                    </Tooltip>
                                                 )}
                                             </Td>
                                         );

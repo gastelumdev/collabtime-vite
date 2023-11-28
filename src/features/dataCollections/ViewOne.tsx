@@ -141,6 +141,14 @@ const ViewOne = () => {
                 { title: "Critical", color: "#FF0000" },
             ]);
         }
+
+        if (selectedOption.value === "status") {
+            setLabels([
+                { title: "Working on it", color: "#146c96" },
+                { title: "Pending review", color: "#FFA500" },
+                { title: "Done", color: "#28B542" },
+            ]);
+        }
     };
 
     const handleLabelOptionsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -249,6 +257,7 @@ const ViewOne = () => {
                                 { value: "label", label: "Label" },
                                 { value: "people", label: "Assign To" },
                                 { value: "priority", label: "Priority" },
+                                { value: "status", label: "Status" },
                             ]}
                             styles={
                                 {
