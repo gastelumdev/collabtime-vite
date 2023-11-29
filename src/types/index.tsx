@@ -84,11 +84,18 @@ export type TColumn = {
     includeInExport: boolean;
 };
 
+export interface INote {
+    content: string;
+    owner: string;
+    createdAt: string;
+}
+
 export type TRow = {
     _id?: string;
     dataCollectionId: string;
     assignedTo?: string;
     notes: string;
+    notesList: INote[];
     cells: string[] | TCell;
 };
 

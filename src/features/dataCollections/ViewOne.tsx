@@ -28,7 +28,7 @@ import SideBarLayout from "../../components/Layouts/SideBarLayout";
 import { TColumn, TLabel } from "../../types";
 import Divider from "../../components/Divider/Divider";
 
-import getTextColor from "../../utils/helpers";
+import { getTextColor } from "../../utils/helpers";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import PrimaryDrawer from "../../components/PrimaryDrawer";
 import DataCollection from "./DataCollection";

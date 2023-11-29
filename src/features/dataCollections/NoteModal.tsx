@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { TRow } from "../../types";
+import { INote, TRow } from "../../types";
 import {
     Box,
+    Flex,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -9,12 +10,15 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
+    Text,
     Textarea,
     useDisclosure,
 } from "@chakra-ui/react";
 import { FaRegStickyNote } from "react-icons/fa";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import { IconContext } from "react-icons";
+import { formatTime } from "../../utils/helpers";
+import { useGetUserQuery } from "../../app/services/api";
 
 interface IProps {
     row: TRow;
@@ -23,16 +27,34 @@ interface IProps {
 
 const NoteModal = ({ row, updateRow }: IProps) => {
     const { isOpen: notesIsOpen, onOpen: notesOnOpen, onClose: notesOnClose } = useDisclosure();
+    const { data: user } = useGetUserQuery(localStorage.getItem("userId") || "");
 
     const [data, setData] = useState<TRow>(row);
+    const [note, setNote] = useState<INote>({
+        content: "",
+        owner: `${user?.firstname} ${user?.lastname}`,
+        createdAt: "",
+    });
 
     const handleNoteChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setData({ ...data, notes: event.target.value });
+        setNote({ ...note, content: event.target.value });
     };
 
     const handleNoteClick = () => {
-        updateRow(data);
-        notesOnClose();
+        setNote({ ...note, createdAt: new Date().toISOString() });
+
+        const dataCopy = data;
+        const notesList = dataCopy.notesList;
+        console.log(dataCopy);
+
+        const result = [...notesList, { ...note, createdAt: new Date().toISOString() }];
+        setData({ ...data, notesList: result });
+        updateRow({ ...data, notesList: result });
+        setNote({
+            content: "",
+            owner: `${user?.firstname} ${user?.lastname}`,
+            createdAt: "",
+        });
     };
 
     return (
@@ -48,8 +70,21 @@ const NoteModal = ({ row, updateRow }: IProps) => {
                     <ModalHeader>Notes</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
+                        {row.notesList.map((note, index) => {
+                            return (
+                                <Box key={index} mb={"20px"} px={"6px"}>
+                                    <Flex mb={"5px"}>
+                                        <Text fontSize={"14px"}>{`${note.owner} - `}</Text>
+                                        <Text ml={"3px"} fontSize={"12px"} pt={"2px"}>
+                                            {formatTime(new Date(note.createdAt))}
+                                        </Text>
+                                    </Flex>
+                                    <Text fontSize={"14px"}>{note.content}</Text>
+                                </Box>
+                            );
+                        })}
                         <Textarea
-                            value={data.notes}
+                            value={note.content}
                             onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => handleNoteChange(event)}
                             placeholder={"Enter notes..."}
                             size={"sm"}

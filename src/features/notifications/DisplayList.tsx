@@ -1,63 +1,12 @@
-/**
- * This file needs to be moved to ChakraUI
- * ***************************************
- */
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { Box, Center, Flex, HStack, Spacer, Spinner, Stack, Text, useToast } from "@chakra-ui/react";
 import { useGetNotificationsQuery, useCallNotificationsUpdateMutation } from "../../app/services/api";
-
-// const data = [
-//     {
-//         message: "Task 1 was assigned to you by Carlos Torres",
-//         created_on: "10/06/2023",
-//         data_source: "List 1",
-//         priority: "Critical",
-//     },
-//     {
-//         message: "Task 1 was assigned to you by Carlos Torres",
-//         created_on: "10/06/2023",
-//         data_source: "List 1",
-//         priority: "Low",
-//     },
-//     {
-//         message: "Task 1 was assigned to you by Carlos Torres",
-//         created_on: "10/06/2023",
-//         data_source: "List 1",
-//         priority: "Medium",
-//     },
-//     {
-//         message: "Task 1 was assigned to you by Carlos Torres",
-//         created_on: "10/06/2023",
-//         data_source: "List 1",
-//         priority: "High",
-//     },
-//     {
-//         message: "Task 1 was assigned to you by Carlos Torres",
-//         created_on: "10/06/2023",
-//         data_source: "List 1",
-//         priority: "Low",
-//     },
-//     {
-//         message: "Task 1 was assigned to you by Carlos Torres",
-//         created_on: "10/06/2023",
-//         data_source: "List 1",
-//         priority: "Medium",
-//     },
-// ];
-
-// const setPriorityColor = (priority: string) => {
-//     if (priority === "none") return priorityColors[0];
-//     if (priority === "Critical") return priorityColors[1];
-//     if (priority === "High") return priorityColors[2];
-//     if (priority === "Medium") return priorityColors[3];
-//     if (priority === "Low") return priorityColors[4];
-// };
+import { formatTime } from "../../utils/helpers";
 
 const DisplayList = () => {
     const { data, isLoading, isError, error } = useGetNotificationsQuery(null);
     const [callNotificationsUpdate] = useCallNotificationsUpdateMutation();
-    // const [allData] = useState(data);
     const [priority] = useState("All");
     const [activeTab, setActiveTab] = useState(0);
     const toast = useToast();
@@ -77,7 +26,6 @@ const DisplayList = () => {
                 description: item,
                 status: "info",
             });
-            // setNotifications(callNotificationsUpdate(priority) as any);
         });
 
         return () => {
@@ -96,33 +44,29 @@ const DisplayList = () => {
         callNotificationsUpdate(priority);
     };
 
-    const formatHours = (hours: any) => {
-        if (hours > 12) {
-            return hours - 12;
-        }
-        return hours;
-    };
+    // const formatHours = (hours: any) => {
+    //     if (hours > 12) {
+    //         return hours - 12;
+    //     }
+    //     return hours;
+    // };
 
-    const getMeridian = (hours: any) => {
-        if (hours > 12) {
-            return "PM";
-        }
-        return "AM";
-    };
+    // const getMeridian = (hours: any) => {
+    //     if (hours > 12) {
+    //         return "PM";
+    //     }
+    //     return "AM";
+    // };
 
-    const formatTime = (date: Date) => {
-        let newDate = new Date(date);
-        console.log(date);
-        console.log(newDate.getDay());
-        let formattedDate = `${newDate.getMonth()}/${newDate.getDate()}/${newDate.getFullYear()} ${formatHours(
-            newDate.getHours()
-        )}:${newDate.getUTCMinutes() > 9 ? "" : "0"}${newDate.getUTCMinutes()} ${getMeridian(newDate.getHours())}`;
-        return (
-            <Text fontSize={"12px"} color={"#7b809a"}>
-                {formattedDate}
-            </Text>
-        );
-    };
+    // const formatTime = (date: Date) => {
+    //     let newDate = new Date(date);
+    //     console.log(date);
+    //     console.log(newDate.getDay());
+    //     let formattedDate = `${newDate.getMonth()}/${newDate.getDate()}/${newDate.getFullYear()} ${formatHours(
+    //         newDate.getHours()
+    //     )}:${newDate.getUTCMinutes() > 9 ? "" : "0"}${newDate.getUTCMinutes()} ${getMeridian(newDate.getHours())}`;
+    //     return formattedDate;
+    // };
 
     const setPriorityColor = (priority: string) => {
         if (priority === "All")
@@ -263,7 +207,9 @@ const DisplayList = () => {
                                             {item.message}
                                         </Text>
                                         <Spacer />
-                                        {formatTime(item.createdAt)}
+                                        <Text fontSize={"12px"} color={"#7b809a"}>
+                                            {formatTime(item.createdAt)}
+                                        </Text>
                                     </Flex>
                                 </Box>
                                 {/* <Divider

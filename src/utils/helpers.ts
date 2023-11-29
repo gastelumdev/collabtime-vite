@@ -22,11 +22,31 @@ function getRGB(c: string) {
     return (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05)
   }
   
-  function getTextColor(bgColor: string) {
+  export function getTextColor(bgColor: string) {
     const whiteContrast = getContrast(bgColor, '#ffffff')
     const blackContrast = getContrast(bgColor, '#000000')
   
     return whiteContrast > blackContrast ? '#ffffff' : '#000000'
   }
 
-  export default getTextColor;
+  const formatHours = (hours: any) => {
+    if (hours > 12) {
+        return hours - 12;
+    }
+    return hours;
+};
+
+const getMeridian = (hours: any) => {
+    if (hours > 12) {
+        return "PM";
+    }
+    return "AM";
+};
+
+export const formatTime = (date: Date) => {
+    let newDate = new Date(date);
+    let formattedDate = `${newDate.getMonth()}/${newDate.getDate()}/${newDate.getFullYear()} ${formatHours(
+        newDate.getHours()
+    )}:${newDate.getUTCMinutes() > 9 ? "" : "0"}${newDate.getUTCMinutes()} ${getMeridian(newDate.getHours())}`;
+    return formattedDate
+};

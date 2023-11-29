@@ -1,4 +1,4 @@
-import getTextColor from "../../utils/helpers";
+import {getTextColor} from "../../utils/helpers";
 
 interface TProps {
     bgColor: string;
