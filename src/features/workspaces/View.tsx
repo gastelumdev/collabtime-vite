@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { RefObject, useEffect } from "react";
 import {
     useGetWorkspacesQuery,
     useCreateWorkspaceMutation,
@@ -9,7 +9,25 @@ import {
 
 import { io } from "socket.io-client";
 
-import { Box, Container, Flex, Heading, SimpleGrid, Spacer, Text, Button, Center, useToast } from "@chakra-ui/react";
+import {
+    Box,
+    Container,
+    Flex,
+    Heading,
+    SimpleGrid,
+    Spacer,
+    Text,
+    Button,
+    Center,
+    useToast,
+    useDisclosure,
+    AlertDialog,
+    AlertDialogOverlay,
+    AlertDialogContent,
+    AlertDialogHeader,
+    AlertDialogBody,
+    AlertDialogFooter,
+} from "@chakra-ui/react";
 
 import { TWorkspace, LinkItemProps } from "../../types";
 import Create from "./Create";
@@ -21,6 +39,7 @@ import PrimaryCard from "../../components/PrimaryCard";
 import { AiOutlineDelete, AiOutlineLike } from "react-icons/ai";
 import { IconContext } from "react-icons";
 import { BsPersonWorkspace } from "react-icons/bs";
+import React from "react";
 
 const LinkItems: Array<LinkItemProps> = [{ name: "Workspaces", icon: BsPersonWorkspace, path: "/workspaces" }];
 
@@ -38,6 +57,9 @@ const View = () => {
     const [callUpdate] = useCallUpdateMutation();
 
     const toast = useToast();
+
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const cancelRef = React.useRef<any>(null);
 
     /**
      * Socket.io listening for update to refetch data
@@ -132,14 +154,52 @@ const View = () => {
                                             }
                                             deleteButton={
                                                 workspace?.owner === localStorage.getItem("userId") ? (
-                                                    <Button
-                                                        flex="1"
-                                                        variant="ghost"
-                                                        leftIcon={<AiOutlineDelete />}
-                                                        color={"rgb(123, 128, 154)"}
-                                                        zIndex={10}
-                                                        onClick={() => deleteWorkspace(workspace._id as string)}
-                                                    ></Button>
+                                                    <>
+                                                        <Button
+                                                            flex="1"
+                                                            variant="ghost"
+                                                            leftIcon={<AiOutlineDelete />}
+                                                            color={"rgb(123, 128, 154)"}
+                                                            zIndex={10}
+                                                            onClick={onOpen}
+                                                        ></Button>
+                                                        <AlertDialog
+                                                            isOpen={isOpen}
+                                                            leastDestructiveRef={cancelRef}
+                                                            onClose={onClose}
+                                                        >
+                                                            <AlertDialogOverlay>
+                                                                <AlertDialogContent>
+                                                                    <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                                                                        Delete Workspace
+                                                                    </AlertDialogHeader>
+
+                                                                    <AlertDialogBody>
+                                                                        Are you sure? You can't undo this action
+                                                                        afterwards.
+                                                                    </AlertDialogBody>
+
+                                                                    <AlertDialogFooter>
+                                                                        <Button ref={cancelRef} onClick={onClose}>
+                                                                            Cancel
+                                                                        </Button>
+                                                                        <Button
+                                                                            colorScheme="red"
+                                                                            onClick={() => {
+                                                                                deleteWorkspace(
+                                                                                    workspace._id as string
+                                                                                );
+                                                                                onClose();
+                                                                            }}
+                                                                            ml={3}
+                                                                        >
+                                                                            Delete
+                                                                        </Button>
+                                                                    </AlertDialogFooter>
+                                                                </AlertDialogContent>
+                                                            </AlertDialogOverlay>
+                                                        </AlertDialog>
+                                                    </>
                                                 ) : null
                                             }
                                         />

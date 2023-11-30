@@ -7,6 +7,12 @@ import {
 } from "../../app/services/api";
 
 import {
+    AlertDialog,
+    AlertDialogBody,
+    AlertDialogContent,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogOverlay,
     Box,
     Button,
     Card,
@@ -20,6 +26,7 @@ import {
     SimpleGrid,
     Spacer,
     Text,
+    useDisclosure,
 } from "@chakra-ui/react";
 import SideBarLayout from "../../components/Layouts/SideBarLayout";
 
@@ -32,6 +39,7 @@ import Edit from "./Edit";
 import Create from "./Create";
 import { FaTasks } from "react-icons/fa";
 import { useEffect, useState } from "react";
+import React from "react";
 
 interface LinkItemProps {
     name: string;
@@ -72,6 +80,9 @@ const View = () => {
     const [deleteDataCollection] = useDeleteDataCollectionMutation();
 
     const [permissions, setPermissions] = useState<number>();
+
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const cancelRef = React.useRef<any>(null);
 
     useEffect(() => {
         getPermissions();
@@ -217,14 +228,51 @@ const View = () => {
                                                     dataCollection={dataCollection}
                                                     updateDataCollection={updateDataCollection}
                                                 />
-                                                <Button
-                                                    flex="1"
-                                                    variant="ghost"
-                                                    leftIcon={<AiOutlineDelete />}
-                                                    color={"rgb(123, 128, 154)"}
-                                                    zIndex={10}
-                                                    onClick={() => deleteDataCollection(dataCollection?._id || "")}
-                                                ></Button>
+                                                <>
+                                                    <Button
+                                                        flex="1"
+                                                        variant="ghost"
+                                                        leftIcon={<AiOutlineDelete />}
+                                                        color={"rgb(123, 128, 154)"}
+                                                        zIndex={10}
+                                                        onClick={onOpen}
+                                                    ></Button>
+                                                    <AlertDialog
+                                                        isOpen={isOpen}
+                                                        leastDestructiveRef={cancelRef}
+                                                        onClose={onClose}
+                                                    >
+                                                        <AlertDialogOverlay>
+                                                            <AlertDialogContent>
+                                                                <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                                                                    Delete Customer
+                                                                </AlertDialogHeader>
+
+                                                                <AlertDialogBody>
+                                                                    Are you sure? You can't undo this action afterwards.
+                                                                </AlertDialogBody>
+
+                                                                <AlertDialogFooter>
+                                                                    <Button ref={cancelRef} onClick={onClose}>
+                                                                        Cancel
+                                                                    </Button>
+                                                                    <Button
+                                                                        colorScheme="red"
+                                                                        onClick={() => {
+                                                                            deleteDataCollection(
+                                                                                dataCollection?._id || ""
+                                                                            );
+                                                                            onClose();
+                                                                        }}
+                                                                        ml={3}
+                                                                    >
+                                                                        Delete
+                                                                    </Button>
+                                                                </AlertDialogFooter>
+                                                            </AlertDialogContent>
+                                                        </AlertDialogOverlay>
+                                                    </AlertDialog>
+                                                </>
                                             </CardFooter>
                                         ) : null}
                                     </Card>
