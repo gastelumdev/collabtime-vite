@@ -93,7 +93,7 @@ export const createRowColorStyles: any = () => ({
         return {
             ...styles,
             backgroundColor: data.color,
-            color: "white",
+            color: getTextColor(data.color),
             padding: "7px",
         };
     },
