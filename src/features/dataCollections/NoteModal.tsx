@@ -201,7 +201,7 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
                                         </Text>
                                     </Flex>
                                     <Text fontSize={"14px"}>{note.content}</Text>
-                                    {note.images.map((image, index) => {
+                                    {(note.images || []).map((image, index) => {
                                         if (image) {
                                             return (
                                                 <a
