@@ -106,7 +106,7 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
         if (event.target.files) {
             console.log(event.target.files[0].name);
             setFile(event.target.files[0]);
-            const images = note.images;
+            // const images = note.images;
             // setNote({ ...note, images: [...images, event.target.files[0].name] });
         }
     };
@@ -120,6 +120,7 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
             people: [],
             images: [],
         });
+        setFile(null);
         notesOnClose();
     };
 
@@ -188,7 +189,7 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>Notes</ModalHeader>
-                    <ModalCloseButton />
+                    <ModalCloseButton onClick={onClose} />
                     <ModalBody>
                         {row.notesList.map((note, index) => {
                             return (
