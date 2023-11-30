@@ -88,6 +88,8 @@ export interface INote {
     content: string;
     owner: string;
     createdAt: string;
+    read: boolean;
+    people: TInvitee[];
 }
 
 export type TRow = {

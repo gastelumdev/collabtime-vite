@@ -8,6 +8,7 @@ import {
     useUpdateCellMutation,
     useGetUserQuery,
     useUpdateRowMutation,
+    useRowCallUpdateMutation,
 } from "../../app/services/api";
 import {
     Box,
@@ -47,6 +48,7 @@ import { cellColorStyles, createRowColorStyles } from "./select.styles";
 import NoteModal from "./NoteModal";
 import RenameColumn from "./RenameColumn";
 import EditRow from "./EditRow";
+import { io } from "socket.io-client";
 
 const DataCollection = ({ onOpen }: { onOpen: any }) => {
     const { dataCollectionId } = useParams();
@@ -65,6 +67,7 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
     const [updateRow] = useUpdateRowMutation();
     const [deleteRow, { isLoading: deletingRows }] = useDeleteRowMutation();
     const [updateCell] = useUpdateCellMutation();
+    const [rowCallUpdate] = useRowCallUpdateMutation();
     const [headerMenuIsOpen, setHeaderMenuIsOpen] = useState(
         new Array(columns?.length).fill(null).map(() => {
             return false;
@@ -126,6 +129,19 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
         }
         console.log(columns);
         console.log();
+    }, []);
+
+    useEffect(() => {
+        const socket = io(import.meta.env.VITE_API_URL);
+        socket.connect();
+        socket.on("update row", () => {
+            rowCallUpdate(null);
+            // setNotifications(callNotificationsUpdate(priority) as any);
+        });
+
+        return () => {
+            socket.disconnect();
+        };
     }, []);
 
     const setDefaultRow = () => {
@@ -311,7 +327,11 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                                                     }
                                                 />
                                                 <EditRow cells={row.cells} />
-                                                <NoteModal row={row} updateRow={updateRow} />
+                                                <NoteModal
+                                                    row={row}
+                                                    updateRow={updateRow}
+                                                    rowCallUpdate={rowCallUpdate}
+                                                />
                                             </Flex>
                                         </Td>
                                     ) : null}

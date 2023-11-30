@@ -45,7 +45,7 @@ const getMeridian = (hours: any) => {
 
 export const formatTime = (date: Date) => {
     let newDate = new Date(date);
-    let formattedDate = `${newDate.getMonth()}/${newDate.getDate()}/${newDate.getFullYear()} ${formatHours(
+    let formattedDate = `${newDate.getMonth() + 1}/${newDate.getDate()}/${newDate.getFullYear()} ${formatHours(
         newDate.getHours()
     )}:${newDate.getUTCMinutes() > 9 ? "" : "0"}${newDate.getUTCMinutes()} ${getMeridian(newDate.getHours())}`;
     return formattedDate
