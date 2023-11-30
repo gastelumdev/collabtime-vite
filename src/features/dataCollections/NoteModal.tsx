@@ -3,6 +3,7 @@ import { INote, TRow } from "../../types";
 import {
     Box,
     Flex,
+    Input,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -18,7 +19,7 @@ import { FaRegStickyNote } from "react-icons/fa";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import { IconContext } from "react-icons";
 import { formatTime } from "../../utils/helpers";
-import { useGetOneWorkspaceQuery, useGetUserQuery } from "../../app/services/api";
+import { useGetOneWorkspaceQuery, useGetUserQuery, useUploadMutation } from "../../app/services/api";
 import { io } from "socket.io-client";
 
 interface IProps {
@@ -31,6 +32,7 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
     const { isOpen: notesIsOpen, onOpen: notesOnOpen, onClose: notesOnClose } = useDisclosure();
     const { data: user } = useGetUserQuery(localStorage.getItem("userId") || "");
     const { data: workspace } = useGetOneWorkspaceQuery(localStorage.getItem("workspaceId") || "");
+    const [upload] = useUploadMutation();
 
     // const [data, setData] = useState<TRow>(row);
     const [note, setNote] = useState<INote>({
@@ -39,7 +41,9 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
         createdAt: "",
         read: false,
         people: [],
+        images: [],
     });
+    const [file, setFile] = useState<File | null>(null);
     const [hasUnreadItems, setHasUnreadItems] = useState<boolean>();
 
     useEffect(() => {
@@ -98,8 +102,41 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
         setNote({ ...note, content: event.target.value });
     };
 
-    const handleNoteClick = () => {
-        setNote({ ...note, createdAt: new Date().toISOString(), people: workspace?.members || [] });
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files) {
+            console.log(event.target.files[0].name);
+            setFile(event.target.files[0]);
+            const images = note.images;
+            // setNote({ ...note, images: [...images, event.target.files[0].name] });
+        }
+    };
+
+    const onClose = () => {
+        setNote({
+            content: "",
+            owner: `${user?.firstname} ${user?.lastname}`,
+            createdAt: "",
+            read: false,
+            people: [],
+            images: [],
+        });
+        notesOnClose();
+    };
+
+    const handleNoteClick = async () => {
+        const formdata: FormData = new FormData();
+        formdata.append("file", file || "");
+        const filename: any = await upload(formdata);
+
+        console.log(filename.data.filename);
+        const imagesCopy = note.images;
+
+        setNote({
+            ...note,
+            createdAt: new Date().toISOString(),
+            people: workspace?.members || [],
+            images: [...imagesCopy, filename.data.filename],
+        });
 
         const dataCopy = row;
         const notesList = dataCopy.notesList;
@@ -107,17 +144,25 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
 
         const result = [
             ...notesList,
-            { ...note, createdAt: new Date().toISOString(), people: workspace?.members || [] },
+            {
+                ...note,
+                createdAt: new Date().toISOString(),
+                people: workspace?.members || [],
+                images: [...imagesCopy, filename.data.filename],
+            },
         ];
-        // setData({ ...data, notesList: result });
+
         updateRow({ ...row, notesList: result });
+
         setNote({
             content: "",
             owner: `${user?.firstname} ${user?.lastname}`,
             createdAt: "",
             read: false,
             people: [],
+            images: [],
         });
+        setFile(null);
         notesOnClose();
     };
 
@@ -155,6 +200,22 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
                                         </Text>
                                     </Flex>
                                     <Text fontSize={"14px"}>{note.content}</Text>
+                                    {note.images.map((image, index) => {
+                                        if (image) {
+                                            return (
+                                                <a
+                                                    key={index}
+                                                    href={`${import.meta.env.VITE_API_URL}/images/${image}`}
+                                                    target="_blank"
+                                                >
+                                                    <Text fontSize={"12px"} color={"#16b2fc"} mt={"6px"}>
+                                                        Image
+                                                    </Text>
+                                                </a>
+                                            );
+                                        }
+                                        return null;
+                                    })}
                                 </Box>
                             );
                         })}
@@ -164,6 +225,14 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
                             placeholder={"Enter notes..."}
                             size={"sm"}
                             rows={10}
+                        />
+                        <Input
+                            type="file"
+                            size={"md"}
+                            p={"1px"}
+                            mt={"6px"}
+                            border={"none"}
+                            onChange={handleFileChange}
                         />
                     </ModalBody>
 

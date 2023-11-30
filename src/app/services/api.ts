@@ -240,6 +240,13 @@ export const api = createApi({
                 body: cell,
             }),
             invalidatesTags: ["Rows"],
+        }),
+        upload: builder.mutation<any, any>({
+            query: (item) => ({
+                url: "upload",
+                method: "POST",
+                body: item,
+            })
         })
     })
 })
@@ -276,5 +283,6 @@ export const {
     useUpdateRowMutation,
     useDeleteRowMutation,
     useRowCallUpdateMutation,
-    useUpdateCellMutation
+    useUpdateCellMutation,
+    useUploadMutation,
 } = api

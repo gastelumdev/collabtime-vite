@@ -90,6 +90,7 @@ export interface INote {
     createdAt: string;
     read: boolean;
     people: TInvitee[];
+    images: string[];
 }
 
 export type TRow = {
