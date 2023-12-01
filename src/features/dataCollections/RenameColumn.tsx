@@ -149,7 +149,7 @@ const RenameColumn = ({ column }: IProps) => {
 
                             <Box>
                                 {labels?.map((label: TLabel, index: number) => {
-                                    console.log(label);
+                                    // console.log(label);
                                     return (
                                         <Box key={index} bg={label.color} p={"5px"} m={"5px"}>
                                             <HStack>

@@ -26,15 +26,18 @@ function App() {
         socket.on("update", (item) => {
             console.log("Notifications called for update");
 
-            toast({
-                title: "Notification",
-                description: item.message,
-                status: "info",
-            });
-            // setNotifications(callNotificationsUpdate(priority) as any);
+            if (item) {
+                toast({
+                    title: "Notification",
+                    description: item.message,
+                    status: "info",
+                });
+                // setNotifications(callNotificationsUpdate(priority) as any);
+            }
         });
 
         socket.on(localStorage.getItem("userId") || "", (item) => {
+            console.log(item);
             toast({
                 title: "Notification",
                 description: item.message,
