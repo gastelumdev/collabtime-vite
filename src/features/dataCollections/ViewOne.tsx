@@ -72,12 +72,12 @@ const ViewOne = () => {
     const [createColumn] = useCreateColumnMutation();
 
     const [columnName, setColumnName] = useState<string>("");
-    const [columnType, setColumnType] = useState<string>("");
+    const [columnType, setColumnType] = useState<string>("text");
     const [columnNameError, setColumnNameError] = useState<boolean>(false);
     const [showLabelForm, setShowLabelForm] = useState(false);
     const [labelOptions, setLabelOptions] = useState<TLabel>({
         title: "",
-        color: "",
+        color: "#015796",
     });
     const [labels, setLabels] = useState<TLabel[]>([
         { title: "Label 1", color: "#005796" },
@@ -85,6 +85,7 @@ const ViewOne = () => {
         { title: "Label 3", color: "#ffa507" },
     ]);
     const [labelStyles, setLabelStyles] = useState<any>({});
+    const [labelTitleError, setLabelTitleError] = useState<boolean>(false);
 
     useEffect(() => {
         for (const column of columns || []) {
@@ -99,22 +100,25 @@ const ViewOne = () => {
      * This should be replaced by RTK
      */
     const handleAddColumn = () => {
-        const newColumn: TColumn = {
-            dataCollectionId: localStorage.getItem("dataCollectionId") || "",
-            name: columnName,
-            type: columnType,
-            permanent: false,
-            labels: labels,
-            people: [],
-            includeInForm: true,
-            includeInExport: true,
-        };
+        console.log(columnName);
+        if (!columnNameError) {
+            const newColumn: TColumn = {
+                dataCollectionId: localStorage.getItem("dataCollectionId") || "",
+                name: columnName,
+                type: columnType,
+                permanent: false,
+                labels: labels,
+                people: [],
+                includeInForm: true,
+                includeInExport: true,
+            };
 
-        // Set column name to a database friendly underscore naming
-        newColumn.name = newColumn.name.toLowerCase().split(" ").join("_");
+            // Set column name to a database friendly underscore naming
+            newColumn.name = newColumn.name.toLowerCase().split(" ").join("_");
 
-        createColumn(newColumn);
-        onClose();
+            createColumn(newColumn);
+            onClose();
+        }
     };
 
     /**
@@ -130,7 +134,7 @@ const ViewOne = () => {
             if (columnNamesMap[column.name] == undefined) columnNamesMap[column.name] = column.name;
         }
 
-        if (columnNamesMap[value.toLowerCase().split(" ").join("_")]) {
+        if (columnNamesMap[value.toLowerCase().split(" ").join("_")] || value == "") {
             setColumnNameError(true);
         } else {
             setColumnNameError(false);
@@ -166,6 +170,11 @@ const ViewOne = () => {
     };
 
     const handleLabelOptionsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.name == "title" && event.target.value == "") {
+            setLabelTitleError(true);
+        } else {
+            setLabelTitleError(false);
+        }
         setLabelOptions({
             ...labelOptions,
             [event.target.name]: event.target.value,
@@ -181,17 +190,24 @@ const ViewOne = () => {
     };
 
     const addLabel = () => {
-        const labelsCopy = [...labels, labelOptions];
-        setLabels(labelsCopy);
-        setLabelOptions({ title: "", color: "" });
+        setLabelTitleError(false);
+        if (labelOptions.title === "") {
+            setLabelTitleError(true);
+        } else {
+            const labelsCopy = [...labels, labelOptions];
+            setLabels(labelsCopy);
+            setLabelOptions({ title: "", color: "#015796" });
+        }
     };
 
     const closeDrawer = () => {
         onClose();
         setShowLabelForm(false);
+        setColumnName("");
+        setColumnType("");
         setLabelOptions({
             title: "",
-            color: "",
+            color: "#015796",
         });
     };
 
@@ -252,7 +268,7 @@ const ViewOne = () => {
                         <Flex>
                             <Text mb={"5px"}>Name</Text>
                             <Text ml={"8px"} pt={"2px"} fontSize={"14px"} color={"#e53e3e"}>
-                                {columnNameError ? "* Column already exists." : ""}
+                                {columnNameError ? "* Column already exists or name is empty." : ""}
                             </Text>
                         </Flex>
                         <Input
@@ -296,7 +312,14 @@ const ViewOne = () => {
                                 marginTop="0"
                             />
                             <Box>
-                                <Text mb={"5px"}>Label name</Text>
+                                <HStack>
+                                    <Text mb={"5px"}>Label name</Text>
+                                    {labelTitleError ? (
+                                        <Text mb={"5px"} color={"red"} fontSize={"sm"}>
+                                            * Required
+                                        </Text>
+                                    ) : null}
+                                </HStack>
                                 <Input
                                     // ref={firstField}
                                     id="labelName"
@@ -313,10 +336,13 @@ const ViewOne = () => {
                                     // ref={firstField}
                                     id="labelColor"
                                     name="color"
+                                    value={labelOptions.color}
                                     onChange={handleLabelOptionsChange}
                                 />
                             </Box>
-                            <PrimaryButton onClick={addLabel}>Add label</PrimaryButton>
+                            <PrimaryButton onClick={addLabel} isDisabled={labelOptions.title == ""}>
+                                Add label
+                            </PrimaryButton>
                             <Divider
                                 gradient="radial-gradient(#eceef1 40%, white 60%)"
                                 marginBottom="0"
@@ -343,7 +369,7 @@ const ViewOne = () => {
                 </Stack>
                 <Flex mt={"20px"}>
                     <Spacer />
-                    <PrimaryButton onClick={handleAddColumn} isDisabled={columnNameError}>
+                    <PrimaryButton onClick={handleAddColumn} isDisabled={columnNameError || columnName == ""}>
                         SAVE
                     </PrimaryButton>
                 </Flex>

@@ -83,7 +83,7 @@ const AddForm = ({ dataCollection, updateDataCollection }: IProps) => {
                 <Text pb={"5px"}>Name</Text>
                 <Input
                     name="name"
-                    placeholder="Please enter user name"
+                    placeholder="Please enter workspace name"
                     value={data.name}
                     required={true}
                     onChange={handleChange}
