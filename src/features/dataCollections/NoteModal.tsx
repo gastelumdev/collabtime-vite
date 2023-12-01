@@ -129,16 +129,16 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
     const handleNoteClick = async () => {
         const formdata: FormData = new FormData();
         formdata.append("file", file || "");
-        const filename: any = await upload(formdata);
+        const res: any = await upload(formdata);
 
-        console.log(filename.data.filename);
+        console.log(res.data);
         const imagesCopy = note.images;
 
         setNote({
             ...note,
             createdAt: new Date().toISOString(),
             people: workspace?.members || [],
-            images: [...imagesCopy, filename.data.filename],
+            images: [...imagesCopy, res.data.url],
         });
 
         const dataCopy = row;
@@ -151,7 +151,7 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
                 ...note,
                 createdAt: new Date().toISOString(),
                 people: workspace?.members || [],
-                images: [...imagesCopy, filename.data.filename],
+                images: [...imagesCopy, res.data.url],
             },
         ];
 
@@ -205,11 +205,7 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
                                         {(note.images || []).map((image, index) => {
                                             if (image) {
                                                 return (
-                                                    <a
-                                                        key={index}
-                                                        href={`${import.meta.env.VITE_API_URL}/images/${image}`}
-                                                        target="_blank"
-                                                    >
+                                                    <a key={index} href={`${image}`} target="_blank">
                                                         <Flex>
                                                             <Text pt={"5px"} mr={"3px"}>
                                                                 <CgAttachment color={"#16b2fc"} fontSize={"12px"} />
