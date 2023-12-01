@@ -188,7 +188,7 @@ export const api = createApi({
                 method: "POST",
                 body: column
             }),
-            invalidatesTags: ["Column"],
+            invalidatesTags: ["Column", "Rows"],
         }),
         deleteColumn: builder.mutation<TColumn, string>({
             query: (columnId) => ({

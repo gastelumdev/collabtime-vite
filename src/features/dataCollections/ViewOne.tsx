@@ -21,6 +21,7 @@ import Select from "react-select";
 import { IconType } from "react-icons";
 import { BsFiletypeDoc, BsPersonWorkspace } from "react-icons/bs";
 import { AiOutlineClose, AiOutlineMessage } from "react-icons/ai";
+import { MdOutlineColorLens } from "react-icons/md";
 import { BiTable } from "react-icons/bi";
 import { FaTasks } from "react-icons/fa";
 
@@ -93,6 +94,7 @@ const ViewOne = () => {
                 setLabelStyles({ ...labelStyles, [column.name]: "" });
             }
         }
+        setShowLabelForm(false);
     }, []);
 
     /**
@@ -205,6 +207,11 @@ const ViewOne = () => {
         setShowLabelForm(false);
         setColumnName("");
         setColumnType("");
+        setLabels([
+            { title: "Label 1", color: "#005796" },
+            { title: "Label 2", color: "#4FAD00" },
+            { title: "Label 3", color: "#ffa507" },
+        ]);
         setLabelOptions({
             title: "",
             color: "#015796",
@@ -311,43 +318,50 @@ const ViewOne = () => {
                                 marginBottom="0"
                                 marginTop="0"
                             />
-                            <Box>
-                                <HStack>
-                                    <Text mb={"5px"}>Label name</Text>
-                                    {labelTitleError ? (
-                                        <Text mb={"5px"} color={"red"} fontSize={"sm"}>
-                                            * Required
-                                        </Text>
-                                    ) : null}
-                                </HStack>
-                                <Input
-                                    // ref={firstField}
-                                    id="labelName"
-                                    name="title"
-                                    value={labelOptions.title}
-                                    placeholder="Please enter label name"
-                                    onChange={handleLabelOptionsChange}
-                                />
-                            </Box>
-                            <Box>
-                                <Text mb={"5px"}>Select label color</Text>
-                                <input
-                                    type={"color"}
-                                    // ref={firstField}
-                                    id="labelColor"
-                                    name="color"
-                                    value={labelOptions.color}
-                                    onChange={handleLabelOptionsChange}
-                                />
-                            </Box>
-                            <PrimaryButton onClick={addLabel} isDisabled={labelOptions.title == ""}>
-                                Add label
-                            </PrimaryButton>
-                            <Divider
-                                gradient="radial-gradient(#eceef1 40%, white 60%)"
-                                marginBottom="0"
-                                marginTop="0"
-                            />
+                            <Flex>
+                                <Box mr={"20px"}>
+                                    <HStack>
+                                        <Text mb={"10px"}>Labels</Text>
+                                        {labelTitleError ? (
+                                            <Text mb={"5px"} color={"red"} fontSize={"sm"}>
+                                                * Required
+                                            </Text>
+                                        ) : null}
+                                    </HStack>
+                                    <Input
+                                        // ref={firstField}
+                                        id="labelName"
+                                        name="title"
+                                        value={labelOptions.title}
+                                        size={"sm"}
+                                        placeholder="Please enter label name"
+                                        onChange={handleLabelOptionsChange}
+                                    />
+                                </Box>
+                                <Box mb={"10px"} pt={"32px"}>
+                                    {/* <Text mb={"5px"}>Label color</Text> */}
+                                    <HStack>
+                                        <MdOutlineColorLens color={"rgb(123, 128, 154)"} />
+                                        <Box pt={"5px"}>
+                                            <input
+                                                type={"color"}
+                                                // ref={firstField}
+                                                id="labelColor"
+                                                name="color"
+                                                height={"300px"}
+                                                value={labelOptions.color}
+                                                onChange={handleLabelOptionsChange}
+                                            />
+                                        </Box>
+                                    </HStack>
+                                </Box>
+                                <Spacer />
+                                <Box mt={"36px"}>
+                                    <PrimaryButton onClick={addLabel} isDisabled={labelOptions.title == ""} size="sm">
+                                        Add label
+                                    </PrimaryButton>
+                                </Box>
+                            </Flex>
                             <Box>
                                 {labels.map((label: TLabel, index: number) => {
                                     console.log(label);

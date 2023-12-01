@@ -11,6 +11,12 @@ import {
     useRowCallUpdateMutation,
 } from "../../app/services/api";
 import {
+    AlertDialog,
+    AlertDialogBody,
+    AlertDialogContent,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogOverlay,
     Box,
     Button,
     Card,
@@ -35,6 +41,7 @@ import {
     Thead,
     Tooltip,
     Tr,
+    useDisclosure,
 } from "@chakra-ui/react";
 import Select from "react-select";
 
@@ -52,6 +59,8 @@ import { io } from "socket.io-client";
 
 const DataCollection = ({ onOpen }: { onOpen: any }) => {
     const { dataCollectionId } = useParams();
+    const { isOpen: deleteColumnIsOpen, onOpen: deleteColumnOnOpen, onClose: deleteColumnOnClose } = useDisclosure();
+    const cancelRef = React.useRef<any>(null);
 
     const { data: user } = useGetUserQuery(localStorage.getItem("userId") || "");
 
@@ -280,10 +289,44 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                                                     </Text>
                                                 </MenuButton>
                                                 <MenuList>
-                                                    <MenuItem onClick={() => handleDeleteColumn(column)}>
-                                                        Delete Column
-                                                    </MenuItem>
                                                     <RenameColumn column={column} />
+                                                    <MenuItem onClick={deleteColumnOnOpen}>Delete Column</MenuItem>
+                                                    <AlertDialog
+                                                        isOpen={deleteColumnIsOpen}
+                                                        leastDestructiveRef={cancelRef}
+                                                        onClose={deleteColumnOnClose}
+                                                    >
+                                                        <AlertDialogOverlay>
+                                                            <AlertDialogContent>
+                                                                <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                                                                    Delete Column
+                                                                </AlertDialogHeader>
+
+                                                                <AlertDialogBody>
+                                                                    Are you sure? You can't undo this action afterwards.
+                                                                </AlertDialogBody>
+
+                                                                <AlertDialogFooter>
+                                                                    <Button
+                                                                        ref={cancelRef}
+                                                                        onClick={deleteColumnOnClose}
+                                                                    >
+                                                                        Cancel
+                                                                    </Button>
+                                                                    <Button
+                                                                        colorScheme="red"
+                                                                        onClick={() => {
+                                                                            handleDeleteColumn(column);
+                                                                            deleteColumnOnClose();
+                                                                        }}
+                                                                        ml={3}
+                                                                    >
+                                                                        Delete
+                                                                    </Button>
+                                                                </AlertDialogFooter>
+                                                            </AlertDialogContent>
+                                                        </AlertDialogOverlay>
+                                                    </AlertDialog>
                                                 </MenuList>
                                             </Menu>
                                         ) : (
