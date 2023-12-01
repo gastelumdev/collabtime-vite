@@ -28,7 +28,6 @@ import {
 } from "@chakra-ui/react";
 import { FiMenu, FiLogOut } from "react-icons/fi";
 import { IconContext, IconType } from "react-icons";
-import { LikeOutlined } from "@ant-design/icons";
 import Divider from "../Divider/Divider";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
