@@ -76,7 +76,9 @@ const View = () => {
     // const [data, setData] = useState<TDataCollection[]>(dataCollections);
     const { data: user } = useGetUserQuery(localStorage.getItem("userId") || "");
     const { data } = useGetDataCollectionsQuery(null);
-    const { data: workspace } = useGetOneWorkspaceQuery(localStorage.getItem("workspaceId") || "");
+    const { data: workspace, isFetching: workspaceIsFetching } = useGetOneWorkspaceQuery(
+        localStorage.getItem("workspaceId") || ""
+    );
     const [createDataCollection] = useCreateDataCollecionMutation();
     const [updateDataCollection] = useUpdateDataCollectionMutation();
     const [deleteDataCollection] = useDeleteDataCollectionMutation();
@@ -116,7 +118,7 @@ const View = () => {
                             <Flex>
                                 <Box>
                                     <Heading size={"sm"} mb={"12px"} color={"rgb(52, 71, 103)"}>
-                                        {`${workspace?.name} - Data Collections`}
+                                        {!workspaceIsFetching ? `${workspace?.name} - Data Collections` : null}
                                     </Heading>
                                     <Text color={"rgb(123, 128, 154)"} fontSize={"md"} fontWeight={300}>
                                         Create data collection tables to visualize and manage your data.

@@ -73,7 +73,9 @@ const ViewOne = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const { data: dataCollection } = useGetDataCollectionQuery(null);
-    const { data: workspace } = useGetOneWorkspaceQuery(localStorage.getItem("workspaceId") || "");
+    const { data: workspace, isFetching: workspaceIsFetching } = useGetOneWorkspaceQuery(
+        localStorage.getItem("workspaceId") || ""
+    );
 
     const { data: columns } = useGetColumnsQuery(null);
     const [createColumn] = useCreateColumnMutation();
@@ -256,7 +258,9 @@ const ViewOne = () => {
                                     <Flex>
                                         <Box>
                                             <Heading size={"sm"} mt={"5px"} mb={"4px"}>
-                                                {`${workspace?.name} - ${dataCollection?.name}`}
+                                                {!workspaceIsFetching
+                                                    ? `${workspace?.name} - ${dataCollection?.name}`
+                                                    : null}
                                             </Heading>
                                             <Text fontSize={"md"} color={"rgb(123, 128, 154)"}>
                                                 {dataCollection?.description}
