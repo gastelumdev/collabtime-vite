@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useGetColumnsQuery, useCreateColumnMutation, useGetDataCollectionQuery } from "../../app/services/api";
+import {
+    useGetColumnsQuery,
+    useCreateColumnMutation,
+    useGetDataCollectionQuery,
+    useGetOneWorkspaceQuery,
+} from "../../app/services/api";
 import {
     Box,
     Card,
@@ -68,6 +73,7 @@ const ViewOne = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const { data: dataCollection } = useGetDataCollectionQuery(null);
+    const { data: workspace } = useGetOneWorkspaceQuery(localStorage.getItem("workspaceId") || "");
 
     const { data: columns } = useGetColumnsQuery(null);
     const [createColumn] = useCreateColumnMutation();
@@ -250,7 +256,7 @@ const ViewOne = () => {
                                     <Flex>
                                         <Box>
                                             <Heading size={"sm"} mt={"5px"} mb={"4px"}>
-                                                {dataCollection?.name}
+                                                {`${workspace?.name} - ${dataCollection?.name}`}
                                             </Heading>
                                             <Text fontSize={"md"} color={"rgb(123, 128, 154)"}>
                                                 {dataCollection?.description}
