@@ -1,10 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
     useGetWorkspacesQuery,
     useCreateWorkspaceMutation,
     useDeleteWorkspaceMutation,
     useUpdateWorkspaceMutation,
     useCallUpdateMutation,
+    useGetUserQuery,
 } from "../../app/services/api";
 
 import { io } from "socket.io-client";
@@ -50,6 +51,7 @@ const LinkItems: Array<LinkItemProps> = [{ name: "Workspaces", icon: BsPersonWor
  */
 const View = () => {
     const { data } = useGetWorkspacesQuery(null);
+    const { data: user } = useGetUserQuery(localStorage.getItem("userId") || "");
     const [createWorkspace, { isError: createWorkspaceIsError, error: createWorkspaceError }] =
         useCreateWorkspaceMutation();
     const [updateWorkspace] = useUpdateWorkspaceMutation();
@@ -60,6 +62,8 @@ const View = () => {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
     const cancelRef = React.useRef<any>(null);
+
+    const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
 
     /**
      * Socket.io listening for update to refetch data
@@ -80,6 +84,16 @@ const View = () => {
             socket.disconnect();
         };
     }, []);
+
+    useEffect(() => {
+        for (const workspace of data || []) {
+            for (const member of workspace.members) {
+                if (member.email === user?.email && member.permissions > 1) {
+                    setIsAuthorized(true);
+                }
+            }
+        }
+    }, [data, user]);
 
     if (createWorkspaceIsError) {
         toast({
@@ -146,14 +160,16 @@ const View = () => {
                                             key={index}
                                             index={index}
                                             data={workspace}
-                                            divider={workspace?.owner === localStorage.getItem("userId")}
+                                            divider={
+                                                workspace?.owner === localStorage.getItem("userId") || isAuthorized
+                                            }
                                             editButton={
-                                                workspace?.owner === localStorage.getItem("userId") ? (
+                                                workspace?.owner === localStorage.getItem("userId") || isAuthorized ? (
                                                     <Edit workspace={workspace} updateWorkspace={updateWorkspace} />
                                                 ) : null
                                             }
                                             deleteButton={
-                                                workspace?.owner === localStorage.getItem("userId") ? (
+                                                workspace?.owner === localStorage.getItem("userId") || isAuthorized ? (
                                                     <>
                                                         <Button
                                                             flex="1"

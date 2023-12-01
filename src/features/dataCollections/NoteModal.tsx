@@ -11,11 +11,13 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
+    Spacer,
     Text,
     Textarea,
     useDisclosure,
 } from "@chakra-ui/react";
 import { FaRegStickyNote } from "react-icons/fa";
+import { CgAttachment } from "react-icons/cg";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import { IconContext } from "react-icons";
 import { formatTime } from "../../utils/helpers";
@@ -199,24 +201,30 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
                                         <Text ml={"3px"} fontSize={"12px"} pt={"2px"}>
                                             {formatTime(new Date(note.createdAt))}
                                         </Text>
+                                        <Spacer />
+                                        {(note.images || []).map((image, index) => {
+                                            if (image) {
+                                                return (
+                                                    <a
+                                                        key={index}
+                                                        href={`${import.meta.env.VITE_API_URL}/images/${image}`}
+                                                        target="_blank"
+                                                    >
+                                                        <Flex>
+                                                            <Text pt={"5px"} mr={"3px"}>
+                                                                <CgAttachment color={"#16b2fc"} fontSize={"12px"} />
+                                                            </Text>
+                                                            <Text fontSize={"12px"} color={"#16b2fc"} mt={"2px"}>
+                                                                Attachment
+                                                            </Text>
+                                                        </Flex>
+                                                    </a>
+                                                );
+                                            }
+                                            return null;
+                                        })}
                                     </Flex>
                                     <Text fontSize={"14px"}>{note.content}</Text>
-                                    {(note.images || []).map((image, index) => {
-                                        if (image) {
-                                            return (
-                                                <a
-                                                    key={index}
-                                                    href={`${import.meta.env.VITE_API_URL}/images/${image}`}
-                                                    target="_blank"
-                                                >
-                                                    <Text fontSize={"12px"} color={"#16b2fc"} mt={"6px"}>
-                                                        Image
-                                                    </Text>
-                                                </a>
-                                            );
-                                        }
-                                        return null;
-                                    })}
                                 </Box>
                             );
                         })}
