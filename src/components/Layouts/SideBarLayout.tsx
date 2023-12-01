@@ -90,8 +90,7 @@ const SidebarContent = ({ linkItems, onClose, ...rest }: SidebarProps) => {
                                         fontSize: "20px",
                                     }}
                                 /> */}
-                                <img src="logo-no-background.png" />
-                                Collabtime
+                                <img src={logo} width={"80px"} />
                             </Text>
                         </Center>
                     </Box>
