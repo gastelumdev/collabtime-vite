@@ -33,6 +33,7 @@ import Divider from "../Divider/Divider";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import View from "../../features/notifications/View";
+import logo from "../../assets/logo-no-background.png";
 
 interface LinkItemProps {
     name: string;
@@ -84,12 +85,13 @@ const SidebarContent = ({ linkItems, onClose, ...rest }: SidebarProps) => {
                     <Box pt={"6px"} pb={"4px"}>
                         <Center>
                             <Text as={"b"} fontSize={"16px"} color={"white"}>
-                                <LikeOutlined
+                                {/* <LikeOutlined
                                     style={{
                                         marginRight: "4px",
                                         fontSize: "20px",
                                     }}
-                                />
+                                /> */}
+                                <img src="logo-no-background.png" />
                                 Collabtime
                             </Text>
                         </Center>
@@ -290,13 +292,13 @@ const SideBarLayout = ({ linkItems, leftContent, sidebar = true, children }: Sid
                                 <Box pt={"6px"} pb={"4px"}>
                                     <Center>
                                         <Text as={"b"} fontSize={"16px"} color={"white"}>
-                                            <LikeOutlined
+                                            {/* <LikeOutlined
                                                 style={{
                                                     marginRight: "4px",
                                                     fontSize: "20px",
                                                 }}
-                                            />
-                                            Collabtime
+                                            /> */}
+                                            <img src={logo} width={"80px"} />
                                         </Text>
                                     </Center>
                                 </Box>
