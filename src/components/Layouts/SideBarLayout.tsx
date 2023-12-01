@@ -279,7 +279,7 @@ const SideBarLayout = ({ linkItems, leftContent, sidebar = true, children }: Sid
                     onOverlayClick={onClose}
                     size="xs"
                 >
-                    <DrawerContent>
+                    <DrawerContent boxShadow={"none"}>
                         <Box py={6} pl={6} height={"full"} bg={useColorModeValue("gray.100", "gray.900")}>
                             <Box
                                 pt={"20px"}

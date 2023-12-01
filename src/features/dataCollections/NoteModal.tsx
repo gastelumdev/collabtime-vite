@@ -237,6 +237,7 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
                         />
                         <Input
                             type="file"
+                            accept="image/png, image/jpeg, image/jpg"
                             size={"md"}
                             p={"1px"}
                             mt={"6px"}
