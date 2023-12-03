@@ -247,6 +247,20 @@ export const api = createApi({
                 method: "POST",
                 body: item,
             })
+        }),
+        uploadDocs: builder.mutation<any, any>({
+            query: (item) => ({
+                url: "uploadDocs",
+                method: "POST",
+                body: item,
+            })
+        }),
+        uploadPersistedDocs: builder.mutation<any, any>({
+            query: (item) => ({
+                url: "uploadPersistedDocs",
+                method: "POST",
+                body: item,
+            })
         })
     })
 })
@@ -285,4 +299,6 @@ export const {
     useRowCallUpdateMutation,
     useUpdateCellMutation,
     useUploadMutation,
+    useUploadDocsMutation,
+    useUploadPersistedDocsMutation,
 } = api
