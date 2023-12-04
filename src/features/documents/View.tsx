@@ -191,7 +191,9 @@ const View = () => {
                                                     </Box>
                                                     {document.type === "upload" ? (
                                                         <Text>
-                                                            <a href={document.url}>{document.filename}</a>
+                                                            <a href={document.url} target="_blank">
+                                                                {document.filename}
+                                                            </a>
                                                         </Text>
                                                     ) : (
                                                         <UpdateModal document={document} />
