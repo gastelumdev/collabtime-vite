@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store";
 import { LoginRequest, UserResponse, ResetPasswordRequestRequest, BasicResponse } from "../../features/auth/types";
-import { TCell, TColumn, TDataCollection, TJoinWorkspace, TNotification, TRow, TTableData, TUser, TWorkspace, TWorkspaceUsers } from "../../types";
+import { TCell, TColumn, TDataCollection, TDocument, TJoinWorkspace, TNotification, TRow, TTableData, TUser, TWorkspace, TWorkspaceUsers } from "../../types";
 
 export const api = createApi({
     baseQuery: fetchBaseQuery({
@@ -12,7 +12,7 @@ export const api = createApi({
             return headers;
         }
     }),
-    tagTypes: ["auth", "Workspace", "Notification", "DataCollection", "Column", "Rows"],
+    tagTypes: ["auth", "Workspace", "Notification", "DataCollection", "Column", "Rows", "Documents"],
     endpoints: (builder) => ({
         login: builder.mutation<UserResponse, LoginRequest>({
             query: (credentials) => ({
@@ -261,6 +261,28 @@ export const api = createApi({
                 method: "POST",
                 body: item,
             })
+        }),
+        getDocuments: builder.query<TDocument[], null>({
+            query: () => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/documents`,
+            }),
+            providesTags: ["Documents"]
+        }),
+        createDocument: builder.mutation<TDocument, TDocument>({
+            query: (document) => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/documents`,
+                method: "POST",
+                body: document,
+            }),
+            invalidatesTags: ["Documents"]
+        }),
+        updateDocument: builder.mutation<TDocument, TDocument>({
+            query: (document) => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/documents/update`,
+                method: "POST",
+                body: document,
+            }),
+            invalidatesTags: ["Documents"]
         })
     })
 })
@@ -301,4 +323,7 @@ export const {
     useUploadMutation,
     useUploadDocsMutation,
     useUploadPersistedDocsMutation,
+    useGetDocumentsQuery,
+    useCreateDocumentMutation,
+    useUpdateDocumentMutation,
 } = api

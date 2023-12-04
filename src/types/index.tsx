@@ -142,3 +142,14 @@ export interface LinkItemProps {
     icon: IconType;
     path: string;
 }
+
+export type TDocument = {
+    workspace: string;
+    filename: string;
+    type: string;
+    originalname?: string;
+    url?: string;
+    ext?: string;
+    value?: string;
+    file?: any;
+};

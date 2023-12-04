@@ -17,6 +17,7 @@
     "@emotion/styled": "^11.11.0",
     "@reduxjs/toolkit": "^1.9.7",
     "@table-library/react-table-library": "^4.1.7",
+    "@tinymce/tinymce-react": "^4.3.2",
     "@types/react-select": "^5.0.1",
     "antd": "^5.9.4",
     "framer-motion": "^10.16.4",

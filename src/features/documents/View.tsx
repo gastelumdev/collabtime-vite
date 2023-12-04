@@ -1,13 +1,50 @@
-import { Box, Container, Flex, Heading, Input, SimpleGrid, Spacer, Text } from "@chakra-ui/react";
+import {
+    Box,
+    Button,
+    Card,
+    CardBody,
+    Container,
+    Flex,
+    Heading,
+    Input,
+    List,
+    ListItem,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
+    SimpleGrid,
+    Spacer,
+    Text,
+    useDisclosure,
+} from "@chakra-ui/react";
+import { Editor } from "@tinymce/tinymce-react";
+import "./styles.css";
 import SideBarLayout from "../../components/Layouts/SideBarLayout";
 import { IconType } from "react-icons";
 import { BsFiletypeDoc, BsPersonWorkspace } from "react-icons/bs";
 import { BiTable } from "react-icons/bi";
-import { FaTasks } from "react-icons/fa";
+import { FaRegFileAlt, FaRegFileExcel, FaTasks } from "react-icons/fa";
 import { AiOutlineMessage } from "react-icons/ai";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
-import { useUploadDocsMutation, useUploadPersistedDocsMutation } from "../../app/services/api";
+import {
+    useCreateDocumentMutation,
+    useGetDocumentsQuery,
+    useUploadDocsMutation,
+    useUploadPersistedDocsMutation,
+} from "../../app/services/api";
+import { ChevronDownIcon } from "@chakra-ui/icons";
+import { FaRegImage } from "react-icons/fa";
+import PrimaryDrawer from "../../components/PrimaryDrawer";
+import UpdateModal from "./UpdateModal";
 
 interface LinkItemProps {
     name: string;
@@ -36,9 +73,19 @@ const LinkItems: Array<LinkItemProps> = [
 ];
 
 const View = () => {
+    const { isOpen: uploadIsOpen, onOpen: uploadOnOpen, onClose: uploadOnClose } = useDisclosure();
+    const { isOpen: createIsOpen, onOpen: createOnOpen, onClose: createOnClose } = useDisclosure();
+
+    const { data: documents } = useGetDocumentsQuery(null);
+    const [createDocument] = useCreateDocumentMutation();
+
     const [uploadDocs] = useUploadDocsMutation();
     const [uploadPersistedDocs] = useUploadPersistedDocsMutation();
     const [file, setFile] = useState<File | null>(null);
+    const [createdDocName, setCreatedDocName] = useState<string>("");
+    const [editorValue, setEditorValue] = useState<string>("");
+
+    const editorRef = useRef<any>(null);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
@@ -49,7 +96,7 @@ const View = () => {
         }
     };
 
-    const handleNoteClick = async () => {
+    const handleUploadClick = async () => {
         const formdata: FormData = new FormData();
         formdata.append("docs", file || "");
         const res: any = await uploadDocs(formdata);
@@ -57,41 +104,36 @@ const View = () => {
 
         console.log(res.data);
         console.log(persistedRes.data);
-        // const imagesCopy = note.images;
 
-        // setNote({
-        //     ...note,
-        //     createdAt: new Date().toISOString(),
-        //     people: workspace?.members || [],
-        //     images: [...imagesCopy, res.data.url],
-        // });
+        if (res.data.url && persistedRes.data.url && res.data.url === persistedRes.data.url) {
+            let splitFilename = res.data.file.filename.split(".");
+            let ext = splitFilename[splitFilename.length - 1];
+            createDocument({
+                workspace: localStorage.getItem("workspaceId") || "",
+                filename: res.data.originalname,
+                type: "upload",
+                originalname: res.data.originalname,
+                url: res.data.url,
+                file: res.data.file,
+                ext: ext,
+            });
+        }
+    };
 
-        // const dataCopy = row;
-        // const notesList = dataCopy.notesList;
-        // console.log(dataCopy);
+    const handleDocumentClick = () => {
+        createDocument({
+            workspace: localStorage.getItem("workspaceId") || "",
+            filename: createdDocName,
+            type: "created",
+            value: editorValue,
+            ext: "created",
+        });
+    };
 
-        // const result = [
-        //     ...notesList,
-        //     {
-        //         ...note,
-        //         createdAt: new Date().toISOString(),
-        //         people: workspace?.members || [],
-        //         images: [...imagesCopy, res.data.url],
-        //     },
-        // ];
-
-        // updateRow({ ...row, notesList: result });
-
-        // setNote({
-        //     content: "",
-        //     owner: `${user?.firstname} ${user?.lastname}`,
-        //     createdAt: "",
-        //     read: false,
-        //     people: [],
-        //     images: [],
-        // });
-        // setFile(null);
-        // notesOnClose();
+    const getIcon = (type: string) => {
+        if (type === "jpg" || type === "png" || type === "jpeg") return <FaRegImage />;
+        if (type === "xlsx") return <FaRegFileExcel />;
+        return <FaRegFileAlt />;
     };
 
     return (
@@ -125,21 +167,130 @@ const View = () => {
                             </Flex>
                         </SimpleGrid>
 
-                        <SimpleGrid spacing={6} columns={{ base: 1, sm: 1, md: 2, lg: 2, xl: 3 }}>
-                            <Input
-                                type="file"
-                                // accept="image/png, image/jpeg, image/jpg"
-                                size={"md"}
-                                p={"1px"}
-                                mt={"6px"}
-                                border={"none"}
-                                onChange={handleFileChange}
-                            />
-                            <PrimaryButton onClick={() => handleNoteClick()}>SAVE</PrimaryButton>
-                        </SimpleGrid>
+                        <Card w={"300px"}>
+                            <Menu>
+                                <MenuButton as={Button} bgColor={"white"} rightIcon={<ChevronDownIcon />}>
+                                    Actions
+                                </MenuButton>
+                                <MenuList>
+                                    <MenuItem onClick={uploadOnOpen}>Upload file</MenuItem>
+                                    <MenuItem onClick={createOnOpen}>Create doc</MenuItem>
+                                </MenuList>
+                            </Menu>
+                        </Card>
+                        <Card mt={"10px"}>
+                            <CardBody>
+                                {documents?.map((document, index) => {
+                                    console.log(document);
+                                    return (
+                                        <List key={index}>
+                                            <ListItem>
+                                                <Flex>
+                                                    <Box pt={"4px"} mr={"3px"}>
+                                                        {getIcon(document.ext || "")}
+                                                    </Box>
+                                                    {document.type === "upload" ? (
+                                                        <Text>
+                                                            <a href={document.url}>{document.filename}</a>
+                                                        </Text>
+                                                    ) : (
+                                                        <UpdateModal document={document} />
+                                                    )}
+                                                </Flex>
+                                            </ListItem>
+                                        </List>
+                                    );
+                                })}
+                            </CardBody>
+                        </Card>
                     </Container>
                 </Flex>
             </Box>
+            <Modal isOpen={uploadIsOpen} onClose={uploadOnClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Upload File</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <Input
+                            type="file"
+                            // accept="image/png, image/jpeg, image/jpg"
+                            size={"md"}
+                            p={"1px"}
+                            mt={"6px"}
+                            border={"none"}
+                            onChange={handleFileChange}
+                        />
+                    </ModalBody>
+
+                    <ModalFooter>
+                        <Button colorScheme="blue" mr={3} onClick={uploadOnClose}>
+                            Close
+                        </Button>
+                        <PrimaryButton onClick={() => handleUploadClick()}>SAVE</PrimaryButton>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+            <PrimaryDrawer isOpen={createIsOpen} onClose={createOnClose} title={"Create doc"} size="full">
+                <Box pb={"20px"}>
+                    <Text mb={"5px"}>Document name</Text>
+                    <Input
+                        value={createdDocName}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => setCreatedDocName(event.target.value)}
+                    />
+                </Box>
+                <Text mb={"5px"}>Content</Text>
+                <Editor
+                    apiKey={import.meta.env.VITE_EDITOR_KEY}
+                    onInit={(evt, editor) => {
+                        console.log(evt);
+                        editorRef.current = editor;
+                    }}
+                    onEditorChange={(a) => {
+                        setEditorValue(a);
+                    }}
+                    // initialValue="<p>This is the initial content of the editor.</p>"
+                    value={editorValue}
+                    init={{
+                        height: 500,
+                        menubar: true,
+                        plugins: [
+                            "a11ychecker",
+                            "advlist",
+                            "advcode",
+                            "advtable",
+                            "autolink",
+                            "checklist",
+                            "export",
+                            "lists",
+                            "link",
+                            "image",
+                            "charmap",
+                            "preview",
+                            "anchor",
+                            "searchreplace",
+                            "visualblocks",
+                            "powerpaste",
+                            "fullscreen",
+                            "formatpainter",
+                            "insertdatetime",
+                            "media",
+                            "table",
+                            "help",
+                            "wordcount",
+                        ],
+                        // toolbar:
+                        //     "undo redo | casechange blocks | bold italic backcolor | " +
+                        //     "alignleft aligncenter alignright alignjustify | " +
+                        //     "bullist numlist checklist outdent indent | removeformat | a11ycheck code table help",
+                        content_style: " .tox-menu {z-index: 10000000000 !important} ",
+                    }}
+                />
+                <Flex mt={"10px"}>
+                    <Spacer />
+                    <PrimaryButton onClick={handleDocumentClick}>SAVE</PrimaryButton>
+                </Flex>
+            </PrimaryDrawer>
         </SideBarLayout>
         // </Layout>
     );
