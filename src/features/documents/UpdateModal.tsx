@@ -43,18 +43,23 @@ const UpdateModal = ({ document }: IProps) => {
                     updateDocOnOpen();
                 }}
                 cursor={"pointer"}
+                color={"rgb(123, 128, 154)"}
             >
                 {document.filename}
             </Text>
             <PrimaryDrawer isOpen={updateDocIsOpen} onClose={updateDocOnClose} title={"Update doc"} size="full">
                 <Box pb={"20px"}>
-                    <Text mb={"5px"}>Document name</Text>
+                    <Text mb={"5px"} color={"rgb(123, 128, 154)"}>
+                        Document name
+                    </Text>
                     <Input
                         value={createdDocName}
                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => setCreatedDocName(event.target.value)}
                     />
                 </Box>
-                <Text mb={"5px"}>Content</Text>
+                <Text mb={"5px"} color={"rgb(123, 128, 154)"}>
+                    Content
+                </Text>
 
                 <Editor
                     apiKey={import.meta.env.VITE_EDITOR_KEY}

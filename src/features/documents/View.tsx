@@ -1,4 +1,10 @@
 import {
+    AlertDialog,
+    AlertDialogBody,
+    AlertDialogContent,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogOverlay,
     Box,
     Button,
     Card,
@@ -7,8 +13,6 @@ import {
     Flex,
     Heading,
     Input,
-    List,
-    ListItem,
     Menu,
     MenuButton,
     MenuItem,
@@ -22,21 +26,29 @@ import {
     ModalOverlay,
     SimpleGrid,
     Spacer,
+    Table,
+    TableContainer,
+    Tbody,
+    Td,
     Text,
+    Th,
+    Thead,
+    Tr,
     useDisclosure,
 } from "@chakra-ui/react";
 import { Editor } from "@tinymce/tinymce-react";
 import "./styles.css";
 import SideBarLayout from "../../components/Layouts/SideBarLayout";
-import { IconType } from "react-icons";
+import { IconContext, IconType } from "react-icons";
 import { BsFiletypeDoc, BsPersonWorkspace } from "react-icons/bs";
 import { BiTable } from "react-icons/bi";
-import { FaRegFileAlt, FaRegFileExcel, FaTasks } from "react-icons/fa";
+import { FaRegFileAlt, FaRegFileExcel, FaRegTrashAlt, FaTasks } from "react-icons/fa";
 import { AiOutlineMessage } from "react-icons/ai";
 import { useRef, useState } from "react";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import {
     useCreateDocumentMutation,
+    useDeleteDocumentMutation,
     useGetDocumentsQuery,
     useUploadDocsMutation,
     useUploadPersistedDocsMutation,
@@ -45,6 +57,7 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import { FaRegImage } from "react-icons/fa";
 import PrimaryDrawer from "../../components/PrimaryDrawer";
 import UpdateModal from "./UpdateModal";
+import { TDocument } from "../../types";
 
 interface LinkItemProps {
     name: string;
@@ -75,9 +88,11 @@ const LinkItems: Array<LinkItemProps> = [
 const View = () => {
     const { isOpen: uploadIsOpen, onOpen: uploadOnOpen, onClose: uploadOnClose } = useDisclosure();
     const { isOpen: createIsOpen, onOpen: createOnOpen, onClose: createOnClose } = useDisclosure();
+    const { isOpen: deleteIsOpen, onOpen: deleteOnOpen, onClose: deleteOnClose } = useDisclosure();
 
     const { data: documents } = useGetDocumentsQuery(null);
     const [createDocument] = useCreateDocumentMutation();
+    const [deleteDocument] = useDeleteDocumentMutation();
 
     const [uploadDocs] = useUploadDocsMutation();
     const [uploadPersistedDocs] = useUploadPersistedDocsMutation();
@@ -86,6 +101,7 @@ const View = () => {
     const [editorValue, setEditorValue] = useState<string>("");
 
     const editorRef = useRef<any>(null);
+    const cancelRef = useRef<any>();
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
@@ -117,6 +133,7 @@ const View = () => {
                 file: res.data.file,
                 ext: ext,
             });
+            uploadOnClose();
         }
     };
 
@@ -131,9 +148,15 @@ const View = () => {
     };
 
     const getIcon = (type: string) => {
-        if (type === "jpg" || type === "png" || type === "jpeg") return <FaRegImage />;
-        if (type === "xlsx") return <FaRegFileExcel />;
+        if (type === "jpg" || type === "png" || type === "jpeg") return <FaRegImage color={"rgb(123, 128, 154)"} />;
+        if (type === "xlsx") return <FaRegFileExcel color={"rgb(123, 128, 154)"} />;
         return <FaRegFileAlt />;
+    };
+
+    const handleDeleteDocument = (document: TDocument) => {
+        console.log(document);
+        deleteDocument(document);
+        deleteOnClose();
     };
 
     return (
@@ -167,47 +190,143 @@ const View = () => {
                             </Flex>
                         </SimpleGrid>
 
-                        <Card w={"300px"}>
-                            <Menu>
-                                <MenuButton as={Button} bgColor={"white"} rightIcon={<ChevronDownIcon />}>
-                                    Actions
-                                </MenuButton>
-                                <MenuList>
-                                    <MenuItem onClick={uploadOnOpen}>Upload file</MenuItem>
-                                    <MenuItem onClick={createOnOpen}>Create doc</MenuItem>
-                                </MenuList>
-                            </Menu>
-                        </Card>
+                        <Flex>
+                            <Spacer />
+                            <Card w={"150px"}>
+                                <Menu>
+                                    <MenuButton
+                                        as={Button}
+                                        bgColor={"white"}
+                                        color={"rgb(123, 128, 154)"}
+                                        rightIcon={<ChevronDownIcon />}
+                                    >
+                                        Actions
+                                    </MenuButton>
+                                    <MenuList>
+                                        <MenuItem onClick={uploadOnOpen}>Upload file</MenuItem>
+                                        <MenuItem onClick={createOnOpen}>Create doc</MenuItem>
+                                    </MenuList>
+                                </Menu>
+                            </Card>
+                        </Flex>
                         <Card mt={"10px"}>
                             <CardBody>
-                                {documents?.map((document, index) => {
-                                    console.log(document);
-                                    return (
-                                        <List key={index}>
-                                            <ListItem>
-                                                <Flex>
-                                                    <Box pt={"4px"} mr={"3px"}>
-                                                        {getIcon(document.ext || "")}
-                                                    </Box>
-                                                    {document.type === "upload" ? (
-                                                        <Text>
-                                                            <a href={document.url} target="_blank">
-                                                                {document.filename}
-                                                            </a>
-                                                        </Text>
-                                                    ) : (
-                                                        <UpdateModal document={document} />
-                                                    )}
-                                                </Flex>
-                                            </ListItem>
-                                        </List>
-                                    );
-                                })}
+                                {documents?.length || 0 > 0 ? (
+                                    <TableContainer>
+                                        <Table size={"sm"}>
+                                            <Thead>
+                                                <Tr>
+                                                    <Th>Filename</Th>
+                                                    <Th>Uploaded by</Th>
+                                                    <Th>Size</Th>
+                                                    <Th>Actions</Th>
+                                                </Tr>
+                                            </Thead>
+                                            <Tbody>
+                                                {documents?.map((document, index) => {
+                                                    console.log(document);
+                                                    return (
+                                                        <Tr key={index}>
+                                                            <Td>
+                                                                <Flex>
+                                                                    <Box pt={"0px"} mr={"6px"}>
+                                                                        <IconContext.Provider
+                                                                            value={{ color: "#7b809a" }}
+                                                                        >
+                                                                            {getIcon(document.ext || "")}
+                                                                        </IconContext.Provider>
+                                                                    </Box>
+                                                                    {document.type === "upload" ? (
+                                                                        <Text color={"rgb(123, 128, 154)"}>
+                                                                            <a href={document.url} target="_blank">
+                                                                                {document.filename}
+                                                                            </a>
+                                                                        </Text>
+                                                                    ) : (
+                                                                        <UpdateModal document={document} />
+                                                                    )}
+                                                                </Flex>
+                                                            </Td>
+                                                            <Td>
+                                                                <Text
+                                                                    color={"rgb(123, 128, 154)"}
+                                                                    fontSize={"14px"}
+                                                                >{`${document.createdBy.firstname} ${document.createdBy.lastname}`}</Text>
+                                                            </Td>
+                                                            <Td>
+                                                                <Text color={"rgb(123, 128, 154)"} fontSize={"14px"}>
+                                                                    {document.file ? document.file.size : ""}
+                                                                </Text>
+                                                            </Td>
+                                                            <Td>
+                                                                <Text
+                                                                    p={"2px"}
+                                                                    onClick={deleteOnOpen}
+                                                                    cursor={"pointer"}
+                                                                    color={"rgb(123, 128, 154)"}
+                                                                    fontSize={"12px"}
+                                                                    _hover={{ color: "red" }}
+                                                                >
+                                                                    <FaRegTrashAlt />
+                                                                </Text>
+                                                            </Td>
+                                                            <AlertDialog
+                                                                isOpen={deleteIsOpen}
+                                                                leastDestructiveRef={cancelRef}
+                                                                onClose={deleteOnClose}
+                                                            >
+                                                                <AlertDialogOverlay>
+                                                                    <AlertDialogContent>
+                                                                        <AlertDialogHeader
+                                                                            fontSize="lg"
+                                                                            fontWeight="bold"
+                                                                        >
+                                                                            Delete Customer
+                                                                        </AlertDialogHeader>
+
+                                                                        <AlertDialogBody>
+                                                                            Are you sure? You can't undo this action
+                                                                            afterwards.
+                                                                        </AlertDialogBody>
+
+                                                                        <AlertDialogFooter>
+                                                                            <Button
+                                                                                ref={cancelRef}
+                                                                                onClick={deleteOnClose}
+                                                                            >
+                                                                                Cancel
+                                                                            </Button>
+                                                                            <Button
+                                                                                colorScheme="red"
+                                                                                onClick={() =>
+                                                                                    handleDeleteDocument(document)
+                                                                                }
+                                                                                ml={3}
+                                                                            >
+                                                                                Delete
+                                                                            </Button>
+                                                                        </AlertDialogFooter>
+                                                                    </AlertDialogContent>
+                                                                </AlertDialogOverlay>
+                                                            </AlertDialog>
+                                                        </Tr>
+                                                    );
+                                                })}
+                                            </Tbody>
+                                        </Table>
+                                    </TableContainer>
+                                ) : (
+                                    <Text color={"rgb(123, 128, 154)"}>You currently have no uploads.</Text>
+                                )}
                             </CardBody>
                         </Card>
                     </Container>
                 </Flex>
             </Box>
+            {/*
+             ***************************** UPLOAD MODAL ********************************************
+             ***************************************************************************************
+             */}
             <Modal isOpen={uploadIsOpen} onClose={uploadOnClose}>
                 <ModalOverlay />
                 <ModalContent>
@@ -233,6 +352,10 @@ const View = () => {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
+            {/*
+             ******************* CREATE DOCUMENT DRAWER ********************************************
+             ***************************************************************************************
+             */}
             <PrimaryDrawer isOpen={createIsOpen} onClose={createOnClose} title={"Create doc"} size="full">
                 <Box pb={"20px"}>
                     <Text mb={"5px"}>Document name</Text>
@@ -281,10 +404,10 @@ const View = () => {
                             "help",
                             "wordcount",
                         ],
-                        // toolbar:
-                        //     "undo redo | casechange blocks | bold italic backcolor | " +
-                        //     "alignleft aligncenter alignright alignjustify | " +
-                        //     "bullist numlist checklist outdent indent | removeformat | a11ycheck code table help",
+                        toolbar:
+                            "undo redo | casechange blocks | bold italic backcolor | " +
+                            "alignleft aligncenter alignright alignjustify | " +
+                            "bullist numlist checklist outdent indent | removeformat | a11ycheck code table help",
                         content_style: " .tox-menu {z-index: 10000000000 !important} ",
                     }}
                 />

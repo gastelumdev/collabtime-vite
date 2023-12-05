@@ -283,7 +283,15 @@ export const api = createApi({
                 body: document,
             }),
             invalidatesTags: ["Documents"]
-        })
+        }),
+        deleteDocument: builder.mutation<TDocument, TDocument>({
+            query: (document) => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/documents/delete`,
+                method: "POST",
+                body: document,
+            }),
+            invalidatesTags: ["Documents"]
+        }),
     })
 })
 
@@ -326,4 +334,5 @@ export const {
     useGetDocumentsQuery,
     useCreateDocumentMutation,
     useUpdateDocumentMutation,
+    useDeleteDocumentMutation,
 } = api

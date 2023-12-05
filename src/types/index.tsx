@@ -145,6 +145,7 @@ export interface LinkItemProps {
 
 export type TDocument = {
     workspace: string;
+    createdBy?: any;
     filename: string;
     type: string;
     originalname?: string;
