@@ -633,14 +633,14 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                             <Tr>
                                 <Td p={"0"} display={(permissions || 0) > 1 ? "contents" : "none"}>
                                     <Box position={"relative"}>
-                                        <Box position={"absolute"} bottom={"-12"}>
+                                        <Box position={"absolute"} bottom={"-12"} left={"-26px"}>
                                             <Button
                                                 variant={"unstyled"}
                                                 onClick={() => {
                                                     setShowRowForm(true);
                                                 }}
                                                 leftIcon={<AiOutlinePlus />}
-                                                w={"10px"}
+                                                w={"140px"}
                                                 size={"sm"}
                                                 m={"10px"}
                                                 color={"rgb(123, 128, 154)"}
