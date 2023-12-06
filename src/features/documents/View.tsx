@@ -24,6 +24,7 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
+    Progress,
     SimpleGrid,
     Spacer,
     Table,
@@ -91,7 +92,7 @@ const View = () => {
     const { isOpen: deleteIsOpen, onOpen: deleteOnOpen, onClose: deleteOnClose } = useDisclosure();
 
     const { data: documents } = useGetDocumentsQuery(null);
-    const [createDocument] = useCreateDocumentMutation();
+    const [createDocument, { isLoading }] = useCreateDocumentMutation();
     const [deleteDocument] = useDeleteDocumentMutation();
 
     const [uploadDocs] = useUploadDocsMutation();
@@ -378,6 +379,7 @@ const View = () => {
                     <ModalHeader>Upload Files</ModalHeader>
                     <ModalCloseButton onClick={handleUploadOnClose} />
                     <ModalBody>
+                        {isLoading ? <Progress size="xs" isIndeterminate /> : null}
                         <Input
                             type="file"
                             // accept="image/png, image/jpeg, image/jpg"
