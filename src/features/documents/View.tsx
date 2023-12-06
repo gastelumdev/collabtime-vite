@@ -176,6 +176,7 @@ const View = () => {
             value: editorValue,
             ext: "created",
         });
+        createOnClose();
     };
 
     const getIcon = (type: string) => {
