@@ -96,7 +96,8 @@ const View = () => {
 
     const [uploadDocs] = useUploadDocsMutation();
     const [uploadPersistedDocs] = useUploadPersistedDocsMutation();
-    const [file, setFile] = useState<File | null>(null);
+    const [files, setFiles] = useState<FileList | []>([]);
+    const [duplicateFiles, setDuplicateFiles] = useState<string[]>([]);
     const [createdDocName, setCreatedDocName] = useState<string>("");
     const [editorValue, setEditorValue] = useState<string>("");
 
@@ -104,9 +105,30 @@ const View = () => {
     const cancelRef = useRef<any>();
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setDuplicateFiles([]);
+        console.log(event.target.files);
         if (event.target.files) {
-            console.log(event.target.files[0].name);
-            setFile(event.target.files[0]);
+            console.log("TO BE UPLOADED", event.target.files);
+            console.log("DOCUMENTS", documents);
+            let fileMap = {};
+            for (const file of event.target.files) {
+                fileMap = { ...fileMap, [file.name]: file.name };
+            }
+
+            const duplicateFilesCopy = duplicateFiles;
+
+            for (const i in documents || []) {
+                if (documents) {
+                    if (fileMap.hasOwnProperty(documents[i].filename)) {
+                        duplicateFilesCopy.push(documents[i].filename);
+                    }
+                }
+            }
+
+            setDuplicateFiles(duplicateFilesCopy);
+
+            console.log(fileMap);
+            setFiles(event.target.files);
             // const images = note.images;
             // setNote({ ...note, images: [...images, event.target.files[0].name] });
         }
@@ -114,26 +136,35 @@ const View = () => {
 
     const handleUploadClick = async () => {
         const formdata: FormData = new FormData();
-        formdata.append("docs", file || "");
+        for (let i = 0; i < (files?.length || 0); i++) {
+            formdata.append("docs", files[i]);
+        }
+
         const res: any = await uploadDocs(formdata);
         const persistedRes: any = await uploadPersistedDocs(formdata);
 
         console.log(res.data);
         console.log(persistedRes.data);
 
-        if (res.data.url && persistedRes.data.url && res.data.url === persistedRes.data.url) {
-            let splitFilename = res.data.file.filename.split(".");
-            let ext = splitFilename[splitFilename.length - 1];
-            createDocument({
-                workspace: localStorage.getItem("workspaceId") || "",
-                filename: res.data.originalname,
-                type: "upload",
-                originalname: res.data.originalname,
-                url: res.data.url,
-                file: res.data.file,
-                ext: ext,
-            });
-            uploadOnClose();
+        for (let i = 0; i < res.data.files.length; i++) {
+            if (
+                res.data.files[i].url &&
+                persistedRes.data.files[i].url &&
+                res.data.files[i].url === persistedRes.data.files[i].url
+            ) {
+                let splitFilename = res.data.files[i].file.filename.split(".");
+                let ext = splitFilename[splitFilename.length - 1];
+                await createDocument({
+                    workspace: localStorage.getItem("workspaceId") || "",
+                    filename: res.data.files[i].originalname,
+                    type: "upload",
+                    originalname: res.data.files[i].originalname,
+                    url: res.data.files[i].url,
+                    file: res.data.files[i].file,
+                    ext: ext,
+                });
+                uploadOnClose();
+            }
         }
     };
 
@@ -157,6 +188,12 @@ const View = () => {
         console.log(document);
         deleteDocument(document);
         deleteOnClose();
+        setDuplicateFiles([]);
+    };
+
+    const handleUploadOnClose = () => {
+        uploadOnClose();
+        setDuplicateFiles([]);
     };
 
     return (
@@ -203,7 +240,14 @@ const View = () => {
                                         Actions
                                     </MenuButton>
                                     <MenuList>
-                                        <MenuItem onClick={uploadOnOpen}>Upload file</MenuItem>
+                                        <MenuItem
+                                            onClick={() => {
+                                                uploadOnOpen();
+                                                setDuplicateFiles([]);
+                                            }}
+                                        >
+                                            Upload files
+                                        </MenuItem>
                                         <MenuItem onClick={createOnOpen}>Create doc</MenuItem>
                                     </MenuList>
                                 </Menu>
@@ -328,10 +372,10 @@ const View = () => {
              ***************************************************************************************
              */}
             <Modal isOpen={uploadIsOpen} onClose={uploadOnClose}>
-                <ModalOverlay />
+                <ModalOverlay onClick={handleUploadOnClose} />
                 <ModalContent>
-                    <ModalHeader>Upload File</ModalHeader>
-                    <ModalCloseButton />
+                    <ModalHeader>Upload Files</ModalHeader>
+                    <ModalCloseButton onClick={handleUploadOnClose} />
                     <ModalBody>
                         <Input
                             type="file"
@@ -341,14 +385,44 @@ const View = () => {
                             mt={"6px"}
                             border={"none"}
                             onChange={handleFileChange}
+                            multiple={true}
+                            onClick={() => {
+                                setDuplicateFiles([]);
+                            }}
                         />
+
+                        <Box pt={"5px"}>
+                            {duplicateFiles.length > 0 ? (
+                                <Text color={"rgb(123, 128, 154)"} mb={"10px"}>
+                                    The following files have already been uploaded:
+                                </Text>
+                            ) : (
+                                <Text color={"rgb(123, 128, 154)"} fontSize={"14px"}>
+                                    Limit: 50 per upload
+                                </Text>
+                            )}
+                            {documents?.map((document, index) => {
+                                console.log(duplicateFiles);
+                                return (
+                                    <Box key={index}>
+                                        {duplicateFiles.includes(document.filename) ? (
+                                            <Flex>
+                                                <Box pt={"6px"} mr={"5px"} fontSize={"14px"}>
+                                                    <Text color={"rgb(123, 128, 154)"}>{getIcon(document.type)}</Text>
+                                                </Box>
+                                                <Text color={"rgb(123, 128, 154)"}>{document.filename}</Text>
+                                            </Flex>
+                                        ) : null}
+                                    </Box>
+                                );
+                            })}
+                        </Box>
                     </ModalBody>
 
                     <ModalFooter>
-                        <Button colorScheme="blue" mr={3} onClick={uploadOnClose}>
-                            Close
-                        </Button>
-                        <PrimaryButton onClick={() => handleUploadClick()}>SAVE</PrimaryButton>
+                        <PrimaryButton onClick={() => handleUploadClick()} isDisabled={duplicateFiles.length > 0}>
+                            SAVE
+                        </PrimaryButton>
                     </ModalFooter>
                 </ModalContent>
             </Modal>
