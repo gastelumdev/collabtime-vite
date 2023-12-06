@@ -54,12 +54,7 @@ const LinkItems: Array<LinkItemProps> = [
 
 const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
     return (
-        <Box
-            as="a"
-            href="#"
-            style={{ textDecoration: "none" }}
-            _focus={{ boxShadow: "none" }}
-        >
+        <Box as="a" href="#" style={{ textDecoration: "none" }} _focus={{ boxShadow: "none" }}>
             <Flex
                 align="center"
                 p="4"
@@ -118,8 +113,7 @@ export default function Nav({ setWidth }: INavProps) {
                     }}
                     style={{
                         borderRadius: "10px",
-                        backgroundImage:
-                            "radial-gradient(circle at center top, rgb(66, 66, 74), black)",
+                        backgroundImage: "radial-gradient(circle at center top, rgb(66, 66, 74), black)",
                         position: "fixed",
                         height: "98%",
                         zIndex: "10",
@@ -139,17 +133,12 @@ export default function Nav({ setWidth }: INavProps) {
                                 </Text>
                             </Center>
                         </Box>
-                        <Divider
-                            gradient="radial-gradient(#5e5b5b 40%, #1c1c1c)"
-                            marginBottom="10px"
-                        />
+                        <Divider gradient="radial-gradient(#5e5b5b 40%, #1c1c1c)" marginBottom="10px" />
                         <Box transition="3s ease" color={"white"}>
                             {LinkItems.map((link) => (
                                 <Link to={link.path}>
                                     <NavItem key={link.name} icon={link.icon}>
-                                        <Text color={"#dbdbdb"}>
-                                            {link.name}
-                                        </Text>
+                                        <Text color={"#dbdbdb"}>{link.name}</Text>
                                     </NavItem>
                                 </Link>
                             ))}

@@ -25,12 +25,13 @@ import {
     Hide,
     Spacer,
     Stack,
+    Tooltip,
 } from "@chakra-ui/react";
 import { FiMenu, FiLogOut } from "react-icons/fi";
 import { IconContext, IconType } from "react-icons";
 import Divider from "../Divider/Divider";
 import { Link, useNavigate } from "react-router-dom";
-import { FaUserCircle } from "react-icons/fa";
+import { FaSignOutAlt, FaUserCircle } from "react-icons/fa";
 import View from "../../features/notifications/View";
 import logo from "../../assets/logo-no-background.png";
 
@@ -53,7 +54,8 @@ interface TopNavProps extends FlexProps {
 
 interface SidebarProps extends BoxProps {
     linkItems: LinkItemProps[];
-    onClose: () => void;
+    isOpen: any;
+    onClose: any;
 }
 
 interface SidebarContentProps {
@@ -63,13 +65,13 @@ interface SidebarContentProps {
     children: ReactNode;
 }
 
-const SidebarContent = ({ linkItems, onClose, ...rest }: SidebarProps) => {
+const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) => {
     return (
         <Box
             transition="3s ease"
             borderRight="px"
             borderRightColor={useColorModeValue("gray.200", "gray.700")}
-            w={{ base: "full", md: 60 }}
+            w={{ base: "full", md: "80px" }}
             pos="fixed"
             h="full"
             {...rest}
@@ -90,25 +92,39 @@ const SidebarContent = ({ linkItems, onClose, ...rest }: SidebarProps) => {
                                         fontSize: "20px",
                                     }}
                                 /> */}
-                                <img src={logo} width={"80px"} />
+                                <img src={logo} width={"30px"} />
                             </Text>
                         </Center>
                     </Box>
                     <Divider gradient="radial-gradient(#5e5b5b 40%, #1c1c1c)" marginBottom="10px" />
                     <Box transition="3s ease">
                         {linkItems.map((link) => (
-                            <Link to={link.path} key={link.name}>
-                                <NavItem key={link.name} icon={link.icon}>
-                                    <Text color={"white"}>{link.name}</Text>
-                                </NavItem>
-                            </Link>
+                            <Tooltip
+                                label={link.name}
+                                openDelay={0}
+                                // isDisabled={isFocused}
+                                placement={"top"}
+                            >
+                                <Link to={link.path} key={link.name}>
+                                    <NavItem key={link.name} icon={link.icon}>
+                                        {isOpen ? <Text color={"white"}>{link.name}</Text> : null}
+                                    </NavItem>
+                                </Link>
+                            </Tooltip>
                         ))}
                         <Divider gradient="radial-gradient(#5e5b5b 40%, black)" marginBottom="10px" marginTop="10px" />
-                        <Link to={"/login"}>
-                            <NavItem icon={FiLogOut}>
-                                <Text color={"white"}>Logout</Text>
-                            </NavItem>
-                        </Link>
+                        <Tooltip
+                            label={"Logout"}
+                            openDelay={0}
+                            // isDisabled={isFocused}
+                            placement={"top"}
+                        >
+                            <Link to={"/login"}>
+                                <NavItem icon={FaSignOutAlt}>
+                                    {isOpen ? <Text color={"white"}>Logout</Text> : null}
+                                </NavItem>
+                            </Link>
+                        </Tooltip>
                     </Box>
                 </Box>
             </Box>
@@ -139,7 +155,7 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
                         color: "white",
                     }}
                     as={icon}
-                    color={"white"}
+                    color={"lightgray"}
                 />
             )}
             {children}
@@ -268,7 +284,12 @@ const SideBarLayout = ({ linkItems, leftContent, sidebar = true, children }: Sid
     return (
         <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")} pl={{ base: 0, lg: 6 }} pr={0} pt={6}>
             {sidebar ? (
-                <SidebarContent linkItems={linkItems} onClose={() => onClose} display={{ base: "none", lg: "block" }} />
+                <SidebarContent
+                    linkItems={linkItems}
+                    onClose={onClose}
+                    isOpen={isOpen}
+                    display={{ base: "none", lg: "block" }}
+                />
             ) : null}
             <Box mx={"6px"} ml={"6px"}>
                 <Drawer
@@ -326,15 +347,15 @@ const SideBarLayout = ({ linkItems, leftContent, sidebar = true, children }: Sid
                 </Drawer>
             </Box>
             {/* mobilenav */}
-            <Box ml={{ base: 0, lg: sidebar ? "240px" : "0" }} p={{ base: 0 }}>
+            <Box ml={{ base: 0, lg: sidebar ? "100px" : "0" }} p={{ base: 0 }}>
                 <TopNav sidebar={false} onOpen={onOpen} leftContent={leftContent} />
             </Box>
             <Box
-                ml={{ base: 0, lg: sidebar ? "240px" : "0" }}
+                ml={{ base: 0, lg: sidebar ? "85px" : "0" }}
                 p={{ base: 0 }}
                 pt={{
-                    base: sidebar ? "0px" : "50px",
-                    lg: sidebar ? "0px" : "50px",
+                    base: sidebar ? "0px" : "20px",
+                    lg: sidebar ? "0px" : "20px",
                 }}
             >
                 {children}

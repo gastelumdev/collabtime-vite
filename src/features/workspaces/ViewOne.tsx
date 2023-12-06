@@ -4,37 +4,15 @@ import { useGetOneWorkspaceQuery, useGetWorkspaceUsersQuery, useGetUserQuery } f
 
 import { Avatar, AvatarGroup, Box, Container, Flex, Heading, SimpleGrid, Spacer, Text } from "@chakra-ui/react";
 
-import { LinkItemProps, TUser } from "../../types";
+import LinkItems from "../../utils/linkItems";
+import { TUser } from "../../types";
 
 import SideBarLayout from "../../components/Layouts/SideBarLayout";
-
-import { BiTable } from "react-icons/bi";
-import { FaTasks } from "react-icons/fa";
-import { BsFiletypeDoc, BsListTask, BsPersonWorkspace } from "react-icons/bs";
+import { BsFiletypeDoc } from "react-icons/bs";
 import { AiOutlineMessage, AiOutlineTable } from "react-icons/ai";
 import SecondaryCard from "../../components/SecondaryCard";
 import Invite from "./Invite";
 import { useEffect, useState } from "react";
-
-/**
- * The link items array used for the sidebar navigation
- * @constant {LinkItemProps[]} LinkItems
- */
-const LinkItems: Array<LinkItemProps> = [
-    { name: "Workspaces", icon: BsPersonWorkspace, path: "/workspaces" },
-    {
-        name: "Data Collections",
-        icon: BiTable,
-        path: "/workspaces/1/dataCollections",
-    },
-    { name: "Tasks", icon: FaTasks, path: "/workspaces/1/taskLists" },
-    { name: "Documents", icon: BsFiletypeDoc, path: "/workspaces/1/documents" },
-    {
-        name: "Message Board",
-        icon: AiOutlineMessage,
-        path: "/workspaces/1/messageBoard",
-    },
-];
 
 /**
  * This funcion renders a workspace when selected from the workspaces page
@@ -125,23 +103,13 @@ const ViewOne = () => {
                                     />
                                 </a>
                             ) : null}
-                            {(workspace?.tools.taskLists.access || 0) > 0 ? (
-                                <a href={`/workspaces/${workspace?._id}/taskLists`}>
-                                    <SecondaryCard
-                                        title={"Tasks"}
-                                        description={"Create and assign tasks."}
-                                        icon={BsListTask}
-                                        bgImage="linear-gradient(195deg, rgb(102, 187, 106), rgb(67, 160, 71))"
-                                    />
-                                </a>
-                            ) : null}
                             {(workspace?.tools.docs.access || 0) > 0 ? (
                                 <a href={`/workspaces/${workspace?._id}/documents`}>
                                     <SecondaryCard
                                         title={"Documents"}
                                         description={"Create and upload docs."}
                                         icon={BsFiletypeDoc}
-                                        bgImage="linear-gradient(195deg, rgb(66, 66, 74), black)"
+                                        bgImage="linear-gradient(195deg, rgb(102, 187, 106), rgb(67, 160, 71))"
                                     />
                                 </a>
                             ) : null}

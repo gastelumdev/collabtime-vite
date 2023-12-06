@@ -15,7 +15,6 @@ import {
     HStack,
     Heading,
     Input,
-    SimpleGrid,
     Spacer,
     Stack,
     Text,
@@ -23,12 +22,10 @@ import {
 } from "@chakra-ui/react";
 import Select from "react-select";
 
-import { IconType } from "react-icons";
-import { BsFiletypeDoc, BsPersonWorkspace } from "react-icons/bs";
-import { AiOutlineClose, AiOutlineMessage } from "react-icons/ai";
+import { AiOutlineClose } from "react-icons/ai";
 import { MdOutlineColorLens } from "react-icons/md";
-import { BiTable } from "react-icons/bi";
-import { FaTasks } from "react-icons/fa";
+
+import LinkItems from "../../utils/linkItems";
 
 import SideBarLayout from "../../components/Layouts/SideBarLayout";
 import { TColumn, TLabel } from "../../types";
@@ -39,36 +36,6 @@ import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import PrimaryDrawer from "../../components/PrimaryDrawer";
 import DataCollection from "./DataCollection";
 import { useParams } from "react-router-dom";
-
-interface LinkItemProps {
-    name: string;
-    icon: IconType;
-    path: string;
-}
-
-const LinkItems: Array<LinkItemProps> = [
-    { name: "Workspaces", icon: BsPersonWorkspace, path: "/workspaces" },
-    {
-        name: "Data Collections",
-        icon: BiTable,
-        path: `/workspaces/${localStorage.getItem("workspaceId")}/dataCollections`,
-    },
-    {
-        name: "Tasks",
-        icon: FaTasks,
-        path: `/workspaces/${localStorage.getItem("workspaceId")}/taskLists`,
-    },
-    {
-        name: "Documents",
-        icon: BsFiletypeDoc,
-        path: `/workspaces/${localStorage.getItem("workspaceId")}/documents`,
-    },
-    {
-        name: "Message Board",
-        icon: AiOutlineMessage,
-        path: `/workspaces/${localStorage.getItem("workspaceId")}/messageBoard`,
-    },
-];
 
 const ViewOne = () => {
     const { id, dataCollectionId } = useParams();
@@ -244,13 +211,13 @@ const ViewOne = () => {
                         bg={"#eff2f5"}
                     >
                         <Container maxW={"8xl"} mt={{ base: 4, sm: 0 }}>
-                            <SimpleGrid
+                            {/* <SimpleGrid
                                 spacing={6}
                                 // templateColumns="repeat(auto-fill, minmax(300px, 1fr))"
                                 columns={{ base: 1, sm: 2 }}
                                 pb={"30px"}
                             >
-                                {/* <Flex>
+                                <Flex>
                                     <Box>
                                         <Heading size={"sm"} mb={"12px"} color={"rgb(52, 71, 103)"}>
                                             Data Collections
@@ -259,8 +226,8 @@ const ViewOne = () => {
                                             Create data collection tables to visualize and manage your data.
                                         </Text>
                                     </Box>
-                                </Flex> */}
-                            </SimpleGrid>
+                                </Flex>
+                            </SimpleGrid> */}
                             <Card mb={"60px"}>
                                 <CardHeader>
                                     <Flex>
@@ -277,7 +244,7 @@ const ViewOne = () => {
                                         <Spacer />
                                     </Flex>
                                 </CardHeader>
-                                <CardBody>
+                                <CardBody pt={"0"}>
                                     <DataCollection onOpen={onOpen} />
                                 </CardBody>
                             </Card>

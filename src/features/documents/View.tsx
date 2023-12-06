@@ -40,11 +40,9 @@ import {
 import { Editor } from "@tinymce/tinymce-react";
 import "./styles.css";
 import SideBarLayout from "../../components/Layouts/SideBarLayout";
-import { IconContext, IconType } from "react-icons";
-import { BsFiletypeDoc, BsPersonWorkspace } from "react-icons/bs";
-import { BiTable } from "react-icons/bi";
-import { FaRegFileAlt, FaRegFileExcel, FaRegTrashAlt, FaTasks } from "react-icons/fa";
-import { AiOutlineMessage } from "react-icons/ai";
+import LinkItems from "../../utils/linkItems";
+import { IconContext } from "react-icons";
+import { FaRegFileAlt, FaRegFileExcel, FaRegTrashAlt } from "react-icons/fa";
 import { useRef, useState } from "react";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import {
@@ -60,32 +58,6 @@ import { FaRegImage } from "react-icons/fa";
 import PrimaryDrawer from "../../components/PrimaryDrawer";
 import UpdateModal from "./UpdateModal";
 import { TDocument } from "../../types";
-
-interface LinkItemProps {
-    name: string;
-    icon: IconType;
-    path: string;
-}
-
-/**
- * The link items array used for the sidebar navigation
- * @constant {array}
- */
-const LinkItems: Array<LinkItemProps> = [
-    { name: "Workspaces", icon: BsPersonWorkspace, path: "/workspaces" },
-    {
-        name: "Data Collections",
-        icon: BiTable,
-        path: "/workspaces/1/dataCollections",
-    },
-    { name: "Tasks", icon: FaTasks, path: "/workspaces/1/taskLists" },
-    { name: "Documents", icon: BsFiletypeDoc, path: "/workspaces/1/documents" },
-    {
-        name: "Message Board",
-        icon: AiOutlineMessage,
-        path: "/workspaces/1/messageBoard",
-    },
-];
 
 const View = () => {
     const { isOpen: uploadIsOpen, onOpen: uploadOnOpen, onClose: uploadOnClose } = useDisclosure();

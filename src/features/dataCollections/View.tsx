@@ -31,46 +31,16 @@ import {
 } from "@chakra-ui/react";
 import SideBarLayout from "../../components/Layouts/SideBarLayout";
 
-import { BsFiletypeDoc, BsPersonWorkspace } from "react-icons/bs";
-import { IconContext, IconType } from "react-icons";
-import { AiOutlineDelete, AiOutlineMessage } from "react-icons/ai";
+import LinkItems from "../../utils/linkItems";
+
+import { IconContext } from "react-icons";
+import { AiOutlineDelete } from "react-icons/ai";
 import Divider from "../../components/Divider/Divider";
 import { BiTable } from "react-icons/bi";
 import Edit from "./Edit";
 import Create from "./Create";
-import { FaTasks } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import React from "react";
-
-interface LinkItemProps {
-    name: string;
-    icon: IconType;
-    path: string;
-}
-
-const LinkItems: Array<LinkItemProps> = [
-    { name: "Workspaces", icon: BsPersonWorkspace, path: "/workspaces" },
-    {
-        name: "Data Collections",
-        icon: BiTable,
-        path: `/workspaces/${localStorage.getItem("workspaceId")}/dataCollections`,
-    },
-    {
-        name: "Tasks",
-        icon: FaTasks,
-        path: `/workspaces/${localStorage.getItem("workspaceId")}/taskLists`,
-    },
-    {
-        name: "Documents",
-        icon: BsFiletypeDoc,
-        path: `/workspaces/${localStorage.getItem("workspaceId")}/documents`,
-    },
-    {
-        name: "Message Board",
-        icon: AiOutlineMessage,
-        path: `/workspaces/${localStorage.getItem("workspaceId")}/messageBoard`,
-    },
-];
 
 const View = () => {
     // const [data, setData] = useState<TDataCollection[]>(dataCollections);
