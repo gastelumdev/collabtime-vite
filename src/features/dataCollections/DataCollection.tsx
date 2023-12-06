@@ -401,65 +401,89 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                                         });
                                         return (
                                             <Td key={index} px={cell.type == "label" ? "1px" : "10px"} py={"0"} m={"0"}>
-                                                {cell.type === "label" ||
-                                                cell.type === "priority" ||
-                                                cell.type === "status" ? (
-                                                    <Select
-                                                        options={options}
-                                                        styles={cellColorStyles({
-                                                            bgColor,
-                                                            padding: "10px",
-                                                            border: "none",
-                                                        })}
-                                                        defaultValue={{
-                                                            value: cell.value,
-                                                            label: cell.value == "" ? "Select..." : cell.value,
-                                                        }}
-                                                        onChange={(newValue) => handleLabelSelectChange(newValue, cell)}
-                                                        isDisabled={
-                                                            rowsLoading || rowsFetching || !((permissions || 0) > 1)
-                                                        }
-                                                    />
-                                                ) : cell.type === "people" ? (
-                                                    <Select
-                                                        options={peopleOptions}
-                                                        styles={cellColorStyles({
-                                                            bgColor: "#ffffff",
-                                                            padding: "7px",
-                                                            border: "none",
-                                                        })}
-                                                        defaultValue={{
-                                                            value: cell.value,
-                                                            label: cell.value == "" ? "Select..." : cell.value,
-                                                        }}
-                                                        onChange={(newValue) => handleLabelSelectChange(newValue, cell)}
-                                                        isDisabled={
-                                                            rowsLoading || rowsFetching || !((permissions || 0) > 1)
-                                                        }
-                                                    />
-                                                ) : cell.type === "date" ? (
-                                                    <input
-                                                        type="datetime-local"
-                                                        defaultValue={cell.value.slice(0, 16)}
-                                                        name={cell.name}
-                                                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                                            console.log(event);
-                                                            handleUpdateRowInputChange(event);
-                                                        }}
-                                                        onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) =>
-                                                            handleUpdateRowOnFocus(event, cell)
-                                                        }
-                                                        onBlur={(event: React.FocusEvent<HTMLInputElement, Element>) =>
-                                                            handleUpdateRowOnBlur(event, cell)
-                                                        }
-                                                    />
-                                                ) : (
-                                                    <Tooltip
-                                                        label={cell.value}
-                                                        openDelay={500}
-                                                        isDisabled={isFocused}
-                                                        placement={"top"}
-                                                    >
+                                                <Tooltip
+                                                    label={cell.value}
+                                                    openDelay={500}
+                                                    isDisabled={isFocused}
+                                                    placement={"top"}
+                                                >
+                                                    {cell.type === "label" ||
+                                                    cell.type === "priority" ||
+                                                    cell.type === "status" ? (
+                                                        <Box>
+                                                            <Select
+                                                                options={options}
+                                                                styles={cellColorStyles({
+                                                                    bgColor,
+                                                                    padding: "10px",
+                                                                    border: "none",
+                                                                })}
+                                                                defaultValue={{
+                                                                    value: cell.value,
+                                                                    label: cell.value == "" ? "Select..." : cell.value,
+                                                                }}
+                                                                onChange={(newValue) =>
+                                                                    handleLabelSelectChange(newValue, cell)
+                                                                }
+                                                                isDisabled={
+                                                                    rowsLoading ||
+                                                                    rowsFetching ||
+                                                                    !((permissions || 0) > 1)
+                                                                }
+                                                            />
+                                                        </Box>
+                                                    ) : cell.type === "people" ? (
+                                                        <Box>
+                                                            {rowsLoading ||
+                                                            rowsFetching ||
+                                                            !((permissions || 0) > 1) ? (
+                                                                <Text cursor={"default"}>{cell.value}</Text>
+                                                            ) : (
+                                                                <Box>
+                                                                    <Select
+                                                                        options={peopleOptions}
+                                                                        styles={cellColorStyles({
+                                                                            bgColor: "#ffffff",
+                                                                            padding: "7px",
+                                                                            border: "none",
+                                                                        })}
+                                                                        defaultValue={{
+                                                                            value: cell.value,
+                                                                            label:
+                                                                                cell.value == ""
+                                                                                    ? "Select..."
+                                                                                    : cell.value,
+                                                                        }}
+                                                                        onChange={(newValue) =>
+                                                                            handleLabelSelectChange(newValue, cell)
+                                                                        }
+                                                                        // isDisabled={
+                                                                        //     rowsLoading || rowsFetching || !((permissions || 0) > 1)
+                                                                        // }
+                                                                    />
+                                                                </Box>
+                                                            )}
+                                                        </Box>
+                                                    ) : cell.type === "date" ? (
+                                                        <input
+                                                            type="datetime-local"
+                                                            defaultValue={cell.value.slice(0, 16)}
+                                                            name={cell.name}
+                                                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                                console.log(event);
+                                                                handleUpdateRowInputChange(event);
+                                                            }}
+                                                            onFocus={(
+                                                                event: React.FocusEvent<HTMLInputElement, Element>
+                                                            ) => handleUpdateRowOnFocus(event, cell)}
+                                                            onBlur={(
+                                                                event: React.FocusEvent<HTMLInputElement, Element>
+                                                            ) => handleUpdateRowOnBlur(event, cell)}
+                                                            disabled={
+                                                                rowsLoading || rowsFetching || !((permissions || 0) > 1)
+                                                            }
+                                                        />
+                                                    ) : (
                                                         <Input
                                                             value={
                                                                 editMode.includes(cell?._id) ? tempValue : cell.value
@@ -483,9 +507,10 @@ const DataCollection = ({ onOpen }: { onOpen: any }) => {
                                                                 rowsFetching
                                                             }
                                                             isReadOnly={!((permissions || 0) > 1)}
+                                                            cursor={(permissions || 0) > 1 ? "text" : "default"}
                                                         />
-                                                    </Tooltip>
-                                                )}
+                                                    )}
+                                                </Tooltip>
                                             </Td>
                                         );
                                     })}
