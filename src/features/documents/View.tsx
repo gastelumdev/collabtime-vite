@@ -91,8 +91,8 @@ const View = () => {
     const { isOpen: createIsOpen, onOpen: createOnOpen, onClose: createOnClose } = useDisclosure();
     const { isOpen: deleteIsOpen, onOpen: deleteOnOpen, onClose: deleteOnClose } = useDisclosure();
 
-    const { data: documents } = useGetDocumentsQuery(null);
-    const [createDocument, { isLoading }] = useCreateDocumentMutation();
+    const { data: documents, isFetching: documentsIsFetching } = useGetDocumentsQuery(null);
+    const [createDocument, { isLoading: createIsLoading }] = useCreateDocumentMutation();
     const [deleteDocument] = useDeleteDocumentMutation();
 
     const [uploadDocs] = useUploadDocsMutation();
@@ -170,6 +170,7 @@ const View = () => {
     };
 
     const handleDocumentClick = () => {
+        createOnClose();
         createDocument({
             workspace: localStorage.getItem("workspaceId") || "",
             filename: createdDocName,
@@ -177,7 +178,6 @@ const View = () => {
             value: editorValue,
             ext: "created",
         });
-        createOnClose();
     };
 
     const getIcon = (type: string) => {
@@ -379,7 +379,7 @@ const View = () => {
                     <ModalHeader>Upload Files</ModalHeader>
                     <ModalCloseButton onClick={handleUploadOnClose} />
                     <ModalBody>
-                        {isLoading ? <Progress size="xs" isIndeterminate /> : null}
+                        {createIsLoading || documentsIsFetching ? <Progress size="xs" isIndeterminate /> : null}
                         <Input
                             type="file"
                             // accept="image/png, image/jpeg, image/jpg"
