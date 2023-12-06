@@ -51,6 +51,7 @@ import {
     useCreateDocumentMutation,
     useDeleteDocumentMutation,
     useGetDocumentsQuery,
+    useGetOneWorkspaceQuery,
     useUploadDocsMutation,
     useUploadPersistedDocsMutation,
 } from "../../app/services/api";
@@ -92,6 +93,7 @@ const View = () => {
     const { isOpen: deleteIsOpen, onOpen: deleteOnOpen, onClose: deleteOnClose } = useDisclosure();
 
     const { data: documents, isFetching: documentsIsFetching } = useGetDocumentsQuery(null);
+    const { data: workspace } = useGetOneWorkspaceQuery(localStorage.getItem("workspaceId") || "");
     const [createDocument, { isLoading: createIsLoading }] = useCreateDocumentMutation();
     const [deleteDocument] = useDeleteDocumentMutation();
 
@@ -211,12 +213,12 @@ const View = () => {
                             spacing={6}
                             // templateColumns="repeat(auto-fill, minmax(300px, 1fr))"
                             columns={{ base: 1, sm: 2 }}
-                            pb={"50px"}
+                            pb={"10px"}
                         >
                             <Flex>
                                 <Box>
                                     <Heading size={"sm"} mb={"12px"} color={"rgb(52, 71, 103)"}>
-                                        Documents
+                                        {`${workspace?.name} - Documents`}
                                     </Heading>
                                     <Text color={"rgb(123, 128, 154)"} fontSize={"md"} fontWeight={300}>
                                         Upload files or create them with a Rich-Text editor.
@@ -424,7 +426,7 @@ const View = () => {
 
                     <ModalFooter>
                         <PrimaryButton onClick={() => handleUploadClick()} isDisabled={duplicateFiles.length > 0}>
-                            SAVE
+                            UPLOAD
                         </PrimaryButton>
                     </ModalFooter>
                 </ModalContent>

@@ -38,6 +38,7 @@ import { getTextColor } from "../../utils/helpers";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import PrimaryDrawer from "../../components/PrimaryDrawer";
 import DataCollection from "./DataCollection";
+import { useParams } from "react-router-dom";
 
 interface LinkItemProps {
     name: string;
@@ -70,6 +71,8 @@ const LinkItems: Array<LinkItemProps> = [
 ];
 
 const ViewOne = () => {
+    const { id, dataCollectionId } = useParams();
+
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const { data: dataCollection } = useGetDataCollectionQuery(null);
@@ -95,6 +98,11 @@ const ViewOne = () => {
     ]);
     const [labelStyles, setLabelStyles] = useState<any>({});
     const [labelTitleError, setLabelTitleError] = useState<boolean>(false);
+
+    useEffect(() => {
+        localStorage.setItem("workspaceId", id || "");
+        localStorage.setItem("dataCollectionId", dataCollectionId || "");
+    });
 
     useEffect(() => {
         for (const column of columns || []) {
