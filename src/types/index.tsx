@@ -74,7 +74,7 @@ export type TDataCollection = {
 
 export type TColumn = {
     _id?: string;
-    dataCollectionId: string;
+    dataCollection: string;
     name: string;
     type: string;
     permanent: boolean;
@@ -95,9 +95,9 @@ export interface INote {
 
 export type TRow = {
     _id?: string;
-    dataCollectionId: string;
+    dataCollection: string;
     assignedTo?: string;
-    notes: string;
+    notes?: string;
     notesList: INote[];
     cells: string[] | TCell;
 };

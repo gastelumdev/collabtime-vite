@@ -21,7 +21,12 @@ import { CgAttachment } from "react-icons/cg";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import { IconContext } from "react-icons";
 import { formatTime } from "../../utils/helpers";
-import { useGetOneWorkspaceQuery, useGetUserQuery, useUploadMutation } from "../../app/services/api";
+import {
+    useGetOneWorkspaceQuery,
+    useGetUserQuery,
+    useUploadDocsMutation,
+    useUploadPersistedDocsMutation,
+} from "../../app/services/api";
 import { io } from "socket.io-client";
 
 interface IProps {
@@ -34,7 +39,8 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
     const { isOpen: notesIsOpen, onOpen: notesOnOpen, onClose: notesOnClose } = useDisclosure();
     const { data: user } = useGetUserQuery(localStorage.getItem("userId") || "");
     const { data: workspace } = useGetOneWorkspaceQuery(localStorage.getItem("workspaceId") || "");
-    const [upload] = useUploadMutation();
+    const [uploadDocs] = useUploadDocsMutation();
+    const [uploadPersistedDocs] = useUploadPersistedDocsMutation();
 
     // const [data, setData] = useState<TRow>(row);
     const [note, setNote] = useState<INote>({
@@ -45,7 +51,7 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
         people: [],
         images: [],
     });
-    const [file, setFile] = useState<File | null>(null);
+    const [files, setFiles] = useState<FileList | []>([]);
     const [hasUnreadItems, setHasUnreadItems] = useState<boolean>();
 
     useEffect(() => {
@@ -68,7 +74,7 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
     }, [row]);
 
     const setUnreadItems = () => {
-        for (const note of row.notesList) {
+        for (const note of row.notesList || []) {
             for (const people of note.people) {
                 if (people.email == user?.email) {
                     setHasUnreadItems(true);
@@ -85,7 +91,7 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
             const rowCopy = row;
             let filteredPeople: any = [];
             let newNote = [];
-            for (const note of rowCopy.notesList) {
+            for (const note of rowCopy.notesList || []) {
                 filteredPeople = note.people.filter((item) => {
                     return item.email != user?.email;
                 });
@@ -106,8 +112,8 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
-            console.log(event.target.files[0].name);
-            setFile(event.target.files[0]);
+            console.log(event.target.files);
+            setFiles(event.target.files);
             // const images = note.images;
             // setNote({ ...note, images: [...images, event.target.files[0].name] });
         }
@@ -122,23 +128,41 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
             people: [],
             images: [],
         });
-        setFile(null);
+        setFiles([]);
         notesOnClose();
     };
 
     const handleNoteClick = async () => {
         const formdata: FormData = new FormData();
-        formdata.append("file", file || "");
-        const res: any = await upload(formdata);
+        for (let i = 0; i < (files?.length || 0); i++) {
+            formdata.append("docs", files[i]);
+        }
+        const res: any = await uploadDocs(formdata);
+        const persistedRes: any = await uploadPersistedDocs(formdata);
 
-        console.log(res.data);
-        const imagesCopy = note.images;
+        const fileUrls = [];
+
+        for (let i = 0; i < res.data.files.length; i++) {
+            if (
+                res.data.files[i].url &&
+                persistedRes.data.files[i].url &&
+                res.data.files[i].url === persistedRes.data.files[i].url
+            ) {
+                // let splitFilename = res.data.files[i].file.filename.split(".");
+                // let ext = splitFilename[splitFilename.length - 1];
+                console.log(res.data.files[i]);
+                fileUrls.push(res.data.files[i].url);
+            }
+        }
+
+        console.log(fileUrls);
+        // const imagesCopy = note.images;
 
         setNote({
             ...note,
             createdAt: new Date().toISOString(),
             people: workspace?.members || [],
-            images: [...imagesCopy, res.data.url],
+            images: fileUrls,
         });
 
         const dataCopy = row;
@@ -151,7 +175,7 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
                 ...note,
                 createdAt: new Date().toISOString(),
                 people: workspace?.members || [],
-                images: [...imagesCopy, res.data.url],
+                images: fileUrls,
             },
         ];
 
@@ -165,7 +189,7 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
             people: [],
             images: [],
         });
-        setFile(null);
+        setFiles([]);
         notesOnClose();
     };
 
@@ -239,6 +263,7 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
                             mt={"6px"}
                             border={"none"}
                             onChange={handleFileChange}
+                            // multiple
                         />
                     </ModalBody>
 
