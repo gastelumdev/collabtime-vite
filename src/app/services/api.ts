@@ -292,6 +292,13 @@ export const api = createApi({
             }),
             invalidatesTags: ["Documents"]
         }),
+        searchAll: builder.mutation<{workspaces: TWorkspace[], dataCollections: TDataCollection[], docs: TDocument}, {key: string}>({
+            query: (key) => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/searchAll`,
+                method: "POST",
+                body: key
+            })
+        })
     })
 })
 
@@ -335,4 +342,5 @@ export const {
     useCreateDocumentMutation,
     useUpdateDocumentMutation,
     useDeleteDocumentMutation,
+    useSearchAllMutation,
 } = api

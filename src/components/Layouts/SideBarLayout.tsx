@@ -28,11 +28,13 @@ import {
     Tooltip,
 } from "@chakra-ui/react";
 import { FiMenu, FiLogOut } from "react-icons/fi";
+
 import { IconContext, IconType } from "react-icons";
 import Divider from "../Divider/Divider";
 import { Link, useNavigate } from "react-router-dom";
 import { FaSignOutAlt, FaUserCircle } from "react-icons/fa";
 import View from "../../features/notifications/View";
+import Search from "../../features/search/View";
 import logo from "../../assets/logo-no-background.png";
 
 interface LinkItemProps {
@@ -100,12 +102,13 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
                     <Box transition="3s ease">
                         {linkItems.map((link) => (
                             <Tooltip
+                                key={link.name}
                                 label={link.name}
                                 openDelay={0}
                                 // isDisabled={isFocused}
                                 placement={"top"}
                             >
-                                <Link to={link.path} key={link.name}>
+                                <Link to={link.path}>
                                     <NavItem key={link.name} icon={link.icon}>
                                         {isOpen ? <Text color={"white"}>{link.name}</Text> : null}
                                     </NavItem>
@@ -210,6 +213,9 @@ const TopNav = ({ sidebar = true, onOpen, leftContent, ...rest }: TopNavProps) =
                                 </Hide>
 
                                 <Stack direction={"row"} spacing={6}>
+                                    <Menu>
+                                        <Search />
+                                    </Menu>
                                     <Menu>
                                         <View />
                                     </Menu>
