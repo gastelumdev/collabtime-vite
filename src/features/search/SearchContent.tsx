@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { IconContext } from "react-icons";
 import { FaSearch } from "react-icons/fa";
 import { TDataCollection, TDocument, TWorkspace } from "../../types";
-import DataCollection from "../dataCollections/DataCollection";
+// import DataCollection from "../dataCollections/DataCollection";
 import UpdateModal from "../documents/UpdateModal";
 
 interface IProps {
@@ -22,7 +22,7 @@ const SearchContent = ({ onClose }: IProps) => {
         docs: TDocument[];
     }>({ workspaces: [], dataCollections: [], docs: [] });
     const [tabSelectedName, setTabSelectedName] = useState<string>("all");
-    const [tagInputActive, setTagInputActive] = useState<boolean>(false);
+    // const [tagInputActive, setTagInputActive] = useState<boolean>(false);
 
     const handleSearchInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchInputText(event.target.value);

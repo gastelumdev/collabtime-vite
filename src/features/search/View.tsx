@@ -1,4 +1,3 @@
-import React from "react";
 import { Box, MenuButton, useDisclosure } from "@chakra-ui/react";
 import { FaSearch } from "react-icons/fa";
 import { IconContext } from "react-icons";
