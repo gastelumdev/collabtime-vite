@@ -17,6 +17,7 @@ let defaultValues: TDataCollection = {
     },
     columns: [],
     rows: [],
+    tags: [],
 };
 
 interface IProps {
