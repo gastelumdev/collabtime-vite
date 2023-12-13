@@ -172,7 +172,7 @@ const CreateColumn = ({ columns, createColumn }: TProps) => {
     };
     return (
         <>
-            <Button onClick={onOpen} variant={"unstyled"} float={"right"}>
+            <Button onClick={onOpen} variant={"unstyled"}>
                 <BsPlusCircle />
             </Button>
             <PrimaryDrawer isOpen={isOpen} onClose={closeDrawer} title={"Create a new column"}>

@@ -21,8 +21,6 @@ import {
     MenuList,
     Center,
     Container,
-    SimpleGrid,
-    Hide,
     Spacer,
     Stack,
     Tooltip,
@@ -179,101 +177,98 @@ const TopNav = ({ sidebar = true, onOpen, leftContent, ...rest }: TopNavProps) =
         <Flex
             ml={{ base: 0, lg: sidebar ? "400px" : "0" }}
             pl={{ base: 0, lg: 0 }}
-            height="20"
+            h={{ sm: "22px" }}
+            mb={{ sm: "20px" }}
             alignItems="center"
             bg={useColorModeValue("gray.100", "gray.900")}
             borderBottomColor={useColorModeValue("gray.200", "gray.700")}
             justifyContent={{ base: "space-between", md: "flex-end" }}
             {...rest}
         >
-            <Container maxW={"8xl"} mt={{ base: 0 }}>
+            <Container maxW={"full"} mt={{ base: 0 }} px={"18px"}>
                 <Box pb={3} bg={"#eff2f5"}>
                     <Box bg={"#eff2f5"}>
-                        <SimpleGrid columns={[1, 2, 2]} spacingY={{ sm: 3 }}>
-                            <Flex alignItems={"center"} justifyContent={"space-between"}>
-                                <IconButton
-                                    display={{ base: "flex", lg: "none" }}
-                                    onClick={onOpen}
-                                    variant="outline"
-                                    aria-label="open menu"
-                                    icon={<FiMenu />}
-                                />
-                                <Box
-                                    ml={{ base: 3, lg: 0 }}
-                                    // pt={"18px"}
-                                    bg={"#eff2f5"}
-                                >
-                                    {leftContent}
-                                </Box>
-                                <Spacer />
-                            </Flex>
-                            <Flex>
+                        {/* <SimpleGrid columns={[1, 2, 2]} spacingY={{ sm: 3 }}> */}
+                        <Flex alignItems={"center"} justifyContent={"space-between"}>
+                            <IconButton
+                                display={{ base: "flex", lg: "none" }}
+                                onClick={onOpen}
+                                variant="outline"
+                                aria-label="open menu"
+                                icon={<FiMenu />}
+                            />
+                            <Box
+                                ml={{ base: 3, lg: 0 }}
+                                // pt={"18px"}
+                                bg={"#eff2f5"}
+                            >
+                                {leftContent}
+                            </Box>
+                            <Spacer />
+                            <Stack direction={"row"} spacing={6}>
+                                <Menu>
+                                    <Search />
+                                </Menu>
+                                <Menu>
+                                    <View />
+                                </Menu>
+                                <Menu autoSelect={false}>
+                                    <MenuButton
+                                        style={{
+                                            backgroundColor: "#eff2f5",
+                                        }}
+                                    >
+                                        <Text size={"20px"} pt={1}>
+                                            <IconContext.Provider
+                                                value={{
+                                                    size: "18px",
+                                                    color: "#7b809a",
+                                                }}
+                                            >
+                                                <FaUserCircle />
+                                            </IconContext.Provider>
+                                        </Text>
+                                    </MenuButton>
+                                    <MenuList alignItems={"center"} zIndex={"10"}>
+                                        <br />
+                                        <Center>
+                                            <Avatar
+                                                size={"lg"}
+                                                src={`https://api.dicebear.com/7.x/initials/svg?seed=${data?.firstname}%20${data?.lastname}`}
+                                            />
+                                        </Center>
+                                        <br />
+                                        <Center>
+                                            <p>{`${data?.firstname} ${data?.lastname}`}</p>
+                                        </Center>
+                                        <Center>
+                                            <p
+                                                style={{
+                                                    fontSize: "12px",
+                                                    color: "gray",
+                                                }}
+                                            >
+                                                {data?.email}
+                                            </p>
+                                        </Center>
+                                        <br />
+                                        <MenuDivider />
+                                        <MenuItem color={"#7b809a"} onClick={() => navigate("/resetPasswordRequest")}>
+                                            Reset Password
+                                        </MenuItem>
+                                        <MenuItem onClick={logout} color={"#7b809a"}>
+                                            Logout
+                                        </MenuItem>
+                                    </MenuList>
+                                </Menu>
+                            </Stack>
+                        </Flex>
+                        {/* <Flex mt={"10px"}>
                                 <Hide below="sm">
                                     <Spacer />
                                 </Hide>
-
-                                <Stack direction={"row"} spacing={6}>
-                                    <Menu>
-                                        <Search />
-                                    </Menu>
-                                    <Menu>
-                                        <View />
-                                    </Menu>
-                                    <Menu autoSelect={false}>
-                                        <MenuButton
-                                            style={{
-                                                backgroundColor: "#eff2f5",
-                                            }}
-                                        >
-                                            <Text size={"20px"} pt={1}>
-                                                <IconContext.Provider
-                                                    value={{
-                                                        size: "18px",
-                                                        color: "#7b809a",
-                                                    }}
-                                                >
-                                                    <FaUserCircle />
-                                                </IconContext.Provider>
-                                            </Text>
-                                        </MenuButton>
-                                        <MenuList alignItems={"center"} zIndex={"10"}>
-                                            <br />
-                                            <Center>
-                                                <Avatar
-                                                    size={"lg"}
-                                                    src={`https://api.dicebear.com/7.x/initials/svg?seed=${data?.firstname}%20${data?.lastname}`}
-                                                />
-                                            </Center>
-                                            <br />
-                                            <Center>
-                                                <p>{`${data?.firstname} ${data?.lastname}`}</p>
-                                            </Center>
-                                            <Center>
-                                                <p
-                                                    style={{
-                                                        fontSize: "12px",
-                                                        color: "gray",
-                                                    }}
-                                                >
-                                                    {data?.email}
-                                                </p>
-                                            </Center>
-                                            <br />
-                                            <MenuDivider />
-                                            <MenuItem
-                                                color={"#7b809a"}
-                                                onClick={() => navigate("/resetPasswordRequest")}
-                                            >
-                                                Reset Password
-                                            </MenuItem>
-                                            <MenuItem onClick={logout} color={"#7b809a"}>
-                                                Logout
-                                            </MenuItem>
-                                        </MenuList>
-                                    </Menu>
-                                </Stack>
-                            </Flex>
-                        </SimpleGrid>
+                            </Flex> */}
+                        {/* </SimpleGrid> */}
                     </Box>
                 </Box>
             </Container>

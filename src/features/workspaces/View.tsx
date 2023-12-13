@@ -39,8 +39,7 @@ import Edit from "./Edit";
 import SideBarLayout from "../../components/Layouts/SideBarLayout";
 import PrimaryCard from "../../components/PrimaryCard";
 
-import { AiOutlineDelete, AiOutlineLike } from "react-icons/ai";
-import { IconContext } from "react-icons";
+import { AiOutlineDelete } from "react-icons/ai";
 import { BsPersonWorkspace } from "react-icons/bs";
 import React from "react";
 import TagsModal from "../tags/TagsModal";
@@ -140,25 +139,25 @@ const View = () => {
     return (
         <SideBarLayout
             linkItems={LinkItems}
-            leftContent={
-                <Box pt={"6px"} pb={"4px"}>
-                    <Center>
-                        <IconContext.Provider value={{ color: "#7b809a", size: "20px" }}>
-                            <Box display={"inline-block"} mr={"3px"}>
-                                <AiOutlineLike />
-                            </Box>
-                        </IconContext.Provider>
-                        <Text as={"b"} fontSize={"16px"} color={"#7b809a"}>
-                            Collabtime
-                        </Text>
-                    </Center>
-                </Box>
-            }
+            // leftContent={
+            //     <Box pt={"6px"} pb={"4px"}>
+            //         <Center>
+            //             <IconContext.Provider value={{ color: "#7b809a", size: "20px" }}>
+            //                 <Box display={"inline-block"} mr={"3px"}>
+            //                     <AiOutlineLike />
+            //                 </Box>
+            //             </IconContext.Provider>
+            //             <Text as={"b"} fontSize={"16px"} color={"#7b809a"}>
+            //                 Collabtime
+            //             </Text>
+            //         </Center>
+            //     </Box>
+            // }
             sidebar={false}
         >
             <Box>
                 <Flex minH={"100vh"} bg={"#eff2f5"}>
-                    <Container maxW={"8xl"} mt={{ base: 4, sm: 0 }}>
+                    <Container maxW={"full"} mt={{ base: 4, sm: 0 }}>
                         <SimpleGrid spacing={6} columns={{ base: 1, sm: 2 }} pb={"50px"}>
                             <Flex>
                                 <Box>
@@ -184,8 +183,8 @@ const View = () => {
                                     base: 1,
                                     sm: 1,
                                     md: 2,
-                                    lg: 2,
-                                    xl: 3,
+                                    lg: 3,
+                                    xl: 4,
                                 }}
                             >
                                 {data?.map((workspace: TWorkspace, index: number) => {

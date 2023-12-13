@@ -78,7 +78,7 @@ const View = () => {
                     // justify={"center"}
                     bg={"#eff2f5"}
                 >
-                    <Container maxW={"8xl"} mt={{ base: 4, sm: 0 }}>
+                    <Container maxW={"full"} mt={{ base: 4, sm: 0 }}>
                         <SimpleGrid
                             spacing={6}
                             // templateColumns="repeat(auto-fill, minmax(300px, 1fr))"

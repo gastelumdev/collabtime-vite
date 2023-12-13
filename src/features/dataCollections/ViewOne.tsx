@@ -30,7 +30,12 @@ const ViewOne = () => {
                         // justify={"center"}
                         bg={"#eff2f5"}
                     >
-                        <Container maxW={"8xl"} mt={{ base: 4, sm: 0 }}>
+                        <Container
+                            maxW={"full"}
+                            // w={"100%"}
+                            mt={{ base: 4, sm: 0 }}
+                            px={"20px"}
+                        >
                             {/* <SimpleGrid
                                 spacing={6}
                                 // templateColumns="repeat(auto-fill, minmax(300px, 1fr))"
@@ -48,7 +53,7 @@ const ViewOne = () => {
                                     </Box>
                                 </Flex>
                             </SimpleGrid> */}
-                            <Card mb={"60px"}>
+                            <Card mb={"60px"} w={"100%"}>
                                 <CardHeader>
                                     <Flex>
                                         <Box>

@@ -293,19 +293,25 @@ const DataCollectionTable = ({
                 ) : null}
             </Box>
             <TableContainer pb={"300px"}>
-                <Table size="sm">
+                <Table size="sm" style={{ tableLayout: "fixed" }}>
                     <Thead>
                         {/* ******** COLUMNS ******** */}
                         {/* ************************* */}
                         <Tr>
                             {(permissions || 0) > 1 ? (
-                                <Th w={"60px"}>
+                                <Th w={"100px"}>
                                     <Text visibility={"hidden"}>Wor</Text>
                                 </Th>
                             ) : null}
                             {columns?.map((column: TColumn, index: number) => {
+                                let width = "200px";
+
+                                if (column.type === "people") width = "145px";
+                                if (column.type === "priority" || column.type === "status" || column.type === "label")
+                                    width = "170px";
+                                console.log(column.type, width);
                                 return (
-                                    <Th key={index}>
+                                    <Th key={index} width={width}>
                                         {(permissions || 0) > 1 ? (
                                             <Menu>
                                                 <MenuButton onClick={() => handleColumnHover(index)}>
@@ -476,7 +482,6 @@ const DataCollectionTable = ({
                                                                 editMode.includes(cell?._id) ? tempValue : cell.value
                                                             }
                                                             size={"sm"}
-                                                            w={"180px"}
                                                             variant={"unstyled"}
                                                             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                                                                 handleUpdateRowInputChange(event)
@@ -495,6 +500,7 @@ const DataCollectionTable = ({
                                                             }
                                                             isReadOnly={!((permissions || 0) > 1)}
                                                             cursor={(permissions || 0) > 1 ? "text" : "default"}
+                                                            textOverflow={"ellipsis"}
                                                         />
                                                     )}
                                                 </Tooltip>

@@ -25,7 +25,6 @@ import {
     ModalHeader,
     ModalOverlay,
     Progress,
-    SimpleGrid,
     Spacer,
     Table,
     TableContainer,
@@ -175,173 +174,152 @@ const View = () => {
     return (
         <SideBarLayout linkItems={LinkItems}>
             <Box>
-                <Flex
+                {/* <Flex
                     minH={"100vh"}
                     // justify={"center"}
                     bg={"#eff2f5"}
-                >
-                    <Container maxW={"8xl"} mt={{ base: 4, sm: 0 }}>
-                        <SimpleGrid
-                            spacing={6}
-                            // templateColumns="repeat(auto-fill, minmax(300px, 1fr))"
-                            columns={{ base: 1, sm: 2 }}
-                            pb={"10px"}
-                        >
-                            <Flex>
-                                <Box>
-                                    <Heading size={"sm"} mb={"12px"} color={"rgb(52, 71, 103)"}>
-                                        {`${workspace?.name} - Documents`}
-                                    </Heading>
-                                    <Text color={"rgb(123, 128, 154)"} fontSize={"md"} fontWeight={300}>
-                                        Upload files or create them with a Rich-Text editor.
-                                    </Text>
-                                </Box>
-                            </Flex>
-                            <Flex>
-                                <Spacer />
-                                <Box pb={"20px"}>{/* <Create addNewWorkspace={addNewWorkspace} /> */}</Box>
-                            </Flex>
-                        </SimpleGrid>
+                > */}
+                <Container maxW={"full"} mt={{ base: 4, sm: 0 }}>
+                    <Box mb={{ base: "15px" }}>
+                        <Heading size={"sm"} mb={"12px"} color={"rgb(52, 71, 103)"}>
+                            {`${workspace?.name} - Documents`}
+                        </Heading>
+                        <Text color={"rgb(123, 128, 154)"} fontSize={"md"} fontWeight={300}>
+                            Upload files or create them with a Rich-Text editor.
+                        </Text>
+                    </Box>
 
-                        <Flex>
-                            <Spacer />
-                            <Card w={"150px"}>
-                                <Menu>
-                                    <MenuButton
-                                        as={Button}
-                                        bgColor={"white"}
-                                        color={"rgb(123, 128, 154)"}
-                                        rightIcon={<ChevronDownIcon />}
+                    <Flex>
+                        <Spacer />
+                        <Card w={"150px"}>
+                            <Menu>
+                                <MenuButton
+                                    as={Button}
+                                    bgColor={"white"}
+                                    color={"rgb(123, 128, 154)"}
+                                    rightIcon={<ChevronDownIcon />}
+                                >
+                                    Actions
+                                </MenuButton>
+                                <MenuList>
+                                    <MenuItem
+                                        onClick={() => {
+                                            uploadOnOpen();
+                                            setDuplicateFiles([]);
+                                        }}
                                     >
-                                        Actions
-                                    </MenuButton>
-                                    <MenuList>
-                                        <MenuItem
-                                            onClick={() => {
-                                                uploadOnOpen();
-                                                setDuplicateFiles([]);
-                                            }}
-                                        >
-                                            Upload files
-                                        </MenuItem>
-                                        <MenuItem onClick={createOnOpen}>Create doc</MenuItem>
-                                    </MenuList>
-                                </Menu>
-                            </Card>
-                        </Flex>
-                        <Card mt={"10px"}>
-                            <CardBody>
-                                {documents?.length || 0 > 0 ? (
-                                    <TableContainer>
-                                        <Table size={"sm"}>
-                                            <Thead>
-                                                <Tr>
-                                                    <Th>Filename</Th>
-                                                    <Th>Uploaded by</Th>
-                                                    <Th>Size</Th>
-                                                    <Th>Actions</Th>
-                                                </Tr>
-                                            </Thead>
-                                            <Tbody>
-                                                {documents?.map((document, index) => {
-                                                    console.log(document);
-                                                    return (
-                                                        <Tr key={index}>
-                                                            <Td>
-                                                                <Flex>
-                                                                    <Box pt={"0px"} mr={"6px"}>
-                                                                        <IconContext.Provider
-                                                                            value={{ color: "#7b809a" }}
-                                                                        >
-                                                                            {getIcon(document.ext || "")}
-                                                                        </IconContext.Provider>
-                                                                    </Box>
-                                                                    {document.type === "upload" ? (
-                                                                        <Text color={"rgb(123, 128, 154)"}>
-                                                                            <a href={document.url} target="_blank">
-                                                                                {document.filename}
-                                                                            </a>
-                                                                        </Text>
-                                                                    ) : (
-                                                                        <UpdateModal document={document} />
-                                                                    )}
-                                                                </Flex>
-                                                            </Td>
-                                                            <Td>
-                                                                <Text
-                                                                    color={"rgb(123, 128, 154)"}
-                                                                    fontSize={"14px"}
-                                                                >{`${document.createdBy.firstname} ${document.createdBy.lastname}`}</Text>
-                                                            </Td>
-                                                            <Td>
-                                                                <Text color={"rgb(123, 128, 154)"} fontSize={"14px"}>
-                                                                    {document.file ? document.file.size : ""}
-                                                                </Text>
-                                                            </Td>
-                                                            <Td>
-                                                                <Text
-                                                                    p={"2px"}
-                                                                    onClick={deleteOnOpen}
-                                                                    cursor={"pointer"}
-                                                                    color={"rgb(123, 128, 154)"}
-                                                                    fontSize={"12px"}
-                                                                    _hover={{ color: "red" }}
-                                                                >
-                                                                    <FaRegTrashAlt />
-                                                                </Text>
-                                                            </Td>
-                                                            <AlertDialog
-                                                                isOpen={deleteIsOpen}
-                                                                leastDestructiveRef={cancelRef}
-                                                                onClose={deleteOnClose}
-                                                            >
-                                                                <AlertDialogOverlay>
-                                                                    <AlertDialogContent>
-                                                                        <AlertDialogHeader
-                                                                            fontSize="lg"
-                                                                            fontWeight="bold"
-                                                                        >
-                                                                            Delete Customer
-                                                                        </AlertDialogHeader>
-
-                                                                        <AlertDialogBody>
-                                                                            Are you sure? You can't undo this action
-                                                                            afterwards.
-                                                                        </AlertDialogBody>
-
-                                                                        <AlertDialogFooter>
-                                                                            <Button
-                                                                                ref={cancelRef}
-                                                                                onClick={deleteOnClose}
-                                                                            >
-                                                                                Cancel
-                                                                            </Button>
-                                                                            <Button
-                                                                                colorScheme="red"
-                                                                                onClick={() =>
-                                                                                    handleDeleteDocument(document)
-                                                                                }
-                                                                                ml={3}
-                                                                            >
-                                                                                Delete
-                                                                            </Button>
-                                                                        </AlertDialogFooter>
-                                                                    </AlertDialogContent>
-                                                                </AlertDialogOverlay>
-                                                            </AlertDialog>
-                                                        </Tr>
-                                                    );
-                                                })}
-                                            </Tbody>
-                                        </Table>
-                                    </TableContainer>
-                                ) : (
-                                    <Text color={"rgb(123, 128, 154)"}>You currently have no uploads.</Text>
-                                )}
-                            </CardBody>
+                                        Upload files
+                                    </MenuItem>
+                                    <MenuItem onClick={createOnOpen}>Create doc</MenuItem>
+                                </MenuList>
+                            </Menu>
                         </Card>
-                    </Container>
-                </Flex>
+                    </Flex>
+                    <Card mt={"10px"}>
+                        <CardBody>
+                            {documents?.length || 0 > 0 ? (
+                                <TableContainer>
+                                    <Table size={"sm"}>
+                                        <Thead>
+                                            <Tr>
+                                                <Th>Filename</Th>
+                                                <Th>Uploaded by</Th>
+                                                <Th>Size</Th>
+                                                <Th>Actions</Th>
+                                            </Tr>
+                                        </Thead>
+                                        <Tbody>
+                                            {documents?.map((document, index) => {
+                                                console.log(document);
+                                                return (
+                                                    <Tr key={index}>
+                                                        <Td>
+                                                            <Flex>
+                                                                <Box pt={"0px"} mr={"6px"}>
+                                                                    <IconContext.Provider value={{ color: "#7b809a" }}>
+                                                                        {getIcon(document.ext || "")}
+                                                                    </IconContext.Provider>
+                                                                </Box>
+                                                                {document.type === "upload" ? (
+                                                                    <Text color={"rgb(123, 128, 154)"}>
+                                                                        <a href={document.url} target="_blank">
+                                                                            {document.filename}
+                                                                        </a>
+                                                                    </Text>
+                                                                ) : (
+                                                                    <UpdateModal document={document} />
+                                                                )}
+                                                            </Flex>
+                                                        </Td>
+                                                        <Td>
+                                                            <Text
+                                                                color={"rgb(123, 128, 154)"}
+                                                                fontSize={"14px"}
+                                                            >{`${document.createdBy.firstname} ${document.createdBy.lastname}`}</Text>
+                                                        </Td>
+                                                        <Td>
+                                                            <Text color={"rgb(123, 128, 154)"} fontSize={"14px"}>
+                                                                {document.file ? document.file.size : ""}
+                                                            </Text>
+                                                        </Td>
+                                                        <Td>
+                                                            <Text
+                                                                p={"2px"}
+                                                                onClick={deleteOnOpen}
+                                                                cursor={"pointer"}
+                                                                color={"rgb(123, 128, 154)"}
+                                                                fontSize={"12px"}
+                                                                _hover={{ color: "red" }}
+                                                            >
+                                                                <FaRegTrashAlt />
+                                                            </Text>
+                                                        </Td>
+                                                        <AlertDialog
+                                                            isOpen={deleteIsOpen}
+                                                            leastDestructiveRef={cancelRef}
+                                                            onClose={deleteOnClose}
+                                                        >
+                                                            <AlertDialogOverlay>
+                                                                <AlertDialogContent>
+                                                                    <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                                                                        Delete Customer
+                                                                    </AlertDialogHeader>
+
+                                                                    <AlertDialogBody>
+                                                                        Are you sure? You can't undo this action
+                                                                        afterwards.
+                                                                    </AlertDialogBody>
+
+                                                                    <AlertDialogFooter>
+                                                                        <Button ref={cancelRef} onClick={deleteOnClose}>
+                                                                            Cancel
+                                                                        </Button>
+                                                                        <Button
+                                                                            colorScheme="red"
+                                                                            onClick={() =>
+                                                                                handleDeleteDocument(document)
+                                                                            }
+                                                                            ml={3}
+                                                                        >
+                                                                            Delete
+                                                                        </Button>
+                                                                    </AlertDialogFooter>
+                                                                </AlertDialogContent>
+                                                            </AlertDialogOverlay>
+                                                        </AlertDialog>
+                                                    </Tr>
+                                                );
+                                            })}
+                                        </Tbody>
+                                    </Table>
+                                </TableContainer>
+                            ) : (
+                                <Text color={"rgb(123, 128, 154)"}>You currently have no uploads.</Text>
+                            )}
+                        </CardBody>
+                    </Card>
+                </Container>
+                {/* </Flex> */}
             </Box>
             {/*
              ***************************** UPLOAD MODAL ********************************************

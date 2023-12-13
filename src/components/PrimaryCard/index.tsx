@@ -5,7 +5,7 @@ import {
     CardFooter,
     CardHeader,
     Center,
-    Flex,
+    HStack,
     Heading,
     Tag,
     TagCloseButton,
@@ -46,39 +46,46 @@ const PrimaryCard = ({
             h={"250px"}
         >
             <CardHeader
+                pr={"0"}
                 h={"60px"}
                 as={"a"}
                 href={`/workspaces/${data._id}`}
                 onClick={() => localStorage.setItem("workspaceId", data._id)}
             >
-                <Flex>
-                    <Flex flex="1" gap="4" alignItems="center" flexWrap="wrap" position={"relative"} bottom={10}>
-                        <Box
-                            bgImage={
-                                "radial-gradient(circle at center top, rgb(73, 163, 241), rgb(26, 115, 232))"
-                                // "radial-gradient(circle at center top, rgb(66, 66, 74), black)"
-                                // "radial-gradient(circle at right top, #F26989, #EB1E4E)"
-                                // "radial-gradient(circle at right top, #FF5BA7 , #D32C7A)"
-                            }
-                            padding={"20px"}
-                            borderRadius={"lg"}
-                        >
-                            <AiOutlineLike
-                                style={{
-                                    marginRight: "4px",
-                                    fontSize: "20px",
-                                    color: "white",
-                                }}
-                            />
-                        </Box>
+                <HStack
+                    flex="1"
+                    gap="2"
+                    alignItems="center"
+                    flexWrap="wrap"
+                    position={"relative"}
+                    bottom={10}
+                    left={"2px"}
+                >
+                    <Box
+                        bgImage={
+                            "radial-gradient(circle at center top, rgb(73, 163, 241), rgb(26, 115, 232))"
+                            // "radial-gradient(circle at center top, rgb(66, 66, 74), black)"
+                            // "radial-gradient(circle at right top, #F26989, #EB1E4E)"
+                            // "radial-gradient(circle at right top, #FF5BA7 , #D32C7A)"
+                        }
+                        padding={"20px"}
+                        borderRadius={"lg"}
+                    >
+                        <AiOutlineLike
+                            style={{
+                                marginRight: "2px",
+                                fontSize: "20px",
+                                color: "white",
+                            }}
+                        />
+                    </Box>
 
-                        <Box pt={7}>
-                            <Heading size="sm" color={"#575757"}>
-                                {data.name}
-                            </Heading>
-                        </Box>
-                    </Flex>
-                </Flex>
+                    <Box pt={7}>
+                        <Heading size="xs" color={"#575757"}>
+                            {data.name}
+                        </Heading>
+                    </Box>
+                </HStack>
             </CardHeader>
             <CardBody
                 py={0}
@@ -88,7 +95,7 @@ const PrimaryCard = ({
             >
                 <Box position={"relative"}>
                     <Center>
-                        <Text color={"rgb(123, 128, 154)"} fontSize={"md"}>
+                        <Text color={"rgb(123, 128, 154)"} fontSize={"sm"}>
                             {data.description}
                         </Text>
                     </Center>

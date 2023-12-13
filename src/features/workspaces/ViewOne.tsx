@@ -49,7 +49,7 @@ const ViewOne = () => {
         <SideBarLayout linkItems={LinkItems}>
             <Box>
                 <Flex minH={"100vh"} bg={"#eff2f5"}>
-                    <Container maxW={"8xl"} mt={{ base: 4, sm: 0 }}>
+                    <Container maxW={"full"} mt={{ base: 4, sm: 0 }}>
                         <SimpleGrid spacing={6} columns={{ base: 1, sm: 2 }} pb={"50px"}>
                             <Flex>
                                 <Box>
@@ -92,7 +92,7 @@ const ViewOne = () => {
                                 ) : null}
                             </Flex>
                         </SimpleGrid>
-                        <SimpleGrid spacing={6} spacingY={12} columns={{ base: 1, sm: 1, md: 3 }}>
+                        <SimpleGrid spacing={6} spacingY={12} columns={{ base: 1, sm: 1, md: 3, lg: 4 }}>
                             {(workspace?.tools.dataCollections.access || 0) > 0 ? (
                                 <a href={`/workspaces/${workspace?._id}/dataCollections`}>
                                     <SecondaryCard
