@@ -26,6 +26,8 @@ interface IProps {
     deleteButton?: any;
     tagButton?: any;
     handleCloseTagButtonClick?: any;
+    redirectUrl: string;
+    localStorageId: string;
 }
 
 const PrimaryCard = ({
@@ -36,6 +38,8 @@ const PrimaryCard = ({
     deleteButton,
     tagButton,
     handleCloseTagButtonClick,
+    redirectUrl,
+    localStorageId,
 }: IProps) => {
     return (
         <Card
@@ -49,8 +53,8 @@ const PrimaryCard = ({
                 pr={"0"}
                 h={"60px"}
                 as={"a"}
-                href={`/workspaces/${data._id}`}
-                onClick={() => localStorage.setItem("workspaceId", data._id)}
+                href={redirectUrl}
+                onClick={() => localStorage.setItem(localStorageId, data._id)}
             >
                 <HStack
                     flex="1"
@@ -87,12 +91,7 @@ const PrimaryCard = ({
                     </Box>
                 </HStack>
             </CardHeader>
-            <CardBody
-                py={0}
-                as={"a"}
-                href={`/workspaces/${data._id}`}
-                onClick={() => localStorage.setItem("workspaceId", data._id)}
-            >
+            <CardBody py={0} as={"a"} href={redirectUrl} onClick={() => localStorage.setItem(localStorageId, data._id)}>
                 <Box position={"relative"}>
                     <Center>
                         <Text color={"rgb(123, 128, 154)"} fontSize={"sm"}>

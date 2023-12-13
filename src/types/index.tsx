@@ -72,6 +72,7 @@ export type TDataCollection = {
     form: TForm;
     columns: string[];
     rows: string[];
+    tags: TTag[];
 };
 
 export type TColumn = {

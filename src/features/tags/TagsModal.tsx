@@ -15,7 +15,12 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { GoTag } from "react-icons/go";
-import { useCreateTagMutation, useGetTagsQuery } from "../../app/services/api";
+import {
+    useCreateTagMutation,
+    useGetOneWorkspaceQuery,
+    useGetTagsQuery,
+    useUpdateWorkspaceMutation,
+} from "../../app/services/api";
 import { TTag } from "../../types";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 
@@ -30,6 +35,9 @@ interface IProps {
 const TagsModal = ({ data, tags, update, workspaceId, tagType }: IProps) => {
     const { onOpen, isOpen, onClose } = useDisclosure();
     const initialRef = useRef<any>();
+
+    const { data: workspace } = useGetOneWorkspaceQuery(workspaceId || "");
+    const [updateWorkspace] = useUpdateWorkspaceMutation();
 
     const { data: workspaceTags } = useGetTagsQuery(workspaceId);
     const [createTag] = useCreateTagMutation();
@@ -83,14 +91,22 @@ const TagsModal = ({ data, tags, update, workspaceId, tagType }: IProps) => {
     const handleCreateTagClick = async () => {
         const res: any = await createTag({ tagType: tagType, tag: { workspace: workspaceId, name: tagInput } });
         const tagsCopy = tags || [];
-        const workspaceTagsCopy = data.workspaceTags;
+        console.log(res);
+
+        const workspaceTagsCopy = workspace?.workspaceTags || [];
+        const updateWorkspaceCopy: any = updateWorkspace;
+
         if (tagType === "workspace") {
             await update({
-                ...data,
+                ...workspace,
                 tags: [...tagsCopy, res.data],
                 workspaceTags: [...workspaceTagsCopy, res.data],
             });
         } else {
+            await updateWorkspaceCopy({
+                ...workspace,
+                workspaceTags: [...workspaceTagsCopy, res.data],
+            });
             await update({
                 ...data,
                 tags: [...tagsCopy, res.data],

@@ -193,6 +193,8 @@ const View = () => {
                                             key={index}
                                             index={index}
                                             data={workspace}
+                                            redirectUrl={`/workspaces/${workspace._id}`}
+                                            localStorageId="workspaceId"
                                             divider={
                                                 workspace?.owner === localStorage.getItem("userId") || isAuthorized
                                             }
