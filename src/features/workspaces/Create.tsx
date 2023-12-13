@@ -22,6 +22,8 @@ let defaultValues: TWorkspace = {
     },
     invitees: [],
     members: [],
+    tags: [],
+    workspaceTags: [],
 };
 
 interface IProps {
