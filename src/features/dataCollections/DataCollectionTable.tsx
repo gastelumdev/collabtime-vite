@@ -300,7 +300,7 @@ const DataCollectionTable = ({
                         <Tr>
                             {(permissions || 0) > 1 ? (
                                 <Th w={"100px"}>
-                                    <Text>Wor</Text>
+                                    <Text visibility={"hidden"}>Wor</Text>
                                 </Th>
                             ) : null}
                             {columns?.map((column: TColumn, index: number) => {
