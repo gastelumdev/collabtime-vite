@@ -7,12 +7,13 @@ interface PrimaryDrawerProps {
     onClose: any;
     title: string;
     size?: string;
+    initialFocusRef?: any;
     children: ReactNode;
 }
 
-const PrimaryDrawer = ({ isOpen, onClose, title, size = "md", children }: PrimaryDrawerProps) => {
+const PrimaryDrawer = ({ isOpen, onClose, title, size = "md", initialFocusRef, children }: PrimaryDrawerProps) => {
     return (
-        <Drawer isOpen={isOpen} placement="right" onClose={onClose} size={size}>
+        <Drawer isOpen={isOpen} placement="right" onClose={onClose} size={size} initialFocusRef={initialFocusRef}>
             <DrawerOverlay />
             <DrawerContent>
                 <DrawerCloseButton onClick={onClose} />

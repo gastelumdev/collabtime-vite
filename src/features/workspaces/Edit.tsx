@@ -1,14 +1,5 @@
 import React, { useState } from "react";
-import {
-    Button,
-    Text,
-    Checkbox,
-    Stack,
-    Flex,
-    Input,
-    Spacer,
-    useDisclosure,
-} from "@chakra-ui/react";
+import { Button, Text, Checkbox, Stack, Flex, Input, Spacer, useDisclosure } from "@chakra-ui/react";
 import { TWorkspace } from "../../types";
 import { AiOutlineEdit } from "react-icons/ai";
 import Divider from "../../components/Divider/Divider";
@@ -27,7 +18,6 @@ interface IProps {
  * @returns {JSX}
  */
 const Edit = ({ workspace, updateWorkspace }: IProps) => {
-    console.log(workspace);
     const { isOpen, onOpen, onClose } = useDisclosure();
     /**
      * State management for checked items that turn on and off the
@@ -89,11 +79,7 @@ const Edit = ({ workspace, updateWorkspace }: IProps) => {
                 onClick={onOpen}
                 zIndex={10}
             ></Button>
-            <PrimaryDrawer
-                isOpen={isOpen}
-                onClose={onClose}
-                title="Edit workspace"
-            >
+            <PrimaryDrawer isOpen={isOpen} onClose={onClose} title="Edit workspace">
                 <Text pb={"5px"} color={"rgb(123, 128, 154)"} fontSize={"14px"}>
                     Name
                 </Text>
@@ -124,12 +110,7 @@ const Edit = ({ workspace, updateWorkspace }: IProps) => {
                     <Checkbox
                         isChecked={checkedItems[0]}
                         onChange={(e) =>
-                            setCheckedItems([
-                                e.target.checked,
-                                checkedItems[1],
-                                checkedItems[2],
-                                checkedItems[3],
-                            ])
+                            setCheckedItems([e.target.checked, checkedItems[1], checkedItems[2], checkedItems[3]])
                         }
                         color={"rgb(123, 128, 154)"}
                         fontSize={"14px"}
@@ -139,12 +120,7 @@ const Edit = ({ workspace, updateWorkspace }: IProps) => {
                     <Checkbox
                         isChecked={checkedItems[1]}
                         onChange={(e) =>
-                            setCheckedItems([
-                                checkedItems[0],
-                                e.target.checked,
-                                checkedItems[2],
-                                checkedItems[3],
-                            ])
+                            setCheckedItems([checkedItems[0], e.target.checked, checkedItems[2], checkedItems[3]])
                         }
                         color={"rgb(123, 128, 154)"}
                         fontSize={"14px"}
@@ -154,12 +130,7 @@ const Edit = ({ workspace, updateWorkspace }: IProps) => {
                     <Checkbox
                         isChecked={checkedItems[2]}
                         onChange={(e) =>
-                            setCheckedItems([
-                                checkedItems[0],
-                                checkedItems[1],
-                                e.target.checked,
-                                checkedItems[3],
-                            ])
+                            setCheckedItems([checkedItems[0], checkedItems[1], e.target.checked, checkedItems[3]])
                         }
                         color={"rgb(123, 128, 154)"}
                         fontSize={"14px"}
@@ -169,12 +140,7 @@ const Edit = ({ workspace, updateWorkspace }: IProps) => {
                     <Checkbox
                         isChecked={checkedItems[3]}
                         onChange={(e) =>
-                            setCheckedItems([
-                                checkedItems[0],
-                                checkedItems[1],
-                                checkedItems[2],
-                                e.target.checked,
-                            ])
+                            setCheckedItems([checkedItems[0], checkedItems[1], checkedItems[2], e.target.checked])
                         }
                         color={"rgb(123, 128, 154)"}
                         fontSize={"14px"}
@@ -182,10 +148,7 @@ const Edit = ({ workspace, updateWorkspace }: IProps) => {
                         <Text fontSize={"14px"}>Message Board</Text>
                     </Checkbox>
                 </Stack>
-                <Divider
-                    gradient="radial-gradient(#eceef1 40%, white 60%)"
-                    marginBottom="0"
-                />
+                <Divider gradient="radial-gradient(#eceef1 40%, white 60%)" marginBottom="0" />
                 <Flex mt={"10px"} width={"full"}>
                     <Spacer />
                     <PrimaryButton onClick={editData}>SAVE</PrimaryButton>

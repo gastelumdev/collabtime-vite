@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store";
 import { LoginRequest, UserResponse, ResetPasswordRequestRequest, BasicResponse } from "../../features/auth/types";
-import { TCell, TColumn, TDataCollection, TDocument, TJoinWorkspace, TNotification, TRow, TTableData, TUser, TWorkspace, TWorkspaceUsers } from "../../types";
+import { TCell, TColumn, TDataCollection, TDocument, TJoinWorkspace, TNotification, TRow, TTableData, TTag, TUser, TWorkspace, TWorkspaceUsers } from "../../types";
 
 export const api = createApi({
     baseQuery: fetchBaseQuery({
@@ -12,7 +12,7 @@ export const api = createApi({
             return headers;
         }
     }),
-    tagTypes: ["auth", "Workspace", "Notification", "DataCollection", "Column", "Rows", "Documents"],
+    tagTypes: ["auth", "Workspace", "Notification", "DataCollection", "Column", "Rows", "Documents", "Tags"],
     endpoints: (builder) => ({
         login: builder.mutation<UserResponse, LoginRequest>({
             query: (credentials) => ({
@@ -119,6 +119,13 @@ export const api = createApi({
                 method: "POST"
             }),
             invalidatesTags: ["Workspace"]
+        }),
+        tagExists: builder.mutation<{tagExists: boolean}, TTag>({
+            query: (tag) => ({
+                url: `workspaces/${tag.workspace}/tagExists`,
+                method: "POST",
+                body: tag,
+            })
         }),
         getNotifications: builder.query<TNotification[], null>({
             query: () => ({
@@ -298,6 +305,28 @@ export const api = createApi({
                 method: "POST",
                 body: key
             })
+        }),
+        getTags: builder.query<TTag[], string>({
+            query: (workspaceId) => ({
+                url: `/workspaces/${workspaceId}/tags`,
+            }),
+            providesTags: ["Tags", "Workspace"]
+        }),
+        createTag: builder.mutation<any, any>({
+            query: (body) => ({
+                url: `/workspaces/${body.tag.workspace}/tags`,
+                method: "POST",
+                body: body,
+            }),
+            invalidatesTags: ["Tags", "Workspace"]
+        }),
+        deleteTag: builder.mutation<{success: boolean}, TTag>({
+            query: (tag) => ({
+                url: `/workspaces/${tag.workspace}/tags/delete/${tag._id}`,
+                method: "POST",
+                body: tag,
+            }),
+            invalidatesTags: ["Tags", "Workspace"]
         })
     })
 })
@@ -318,6 +347,7 @@ export const {
     useRemoveMemberMutation,
     useRemoveInviteeMutation,
     useCallUpdateMutation,
+    useTagExistsMutation,
     useGetNotificationsQuery,
     useCallNotificationsUpdateMutation,
     useGetDataCollectionsQuery,
@@ -343,4 +373,7 @@ export const {
     useUpdateDocumentMutation,
     useDeleteDocumentMutation,
     useSearchAllMutation,
+    useGetTagsQuery,
+    useCreateTagMutation,
+    useDeleteTagMutation,
 } = api

@@ -28,6 +28,8 @@ export type TWorkspace = {
     invitees: TInvitee[];
     members: TInvitee[];
     owner: string;
+    tags: TTag[];
+    workspaceTags: TTag[];
 };
 
 export type TInvitee = {
@@ -153,4 +155,10 @@ export type TDocument = {
     ext?: string;
     value?: string;
     file?: any;
+};
+
+export type TTag = {
+    _id?: string;
+    workspace: string;
+    name: string;
 };

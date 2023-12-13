@@ -285,8 +285,6 @@ const TopNav = ({ sidebar = true, onOpen, leftContent, ...rest }: TopNavProps) =
 const SideBarLayout = ({ linkItems, leftContent, sidebar = true, children }: SidebarContentProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    console.log(sidebar);
-
     return (
         <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")} pl={{ base: 0, lg: 6 }} pr={0} pt={6}>
             {sidebar ? (

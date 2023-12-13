@@ -1,6 +1,22 @@
-import { Box, Card, CardBody, CardFooter, CardHeader, Center, Flex, Heading, Text } from "@chakra-ui/react";
+import {
+    Box,
+    Card,
+    CardBody,
+    CardFooter,
+    CardHeader,
+    Center,
+    Flex,
+    Heading,
+    Tag,
+    TagCloseButton,
+    TagLabel,
+    Text,
+    Wrap,
+    WrapItem,
+} from "@chakra-ui/react";
 import { AiOutlineLike } from "react-icons/ai";
 import Divider from "../Divider/Divider";
+import { TTag } from "../../types";
 
 interface IProps {
     index: number;
@@ -8,9 +24,19 @@ interface IProps {
     divider: boolean;
     editButton?: any;
     deleteButton?: any;
+    tagButton?: any;
+    handleCloseTagButtonClick?: any;
 }
 
-const PrimaryCard = ({ index, data, divider = true, editButton, deleteButton }: IProps) => {
+const PrimaryCard = ({
+    index,
+    data,
+    divider = true,
+    editButton,
+    deleteButton,
+    tagButton,
+    handleCloseTagButtonClick,
+}: IProps) => {
     return (
         <Card
             key={index}
@@ -60,17 +86,39 @@ const PrimaryCard = ({ index, data, divider = true, editButton, deleteButton }: 
                 href={`/workspaces/${data._id}`}
                 onClick={() => localStorage.setItem("workspaceId", data._id)}
             >
-                <Center>
-                    <Text color={"rgb(123, 128, 154)"} fontSize={"md"}>
-                        {data.description}
-                    </Text>
-                </Center>
+                <Box position={"relative"}>
+                    <Center>
+                        <Text color={"rgb(123, 128, 154)"} fontSize={"md"}>
+                            {data.description}
+                        </Text>
+                    </Center>
+                </Box>
             </CardBody>
-            {divider ? <Divider gradient="radial-gradient(#eceef1 40%, white 60%)" marginBottom="2px" /> : null}
+            <Box px={"20px"} py={"10px"}>
+                <Wrap spacing={1} key={index}>
+                    {data.tags.map((tag: TTag, index: number) => {
+                        return (
+                            <WrapItem key={index}>
+                                <Tag size={"sm"} variant="subtle" colorScheme="blue" mr={"5px"} zIndex={1000}>
+                                    <TagLabel pb={"2px"}>{tag.name}</TagLabel>
+                                    <TagCloseButton
+                                        onClick={() => handleCloseTagButtonClick(data, tag)}
+                                        zIndex={1000}
+                                    />
+                                </Tag>
+                            </WrapItem>
+                        );
+                    })}
+                </Wrap>
+            </Box>
+            {divider ? (
+                <Divider gradient="radial-gradient(#eceef1 40%, white 60%)" marginBottom="2px" marginTop="0" />
+            ) : null}
 
             <CardFooter p={"5px"}>
                 {editButton}
                 {deleteButton}
+                {tagButton}
             </CardFooter>
         </Card>
     );

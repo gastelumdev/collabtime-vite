@@ -10,9 +10,10 @@ import UpdateModal from "../documents/UpdateModal";
 
 interface IProps {
     onClose: any;
+    firstField: any;
 }
 
-const SearchContent = ({ onClose }: IProps) => {
+const SearchContent = ({ onClose, firstField }: IProps) => {
     const navigate = useNavigate();
     const [searchAll] = useSearchAllMutation();
     const [searchInputText, setSearchInputText] = useState<string>("");
@@ -56,6 +57,7 @@ const SearchContent = ({ onClose }: IProps) => {
                             placeholder={"Search..."}
                             value={searchInputText}
                             onChange={handleSearchInputChange}
+                            ref={firstField}
                         />
                     </InputGroup>
                 </Flex>

@@ -6,6 +6,8 @@ import {
     useUpdateWorkspaceMutation,
     useCallUpdateMutation,
     useGetUserQuery,
+    useDeleteTagMutation,
+    useTagExistsMutation,
 } from "../../app/services/api";
 
 import { io } from "socket.io-client";
@@ -30,7 +32,7 @@ import {
     AlertDialogFooter,
 } from "@chakra-ui/react";
 
-import { TWorkspace, LinkItemProps } from "../../types";
+import { TWorkspace, LinkItemProps, TTag } from "../../types";
 import Create from "./Create";
 import Edit from "./Edit";
 
@@ -41,6 +43,7 @@ import { AiOutlineDelete, AiOutlineLike } from "react-icons/ai";
 import { IconContext } from "react-icons";
 import { BsPersonWorkspace } from "react-icons/bs";
 import React from "react";
+import TagsModal from "../tags/TagsModal";
 
 const LinkItems: Array<LinkItemProps> = [{ name: "Workspaces", icon: BsPersonWorkspace, path: "/workspaces" }];
 
@@ -57,6 +60,8 @@ const View = () => {
     const [updateWorkspace] = useUpdateWorkspaceMutation();
     const [deleteWorkspace] = useDeleteWorkspaceMutation();
     const [callUpdate] = useCallUpdateMutation();
+    const [deleteTag] = useDeleteTagMutation();
+    const [tagExists] = useTagExistsMutation();
 
     const toast = useToast();
 
@@ -94,6 +99,35 @@ const View = () => {
             }
         }
     }, [data, user]);
+
+    const handleCloseTagButtonClick = async (workspace: TWorkspace, tag: TTag) => {
+        const { tags } = workspace;
+        console.log(tags);
+
+        const filteredTags = tags.filter((item) => {
+            return tag.name !== item.name;
+        });
+
+        const newWorkspace = { ...workspace, tags: filteredTags };
+        console.log(newWorkspace);
+        const updatedWorkspaceRes: any = await updateWorkspace(newWorkspace);
+        const updatedWorkspace = updatedWorkspaceRes.data;
+        console.log(updatedWorkspace);
+
+        const { workspaceTags } = updatedWorkspace;
+
+        const thisTagExistsRes: any = await tagExists(tag);
+        console.log(thisTagExistsRes);
+
+        if (!thisTagExistsRes.data.tagExists) {
+            const filteredWorkspaceTags = workspaceTags.filter((item: TTag) => {
+                return item.name !== tag.name;
+            });
+            const newUpdatedWorkspace = { ...updatedWorkspace, workspaceTags: filteredWorkspaceTags };
+            await updateWorkspace(newUpdatedWorkspace);
+            await deleteTag(tag);
+        }
+    };
 
     if (createWorkspaceIsError) {
         toast({
@@ -218,6 +252,18 @@ const View = () => {
                                                     </>
                                                 ) : null
                                             }
+                                            tagButton={
+                                                workspace?.owner === localStorage.getItem("userId") || isAuthorized ? (
+                                                    <TagsModal
+                                                        tagType={"workspace"}
+                                                        data={workspace}
+                                                        tags={workspace.tags}
+                                                        update={updateWorkspace}
+                                                        workspaceId={workspace._id || ""}
+                                                    />
+                                                ) : null
+                                            }
+                                            handleCloseTagButtonClick={handleCloseTagButtonClick}
                                         />
                                     );
                                 })}
