@@ -36,6 +36,8 @@ const Edit = ({ workspace, updateWorkspace }: IProps) => {
      */
     const [data, setData] = useState<TWorkspace>(workspace);
 
+    const [inputError, setInputError] = useState<boolean>(false);
+
     /**
      * Sets tools based on the checkboxes and sets updates the workspace with
      * the update workspace prop
@@ -63,6 +65,11 @@ const Edit = ({ workspace, updateWorkspace }: IProps) => {
      */
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value, name } = event.target;
+        if (value.length > 30) {
+            setInputError(true);
+        } else {
+            setInputError(false);
+        }
         setData({
             ...data,
             [name]: value,
@@ -82,6 +89,9 @@ const Edit = ({ workspace, updateWorkspace }: IProps) => {
             <PrimaryDrawer isOpen={isOpen} onClose={onClose} title="Edit workspace">
                 <Text pb={"5px"} color={"rgb(123, 128, 154)"} fontSize={"14px"}>
                     Name
+                </Text>
+                <Text ml={"8px"} pt={"2px"} fontSize={"14px"} color={"#e53e3e"}>
+                    {inputError ? "* Name exceeds character limit" : ""}
                 </Text>
                 <Input
                     name="name"
@@ -151,7 +161,9 @@ const Edit = ({ workspace, updateWorkspace }: IProps) => {
                 <Divider gradient="radial-gradient(#eceef1 40%, white 60%)" marginBottom="0" />
                 <Flex mt={"10px"} width={"full"}>
                     <Spacer />
-                    <PrimaryButton onClick={editData}>SAVE</PrimaryButton>
+                    <PrimaryButton onClick={editData} isDisabled={inputError}>
+                        SAVE
+                    </PrimaryButton>
                 </Flex>
             </PrimaryDrawer>
         </>

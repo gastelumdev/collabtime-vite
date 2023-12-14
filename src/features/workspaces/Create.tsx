@@ -49,6 +49,7 @@ const Create = ({ addNewWorkspace }: IProps) => {
      */
     const [data, setData] = useState<TWorkspace>(defaultValues);
 
+    const [inputError, setInputError] = useState<boolean>(false);
     /**
      * This function updates the workspace data and create a new workspace
      */
@@ -74,6 +75,11 @@ const Create = ({ addNewWorkspace }: IProps) => {
      */
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value, name } = event.target;
+        if (value.length > 30) {
+            setInputError(true);
+        } else {
+            setInputError(false);
+        }
         setData({
             ...data,
             [name]: value,
@@ -103,6 +109,9 @@ const Create = ({ addNewWorkspace }: IProps) => {
             <PrimaryDrawer isOpen={isOpen} onClose={onClose} size={"md"} title={"Create a new workspace"}>
                 <Text pb={"5px"} color={"rgb(123, 128, 154)"}>
                     Name
+                </Text>
+                <Text ml={"8px"} pt={"2px"} fontSize={"14px"} color={"#e53e3e"}>
+                    {inputError ? "* Name exceeds character limit" : ""}
                 </Text>
                 <Input
                     name="name"
@@ -164,7 +173,9 @@ const Create = ({ addNewWorkspace }: IProps) => {
                     <Divider gradient="radial-gradient(#eceef1 40%, white 60%)" marginBottom="0" />
                     <Flex mt={"10px"} width={"full"}>
                         <Spacer />
-                        <PrimaryButton onClick={createData}>SAVE</PrimaryButton>
+                        <PrimaryButton onClick={createData} isDisabled={inputError}>
+                            SAVE
+                        </PrimaryButton>
                     </Flex>
                 </Stack>
             </PrimaryDrawer>
