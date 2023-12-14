@@ -673,6 +673,7 @@ const DataCollectionTable = ({
                                         </Box>
                                     </Box>
                                 </Td>
+                                {showTagsColumn ? <Td></Td> : null}
                                 {columns?.map((column: TColumn, index: number) => {
                                     const options = column.labels?.map((item) => {
                                         return {
