@@ -23,6 +23,7 @@ import {
 } from "../../app/services/api";
 import { TTag } from "../../types";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
+import { BsPlusCircle } from "react-icons/bs";
 
 interface IProps {
     data: any;
@@ -132,14 +133,20 @@ const TagsModal = ({ data, tags, update, workspaceId, tagType }: IProps) => {
 
     return (
         <>
-            <Button
-                flex="1"
-                variant="ghost"
-                leftIcon={<GoTag />}
-                color={"rgb(123, 128, 154)"}
-                zIndex={10}
-                onClick={onOpen}
-            ></Button>
+            {tagType === "row" ? (
+                <Button onClick={onOpen} variant={"unstyled"} h={"18px"} minW={"16px"} mr={"5px"} pt={"2px"}>
+                    <BsPlusCircle color={"rgb(123, 128, 154)"} />
+                </Button>
+            ) : (
+                <Button
+                    flex="1"
+                    variant="ghost"
+                    leftIcon={<GoTag />}
+                    color={"rgb(123, 128, 154)"}
+                    zIndex={10}
+                    onClick={onOpen}
+                ></Button>
+            )}
             <Modal isOpen={isOpen} onClose={onClose} initialFocusRef={initialRef}>
                 <ModalOverlay />
                 <ModalContent>

@@ -103,6 +103,7 @@ export type TRow = {
     notes?: string;
     notesList: INote[];
     cells: string[] | TCell;
+    tags: TTag[];
 };
 
 export type TCell = {

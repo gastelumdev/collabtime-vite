@@ -7,6 +7,11 @@ import {
     useUpdateRowMutation,
     useRowCallUpdateMutation,
     useCreateColumnMutation,
+    useDeleteTagMutation,
+    useTagExistsMutation,
+    useGetDataCollectionQuery,
+    useGetOneWorkspaceQuery,
+    useUpdateWorkspaceMutation,
 } from "../../app/services/api";
 import {
     AlertDialog,
@@ -32,6 +37,9 @@ import {
     Spacer,
     Table,
     TableContainer,
+    Tag,
+    TagCloseButton,
+    TagLabel,
     Tbody,
     Td,
     Text,
@@ -39,6 +47,7 @@ import {
     Thead,
     Tooltip,
     Tr,
+    WrapItem,
     useDisclosure,
 } from "@chakra-ui/react";
 import Select from "react-select";
@@ -49,9 +58,12 @@ import { cellColorStyles, createRowColorStyles } from "./select.styles";
 import NoteModal from "./NoteModal";
 import RenameColumn from "./RenameColumn";
 import EditRow from "./EditRow";
-import { TCell, TColumn, TRow } from "../../types";
+import { TCell, TColumn, TRow, TTag } from "../../types";
 import CreateColumn from "./CreateColumn";
 import { io } from "socket.io-client";
+import { GoTag } from "react-icons/go";
+import TagsModal from "../tags/TagsModal";
+import { useParams } from "react-router-dom";
 
 interface IProps {
     columns: TColumn[];
@@ -71,6 +83,10 @@ const DataCollectionTable = ({
     permissions = 2,
 }: IProps) => {
     const cancelRef = React.useRef<any>(null);
+    const { id } = useParams();
+
+    const { data: dataCollection } = useGetDataCollectionQuery(dataCollectionId || "");
+    const { data: workspace } = useGetOneWorkspaceQuery(id || "");
 
     const [createColumn] = useCreateColumnMutation();
     const [deleteColumn] = useDeleteColumnMutation();
@@ -79,6 +95,10 @@ const DataCollectionTable = ({
     const [deleteRow, { isLoading: deletingRows }] = useDeleteRowMutation();
     const [updateCell] = useUpdateCellMutation();
     const [rowCallUpdate] = useRowCallUpdateMutation();
+    const [updateWorkspace] = useUpdateWorkspaceMutation();
+
+    const [deleteTag] = useDeleteTagMutation();
+    const [tagExists] = useTagExistsMutation();
 
     const [row, setRow] = useState<any>({});
     const [labelStyles, setLabelStyles] = useState<any>({});
@@ -101,6 +121,9 @@ const DataCollectionTable = ({
             return false;
         })
     );
+
+    const [showTagsColumn, setShowTagsColumn] = useState<boolean>(false);
+    const [tagsColumnWidth, setTagsColumnWidth] = useState<string>("");
 
     /**
      * This converts data so that the react table can read it before the component
@@ -133,8 +156,28 @@ const DataCollectionTable = ({
         };
     }, []);
 
+    useEffect(() => {
+        let max = 0;
+        let maxTags = 0;
+        for (const row of rows) {
+            let totalTagsWidth = 0;
+            for (const tag of row.tags) {
+                totalTagsWidth += tag.name.length;
+            }
+
+            if (totalTagsWidth > max) max = totalTagsWidth;
+            if (row.tags.length > maxTags) maxTags = row.tags.length;
+        }
+
+        let letterWidth = max * 10;
+        let tagSpace = 40;
+        let spacing = 40;
+
+        setTagsColumnWidth((letterWidth + tagSpace + spacing).toString() + "px");
+    }, [rows]);
+
     const setDefaultRow = () => {
-        let temp: TRow = { dataCollection: dataCollectionId, notesList: [], cells: [] };
+        let temp: TRow = { dataCollection: dataCollectionId, notesList: [], cells: [], tags: [] };
         for (const column of columns || []) {
             temp = { ...temp, [column.name]: "" };
         }
@@ -242,6 +285,40 @@ const DataCollectionTable = ({
         await updateCell(newCell);
     };
 
+    const handleCloseTagButtonClick = async (row: TRow, tag: TTag) => {
+        const { tags } = row;
+        console.log(tags);
+
+        const filteredTags = tags.filter((item) => {
+            return tag.name !== item.name;
+        });
+
+        const addNewRow = { ...row, tags: filteredTags };
+        console.log(addNewRow);
+        const updatedRowRes: any = await updateRow(addNewRow);
+        const updatedRow = updatedRowRes.data;
+        console.log(updatedRow);
+
+        let workspaceTags;
+
+        if (workspace) {
+            workspaceTags = workspace.workspaceTags;
+        }
+
+        const thisTagExistsRes: any = await tagExists(tag);
+        console.log(thisTagExistsRes);
+
+        if (!thisTagExistsRes.data.tagExists) {
+            const filteredWorkspaceTags = workspaceTags?.filter((item: TTag) => {
+                return item.name !== tag.name;
+            });
+            const newUpdatedWorkspace: any = { ...workspace, workspaceTags: filteredWorkspaceTags };
+
+            await updateWorkspace(newUpdatedWorkspace);
+            await deleteTag(tag);
+        }
+    };
+
     const DeleteColumnAlert = ({ column }: { column: TColumn }) => {
         const {
             isOpen: deleteColumnModalIsOpen,
@@ -299,11 +376,22 @@ const DataCollectionTable = ({
                         {/* ************************* */}
                         <Tr>
                             {(permissions || 0) > 1 ? (
-                                <Th w={"100px"}>
-                                    <Text visibility={"hidden"}>Wor</Text>
-                                </Th>
+                                <>
+                                    <Th w={"100px"} px={"14px"}>
+                                        <Flex>
+                                            <Spacer />
+                                            <GoTag
+                                                fontSize={"16px"}
+                                                onClick={() => setShowTagsColumn(!showTagsColumn)}
+                                                cursor={"pointer"}
+                                            />
+                                        </Flex>
+                                    </Th>
+                                    {showTagsColumn ? <Th w={tagsColumnWidth}>TAGS</Th> : null}
+                                </>
                             ) : null}
                             {columns?.map((column: TColumn, index: number) => {
+                                console.log(tagsColumnWidth);
                                 let width = "200px";
 
                                 if (column.type === "people") width = "145px";
@@ -355,21 +443,68 @@ const DataCollectionTable = ({
                             return (
                                 <Tr key={index}>
                                     {(permissions || 0) > 1 ? (
-                                        <Td>
-                                            <Flex>
-                                                <Checkbox
-                                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                                                        onDeleteRowCheckboxChange(event, row)
-                                                    }
-                                                />
-                                                <EditRow cells={row.cells} />
-                                                <NoteModal
-                                                    row={row}
-                                                    updateRow={updateRow}
-                                                    rowCallUpdate={rowCallUpdate}
-                                                />
-                                            </Flex>
-                                        </Td>
+                                        <>
+                                            <Td>
+                                                <Flex>
+                                                    <Checkbox
+                                                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                                                            onDeleteRowCheckboxChange(event, row)
+                                                        }
+                                                    />
+                                                    <EditRow cells={row.cells} />
+                                                    <NoteModal
+                                                        row={row}
+                                                        updateRow={updateRow}
+                                                        rowCallUpdate={rowCallUpdate}
+                                                    />
+                                                </Flex>
+                                            </Td>
+                                            {showTagsColumn ? (
+                                                <Td>
+                                                    <Box overflow={"revert"}>
+                                                        <Flex>
+                                                            <TagsModal
+                                                                tagType={"row"}
+                                                                data={row}
+                                                                tags={row.tags}
+                                                                update={updateRow}
+                                                                workspaceId={dataCollection?.workspace || ""}
+                                                            />
+                                                            {row.tags !== undefined
+                                                                ? row.tags.map((tag: TTag, index: number) => {
+                                                                      return (
+                                                                          <>
+                                                                              <WrapItem key={index}>
+                                                                                  <Tag
+                                                                                      size={"sm"}
+                                                                                      variant="subtle"
+                                                                                      colorScheme="blue"
+                                                                                      mr={"5px"}
+                                                                                      zIndex={1000}
+                                                                                  >
+                                                                                      <TagLabel pb={"2px"}>
+                                                                                          {tag.name}
+                                                                                      </TagLabel>
+                                                                                      <TagCloseButton
+                                                                                          onClick={() =>
+                                                                                              handleCloseTagButtonClick(
+                                                                                                  row,
+                                                                                                  tag
+                                                                                              )
+                                                                                          }
+                                                                                          zIndex={1000}
+                                                                                      />
+                                                                                  </Tag>
+                                                                              </WrapItem>
+                                                                          </>
+                                                                      );
+                                                                  })
+                                                                : null}
+                                                        </Flex>
+                                                    </Box>
+                                                </Td>
+                                            ) : null}
+                                        </>
                                     ) : null}
                                     {row.cells.map((cell: TCell, index: number) => {
                                         let bgColor: string = "";

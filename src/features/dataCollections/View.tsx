@@ -7,6 +7,7 @@ import {
     useGetOneWorkspaceQuery,
     useDeleteTagMutation,
     useTagExistsMutation,
+    useUpdateWorkspaceMutation,
 } from "../../app/services/api";
 
 import {
@@ -48,6 +49,7 @@ const View = () => {
     const [createDataCollection] = useCreateDataCollecionMutation();
     const [updateDataCollection] = useUpdateDataCollectionMutation();
     const [deleteDataCollection] = useDeleteDataCollectionMutation();
+    const [updateWorkspace] = useUpdateWorkspaceMutation();
 
     const [deleteTag] = useDeleteTagMutation();
     const [tagExists] = useTagExistsMutation();
@@ -73,27 +75,35 @@ const View = () => {
         const { tags } = dataCollection;
         console.log(tags);
 
+        // Filter out the tag clicked on from the data collection tags
         const filteredTags = tags.filter((item) => {
             return tag.name !== item.name;
         });
 
+        // Create a new data collection with the updated tags
         const addNewDataCollection = { ...dataCollection, tags: filteredTags };
         console.log(addNewDataCollection);
+        // update the data collection and get the updated data collection
         const updatedDataCollectionRes: any = await updateDataCollection(addNewDataCollection);
-        const updatedWorkspace = updatedDataCollectionRes.data;
-        console.log(updatedWorkspace);
+        const updatedDataCollection = updatedDataCollectionRes.data;
+        console.log(updatedDataCollection);
 
-        const { workspaceTags } = updatedWorkspace;
+        let workspaceTags;
+
+        if (workspace) {
+            workspaceTags = workspace.workspaceTags;
+        }
 
         const thisTagExistsRes: any = await tagExists(tag);
         console.log(thisTagExistsRes);
 
         if (!thisTagExistsRes.data.tagExists) {
-            const filteredWorkspaceTags = workspaceTags.filter((item: TTag) => {
+            const filteredWorkspaceTags = workspaceTags?.filter((item: TTag) => {
                 return item.name !== tag.name;
             });
-            const newUpdatedWorkspace = { ...updatedWorkspace, workspaceTags: filteredWorkspaceTags };
-            await updateDataCollection(newUpdatedWorkspace);
+            const newUpdatedWorkspace: any = { ...workspace, workspaceTags: filteredWorkspaceTags };
+
+            await updateWorkspace(newUpdatedWorkspace);
             await deleteTag(tag);
         }
     };
@@ -217,144 +227,7 @@ const View = () => {
                                             }
                                             handleCloseTagButtonClick={handleCloseTagButtonClick}
                                         />
-                                        {/* <Card
-                                            key={index}
-                                            variant="outline"
-                                            boxShadow="rgba(0, 0, 0, 0.1) 0rem 0.25rem 0.375rem -0.0625rem, rgba(0, 0, 0, 0.06) 0rem 0.125rem 0.25rem -0.0625rem"
-                                            mb={{ base: 6 }}
-                                            h={"250px"}
-                                        >
-                                            <CardHeader
-                                                h={"60px"}
-                                                as={"a"}
-                                                href={`/workspaces/${localStorage.getItem(
-                                                    "workspaceId"
-                                                )}/dataCollections/${dataCollection._id}`}
-                                                onClick={() =>
-                                                    localStorage.setItem("dataCollectionId", dataCollection?._id || "")
-                                                }
-                                            >
-                                                <Flex>
-                                                    <Flex
-                                                        flex="1"
-                                                        gap="4"
-                                                        alignItems="center"
-                                                        flexWrap="wrap"
-                                                        position={"relative"}
-                                                        bottom={10}
-                                                    >
-                                                        <Box
-                                                            bgImage={
-                                                                // "radial-gradient(circle at center top, rgb(73, 163, 241), rgb(26, 115, 232))"
-                                                                // "radial-gradient(circle at center top, rgb(66, 66, 74), black)"
-                                                                // "radial-gradient(circle at right top, #F26989, #EB1E4E)"
-                                                                "linear-gradient(195deg, rgb(73, 163, 241), rgb(26, 115, 232))"
-                                                            }
-                                                            padding={"20px"}
-                                                            borderRadius={"lg"}
-                                                            // position={"relative"}
-                                                            // bottom={10}
-                                                        >
-                                                            <IconContext.Provider
-                                                                value={{
-                                                                    size: "18px",
-                                                                    color: "white",
-                                                                }}
-                                                            >
-                                                                <BiTable />
-                                                            </IconContext.Provider>
-                                                        </Box>
-
-                                                        <Box
-                                                            // position={"relative"}
-                                                            // bottom={7}
-                                                            pt={7}
-                                                        >
-                                                            <Heading size="xs" color={"#575757"}>
-                                                                {dataCollection.name}
-                                                            </Heading>
-                                                        </Box>
-                                                    </Flex>
-                                                </Flex>
-                                            </CardHeader>
-                                            <CardBody
-                                                py={0}
-                                                as={"a"}
-                                                href={`/workspaces/${localStorage.getItem(
-                                                    "workspaceId"
-                                                )}/dataCollections/${dataCollection._id}`}
-                                                onClick={() =>
-                                                    localStorage.setItem("dataCollectionId", dataCollection?._id || "")
-                                                }
-                                            >
-                                                <Center>
-                                                    <Text color={"rgb(123, 128, 154)"} fontSize={"md"}>
-                                                        {dataCollection.description}
-                                                    </Text>
-                                                </Center>
-                                            </CardBody>
-
-                                            <Divider
-                                                gradient="radial-gradient(#eceef1 40%, white 60%)"
-                                                marginBottom="2px"
-                                            />
-                                            {(permissions || 0) > 1 ? (
-                                                <CardFooter p={"5px"}>
-                                                    <Edit
-                                                        dataCollection={dataCollection}
-                                                        updateDataCollection={updateDataCollection}
-                                                    />
-                                                    <>
-                                                        <Button
-                                                            flex="1"
-                                                            variant="ghost"
-                                                            leftIcon={<AiOutlineDelete />}
-                                                            color={"rgb(123, 128, 154)"}
-                                                            zIndex={10}
-                                                            onClick={onOpen}
-                                                        ></Button>
-                                                        <AlertDialog
-                                                            isOpen={isOpen}
-                                                            leastDestructiveRef={cancelRef}
-                                                            onClose={onClose}
-                                                        >
-                                                            <AlertDialogOverlay>
-                                                                <AlertDialogContent>
-                                                                    <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                                                                        Delete Customer
-                                                                    </AlertDialogHeader>
-
-                                                                    <AlertDialogBody>
-                                                                        Are you sure? You can't undo this action
-                                                                        afterwards.
-                                                                    </AlertDialogBody>
-
-                                                                    <AlertDialogFooter>
-                                                                        <Button ref={cancelRef} onClick={onClose}>
-                                                                            Cancel
-                                                                        </Button>
-                                                                        <Button
-                                                                            colorScheme="red"
-                                                                            onClick={() => {
-                                                                                deleteDataCollection(
-                                                                                    dataCollection?._id || ""
-                                                                                );
-                                                                                onClose();
-                                                                            }}
-                                                                            ml={3}
-                                                                        >
-                                                                            Delete
-                                                                        </Button>
-                                                                    </AlertDialogFooter>
-                                                                </AlertDialogContent>
-                                                            </AlertDialogOverlay>
-                                                        </AlertDialog>
-                                                    </>
-                                                </CardFooter>
-                                            ) : null}
-                                        </Card> */}
                                     </>
-                                    // </Box>
                                 );
                             })}
                         </SimpleGrid>
