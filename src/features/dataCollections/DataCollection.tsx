@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useGetColumnsQuery, useGetRowsQuery, useGetUserQuery } from "../../app/services/api";
 import { useParams } from "react-router-dom";
 import DataCollectionTable from "./DataCollectionTable";
-import { TDataCollection } from "../../types";
 
 const DataCollection = () => {
     const { dataCollectionId } = useParams();

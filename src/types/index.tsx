@@ -157,6 +157,7 @@ export type TDocument = {
     ext?: string;
     value?: string;
     file?: any;
+    tags: TTag[];
 };
 
 export type TTag = {

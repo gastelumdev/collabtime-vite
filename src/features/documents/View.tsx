@@ -28,12 +28,16 @@ import {
     Spacer,
     Table,
     TableContainer,
+    Tag,
+    TagCloseButton,
+    TagLabel,
     Tbody,
     Td,
     Text,
     Th,
     Thead,
     Tr,
+    WrapItem,
     useDisclosure,
 } from "@chakra-ui/react";
 import { Editor } from "@tinymce/tinymce-react";
@@ -47,8 +51,12 @@ import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import {
     useCreateDocumentMutation,
     useDeleteDocumentMutation,
+    useDeleteTagMutation,
     useGetDocumentsQuery,
     useGetOneWorkspaceQuery,
+    useTagExistsMutation,
+    useUpdateDocumentMutation,
+    useUpdateWorkspaceMutation,
     useUploadDocsMutation,
     useUploadPersistedDocsMutation,
 } from "../../app/services/api";
@@ -56,7 +64,8 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import { FaRegImage } from "react-icons/fa";
 import PrimaryDrawer from "../../components/PrimaryDrawer";
 import UpdateModal from "./UpdateModal";
-import { TDocument } from "../../types";
+import { TDocument, TTag } from "../../types";
+import TagsModal from "../tags/TagsModal";
 
 const View = () => {
     const { isOpen: uploadIsOpen, onOpen: uploadOnOpen, onClose: uploadOnClose } = useDisclosure();
@@ -66,7 +75,12 @@ const View = () => {
     const { data: documents, isFetching: documentsIsFetching } = useGetDocumentsQuery(null);
     const { data: workspace } = useGetOneWorkspaceQuery(localStorage.getItem("workspaceId") || "");
     const [createDocument, { isLoading: createIsLoading }] = useCreateDocumentMutation();
+    const [updateDocument] = useUpdateDocumentMutation();
     const [deleteDocument] = useDeleteDocumentMutation();
+    const [updateWorkspace] = useUpdateWorkspaceMutation();
+
+    const [deleteTag] = useDeleteTagMutation();
+    const [tagExists] = useTagExistsMutation();
 
     const [uploadDocs] = useUploadDocsMutation();
     const [uploadPersistedDocs] = useUploadPersistedDocsMutation();
@@ -136,6 +150,7 @@ const View = () => {
                     url: res.data.files[i].url,
                     file: res.data.files[i].file,
                     ext: ext,
+                    tags: [],
                 });
                 uploadOnClose();
             }
@@ -150,6 +165,7 @@ const View = () => {
             type: "created",
             value: editorValue,
             ext: "created",
+            tags: [],
         });
     };
 
@@ -169,6 +185,40 @@ const View = () => {
     const handleUploadOnClose = () => {
         uploadOnClose();
         setDuplicateFiles([]);
+    };
+
+    const handleCloseTagButtonClick = async (document: TDocument, tag: TTag) => {
+        const { tags } = document;
+        console.log(tags);
+
+        const filteredTags = tags.filter((item) => {
+            return tag.name !== item.name;
+        });
+
+        const addNewDocument = { ...document, tags: filteredTags };
+        console.log(addNewDocument);
+        const updatedRowRes: any = await updateDocument(addNewDocument);
+        const updatedRow = updatedRowRes.data;
+        console.log(updatedRow);
+
+        let workspaceTags;
+
+        if (workspace) {
+            workspaceTags = workspace.workspaceTags;
+        }
+
+        const thisTagExistsRes: any = await tagExists(tag);
+        console.log(thisTagExistsRes);
+
+        if (!thisTagExistsRes.data.tagExists) {
+            const filteredWorkspaceTags = workspaceTags?.filter((item: TTag) => {
+                return item.name !== tag.name;
+            });
+            const newUpdatedWorkspace: any = { ...workspace, workspaceTags: filteredWorkspaceTags };
+
+            await updateWorkspace(newUpdatedWorkspace);
+            await deleteTag(tag);
+        }
     };
 
     return (
@@ -219,13 +269,14 @@ const View = () => {
                         <CardBody>
                             {documents?.length || 0 > 0 ? (
                                 <TableContainer>
-                                    <Table size={"sm"}>
+                                    <Table size={"sm"} style={{ tableLayout: "fixed" }}>
                                         <Thead>
                                             <Tr>
-                                                <Th>Filename</Th>
-                                                <Th>Uploaded by</Th>
-                                                <Th>Size</Th>
-                                                <Th>Actions</Th>
+                                                <Th width={"300px"}>Filename</Th>
+                                                <Th width={"180px"}>Uploaded by</Th>
+                                                <Th width={"180px"}>Size</Th>
+                                                <Th width={"100px"}>Actions</Th>
+                                                <Th>Tags</Th>
                                             </Tr>
                                         </Thead>
                                         <Tbody>
@@ -307,6 +358,51 @@ const View = () => {
                                                                 </AlertDialogContent>
                                                             </AlertDialogOverlay>
                                                         </AlertDialog>
+                                                        <Td>
+                                                            <Box overflow={"revert"}>
+                                                                <Flex>
+                                                                    <TagsModal
+                                                                        tagType={"document"}
+                                                                        data={document}
+                                                                        tags={document.tags}
+                                                                        update={updateDocument}
+                                                                        workspaceId={document?.workspace || ""}
+                                                                    />
+                                                                    {document.tags !== undefined
+                                                                        ? document.tags.map(
+                                                                              (tag: TTag, index: number) => {
+                                                                                  return (
+                                                                                      <>
+                                                                                          <WrapItem key={index}>
+                                                                                              <Tag
+                                                                                                  size={"sm"}
+                                                                                                  variant="subtle"
+                                                                                                  colorScheme="blue"
+                                                                                                  mr={"5px"}
+                                                                                                  zIndex={1000}
+                                                                                              >
+                                                                                                  <TagLabel pb={"2px"}>
+                                                                                                      {tag.name}
+                                                                                                  </TagLabel>
+                                                                                                  <TagCloseButton
+                                                                                                      onClick={() =>
+                                                                                                          handleCloseTagButtonClick(
+                                                                                                              document,
+                                                                                                              tag
+                                                                                                          )
+                                                                                                      }
+                                                                                                      zIndex={1000}
+                                                                                                  />
+                                                                                              </Tag>
+                                                                                          </WrapItem>
+                                                                                      </>
+                                                                                  );
+                                                                              }
+                                                                          )
+                                                                        : null}
+                                                                </Flex>
+                                                            </Box>
+                                                        </Td>
                                                     </Tr>
                                                 );
                                             })}

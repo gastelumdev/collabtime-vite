@@ -90,12 +90,15 @@ const TagsModal = ({ data, tags, update, workspaceId, tagType }: IProps) => {
     };
 
     const handleCreateTagClick = async () => {
+        onClose();
         const res: any = await createTag({ tagType: tagType, tag: { workspace: workspaceId, name: tagInput } });
         const tagsCopy = tags || [];
         console.log(res);
 
         const workspaceTagsCopy = workspace?.workspaceTags || [];
         const updateWorkspaceCopy: any = updateWorkspace;
+
+        console.log(workspaceTagsCopy);
 
         if (tagType === "workspace") {
             await update({
@@ -113,13 +116,12 @@ const TagsModal = ({ data, tags, update, workspaceId, tagType }: IProps) => {
                 tags: [...tagsCopy, res.data],
             });
         }
-
         filterTags();
         setTagInput("");
-        onClose();
     };
 
     const handleAddWorkspaceTag = async (tag: TTag) => {
+        onClose();
         const tagsCopy = tags || [];
         await update({
             ...data,
@@ -128,12 +130,11 @@ const TagsModal = ({ data, tags, update, workspaceId, tagType }: IProps) => {
 
         filterTags();
         setTagInput("");
-        onClose();
     };
 
     return (
         <>
-            {tagType === "row" ? (
+            {tagType === "row" || tagType === "document" ? (
                 <Button onClick={onOpen} variant={"unstyled"} h={"18px"} minW={"16px"} mr={"5px"} pt={"2px"}>
                     <BsPlusCircle color={"rgb(123, 128, 154)"} />
                 </Button>

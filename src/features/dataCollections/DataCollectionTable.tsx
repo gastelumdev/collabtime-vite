@@ -68,10 +68,11 @@ import { useParams } from "react-router-dom";
 interface IProps {
     columns: TColumn[];
     rows: TRow[];
-    rowsLoading: boolean;
-    rowsFetching: boolean;
+    rowsLoading?: boolean;
+    rowsFetching?: boolean;
     dataCollectionId: string;
-    permissions: number;
+    permissions?: number;
+    type?: string;
 }
 
 const DataCollectionTable = ({
@@ -81,6 +82,7 @@ const DataCollectionTable = ({
     rowsFetching,
     dataCollectionId,
     permissions = 2,
+    type = "table",
 }: IProps) => {
     const cancelRef = React.useRef<any>(null);
     const { id } = useParams();
@@ -364,12 +366,14 @@ const DataCollectionTable = ({
     };
     return (
         <>
-            <Box h={"20px"}>
-                {rowsLoading || deletingRows || creatingRow || rowsFetching ? (
-                    <Progress size="xs" isIndeterminate />
-                ) : null}
-            </Box>
-            <TableContainer pb={"300px"}>
+            {type === "table" ? (
+                <Box h={"20px"}>
+                    {rowsLoading || deletingRows || creatingRow || rowsFetching ? (
+                        <Progress size="xs" isIndeterminate />
+                    ) : null}
+                </Box>
+            ) : null}
+            <TableContainer pb={type === "table" ? "300px" : "0"}>
                 <Table size="sm" style={{ tableLayout: "fixed" }}>
                     <Thead>
                         {/* ******** COLUMNS ******** */}
