@@ -99,19 +99,28 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
                     <Divider gradient="radial-gradient(#5e5b5b 40%, #1c1c1c)" marginBottom="10px" />
                     <Box transition="3s ease">
                         {linkItems.map((link) => (
-                            <Tooltip
-                                key={link.name}
-                                label={link.name}
-                                openDelay={0}
-                                // isDisabled={isFocused}
-                                placement={"top"}
-                            >
-                                <Link to={link.path}>
-                                    <NavItem key={link.name} icon={link.icon}>
-                                        {isOpen ? <Text color={"white"}>{link.name}</Text> : null}
-                                    </NavItem>
-                                </Link>
-                            </Tooltip>
+                            <>
+                                <Tooltip
+                                    key={link.name}
+                                    label={link.name}
+                                    openDelay={0}
+                                    // isDisabled={isFocused}
+                                    placement={"top"}
+                                >
+                                    <Link to={link.path}>
+                                        <NavItem key={link.name} icon={link.icon}>
+                                            {isOpen ? <Text color={"white"}>{link.name}</Text> : null}
+                                        </NavItem>
+                                    </Link>
+                                </Tooltip>
+                                {link.name === "Workspaces" ? (
+                                    <Divider
+                                        gradient="radial-gradient(#5e5b5b 40%, black)"
+                                        marginBottom="10px"
+                                        marginTop="10px"
+                                    />
+                                ) : null}
+                            </>
                         ))}
                         <Divider gradient="radial-gradient(#5e5b5b 40%, black)" marginBottom="10px" marginTop="10px" />
                         <Tooltip
@@ -151,7 +160,7 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
             {icon && (
                 <Icon
                     mr="4"
-                    fontSize="16"
+                    fontSize="19"
                     _groupHover={{
                         color: "white",
                     }}

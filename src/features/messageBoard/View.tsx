@@ -25,7 +25,7 @@ import {
     useMarkAsReadMutation,
     useTypingMessageMutation,
 } from "../../app/services/api";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { formatTime } from "../../utils/helpers";
 import { io } from "socket.io-client";
 
@@ -33,7 +33,7 @@ const View = () => {
     const { id } = useParams();
     const messagesEndRef = useRef<any>(null);
     const { data: messages } = useGetMessagesQuery(id || "");
-    const { data: workspace } = useGetOneWorkspaceQuery(id || "");
+    const { data: workspace, isFetching } = useGetOneWorkspaceQuery(id || "");
     const { data: user } = useGetUserQuery(localStorage.getItem("userId") || "");
 
     const [createMessage] = useCreateMessageMutation();
@@ -140,7 +140,17 @@ const View = () => {
                         <Flex>
                             <Box>
                                 <Heading size={"sm"} mb={"12px"} color={"rgb(52, 71, 103)"}>
-                                    {`${workspace?.name} - Message Board`}
+                                    {!isFetching ? (
+                                        <>
+                                            <Link to={`/workspaces/${localStorage.getItem("workspaceId")}`}>
+                                                <Text
+                                                    display={"inline"}
+                                                    textDecor={"underline"}
+                                                >{`${workspace?.name}`}</Text>
+                                            </Link>
+                                            <Text display={"inline"}>{" / Message Board"}</Text>
+                                        </>
+                                    ) : null}
                                 </Heading>
                             </Box>
                         </Flex>

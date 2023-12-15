@@ -66,6 +66,7 @@ import PrimaryDrawer from "../../components/PrimaryDrawer";
 import UpdateModal from "./UpdateModal";
 import { TDocument, TTag } from "../../types";
 import TagsModal from "../tags/TagsModal";
+import { Link } from "react-router-dom";
 
 const View = () => {
     const { isOpen: uploadIsOpen, onOpen: uploadOnOpen, onClose: uploadOnClose } = useDisclosure();
@@ -73,7 +74,7 @@ const View = () => {
     const { isOpen: deleteIsOpen, onOpen: deleteOnOpen, onClose: deleteOnClose } = useDisclosure();
 
     const { data: documents, isFetching: documentsIsFetching } = useGetDocumentsQuery(null);
-    const { data: workspace } = useGetOneWorkspaceQuery(localStorage.getItem("workspaceId") || "");
+    const { data: workspace, isFetching } = useGetOneWorkspaceQuery(localStorage.getItem("workspaceId") || "");
     const [createDocument, { isLoading: createIsLoading }] = useCreateDocumentMutation();
     const [updateDocument] = useUpdateDocumentMutation();
     const [deleteDocument] = useDeleteDocumentMutation();
@@ -232,7 +233,20 @@ const View = () => {
                 <Container maxW={"full"} mt={{ base: 4, sm: 0 }}>
                     <Box mb={{ base: "15px" }}>
                         <Heading size={"sm"} mb={"12px"} color={"rgb(52, 71, 103)"}>
-                            {`${workspace?.name} - Documents`}
+                            <>
+                                {!isFetching ? (
+                                    <>
+                                        <Link to={`/workspaces/${localStorage.getItem("workspaceId")}`}>
+                                            <Text
+                                                display={"inline"}
+                                                textDecor={"underline"}
+                                            >{`${workspace?.name}`}</Text>
+                                        </Link>
+
+                                        <Text display={"inline"}>{" / Documents"}</Text>
+                                    </>
+                                ) : null}
+                            </>
                         </Heading>
                         <Text color={"rgb(123, 128, 154)"} fontSize={"md"} fontWeight={300}>
                             Upload files or create them with a Rich-Text editor.

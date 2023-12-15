@@ -38,6 +38,7 @@ import React from "react";
 import PrimaryCard from "../../components/PrimaryCard";
 import TagsModal from "../tags/TagsModal";
 import { TDataCollection, TTag } from "../../types";
+import { Link } from "react-router-dom";
 
 const View = () => {
     // const [data, setData] = useState<TDataCollection[]>(dataCollections);
@@ -126,7 +127,17 @@ const View = () => {
                             <Flex>
                                 <Box>
                                     <Heading size={"sm"} mb={"12px"} color={"rgb(52, 71, 103)"}>
-                                        {!workspaceIsFetching ? `${workspace?.name} - Data Collections` : null}
+                                        {!workspaceIsFetching ? (
+                                            <>
+                                                <Link to={`/workspaces/${localStorage.getItem("workspaceId")}`}>
+                                                    <Text
+                                                        display={"inline"}
+                                                        textDecor={"underline"}
+                                                    >{`${workspace?.name}`}</Text>
+                                                </Link>{" "}
+                                                <Text display={"inline"}>{" / Data Collections"}</Text>
+                                            </>
+                                        ) : null}
                                     </Heading>
                                     <Text color={"rgb(123, 128, 154)"} fontSize={"md"} fontWeight={300}>
                                         Create data collection tables to visualize and manage your data.
