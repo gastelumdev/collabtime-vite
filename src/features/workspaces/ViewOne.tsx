@@ -1,6 +1,12 @@
 import { useParams, Navigate } from "react-router-dom";
 
-import { useGetOneWorkspaceQuery, useGetWorkspaceUsersQuery, useGetUserQuery } from "../../app/services/api";
+import {
+    useGetOneWorkspaceQuery,
+    useGetWorkspaceUsersQuery,
+    useGetUserQuery,
+    useGetUnreadMessagesQuery,
+    useCallUpdateMessagesMutation,
+} from "../../app/services/api";
 
 import { Avatar, AvatarGroup, Box, Container, Flex, Heading, SimpleGrid, Spacer, Text } from "@chakra-ui/react";
 
@@ -13,6 +19,7 @@ import { AiOutlineMessage, AiOutlineTable } from "react-icons/ai";
 import SecondaryCard from "../../components/SecondaryCard";
 import Invite from "./Invite";
 import { useEffect, useState } from "react";
+import { io } from "socket.io-client";
 
 /**
  * This funcion renders a workspace when selected from the workspaces page
@@ -26,8 +33,27 @@ const ViewOne = () => {
     const { data: user } = useGetUserQuery(localStorage.getItem("userId") || "");
     const { data: workspace, isError, error } = useGetOneWorkspaceQuery(id as string);
     const { data: workspaceUser } = useGetWorkspaceUsersQuery(id as string);
+    const { data: unreadMessages } = useGetUnreadMessagesQuery(null);
+
+    const [callUpdateMessages] = useCallUpdateMessagesMutation();
 
     const [permissions, setPermissions] = useState<number>();
+
+    /**
+     * Socket.io listening for update to refetch data
+     */
+    useEffect(() => {
+        const socket = io(import.meta.env.VITE_API_URL);
+        socket.connect();
+
+        socket.on("update-message", () => {
+            callUpdateMessages(null);
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
 
     useEffect(() => {
         localStorage.setItem("workspaceId", id || "");
@@ -92,7 +118,7 @@ const ViewOne = () => {
                                 ) : null}
                             </Flex>
                         </SimpleGrid>
-                        <SimpleGrid spacing={6} spacingY={12} columns={{ base: 1, sm: 1, md: 3, lg: 4 }}>
+                        <SimpleGrid spacing={6} spacingY={12} columns={{ base: 1, sm: 1, md: 3, lg: 3 }}>
                             {(workspace?.tools.dataCollections.access || 0) > 0 ? (
                                 <a href={`/workspaces/${workspace?._id}/dataCollections`}>
                                     <SecondaryCard
@@ -114,12 +140,25 @@ const ViewOne = () => {
                                 </a>
                             ) : null}
                             {(workspace?.tools.messageBoard.access || 0) > 0 ? (
-                                <a href={`/workspaces/${workspace?._id}/messageBoard`}>
+                                <a href={`/workspaces/${workspace?._id}/messageBoard/active`}>
                                     <SecondaryCard
                                         title={"Message Board"}
                                         description={"Message your team."}
                                         icon={AiOutlineMessage}
                                         bgImage="linear-gradient(195deg, #FF548A, #EC1559)"
+                                        badge={
+                                            (unreadMessages?.length || 0) > 0 ? (
+                                                <Box
+                                                    display={"inline"}
+                                                    bgColor={"white"}
+                                                    px={"5px"}
+                                                    color={"red"}
+                                                    borderRadius={"full"}
+                                                >
+                                                    {unreadMessages?.length}
+                                                </Box>
+                                            ) : null
+                                        }
                                     />
                                 </a>
                             ) : null}

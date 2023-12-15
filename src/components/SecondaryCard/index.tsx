@@ -6,9 +6,16 @@ interface IProps {
     description?: string;
     bgImage?: string;
     icon?: IconType;
+    badge?: any;
 }
 
-const SecondaryCard = ({ title, description, bgImage = "linear-gradient(195deg, #FF548A, #EC1559)", icon }: IProps) => {
+const SecondaryCard = ({
+    title,
+    description,
+    bgImage = "linear-gradient(195deg, #FF548A, #EC1559)",
+    icon,
+    badge,
+}: IProps) => {
     return (
         <Card border={"none"} boxShadow={"lg"}>
             <Box px={"10px"}>
@@ -26,7 +33,7 @@ const SecondaryCard = ({ title, description, bgImage = "linear-gradient(195deg, 
                         <List>
                             <ListItem>
                                 <ListIcon as={icon} boxSize={7} />
-                                {title}
+                                {title} {badge}
                             </ListItem>
                         </List>
                     </Heading>

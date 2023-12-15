@@ -22,7 +22,7 @@ const LinkItems: Array<LinkItemProps> = [
     {
         name: "Message Board",
         icon: FaComments,
-        path: `/workspaces/${localStorage.getItem("workspaceId")}/messageBoard`,
+        path: `/workspaces/${localStorage.getItem("workspaceId")}/messageBoard/active`,
     },
 ];
 

@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store";
 import { LoginRequest, UserResponse, ResetPasswordRequestRequest, BasicResponse } from "../../features/auth/types";
-import { TCell, TColumn, TDataCollection, TDocument, TJoinWorkspace, TNotification, TRow, TTableData, TTag, TUser, TWorkspace, TWorkspaceUsers } from "../../types";
+import { TCell, TColumn, TDataCollection, TDocument, TJoinWorkspace, TMessage, TNotification, TRow, TTableData, TTag, TUser, TWorkspace, TWorkspaceUsers } from "../../types";
 
 export const api = createApi({
     baseQuery: fetchBaseQuery({
@@ -12,7 +12,7 @@ export const api = createApi({
             return headers;
         }
     }),
-    tagTypes: ["auth", "Workspace", "Notification", "DataCollection", "Column", "Rows", "Documents", "Tags"],
+    tagTypes: ["auth", "Workspace", "Notification", "DataCollection", "Column", "Rows", "Documents", "Tags", "Messages"],
     endpoints: (builder) => ({
         login: builder.mutation<UserResponse, LoginRequest>({
             query: (credentials) => ({
@@ -118,7 +118,7 @@ export const api = createApi({
                 url: "workspaces/callUpdate",
                 method: "POST"
             }),
-            invalidatesTags: ["Workspace"]
+            invalidatesTags: ["Workspace", "Messages"]
         }),
         tagExists: builder.mutation<{tagExists: boolean}, TTag>({
             query: (tag) => ({
@@ -334,6 +334,47 @@ export const api = createApi({
                 body: tag,
             }),
             invalidatesTags: ["Tags", "Workspace"]
+        }),
+        getMessages: builder.query<TMessage[], string>({
+            query: (workspaceId) => ({
+                url: `/workspaces/${workspaceId}/messages`
+            }),
+            providesTags: ["Messages"],
+        }),
+        createMessage: builder.mutation<TMessage, TMessage>({
+            query: (message) => ({
+                url: `/workspaces/${message.workspace}/messages`,
+                method: "POST",
+                body: message,
+            }),
+            invalidatesTags: ["Messages"]
+        }),
+        typingMessage: builder.mutation<any, any>({
+            query: () => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/messages/typing`,
+                method: "POST"
+            }),
+            invalidatesTags: ["Messages"]
+        }),
+        getUnreadMessages: builder.query<TMessage[], null>({
+            query: () => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/messages/unread`
+            }),
+            providesTags: ["Messages"]
+        }),
+        callUpdateMessages: builder.mutation<any, null>({
+            query: () => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/messages/callUpdateMessages`,
+                method: "POST",
+            }),
+            invalidatesTags: ["Messages"]
+        }),
+        markAsRead: builder.mutation<any, null>({
+            query: () => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/messages/markAsRead`,
+                method: "POST",
+            }),
+            invalidatesTags: ["Messages"]
         })
     })
 })
@@ -384,4 +425,10 @@ export const {
     useGetTagsQuery,
     useCreateTagMutation,
     useDeleteTagMutation,
+    useGetMessagesQuery,
+    useCreateMessageMutation,
+    useTypingMessageMutation,
+    useGetUnreadMessagesQuery,
+    useCallUpdateMessagesMutation,
+    useMarkAsReadMutation,
 } = api

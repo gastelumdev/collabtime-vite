@@ -14,41 +14,7 @@ import ResetPassword from "./features/auth/ResetPassword";
 import ResetPasswordEmailSent from "./features/auth/ResetPasswordEmailSent";
 import Join from "./features/workspaces/Join";
 
-import { useToast } from "@chakra-ui/react";
-import { io } from "socket.io-client";
-import { useEffect } from "react";
-
 function App() {
-    const toast = useToast();
-    useEffect(() => {
-        const socket = io(import.meta.env.VITE_API_URL);
-        socket.connect();
-        socket.on("update", (item) => {
-            console.log("Notifications called for update");
-
-            if (item) {
-                toast({
-                    title: "Notification",
-                    description: item.message,
-                    status: "info",
-                });
-                // setNotifications(callNotificationsUpdate(priority) as any);
-            }
-        });
-
-        socket.on(localStorage.getItem("userId") || "", (item) => {
-            console.log(item);
-            toast({
-                title: "Notification",
-                description: item.message,
-                status: item.priority === "Low" ? "success" : item.priority === "Critical" ? "error" : "warning",
-            });
-        });
-
-        return () => {
-            socket.disconnect();
-        };
-    }, []);
     return (
         <>
             {/* <Layout> */}
@@ -61,7 +27,7 @@ function App() {
                     <Route path="workspaces/:id/dataCollections/:dataCollectionId" element={<DataCollection />} />
                     <Route path="workspaces/:id/documents" element={<Documents />} />
                     <Route path="workspaces/:id/taskLists" element={<Tasks />} />
-                    <Route path="workspaces/:id/messageBoard" element={<MessageBoard />} />
+                    <Route path="workspaces/:id/messageBoard/:status" element={<MessageBoard />} />
                     {/* </Route> */}
                 </Route>
             </Routes>

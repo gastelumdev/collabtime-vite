@@ -165,3 +165,12 @@ export type TTag = {
     workspace: string;
     name: string;
 };
+
+export type TMessage = {
+    _id?: string;
+    content: string;
+    workspace?: string;
+    createdAt?: Date;
+    createdBy?: TUser;
+    read?: TUser[];
+};

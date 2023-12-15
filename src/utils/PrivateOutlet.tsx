@@ -1,11 +1,67 @@
 // import { ReactNode } from "react";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useParams } from "react-router-dom";
+
+import { useToast } from "@chakra-ui/react";
+import { io } from "socket.io-client";
+import { useEffect } from "react";
 
 interface PrivateOutletProps {
     redirectPath?: string;
 }
 
 export function PrivateOutlet({ redirectPath = "/login" }: PrivateOutletProps) {
+    const toast = useToast();
+    const { status } = useParams();
+
+    console.log(status);
+
+    useEffect(() => {
+        console.log(status);
+        const socket = io(import.meta.env.VITE_API_URL);
+        socket.connect();
+        socket.on("update", (item) => {
+            console.log("Notifications called for update");
+
+            if (item) {
+                toast({
+                    title: "Notification",
+                    description: item.message,
+                    status: "info",
+                });
+                // setNotifications(callNotificationsUpdate(priority) as any);
+            }
+        });
+
+        if (status !== "active") {
+            socket.on("update-message", (item) => {
+                console.log("Notifications called for update");
+
+                if (item) {
+                    toast({
+                        title: `New message from ${item.message.createdBy.firstname} ${item.message.createdBy.lastname} in ${item.workspace.name}`,
+                        description: item.message.content,
+                        status: "info",
+                        duration: 9000,
+                        isClosable: true,
+                    });
+                    // setNotifications(callNotificationsUpdate(priority) as any);
+                }
+            });
+        }
+
+        socket.on(localStorage.getItem("userId") || "", (item) => {
+            console.log(item);
+            toast({
+                title: "Notification",
+                description: item.message,
+                status: item.priority === "Low" ? "success" : item.priority === "Critical" ? "error" : "warning",
+            });
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, [status]);
     if (!localStorage.getItem("workspaceId")) localStorage.setItem("workspaceId", "none");
 
     if (!localStorage.getItem("token")) {
