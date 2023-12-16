@@ -306,7 +306,10 @@ const View = () => {
                                                                     </IconContext.Provider>
                                                                 </Box>
                                                                 {document.type === "upload" ? (
-                                                                    <Text color={"rgb(123, 128, 154)"}>
+                                                                    <Text
+                                                                        color={"rgb(123, 128, 154)"}
+                                                                        textOverflow={"ellipsis"}
+                                                                    >
                                                                         <a href={document.url} target="_blank">
                                                                             {document.filename}
                                                                         </a>

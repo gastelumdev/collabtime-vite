@@ -44,6 +44,8 @@ const UpdateModal = ({ document }: IProps) => {
                 }}
                 cursor={"pointer"}
                 color={"rgb(123, 128, 154)"}
+                overflow={"hidden"}
+                textOverflow={"ellipsis"}
             >
                 {document.filename}
             </Text>

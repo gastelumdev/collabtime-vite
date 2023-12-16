@@ -1,25 +1,66 @@
-import { useEffect } from "react";
-import { useGetDataCollectionQuery, useGetOneWorkspaceQuery } from "../../app/services/api";
-import { Box, Card, CardBody, CardHeader, Container, Flex, Heading, Spacer, Text } from "@chakra-ui/react";
+import { useEffect, useRef, useState } from "react";
+import {
+    useGetDataCollectionQuery,
+    useGetOneWorkspaceQuery,
+    useUpdateDataCollectionMutation,
+} from "../../app/services/api";
+import {
+    Box,
+    Card,
+    CardBody,
+    CardHeader,
+    Container,
+    Flex,
+    Heading,
+    Input,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
+    Spacer,
+    Text,
+    useDisclosure,
+} from "@chakra-ui/react";
 
 import LinkItems from "../../utils/linkItems";
 
 import SideBarLayout from "../../components/Layouts/SideBarLayout";
 import DataCollection from "./DataCollection";
 import { useParams } from "react-router-dom";
+import PrimaryButton from "../../components/Buttons/PrimaryButton";
 
 const ViewOne = () => {
     const { id, dataCollectionId } = useParams();
+    const { onClose, onOpen, isOpen } = useDisclosure();
+    const finalRef = useRef<any>(null);
 
     const { data: dataCollection } = useGetDataCollectionQuery(dataCollectionId || "");
     const { data: workspace, isFetching: workspaceIsFetching } = useGetOneWorkspaceQuery(
         localStorage.getItem("workspaceId") || ""
     );
 
+    const [updateDataCollection] = useUpdateDataCollectionMutation();
+
+    const [isTemplate, setIsTemplate] = useState<boolean>(false);
+    const [templateNameValue, setTemplateNameValue] = useState<string>("");
+
     useEffect(() => {
         localStorage.setItem("workspaceId", id || "");
         localStorage.setItem("dataCollectionId", dataCollectionId || "");
-    });
+
+        if (dataCollection?.asTemplate !== undefined) {
+            setIsTemplate(true);
+        }
+    }, [dataCollection]);
+
+    const handleAddAsTemplateClick = () => {
+        const dataCollectionCopy: any = dataCollection;
+        updateDataCollection({ ...dataCollectionCopy, asTemplate: { active: true, name: templateNameValue } });
+        onClose();
+    };
 
     return (
         <>
@@ -67,6 +108,7 @@ const ViewOne = () => {
                                             </Text>
                                         </Box>
                                         <Spacer />
+                                        {!isTemplate ? <PrimaryButton onClick={onOpen}>TEMPLATE</PrimaryButton> : null}
                                     </Flex>
                                 </CardHeader>
                                 <CardBody pt={"0"}>
@@ -78,6 +120,25 @@ const ViewOne = () => {
                         </Container>
                     </Flex>
                 </Box>
+                <Modal finalFocusRef={finalRef} isOpen={isOpen} onClose={onClose}>
+                    <ModalOverlay />
+                    <ModalContent>
+                        <ModalHeader>Create template</ModalHeader>
+                        <ModalCloseButton />
+                        <ModalBody>
+                            <Input
+                                value={templateNameValue}
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                                    setTemplateNameValue(event.target.value)
+                                }
+                            />
+                        </ModalBody>
+
+                        <ModalFooter>
+                            <PrimaryButton onClick={handleAddAsTemplateClick}>CREATE</PrimaryButton>
+                        </ModalFooter>
+                    </ModalContent>
+                </Modal>
             </SideBarLayout>
         </>
         // </Layout>

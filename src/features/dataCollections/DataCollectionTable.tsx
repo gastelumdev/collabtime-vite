@@ -141,8 +141,6 @@ const DataCollectionTable = ({
                 setLabelStyles({ ...labelStyles, [column.name]: "" });
             }
         }
-        console.log(columns);
-        console.log();
     }, []);
 
     useEffect(() => {
@@ -189,7 +187,6 @@ const DataCollectionTable = ({
 
     const handleLabelChange = (selectedValue: any, columnName: string) => {
         setLabelValue({ ...labelValue, [columnName]: selectedValue.value });
-        console.log(selectedValue);
         let rowCopy = row;
         setRow({ ...rowCopy, [columnName]: selectedValue.value });
         setFirstInputFocus(false);
@@ -202,17 +199,16 @@ const DataCollectionTable = ({
     };
 
     const handleDeleteColumn = (column: TColumn) => {
-        console.log(column);
         deleteColumn(column);
         // setData(rows || []);
     };
 
     const handleAddRowInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        console.log(event.target.value);
         setRow({ ...row, [event.target.name]: event.target.value });
     };
 
     const handleUpdateRowInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(event.target.value);
         setTempValue(event.target.value);
     };
 
@@ -226,7 +222,6 @@ const DataCollectionTable = ({
     };
 
     const handleUpdateRowOnBlur = async (event: React.FocusEvent<HTMLInputElement, Element>, cell: any) => {
-        console.log("******ON BLUR", event.target.value);
         let newCell = cell;
         newCell = { ...newCell, value: event.target.value };
         if (initialValue != event.target.value) await updateCell(newCell);
@@ -238,6 +233,7 @@ const DataCollectionTable = ({
     };
 
     const handleSaveRowClick = async () => {
+        console.log(row);
         await createRow(row);
         setShowRowForm(false);
         setDefaultRow();
@@ -289,17 +285,13 @@ const DataCollectionTable = ({
 
     const handleCloseTagButtonClick = async (row: TRow, tag: TTag) => {
         const { tags } = row;
-        console.log(tags);
 
         const filteredTags = tags.filter((item) => {
             return tag.name !== item.name;
         });
 
         const addNewRow = { ...row, tags: filteredTags };
-        console.log(addNewRow);
-        const updatedRowRes: any = await updateRow(addNewRow);
-        const updatedRow = updatedRowRes.data;
-        console.log(updatedRow);
+        await updateRow(addNewRow);
 
         let workspaceTags;
 
@@ -308,7 +300,6 @@ const DataCollectionTable = ({
         }
 
         const thisTagExistsRes: any = await tagExists(tag);
-        console.log(thisTagExistsRes);
 
         if (!thisTagExistsRes.data.tagExists) {
             const filteredWorkspaceTags = workspaceTags?.filter((item: TTag) => {
@@ -395,13 +386,11 @@ const DataCollectionTable = ({
                                 </>
                             ) : null}
                             {columns?.map((column: TColumn, index: number) => {
-                                console.log(tagsColumnWidth);
                                 let width = "200px";
 
                                 if (column.type === "people") width = "145px";
                                 if (column.type === "priority" || column.type === "status" || column.type === "label")
                                     width = "170px";
-                                console.log(column.type, width);
                                 return (
                                     <Th key={index} width={width}>
                                         {(permissions || 0) > 1 ? (
@@ -602,7 +591,6 @@ const DataCollectionTable = ({
                                                             defaultValue={cell.value.slice(0, 16)}
                                                             name={cell.name}
                                                             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                                                console.log(event);
                                                                 handleUpdateRowInputChange(event);
                                                             }}
                                                             onFocus={(
@@ -689,7 +677,6 @@ const DataCollectionTable = ({
                                             color: "#ffffff",
                                         };
                                     });
-                                    console.log("PEOPLE OPTIONS", peopleOptions);
                                     return (
                                         <Td
                                             key={index}

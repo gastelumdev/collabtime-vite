@@ -73,6 +73,7 @@ export type TDataCollection = {
     columns: string[];
     rows: string[];
     tags: TTag[];
+    asTemplate?: { active: boolean; name: string };
 };
 
 export type TColumn = {
