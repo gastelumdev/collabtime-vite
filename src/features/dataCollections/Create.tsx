@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input, Text, Flex, Spacer } from "@chakra-ui/react";
 import Select from "react-select";
 import { TDataCollection } from "../../types";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import PrimaryDrawer from "../../components/PrimaryDrawer";
+import { useGetDataCollectionsQuery } from "../../app/services/api";
 
 let defaultValues: TDataCollection = {
     name: "",
@@ -25,9 +26,22 @@ interface IProps {
 }
 
 const Create = ({ addNewDataCollection }: IProps) => {
+    const { data: dataCollections } = useGetDataCollectionsQuery(null);
     const [open, setOpen] = useState(false);
     const [data, setData] = useState<TDataCollection>(defaultValues);
     const [inputError, setInputError] = useState<boolean>(false);
+    const [selectFormattedDataCollections, setSelectFormattedDataCollections] = useState<any[]>([]);
+
+    useEffect(() => {
+        const formattedDC = [];
+        for (const dataCollection of dataCollections || []) {
+            if (dataCollection.asTemplate !== undefined && dataCollection.asTemplate.active) {
+                formattedDC.push({ value: dataCollection._id, label: dataCollection.asTemplate.name });
+            }
+        }
+        console.log(formattedDC);
+        setSelectFormattedDataCollections(formattedDC);
+    }, [dataCollections]);
 
     const showDrawer = () => {
         setOpen(true);
@@ -92,7 +106,7 @@ const Create = ({ addNewDataCollection }: IProps) => {
                     options={[
                         { value: "default", label: "Default" },
                         { value: "tasks", label: "Task List" },
-                    ]}
+                    ].concat(selectFormattedDataCollections)}
                     styles={
                         {
                             control: (styles: any) => {

@@ -12,25 +12,7 @@ import {
 
 import { io } from "socket.io-client";
 
-import {
-    Box,
-    Container,
-    Flex,
-    Heading,
-    SimpleGrid,
-    Spacer,
-    Text,
-    Button,
-    Center,
-    useToast,
-    useDisclosure,
-    AlertDialog,
-    AlertDialogOverlay,
-    AlertDialogContent,
-    AlertDialogHeader,
-    AlertDialogBody,
-    AlertDialogFooter,
-} from "@chakra-ui/react";
+import { Box, Container, Flex, Heading, SimpleGrid, Spacer, Text, Center, useToast } from "@chakra-ui/react";
 
 import { TWorkspace, LinkItemProps, TTag } from "../../types";
 import Create from "./Create";
@@ -38,11 +20,9 @@ import Edit from "./Edit";
 
 import SideBarLayout from "../../components/Layouts/SideBarLayout";
 import PrimaryCard from "../../components/PrimaryCard";
-
-import { AiOutlineDelete } from "react-icons/ai";
 import { BsPersonWorkspace } from "react-icons/bs";
-import React from "react";
 import TagsModal from "../tags/TagsModal";
+import Delete from "./Delete";
 
 const LinkItems: Array<LinkItemProps> = [{ name: "Workspaces", icon: BsPersonWorkspace, path: "/workspaces" }];
 
@@ -63,9 +43,6 @@ const View = () => {
     const [tagExists] = useTagExistsMutation();
 
     const toast = useToast();
-
-    const { isOpen, onOpen, onClose } = useDisclosure();
-    const cancelRef = React.useRef<any>(null);
 
     const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
 
@@ -205,52 +182,7 @@ const View = () => {
                                             }
                                             deleteButton={
                                                 workspace?.owner === localStorage.getItem("userId") || isAuthorized ? (
-                                                    <>
-                                                        <Button
-                                                            flex="1"
-                                                            variant="ghost"
-                                                            leftIcon={<AiOutlineDelete />}
-                                                            color={"rgb(123, 128, 154)"}
-                                                            zIndex={10}
-                                                            onClick={onOpen}
-                                                        ></Button>
-                                                        <AlertDialog
-                                                            isOpen={isOpen}
-                                                            leastDestructiveRef={cancelRef}
-                                                            onClose={onClose}
-                                                        >
-                                                            <AlertDialogOverlay>
-                                                                <AlertDialogContent>
-                                                                    <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                                                                        Delete Workspace
-                                                                    </AlertDialogHeader>
-
-                                                                    <AlertDialogBody>
-                                                                        Are you sure? You can't undo this action
-                                                                        afterwards.
-                                                                    </AlertDialogBody>
-
-                                                                    <AlertDialogFooter>
-                                                                        <Button ref={cancelRef} onClick={onClose}>
-                                                                            Cancel
-                                                                        </Button>
-                                                                        <Button
-                                                                            colorScheme="red"
-                                                                            onClick={() => {
-                                                                                deleteWorkspace(
-                                                                                    workspace._id as string
-                                                                                );
-                                                                                onClose();
-                                                                            }}
-                                                                            ml={3}
-                                                                        >
-                                                                            Delete
-                                                                        </Button>
-                                                                    </AlertDialogFooter>
-                                                                </AlertDialogContent>
-                                                            </AlertDialogOverlay>
-                                                        </AlertDialog>
-                                                    </>
+                                                    <Delete workspace={workspace} deleteWorkspace={deleteWorkspace} />
                                                 ) : null
                                             }
                                             tagButton={
