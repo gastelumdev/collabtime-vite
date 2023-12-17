@@ -500,6 +500,7 @@ const DataCollectionTable = ({
                                         </>
                                     ) : null}
                                     {row.cells.map((cell: TCell, index: number) => {
+                                        if (cell.type === "date") console.log(cell.value);
                                         let bgColor: string = "";
                                         for (const label of cell.labels || []) {
                                             if (cell.value == label.title) {
@@ -588,7 +589,7 @@ const DataCollectionTable = ({
                                                     ) : cell.type === "date" ? (
                                                         <input
                                                             type="datetime-local"
-                                                            defaultValue={cell.value.slice(0, 16)}
+                                                            defaultValue={cell.value}
                                                             name={cell.name}
                                                             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                                                                 handleUpdateRowInputChange(event);
