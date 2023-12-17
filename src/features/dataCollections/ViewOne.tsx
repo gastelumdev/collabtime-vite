@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
     useGetDataCollectionQuery,
+    useGetDataCollectionsQuery,
     useGetOneWorkspaceQuery,
     useUpdateDataCollectionMutation,
 } from "../../app/services/api";
@@ -41,11 +42,15 @@ const ViewOne = () => {
     const { data: workspace, isFetching: workspaceIsFetching } = useGetOneWorkspaceQuery(
         localStorage.getItem("workspaceId") || ""
     );
+    const { data: dataCollections } = useGetDataCollectionsQuery(null);
 
     const [updateDataCollection] = useUpdateDataCollectionMutation();
 
     const [isTemplate, setIsTemplate] = useState<boolean>(false);
     const [templateNameValue, setTemplateNameValue] = useState<string>("");
+
+    const [existingTemplateNames, setExistingTemplateNames] = useState<string[]>([]);
+    const [templateExists, setTemplateExists] = useState<boolean>(false);
 
     useEffect(() => {
         localStorage.setItem("workspaceId", id || "");
@@ -55,6 +60,16 @@ const ViewOne = () => {
             setIsTemplate(true);
         }
     }, [dataCollection]);
+
+    useEffect(() => {
+        const templateNames = [];
+        for (const dataCollection of dataCollections || []) {
+            if (dataCollection.asTemplate !== undefined && dataCollection.asTemplate.active) {
+                templateNames.push(dataCollection.asTemplate.name.toLowerCase());
+            }
+        }
+        setExistingTemplateNames(templateNames);
+    }, [dataCollections]);
 
     const handleAddAsTemplateClick = () => {
         const dataCollectionCopy: any = dataCollection;
@@ -128,14 +143,26 @@ const ViewOne = () => {
                         <ModalBody>
                             <Input
                                 value={templateNameValue}
-                                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                                    setTemplateNameValue(event.target.value)
-                                }
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                    if (existingTemplateNames.includes(event.target.value.toLowerCase())) {
+                                        setTemplateExists(true);
+                                    } else {
+                                        setTemplateExists(false);
+                                    }
+                                    setTemplateNameValue(event.target.value);
+                                }}
                             />
+                            <Box h={"15px"}>
+                                {templateExists ? (
+                                    <Text color={"red"}>A template with that name already exists.</Text>
+                                ) : null}
+                            </Box>
                         </ModalBody>
 
                         <ModalFooter>
-                            <PrimaryButton onClick={handleAddAsTemplateClick}>CREATE</PrimaryButton>
+                            <PrimaryButton onClick={handleAddAsTemplateClick} isDisabled={templateExists}>
+                                CREATE
+                            </PrimaryButton>
                         </ModalFooter>
                     </ModalContent>
                 </Modal>
