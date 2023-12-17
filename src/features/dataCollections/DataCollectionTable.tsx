@@ -716,6 +716,7 @@ const DataCollectionTable = ({
                                                         type="datetime-local"
                                                         name={column.name}
                                                         onChange={handleAddRowInputChange}
+                                                        defaultValue={""}
                                                         style={{
                                                             border: "1px solid #cccccc",
                                                             padding: "9px",
