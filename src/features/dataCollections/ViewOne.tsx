@@ -24,6 +24,7 @@ import {
     Spacer,
     Text,
     useDisclosure,
+    useToast,
 } from "@chakra-ui/react";
 
 import LinkItems from "../../utils/linkItems";
@@ -36,6 +37,7 @@ import PrimaryButton from "../../components/Buttons/PrimaryButton";
 const ViewOne = () => {
     const { id, dataCollectionId } = useParams();
     const { onClose, onOpen, isOpen } = useDisclosure();
+    const toast = useToast();
     const finalRef = useRef<any>(null);
 
     const { data: dataCollection } = useGetDataCollectionQuery(dataCollectionId || "");
@@ -56,7 +58,11 @@ const ViewOne = () => {
         localStorage.setItem("workspaceId", id || "");
         localStorage.setItem("dataCollectionId", dataCollectionId || "");
 
-        if (dataCollection?.asTemplate !== undefined) {
+        const dataCollectionCopy: any = dataCollection;
+
+        console.log(dataCollectionCopy);
+
+        if (dataCollectionCopy?.asTemplate !== undefined && dataCollectionCopy?.asTemplate?.active == true) {
             setIsTemplate(true);
         }
     }, [dataCollection]);
@@ -72,9 +78,18 @@ const ViewOne = () => {
     }, [dataCollections]);
 
     const handleAddAsTemplateClick = () => {
+        if (templateNameValue === "") return;
         const dataCollectionCopy: any = dataCollection;
         updateDataCollection({ ...dataCollectionCopy, asTemplate: { active: true, name: templateNameValue } });
         onClose();
+
+        toast({
+            title: `Your template has been created.`,
+            description: `Click "NEW COLLECTION" in the Data Collections page and select "${templateNameValue}" in the template dropdown to use this template.`,
+            status: "info",
+            duration: 9000,
+            isClosable: true,
+        });
     };
 
     return (
@@ -135,12 +150,18 @@ const ViewOne = () => {
                         </Container>
                     </Flex>
                 </Box>
-                <Modal finalFocusRef={finalRef} isOpen={isOpen} onClose={onClose}>
+                <Modal finalFocusRef={finalRef} isOpen={isOpen} onClose={onClose} size={"2xl"}>
                     <ModalOverlay />
                     <ModalContent>
                         <ModalHeader>Create template</ModalHeader>
                         <ModalCloseButton />
                         <ModalBody>
+                            <Text mb={"30px"}>
+                                Creating a template will allow you to create a data collection with the same columns.
+                                After naming and creating it, go to create a new data collection and your new template
+                                will be available under the template options.
+                            </Text>
+                            <Text mb={"5px"}>Template Name</Text>
                             <Input
                                 value={templateNameValue}
                                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {

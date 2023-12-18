@@ -22,6 +22,7 @@ import TagsModal from "../tags/TagsModal";
 import { TDataCollection, TTag } from "../../types";
 import { Link } from "react-router-dom";
 import Delete from "./Delete";
+import Templates from "./Templates";
 
 const View = () => {
     // const [data, setData] = useState<TDataCollection[]>(dataCollections);
@@ -126,6 +127,9 @@ const View = () => {
                             </Flex>
                             <Flex>
                                 <Spacer />
+                                <Box pb={"20px"} mr={"10px"}>
+                                    <Templates />
+                                </Box>
                                 <Box pb={"20px"}>
                                     <Create addNewDataCollection={createDataCollection} />
                                 </Box>
