@@ -105,6 +105,7 @@ export type TRow = {
     notesList: INote[];
     cells: string[] | TCell;
     tags: TTag[];
+    reminder?: boolean;
 };
 
 export type TCell = {

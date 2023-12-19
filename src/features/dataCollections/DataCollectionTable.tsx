@@ -64,6 +64,7 @@ import { io } from "socket.io-client";
 import { GoTag } from "react-icons/go";
 import TagsModal from "../tags/TagsModal";
 import { useParams } from "react-router-dom";
+import { FaRegBell } from "react-icons/fa";
 
 interface IProps {
     columns: TColumn[];
@@ -190,6 +191,10 @@ const DataCollectionTable = ({
         let rowCopy = row;
         setRow({ ...rowCopy, [columnName]: selectedValue.value });
         setFirstInputFocus(false);
+    };
+
+    const handleReminderClick = (row: TRow) => {
+        updateRow({ ...row, reminder: !row.reminder });
     };
 
     const handleColumnHover = (index: number) => {
@@ -372,7 +377,7 @@ const DataCollectionTable = ({
                         <Tr>
                             {(permissions || 0) > 1 ? (
                                 <>
-                                    <Th w={"100px"} px={"14px"}>
+                                    <Th w={"125px"} px={"14px"}>
                                         <Flex>
                                             <Spacer />
                                             <GoTag
@@ -450,6 +455,14 @@ const DataCollectionTable = ({
                                                         updateRow={updateRow}
                                                         rowCallUpdate={rowCallUpdate}
                                                     />
+                                                    <Box
+                                                        ml={"10px"}
+                                                        pt={"2px"}
+                                                        cursor={"pointer"}
+                                                        onClick={() => handleReminderClick(row)}
+                                                    >
+                                                        <FaRegBell color={row.reminder ? "#16b2fc" : "#b8b8b8"} />
+                                                    </Box>
                                                 </Flex>
                                             </Td>
                                             {showTagsColumn ? (
@@ -707,6 +720,9 @@ const DataCollectionTable = ({
                                                         onChange={(selectedOption) =>
                                                             handleLabelChange(selectedOption, column.name)
                                                         }
+                                                        // defaultValue={
+                                                        //     peopleOptions ? peopleOptions[0] : { label: "", value: "" }
+                                                        // }
                                                         styles={createRowColorStyles()}
                                                     />
                                                 </Box>
