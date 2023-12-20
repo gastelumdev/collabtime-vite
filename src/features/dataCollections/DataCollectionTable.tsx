@@ -221,6 +221,12 @@ const DataCollectionTable = ({
         setTempValue(event.target.value);
     };
 
+    // const handleNumberInputChange = (valueAsString: string, valueAsNumber: number) => {
+    //     setRow({ ...row });
+    // };
+
+    // const handleAddRowNumberInputChange = (valueAsString: string, valueAsNumber: number) => {};
+
     const handleUpdateRowOnFocus = (event: React.FocusEvent<HTMLInputElement, Element>, cell: any) => {
         setInitialValue(event.target.value);
         const em: string[] = [];
@@ -398,6 +404,7 @@ const DataCollectionTable = ({
                                 let width = "200px";
 
                                 if (column.type === "people") width = "145px";
+                                if (column.type === "date") width = "210px";
                                 if (column.type === "priority" || column.type === "status" || column.type === "label")
                                     width = "170px";
                                 return (
@@ -638,6 +645,29 @@ const DataCollectionTable = ({
                                                                 rowsLoading || rowsFetching || !((permissions || 0) > 1)
                                                             }
                                                         />
+                                                    ) : cell.type === "number" ? (
+                                                        <input
+                                                            type="number"
+                                                            defaultValue={cell.value}
+                                                            name={cell.name}
+                                                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                                handleUpdateRowInputChange(event);
+                                                            }}
+                                                            onFocus={(
+                                                                event: React.FocusEvent<HTMLInputElement, Element>
+                                                            ) => handleUpdateRowOnFocus(event, cell)}
+                                                            onBlur={(
+                                                                event: React.FocusEvent<HTMLInputElement, Element>
+                                                            ) => handleUpdateRowOnBlur(event, cell)}
+                                                            disabled={
+                                                                rowsLoading || rowsFetching || !((permissions || 0) > 1)
+                                                            }
+                                                            style={{
+                                                                outline: "none",
+                                                                paddingTop: "3px",
+                                                                paddingBottom: "4px",
+                                                            }}
+                                                        />
                                                     ) : (
                                                         <Input
                                                             value={
@@ -723,7 +753,7 @@ const DataCollectionTable = ({
                                             {column.type == "label" ||
                                             column.type == "priority" ||
                                             column.type == "status" ? (
-                                                <Box w={rows?.length || 0 > 0 ? "unset" : "150px"}>
+                                                <Box>
                                                     <Select
                                                         // name={column.name}
                                                         options={options}
@@ -734,7 +764,7 @@ const DataCollectionTable = ({
                                                     />
                                                 </Box>
                                             ) : column.type == "people" ? (
-                                                <Box w={rows?.length || 0 > 0 ? "unset" : "150px"}>
+                                                <Box>
                                                     <Select
                                                         // name={column.name}
                                                         options={peopleOptions}
@@ -748,7 +778,7 @@ const DataCollectionTable = ({
                                                     />
                                                 </Box>
                                             ) : column.type == "date" ? (
-                                                <Box w={rows?.length || 0 > 0 ? "unset" : "200px"}>
+                                                <Box>
                                                     <input
                                                         type="datetime-local"
                                                         name={column.name}
@@ -762,8 +792,35 @@ const DataCollectionTable = ({
                                                         }}
                                                     />
                                                 </Box>
+                                            ) : column.type == "number" ? (
+                                                <Box>
+                                                    <input
+                                                        type="number"
+                                                        name={column.name}
+                                                        onChange={handleAddRowInputChange}
+                                                        defaultValue={""}
+                                                        style={{
+                                                            border: "1px solid #cccccc",
+                                                            padding: "9px",
+                                                            borderRadius: "4px",
+                                                            color: "#828282",
+                                                        }}
+                                                        autoFocus={index == 0}
+                                                        ref={(el) => {
+                                                            if (index == 0 && firstInputFocus) {
+                                                                el?.focus();
+                                                                el?.scrollIntoView();
+                                                            } else {
+                                                                setFirstInputFocus(false);
+                                                            }
+                                                        }}
+                                                        onKeyUp={(event: React.KeyboardEvent<HTMLInputElement>) =>
+                                                            handleAddRowOnKeyUp(event)
+                                                        }
+                                                    />
+                                                </Box>
                                             ) : (
-                                                <Box w={rows?.length || 0 > 0 ? "unset" : "150px"}>
+                                                <Box>
                                                     <Input
                                                         name={column.name}
                                                         onChange={handleAddRowInputChange}

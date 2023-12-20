@@ -202,6 +202,7 @@ const CreateColumn = ({ columns, createColumn }: TProps) => {
                             onChange={(selectedOption: any) => handleSelectType(selectedOption)}
                             options={[
                                 { value: "text", label: "Text" },
+                                { value: "number", label: "Number" },
                                 { value: "date", label: "Date" },
                                 { value: "label", label: "Label" },
                                 { value: "people", label: "Assign To" },
