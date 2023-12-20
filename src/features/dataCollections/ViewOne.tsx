@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import {
+    useAcknowledgeRowMutation,
     useGetDataCollectionQuery,
     useGetDataCollectionsQuery,
     useGetOneWorkspaceQuery,
@@ -31,11 +32,12 @@ import LinkItems from "../../utils/linkItems";
 
 import SideBarLayout from "../../components/Layouts/SideBarLayout";
 import DataCollection from "./DataCollection";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 
 const ViewOne = () => {
     const { id, dataCollectionId } = useParams();
+    const [queryParameters] = useSearchParams();
     const { onClose, onOpen, isOpen } = useDisclosure();
     const toast = useToast();
     const finalRef = useRef<any>(null);
@@ -47,6 +49,8 @@ const ViewOne = () => {
     const { data: dataCollections } = useGetDataCollectionsQuery(null);
 
     const [updateDataCollection] = useUpdateDataCollectionMutation();
+
+    const [acknowledgeRow] = useAcknowledgeRowMutation();
 
     const [isTemplate, setIsTemplate] = useState<boolean>(false);
     const [templateNameValue, setTemplateNameValue] = useState<string>("");
@@ -76,6 +80,13 @@ const ViewOne = () => {
         }
         setExistingTemplateNames(templateNames);
     }, [dataCollections]);
+
+    useEffect(() => {
+        const acknowledgedRowId = queryParameters.get("acknowledgedRow");
+        if (acknowledgedRowId !== undefined) {
+            acknowledgeRow(acknowledgedRowId || "");
+        }
+    }, []);
 
     const handleAddAsTemplateClick = () => {
         if (templateNameValue === "") return;

@@ -106,6 +106,8 @@ export type TRow = {
     cells: string[] | TCell;
     tags: TTag[];
     reminder?: boolean;
+    complete?: boolean;
+    acknowledged?: boolean;
 };
 
 export type TCell = {

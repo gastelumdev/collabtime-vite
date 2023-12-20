@@ -240,6 +240,13 @@ export const api = createApi({
             }),
             invalidatesTags: ["Rows"],
         }),
+        acknowledgeRow: builder.mutation<any, string>({
+            query: (rowId) => ({
+                url: `rows/acknowledge/${rowId}`,
+                method: "POST",
+            }),
+            invalidatesTags: ["Rows"],
+        }),
         updateCell: builder.mutation<TCell, TCell>({
             query: (cell) => ({
                 url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${cell.dataCollection}/cells/${cell._id}`,
@@ -412,6 +419,7 @@ export const {
     useUpdateRowMutation,
     useDeleteRowMutation,
     useRowCallUpdateMutation,
+    useAcknowledgeRowMutation,
     useUpdateCellMutation,
     useUploadMutation,
     useUploadDocsMutation,

@@ -64,7 +64,7 @@ import { io } from "socket.io-client";
 import { GoTag } from "react-icons/go";
 import TagsModal from "../tags/TagsModal";
 import { useParams } from "react-router-dom";
-import { FaRegBell } from "react-icons/fa";
+import { FaRegBell, FaRegCheckSquare } from "react-icons/fa";
 
 interface IProps {
     columns: TColumn[];
@@ -195,6 +195,10 @@ const DataCollectionTable = ({
 
     const handleReminderClick = (row: TRow) => {
         updateRow({ ...row, reminder: !row.reminder });
+    };
+
+    const handleAcknowledgeClick = (row: TRow) => {
+        updateRow({ ...row, acknowledged: !row.acknowledged });
     };
 
     const handleColumnHover = (index: number) => {
@@ -377,7 +381,7 @@ const DataCollectionTable = ({
                         <Tr>
                             {(permissions || 0) > 1 ? (
                                 <>
-                                    <Th w={"125px"} px={"14px"}>
+                                    <Th w={"150px"} px={"14px"}>
                                         <Flex>
                                             <Spacer />
                                             <GoTag
@@ -463,6 +467,23 @@ const DataCollectionTable = ({
                                                     >
                                                         <FaRegBell color={row.reminder ? "#16b2fc" : "#b8b8b8"} />
                                                     </Box>
+                                                    <Tooltip
+                                                        openDelay={500}
+                                                        label={
+                                                            !row.acknowledged ? "Needs acknowledgement" : "Acknowledged"
+                                                        }
+                                                    >
+                                                        <Box
+                                                            ml={"10px"}
+                                                            pt={"2px"}
+                                                            cursor={"pointer"}
+                                                            onClick={() => handleAcknowledgeClick(row)}
+                                                        >
+                                                            <FaRegCheckSquare
+                                                                color={!row.acknowledged ? "#ffa507" : "#16b2fc"}
+                                                            />
+                                                        </Box>
+                                                    </Tooltip>
                                                 </Flex>
                                             </Td>
                                             {showTagsColumn ? (
