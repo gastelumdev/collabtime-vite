@@ -1,10 +1,4 @@
 import {
-    AlertDialog,
-    AlertDialogBody,
-    AlertDialogContent,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogOverlay,
     Box,
     Button,
     Card,
@@ -12,19 +6,9 @@ import {
     Container,
     Flex,
     Heading,
-    Input,
     Menu,
     MenuButton,
-    MenuItem,
     MenuList,
-    Modal,
-    ModalBody,
-    ModalCloseButton,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
-    ModalOverlay,
-    Progress,
     Spacer,
     Table,
     TableContainer,
@@ -38,154 +22,46 @@ import {
     Thead,
     Tr,
     WrapItem,
-    useDisclosure,
 } from "@chakra-ui/react";
-import { Editor } from "@tinymce/tinymce-react";
+
 import "./styles.css";
 import SideBarLayout from "../../components/Layouts/SideBarLayout";
 import LinkItems from "../../utils/linkItems";
 import { IconContext } from "react-icons";
-import { FaRegFileAlt, FaRegFileExcel, FaRegTrashAlt } from "react-icons/fa";
-import { useRef, useState } from "react";
-import PrimaryButton from "../../components/Buttons/PrimaryButton";
+import { FaRegFileAlt, FaRegFileExcel } from "react-icons/fa";
 import {
-    useCreateDocumentMutation,
-    useDeleteDocumentMutation,
     useDeleteTagMutation,
     useGetDocumentsQuery,
     useGetOneWorkspaceQuery,
     useTagExistsMutation,
     useUpdateDocumentMutation,
     useUpdateWorkspaceMutation,
-    useUploadDocsMutation,
-    useUploadPersistedDocsMutation,
 } from "../../app/services/api";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { FaRegImage } from "react-icons/fa";
-import PrimaryDrawer from "../../components/PrimaryDrawer";
 import UpdateModal from "./UpdateModal";
 import { TDocument, TTag } from "../../types";
 import TagsModal from "../tags/TagsModal";
 import { Link } from "react-router-dom";
+import UploadModal from "./UploadModal";
+import DocDrawer from "./DocDrawer";
+import DeleteFileAlert from "./DeleteFileAlert";
 
 const View = () => {
-    const { isOpen: uploadIsOpen, onOpen: uploadOnOpen, onClose: uploadOnClose } = useDisclosure();
-    const { isOpen: createIsOpen, onOpen: createOnOpen, onClose: createOnClose } = useDisclosure();
-    const { isOpen: deleteIsOpen, onOpen: deleteOnOpen, onClose: deleteOnClose } = useDisclosure();
-
-    const { data: documents, isFetching: documentsIsFetching } = useGetDocumentsQuery(null);
+    const { data: documents } = useGetDocumentsQuery(null);
     const { data: workspace, isFetching } = useGetOneWorkspaceQuery(localStorage.getItem("workspaceId") || "");
-    const [createDocument, { isLoading: createIsLoading }] = useCreateDocumentMutation();
+
     const [updateDocument] = useUpdateDocumentMutation();
-    const [deleteDocument] = useDeleteDocumentMutation();
+
     const [updateWorkspace] = useUpdateWorkspaceMutation();
 
     const [deleteTag] = useDeleteTagMutation();
     const [tagExists] = useTagExistsMutation();
 
-    const [uploadDocs] = useUploadDocsMutation();
-    const [uploadPersistedDocs] = useUploadPersistedDocsMutation();
-    const [files, setFiles] = useState<FileList | []>([]);
-    const [duplicateFiles, setDuplicateFiles] = useState<string[]>([]);
-    const [createdDocName, setCreatedDocName] = useState<string>("");
-    const [editorValue, setEditorValue] = useState<string>("");
-
-    const editorRef = useRef<any>(null);
-    const cancelRef = useRef<any>();
-
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setDuplicateFiles([]);
-        console.log(event.target.files);
-        if (event.target.files) {
-            console.log("TO BE UPLOADED", event.target.files);
-            console.log("DOCUMENTS", documents);
-            let fileMap = {};
-            for (const file of event.target.files) {
-                fileMap = { ...fileMap, [file.name]: file.name };
-            }
-
-            const duplicateFilesCopy = duplicateFiles;
-
-            for (const i in documents || []) {
-                if (documents) {
-                    if (fileMap.hasOwnProperty(documents[i].filename)) {
-                        duplicateFilesCopy.push(documents[i].filename);
-                    }
-                }
-            }
-
-            setDuplicateFiles(duplicateFilesCopy);
-
-            console.log(fileMap);
-            setFiles(event.target.files);
-            // const images = note.images;
-            // setNote({ ...note, images: [...images, event.target.files[0].name] });
-        }
-    };
-
-    const handleUploadClick = async () => {
-        const formdata: FormData = new FormData();
-        for (let i = 0; i < (files?.length || 0); i++) {
-            formdata.append("docs", files[i]);
-        }
-
-        const res: any = await uploadDocs(formdata);
-        const persistedRes: any = await uploadPersistedDocs(formdata);
-
-        console.log(res.data);
-        console.log(persistedRes.data);
-
-        for (let i = 0; i < res.data.files.length; i++) {
-            if (
-                res.data.files[i].url &&
-                persistedRes.data.files[i].url &&
-                res.data.files[i].url === persistedRes.data.files[i].url
-            ) {
-                let splitFilename = res.data.files[i].file.filename.split(".");
-                let ext = splitFilename[splitFilename.length - 1];
-                await createDocument({
-                    workspace: localStorage.getItem("workspaceId") || "",
-                    filename: res.data.files[i].originalname,
-                    type: "upload",
-                    originalname: res.data.files[i].originalname,
-                    url: res.data.files[i].url,
-                    file: res.data.files[i].file,
-                    ext: ext,
-                    tags: [],
-                });
-                uploadOnClose();
-            }
-        }
-    };
-
-    const handleDocumentClick = () => {
-        createOnClose();
-        createDocument({
-            workspace: localStorage.getItem("workspaceId") || "",
-            filename: createdDocName,
-            type: "created",
-            value: editorValue,
-            ext: "created",
-            tags: [],
-        });
-    };
-
     const getIcon = (type: string) => {
         if (type === "jpg" || type === "png" || type === "jpeg") return <FaRegImage color={"rgb(123, 128, 154)"} />;
         if (type === "xlsx") return <FaRegFileExcel color={"rgb(123, 128, 154)"} />;
         return <FaRegFileAlt />;
-    };
-
-    const handleDeleteDocument = (document: TDocument) => {
-        console.log(document);
-        deleteDocument(document);
-        deleteOnClose();
-        setDuplicateFiles([]);
-    };
-
-    const handleUploadOnClose = () => {
-        uploadOnClose();
-        setDuplicateFiles([]);
     };
 
     const handleCloseTagButtonClick = async (document: TDocument, tag: TTag) => {
@@ -266,15 +142,8 @@ const View = () => {
                                     Actions
                                 </MenuButton>
                                 <MenuList>
-                                    <MenuItem
-                                        onClick={() => {
-                                            uploadOnOpen();
-                                            setDuplicateFiles([]);
-                                        }}
-                                    >
-                                        Upload files
-                                    </MenuItem>
-                                    <MenuItem onClick={createOnOpen}>Create doc</MenuItem>
+                                    <UploadModal documents={documents || []} />
+                                    <DocDrawer />
                                 </MenuList>
                             </Menu>
                         </Card>
@@ -331,50 +200,9 @@ const View = () => {
                                                             </Text>
                                                         </Td>
                                                         <Td>
-                                                            <Text
-                                                                p={"2px"}
-                                                                onClick={deleteOnOpen}
-                                                                cursor={"pointer"}
-                                                                color={"rgb(123, 128, 154)"}
-                                                                fontSize={"12px"}
-                                                                _hover={{ color: "red" }}
-                                                            >
-                                                                <FaRegTrashAlt />
-                                                            </Text>
+                                                            <DeleteFileAlert document={document} />
                                                         </Td>
-                                                        <AlertDialog
-                                                            isOpen={deleteIsOpen}
-                                                            leastDestructiveRef={cancelRef}
-                                                            onClose={deleteOnClose}
-                                                        >
-                                                            <AlertDialogOverlay>
-                                                                <AlertDialogContent>
-                                                                    <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                                                                        Delete Customer
-                                                                    </AlertDialogHeader>
 
-                                                                    <AlertDialogBody>
-                                                                        Are you sure? You can't undo this action
-                                                                        afterwards.
-                                                                    </AlertDialogBody>
-
-                                                                    <AlertDialogFooter>
-                                                                        <Button ref={cancelRef} onClick={deleteOnClose}>
-                                                                            Cancel
-                                                                        </Button>
-                                                                        <Button
-                                                                            colorScheme="red"
-                                                                            onClick={() =>
-                                                                                handleDeleteDocument(document)
-                                                                            }
-                                                                            ml={3}
-                                                                        >
-                                                                            Delete
-                                                                        </Button>
-                                                                    </AlertDialogFooter>
-                                                                </AlertDialogContent>
-                                                            </AlertDialogOverlay>
-                                                        </AlertDialog>
                                                         <Td>
                                                             <Box overflow={"revert"}>
                                                                 <Flex>
@@ -434,130 +262,6 @@ const View = () => {
                 </Container>
                 {/* </Flex> */}
             </Box>
-            {/*
-             ***************************** UPLOAD MODAL ********************************************
-             ***************************************************************************************
-             */}
-            <Modal isOpen={uploadIsOpen} onClose={uploadOnClose}>
-                <ModalOverlay onClick={handleUploadOnClose} />
-                <ModalContent>
-                    <ModalHeader>Upload Files</ModalHeader>
-                    <ModalCloseButton onClick={handleUploadOnClose} />
-                    <ModalBody>
-                        {createIsLoading || documentsIsFetching ? <Progress size="xs" isIndeterminate /> : null}
-                        <Input
-                            type="file"
-                            // accept="image/png, image/jpeg, image/jpg"
-                            size={"md"}
-                            p={"1px"}
-                            mt={"6px"}
-                            border={"none"}
-                            onChange={handleFileChange}
-                            multiple={true}
-                            onClick={() => {
-                                setDuplicateFiles([]);
-                            }}
-                        />
-
-                        <Box pt={"5px"}>
-                            {duplicateFiles.length > 0 ? (
-                                <Text color={"rgb(123, 128, 154)"} mb={"10px"}>
-                                    The following files have already been uploaded:
-                                </Text>
-                            ) : (
-                                <Text color={"rgb(123, 128, 154)"} fontSize={"14px"}>
-                                    Limit: 50 per upload
-                                </Text>
-                            )}
-                            {documents?.map((document, index) => {
-                                console.log(duplicateFiles);
-                                return (
-                                    <Box key={index}>
-                                        {duplicateFiles.includes(document.filename) ? (
-                                            <Flex>
-                                                <Box pt={"6px"} mr={"5px"} fontSize={"14px"}>
-                                                    <Text color={"rgb(123, 128, 154)"}>{getIcon(document.type)}</Text>
-                                                </Box>
-                                                <Text color={"rgb(123, 128, 154)"}>{document.filename}</Text>
-                                            </Flex>
-                                        ) : null}
-                                    </Box>
-                                );
-                            })}
-                        </Box>
-                    </ModalBody>
-
-                    <ModalFooter>
-                        <PrimaryButton onClick={() => handleUploadClick()} isDisabled={duplicateFiles.length > 0}>
-                            UPLOAD
-                        </PrimaryButton>
-                    </ModalFooter>
-                </ModalContent>
-            </Modal>
-            {/*
-             ******************* CREATE DOCUMENT DRAWER ********************************************
-             ***************************************************************************************
-             */}
-            <PrimaryDrawer isOpen={createIsOpen} onClose={createOnClose} title={"Create doc"} size="full">
-                <Box pb={"20px"}>
-                    <Text mb={"5px"}>Document name</Text>
-                    <Input
-                        value={createdDocName}
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => setCreatedDocName(event.target.value)}
-                    />
-                </Box>
-                <Text mb={"5px"}>Content</Text>
-                <Editor
-                    apiKey={import.meta.env.VITE_EDITOR_KEY}
-                    onInit={(evt, editor) => {
-                        console.log(evt);
-                        editorRef.current = editor;
-                    }}
-                    onEditorChange={(a) => {
-                        setEditorValue(a);
-                    }}
-                    // initialValue="<p>This is the initial content of the editor.</p>"
-                    value={editorValue}
-                    init={{
-                        height: 500,
-                        menubar: true,
-                        plugins: [
-                            "a11ychecker",
-                            "advlist",
-                            "advcode",
-                            "advtable",
-                            "autolink",
-                            "checklist",
-                            "export",
-                            "lists",
-                            "link",
-                            "image",
-                            "charmap",
-                            "preview",
-                            "anchor",
-                            "searchreplace",
-                            "visualblocks",
-                            "powerpaste",
-                            "fullscreen",
-                            "formatpainter",
-                            "insertdatetime",
-                            "media",
-                            "table",
-                            "help",
-                            "wordcount",
-                        ],
-                        toolbar:
-                            "undo redo | casechange blocks | bold italic backcolor | " +
-                            "alignleft aligncenter alignright alignjustify | " +
-                            "bullist numlist checklist outdent indent | removeformat | a11ycheck code table help",
-                        content_style: " .tox-menu {z-index: 10000000000 !important} ",
-                    }}
-                />
-                <Flex mt={"10px"}>
-                    <Spacer />
-                    <PrimaryButton onClick={handleDocumentClick}>SAVE</PrimaryButton>
-                </Flex>
-            </PrimaryDrawer>
         </SideBarLayout>
         // </Layout>
     );
