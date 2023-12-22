@@ -38,7 +38,6 @@ const AddForm = ({ dataCollection, updateDataCollection }: IProps) => {
 
     const updateData = async () => {
         const newDataCollection = data;
-        console.log(newDataCollection);
         updateDataCollection(newDataCollection);
         setData(defaultValues);
         onClose();

@@ -35,12 +35,9 @@ const SearchContent = ({ onClose, firstField }: IProps) => {
 
     const handleSearchInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchInputText(event.target.value);
-        console.log(tagsData.workspaces);
         const res: any = await searchAll({ key: event.target.value });
         const tagsRes: any = await searchTags({ tag: event.target.value });
 
-        console.log(res.data);
-        console.log(tagsRes.data);
         setData({ workspaces: res.data.workspaces, dataCollections: res.data.dataCollections, docs: res.data.docs });
         setTagsData({
             workspaces: tagsRes.data.workspaces,

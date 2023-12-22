@@ -13,7 +13,6 @@ export default function Join() {
     const toast = useToast();
 
     useEffect(() => {
-        console.log(workspaceUsers);
         for (const member of workspaceUsers?.members || []) {
             if (member._id === queryParameters.get("id")) navigate(`/workspaces/${queryParameters.get("workspaceId")}`);
         }

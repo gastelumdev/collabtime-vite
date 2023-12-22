@@ -58,7 +58,6 @@ const UploadModal = ({ documents, cell, addToCell = false, handleDocsChange, cre
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setDuplicateFiles([]);
-        console.log(event.target.files);
         if (event.target.files) {
             let fileMap = {};
             for (const file of event.target.files) {
@@ -77,7 +76,6 @@ const UploadModal = ({ documents, cell, addToCell = false, handleDocsChange, cre
 
             setDuplicateFiles(duplicateFilesCopy);
 
-            console.log(fileMap);
             setFiles(event.target.files);
             // const images = note.images;
             // setNote({ ...note, images: [...images, event.target.files[0].name] });
@@ -92,9 +90,6 @@ const UploadModal = ({ documents, cell, addToCell = false, handleDocsChange, cre
 
         const res: any = await uploadDocs(formdata);
         const persistedRes: any = await uploadPersistedDocs(formdata);
-
-        console.log(res.data);
-        console.log(persistedRes.data);
 
         const documentsCreated: any = [];
 

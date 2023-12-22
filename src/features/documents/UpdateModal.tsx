@@ -22,7 +22,6 @@ const UpdateModal = ({ document }: IProps) => {
     const [editorValue, setEditorValue] = useState<string>(document.value || "");
 
     useEffect(() => {
-        console.log(document.filename);
         setCreatedDocName(document.filename);
         setEditorValue(document.value || "");
     }, [document]);
@@ -39,7 +38,6 @@ const UpdateModal = ({ document }: IProps) => {
         <>
             <Text
                 onClick={() => {
-                    console.log("OPEN MODAL");
                     updateDocOnOpen();
                 }}
                 cursor={"pointer"}
@@ -66,8 +64,8 @@ const UpdateModal = ({ document }: IProps) => {
                 <Editor
                     apiKey={import.meta.env.VITE_EDITOR_KEY}
                     onInit={(evt, editor) => {
-                        console.log(evt);
                         editorRef.current = editor;
+                        evt;
                     }}
                     onEditorChange={(a) => {
                         setEditorValue(a);

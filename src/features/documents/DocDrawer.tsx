@@ -39,13 +39,10 @@ const DocDrawer = ({ cell, addToCell = false, handleDocsChange, create = false, 
         if (addToCell) {
             const cellCopy: any = cell;
             const docsCopy: any = cell?.docs;
-            console.log(docsCopy);
-            console.log(documentCreated);
             updateCell({ ...cellCopy, docs: [...docsCopy, documentCreated.data] });
         }
 
         if (create) {
-            console.log("CREATE***********");
             handleDocsChange(columnName, [documentCreated.data]);
         }
     };
@@ -64,8 +61,8 @@ const DocDrawer = ({ cell, addToCell = false, handleDocsChange, create = false, 
                 <Editor
                     apiKey={import.meta.env.VITE_EDITOR_KEY}
                     onInit={(evt, editor) => {
-                        console.log(evt);
                         editorRef.current = editor;
+                        evt;
                     }}
                     onEditorChange={(a) => {
                         setEditorValue(a);

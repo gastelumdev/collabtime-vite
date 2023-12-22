@@ -55,19 +55,15 @@ const UploadMenu = ({
     const [row, setRow] = useState<any[]>([]);
 
     useEffect(() => {
-        create ? console.log("CREATE***********") : console.log("EDIT**************");
         create ? setRow(preparedRow.docs) : setRow(docs);
     }, [preparedRow, docs]);
 
     // Filters out the docs are already part of the row
     useEffect(() => {
-        console.log(row);
         filter();
     }, [documents, docs]);
 
     const filter = () => {
-        console.log("DOCS ********", docs);
-        console.log("PREPARED DOCS ***********", preparedRow.docs);
         const docIds: any[] = [];
         let filtered;
         if (create) {
@@ -83,14 +79,10 @@ const UploadMenu = ({
                 docIds.push(doc._id);
             }
 
-            console.log(docIds);
-
             filtered = documents?.filter((item) => {
                 return !docIds?.includes(item._id);
             });
         }
-
-        console.log(filtered);
 
         setFilteredDocs(filtered || []);
     };
@@ -99,8 +91,6 @@ const UploadMenu = ({
         const ds = filteredDocs.filter((item: TDocument) => {
             return item._id !== document._id;
         });
-
-        console.log(ds);
 
         setFilteredDocs(ds);
     };

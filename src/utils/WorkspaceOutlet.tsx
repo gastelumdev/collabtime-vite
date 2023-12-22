@@ -9,18 +9,11 @@ export function WorkspaceOutlet() {
     const { data: user } = useGetUserQuery(localStorage.getItem("userId") || "");
     let allowUserToWorkspace = false;
 
-    console.log(user);
-    console.log(localStorage.getItem("workspaceId"));
-
     for (const workspace of user?.workspaces || []) {
-        console.log(workspace.id);
         if (workspace.id == localStorage.getItem("workspaceId")) {
             allowUserToWorkspace = true;
-            console.log(allowUserToWorkspace);
         }
     }
-
-    console.log(!allowUserToWorkspace);
 
     return !allowUserToWorkspace ? <Navigate to={"/workspaces"} /> : <Outlet />;
 }

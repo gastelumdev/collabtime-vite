@@ -23,10 +23,6 @@ const DataCollection = () => {
         getPermissions();
     }, [user]);
 
-    useEffect(() => {
-        console.log(columns);
-    }, [columns]);
-
     const getPermissions = () => {
         for (const workspace of user?.workspaces || []) {
             if (workspace.id == localStorage.getItem("workspaceId")) {

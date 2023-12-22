@@ -24,7 +24,6 @@ const DeleteFileAlert = ({ document }: IProps) => {
     const [deleteDocument] = useDeleteDocumentMutation();
 
     const handleDeleteDocument = (document: TDocument) => {
-        console.log(document);
         deleteDocument(document);
         deleteOnClose();
         // setDuplicateFiles([]);

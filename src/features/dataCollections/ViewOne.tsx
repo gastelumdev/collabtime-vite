@@ -64,8 +64,6 @@ const ViewOne = () => {
 
         const dataCollectionCopy: any = dataCollection;
 
-        console.log(dataCollectionCopy);
-
         if (dataCollectionCopy?.asTemplate !== undefined && dataCollectionCopy?.asTemplate?.active == true) {
             setIsTemplate(true);
         }

@@ -57,9 +57,7 @@ const View = () => {
             callUpdate(null);
         });
 
-        socket.on("getWorkspaces-" + localStorage.getItem("userId"), (item) => {
-            console.log(item);
-        });
+        socket.on("getWorkspaces-" + localStorage.getItem("userId"), () => {});
 
         return () => {
             socket.disconnect();
@@ -78,22 +76,18 @@ const View = () => {
 
     const handleCloseTagButtonClick = async (workspace: TWorkspace, tag: TTag) => {
         const { tags } = workspace;
-        console.log(tags);
 
         const filteredTags = tags.filter((item) => {
             return tag.name !== item.name;
         });
 
         const newWorkspace = { ...workspace, tags: filteredTags };
-        console.log(newWorkspace);
         const updatedWorkspaceRes: any = await updateWorkspace(newWorkspace);
         const updatedWorkspace = updatedWorkspaceRes.data;
-        console.log(updatedWorkspace);
 
         const { workspaceTags } = updatedWorkspace;
 
         const thisTagExistsRes: any = await tagExists(tag);
-        console.log(thisTagExistsRes);
 
         if (!thisTagExistsRes.data.tagExists) {
             const filteredWorkspaceTags = workspaceTags.filter((item: TTag) => {

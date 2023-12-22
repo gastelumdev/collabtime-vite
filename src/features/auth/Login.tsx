@@ -38,16 +38,12 @@ export default function Login() {
         if (formState.email !== "" && formState.password !== "") {
             try {
                 const user = await login(formState).unwrap();
-                console.log(user);
                 dispatch(setCredentials(user));
                 localStorage.setItem("token", user.accessToken);
                 localStorage.setItem("userId", user.user._id as string);
                 localStorage.setItem("notificationsFilter", "All");
                 navigate("/workspaces");
             } catch (err: any) {
-                console.log(err);
-                console.log(err.data.message);
-
                 toast({
                     title: "Login Error.",
                     description: err.data.message,
@@ -65,23 +61,16 @@ export default function Login() {
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value, name } = event.target;
-        console.log(value);
         setFormState({
             ...formState,
             [name]: value,
         });
-        console.log(formState.email);
         setEmailInputError(false);
         setPasswordInputError(false);
     };
 
     return (
-        <Flex
-            minH={"100vh"}
-            align={"center"}
-            justify={"center"}
-            bg={useColorModeValue("gray.50", "gray.800")}
-        >
+        <Flex minH={"100vh"} align={"center"} justify={"center"} bg={useColorModeValue("gray.50", "gray.800")}>
             <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
                 <Stack align={"center"}>
                     <Heading fontSize={"4xl"}>Sign in to your account</Heading>
@@ -90,31 +79,13 @@ export default function Login() {
                         <Text color={"blue.400"}>features</Text> ✌️
                     </Text> */}
                 </Stack>
-                <Box
-                    rounded={"lg"}
-                    bg={useColorModeValue("white", "gray.700")}
-                    boxShadow={"lg"}
-                    p={8}
-                >
+                <Box rounded={"lg"} bg={useColorModeValue("white", "gray.700")} boxShadow={"lg"} p={8}>
                     <Stack spacing={4}>
-                        <FormControl
-                            id="email"
-                            isRequired={true}
-                            isInvalid={emailInputError}
-                        >
+                        <FormControl id="email" isRequired={true} isInvalid={emailInputError}>
                             <FormLabel>Email address</FormLabel>
-                            <Input
-                                type="email"
-                                name={"email"}
-                                value={formState.email}
-                                onChange={handleChange}
-                            />
+                            <Input type="email" name={"email"} value={formState.email} onChange={handleChange} />
                         </FormControl>
-                        <FormControl
-                            id="password"
-                            isRequired={true}
-                            isInvalid={passwordInputError}
-                        >
+                        <FormControl id="password" isRequired={true} isInvalid={passwordInputError}>
                             <FormLabel>Password</FormLabel>
                             <Input
                                 type="password"
@@ -125,24 +96,14 @@ export default function Login() {
                             />
                         </FormControl>
                         <Stack spacing={10}>
-                            <Stack
-                                direction={{ base: "column", sm: "row" }}
-                                align={"start"}
-                                justify={"space-between"}
-                            >
+                            <Stack direction={{ base: "column", sm: "row" }} align={"start"} justify={"space-between"}>
                                 {/* <Checkbox>Remember me</Checkbox> */}
                                 <Box></Box>
-                                <Link
-                                    href="/resetPasswordRequest"
-                                    color={"blue.400"}
-                                >
+                                <Link href="/resetPasswordRequest" color={"blue.400"}>
                                     Forgot password?
                                 </Link>
                             </Stack>
-                            <PrimaryButton
-                                fontSize={"16px"}
-                                onClick={handleSubmit}
-                            >
+                            <PrimaryButton fontSize={"16px"} onClick={handleSubmit}>
                                 Sign in
                             </PrimaryButton>
                         </Stack>

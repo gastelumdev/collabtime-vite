@@ -5,7 +5,7 @@ import { useGetNotificationsQuery, useCallNotificationsUpdateMutation } from "..
 import { formatTime } from "../../utils/helpers";
 
 const DisplayList = () => {
-    const { data, isLoading, isError, error } = useGetNotificationsQuery(null);
+    const { data, isLoading, isError } = useGetNotificationsQuery(null);
     const [callNotificationsUpdate] = useCallNotificationsUpdateMutation();
     const [priority] = useState("All");
     const [activeTab, setActiveTab] = useState(0);
@@ -18,7 +18,6 @@ const DisplayList = () => {
         const socket = io(import.meta.env.VITE_API_URL);
         socket.connect();
         socket.on("update", (item) => {
-            console.log("Notifications called for update");
             callNotificationsUpdate(priority);
 
             toast({
@@ -34,7 +33,6 @@ const DisplayList = () => {
     }, []);
 
     useEffect(() => {
-        console.log(priority);
         setNotificationsFilter(localStorage.getItem("notificationsFilter") as string, 0);
     }, [priority]);
 
@@ -43,30 +41,6 @@ const DisplayList = () => {
         localStorage.setItem("notificationsFilter", priority);
         callNotificationsUpdate(priority);
     };
-
-    // const formatHours = (hours: any) => {
-    //     if (hours > 12) {
-    //         return hours - 12;
-    //     }
-    //     return hours;
-    // };
-
-    // const getMeridian = (hours: any) => {
-    //     if (hours > 12) {
-    //         return "PM";
-    //     }
-    //     return "AM";
-    // };
-
-    // const formatTime = (date: Date) => {
-    //     let newDate = new Date(date);
-    //     console.log(date);
-    //     console.log(newDate.getDay());
-    //     let formattedDate = `${newDate.getMonth()}/${newDate.getDate()}/${newDate.getFullYear()} ${formatHours(
-    //         newDate.getHours()
-    //     )}:${newDate.getUTCMinutes() > 9 ? "" : "0"}${newDate.getUTCMinutes()} ${getMeridian(newDate.getHours())}`;
-    //     return formattedDate;
-    // };
 
     const setPriorityColor = (priority: string) => {
         if (priority === "All")
@@ -98,7 +72,6 @@ const DisplayList = () => {
     };
 
     if (isError) {
-        console.log(error);
         toast({
             title: "Error",
             description: "There was an error loading notifications",

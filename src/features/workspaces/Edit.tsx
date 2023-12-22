@@ -44,7 +44,6 @@ const Edit = ({ workspace, updateWorkspace }: IProps) => {
      */
     const editData = async () => {
         let newWorkspace: TWorkspace = data;
-        console.log(checkedItems);
         newWorkspace = {
             ...data,
             tools: {
@@ -54,7 +53,6 @@ const Edit = ({ workspace, updateWorkspace }: IProps) => {
                 messageBoard: { access: checkedItems[3] ? 2 : 0 },
             },
         };
-        console.log(newWorkspace);
         updateWorkspace(newWorkspace);
         onClose();
     };

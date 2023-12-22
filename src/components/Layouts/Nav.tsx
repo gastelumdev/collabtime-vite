@@ -7,7 +7,7 @@ import { Layout } from "antd";
 // import type { MenuProps } from "antd";
 import { Link } from "react-router-dom";
 import Sider from "antd/es/layout/Sider";
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 import { IconType } from "react-icons";
 import Divider from "../Divider/Divider";
 import { FaTasks } from "react-icons/fa";
@@ -87,9 +87,7 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
 };
 
 export default function Nav({ setWidth }: INavProps) {
-    const [navWidth, setNavWidth] = useState("270px");
-
-    console.log(navWidth);
+    // const [navWidth, setNavWidth] = useState("270px");
 
     return (
         <>
@@ -101,16 +99,15 @@ export default function Nav({ setWidth }: INavProps) {
                     trigger={null}
                     onBreakpoint={(broken) => {
                         if (broken) {
-                            setNavWidth("0px");
+                            // setNavWidth("0px");
                             setWidth("0px");
                         } else {
-                            setNavWidth("270px");
+                            // setNavWidth("270px");
                             setWidth("270px");
                         }
                     }}
-                    onCollapse={(collapsed, type) => {
-                        console.log(collapsed, type);
-                    }}
+                    // onCollapse={(collapsed, type) => {
+                    // }}
                     style={{
                         borderRadius: "10px",
                         backgroundImage: "radial-gradient(circle at center top, rgb(66, 66, 74), black)",

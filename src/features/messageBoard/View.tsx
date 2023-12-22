@@ -110,7 +110,6 @@ const View = () => {
     };
 
     const handleCreateMessageClick = () => {
-        console.log(id);
         createMessage({
             content: messageInput,
             workspace: id || "",
@@ -120,9 +119,7 @@ const View = () => {
     };
 
     const handleCreateMessageOnKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        console.log(event.key);
         if (event.key === "Enter") {
-            console.log(id);
             createMessage({
                 content: messageInput,
                 workspace: id || "",
@@ -218,10 +215,6 @@ const View = () => {
                                               );
                                           })
                                         : "No messages"}
-                                    {/* {usersTyping.map((user, index) => {
-                                        console.log(user);
-                                        return <Text key={index}>{user.firstname}</Text>;
-                                    })} */}
                                     <Box h={"20px"}>
                                         <Center>
                                             {usersTyping && userWhosTyping.user._id !== user?._id ? (

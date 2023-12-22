@@ -1,14 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-    FormControl,
-    Flex,
-    Heading,
-    Input,
-    Stack,
-    Text,
-    useColorModeValue,
-} from "@chakra-ui/react";
+import { FormControl, Flex, Heading, Input, Stack, Text, useColorModeValue } from "@chakra-ui/react";
 
 import { useAuth } from "../../hooks/useAuth";
 import { useResetPasswordRequestMutation } from "../../app/services/api";
@@ -22,10 +14,11 @@ const ResetPasswordRequest = () => {
 
     const handleClick = () => {
         try {
-            const res = resetPasswordRequest({ email }).unwrap();
-            console.log(res);
+            resetPasswordRequest({ email }).unwrap();
             navigate("/resetPasswordEmailSent");
-        } catch (err) {}
+        } catch (err) {
+            console.log(err);
+        }
     };
 
     /**
@@ -38,12 +31,7 @@ const ResetPasswordRequest = () => {
     };
 
     return (
-        <Flex
-            minH={"100vh"}
-            align={"center"}
-            justify={"center"}
-            bg={useColorModeValue("gray.50", "gray.800")}
-        >
+        <Flex minH={"100vh"} align={"center"} justify={"center"} bg={useColorModeValue("gray.50", "gray.800")}>
             <Stack
                 spacing={4}
                 w={"full"}

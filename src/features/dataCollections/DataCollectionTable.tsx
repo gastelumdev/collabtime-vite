@@ -105,14 +105,19 @@ const DataCollectionTable = ({
     const [tagExists] = useTagExistsMutation();
 
     const [row, setRow] = useState<any>({ dataCollection: dataCollection?._id, docs: [] });
-    const [labelStyles, setLabelStyles] = useState<any>({});
-    const [labelValue, setLabelValue] = useState<any>({});
+    // const [labelStyles, setLabelStyles] = useState<any>({});
+    // const [labelValue, setLabelValue] = useState<any>({});
     const [numberChecked, setNumberChecked] = useState<number>(0);
     const [showRowForm, setShowRowForm] = useState<boolean>(false);
-
+    /**
+     * holds the cell ids of the cell that is in focus
+     */
     const [editMode, setEditMode] = useState<string[]>([]);
     const [isFocused, setIsFocused] = useState<boolean>(false);
     const [tempValue, setTempValue] = useState("");
+    /**
+     * Holds the value of an input when it gets focused
+     */
     const [initialValue, setInitialValue] = useState("");
 
     const [deleteRows, setDeleteRows] = useState<TRow[]>([]);
@@ -120,13 +125,18 @@ const DataCollectionTable = ({
 
     const [firstInputFocus, setFirstInputFocus] = useState(true);
 
-    const [headerMenuIsOpen, setHeaderMenuIsOpen] = useState(
-        new Array(columns?.length).fill(null).map(() => {
-            return false;
-        })
-    );
+    // MAY NEED TO BE DELETED -- 12/22/23
+    // const [headerMenuIsOpen, setHeaderMenuIsOpen] = useState(
+    //     new Array(columns?.length).fill(null).map(() => {
+    //         return false;
+    //     })
+    // );
 
     const [showTagsColumn, setShowTagsColumn] = useState<boolean>(false);
+    /**
+     * This variable is used to dynamically adjust the width of the tags column
+     * depending on the amount of tags.
+     */
     const [tagsColumnWidth, setTagsColumnWidth] = useState<string>("");
 
     /**
@@ -137,14 +147,25 @@ const DataCollectionTable = ({
         setDefaultRow();
     }, []);
 
-    useEffect(() => {
-        for (const column of columns || []) {
-            if (column.type === "label") {
-                setLabelStyles({ ...labelStyles, [column.name]: "" });
-            }
-        }
-    }, []);
+    /**
+     * Sets Label styles
+     * MAY BE UNUSED -- 12/21/23
+     */
+    // useEffect(() => {
+    //     for (const column of columns || []) {
+    //         if (column.type === "label") {
+    //             setLabelStyles({ ...labelStyles, [column.name]: "" });
+    //         }
+    //     }
+    // }, []);
 
+    /**
+     * The "update row" is a socket io from the backend that triggers an update request
+     * Since the rowCallUpdate function makes a rtk query request that shares a tag with the
+     * getRows request, which refetches the rows and updates the interface.
+     * This is helpful since when another user makes a change, it updates the interface
+     * without having to trigger it in anyway.
+     */
     useEffect(() => {
         const socket = io(import.meta.env.VITE_API_URL);
         socket.connect();
@@ -158,6 +179,10 @@ const DataCollectionTable = ({
         };
     }, []);
 
+    /**
+     * This preemtively estimates the width of the tags column width based on the amount of
+     * characters of all the tags and additional pixels.
+     */
     useEffect(() => {
         let max = 0;
         let maxTags = 0;
@@ -178,6 +203,9 @@ const DataCollectionTable = ({
         setTagsColumnWidth((letterWidth + tagSpace + spacing).toString() + "px");
     }, [rows]);
 
+    /**
+     * Set a row to a default state
+     */
     const setDefaultRow = () => {
         let temp: TRow = { dataCollection: dataCollectionId, notesList: [], cells: [], tags: [], docs: [] };
         for (const column of columns || []) {
@@ -187,95 +215,201 @@ const DataCollectionTable = ({
         setRow(temp);
     };
 
-    const handleLabelChange = (selectedValue: any, columnName: string) => {
-        setLabelValue({ ...labelValue, [columnName]: selectedValue.value });
-        let rowCopy = row;
-        setRow({ ...rowCopy, [columnName]: selectedValue.value });
-        setFirstInputFocus(false);
-    };
-
-    const handleReminderClick = (row: TRow) => {
-        updateRow({ ...row, reminder: !row.reminder });
-    };
-
-    const handleDocsChange = (name: string, docs: TDocument[]) => {
-        const rowDocs = row.docs || [];
-        setRow({ ...row, [name]: rowDocs.concat(docs) });
-    };
-
-    const handleCellDocsChange = (cell: TCell, doc: TDocument) => {
-        const docs: any = cell.docs;
-        updateCell({ ...cell, docs: [...docs, doc] });
-    };
-
-    const handleAddExistingDoc = (name: string, docs: TDocument[]) => {
-        const rowDocs = row.docs || [];
-        setRow({ ...row, [name]: rowDocs.concat(docs) });
-    };
-
-    const handleAddExistingDocToCell = (cell: TCell, doc: TDocument) => {
-        const docs: any = cell.docs;
-        updateCell({ ...cell, docs: [...docs, doc] });
-    };
-
-    const handleAcknowledgeClick = (row: TRow) => {
-        updateRow({ ...row, acknowledged: !row.acknowledged });
-    };
-
-    const handleColumnHover = (index: number) => {
-        const headerMenuIsOpenCopy = headerMenuIsOpen;
-        headerMenuIsOpenCopy[index] = true;
-        setHeaderMenuIsOpen(headerMenuIsOpenCopy);
-    };
-
+    /**
+     * COLUMN HEADER
+     *
+     * This function calls the delete column request to the backend
+     * @param column Column to be deleted
+     */
     const handleDeleteColumn = (column: TColumn) => {
         deleteColumn(column);
         // setData(rows || []);
     };
 
+    /**
+     * CREATE ROW SECTION
+     *
+     * This function handles the input change and sets the the name as a key to the row
+     * @param event The input event
+     */
     const handleAddRowInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(event.target.value);
         setRow({ ...row, [event.target.name]: event.target.value });
     };
 
-    const handleUpdateRowInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setTempValue(event.target.value);
+    /**
+     * CREATE ROW SECTION
+     *
+     * Sets any of the select inputs values to the row that is passed in to create it.
+     * @param selectedValue This value is recieved from a select input
+     * @param columnName This value is the name of the column which acts as an key
+     *                   in the row that is sent in a create row request
+     */
+    const handleLabelChange = (selectedValue: any, columnName: string) => {
+        // THIS MAY NEED DELETION -- 12/21/23
+        // setLabelValue({ ...labelValue, [columnName]: selectedValue.value });
+        let rowCopy = row;
+        setRow({ ...rowCopy, [columnName]: selectedValue.value });
+
+        // This removes the first input from asking for focus
+        // This is useful since a select input may not be requesting for focus
+        setFirstInputFocus(false);
     };
 
-    // const handleNumberInputChange = (valueAsString: string, valueAsNumber: number) => {
-    //     setRow({ ...row });
-    // };
-
-    // const handleAddRowNumberInputChange = (valueAsString: string, valueAsNumber: number) => {};
-
-    const handleUpdateRowOnFocus = (event: React.FocusEvent<HTMLInputElement, Element>, cell: any) => {
-        setInitialValue(event.target.value);
-        const em: string[] = [];
-        em.push(cell._id);
-        setEditMode(em as any);
-        setTempValue(event.target.value);
-        setIsFocused(true);
+    /**
+     * CREATE ROW SECTION
+     *
+     * This recieves the docs passed in from UploadModal.tsx or DocDrawer.tsx which are first
+     * uploaded.
+     * @param name This is the cell or column name that serves as the key in the row
+     * @param docs This is the documents array that holds the created docs
+     */
+    const handleDocsChange = (name: string, docs: TDocument[]) => {
+        const rowDocs = row.docs || [];
+        setRow({ ...row, [name]: rowDocs.concat(docs) });
     };
 
-    const handleUpdateRowOnBlur = async (event: React.FocusEvent<HTMLInputElement, Element>, cell: any) => {
-        let newCell = cell;
-        newCell = { ...newCell, value: event.target.value };
-        if (initialValue != event.target.value) await updateCell(newCell);
-
-        let tempEditMode = editMode;
-        tempEditMode.pop();
-        setEditMode(tempEditMode);
-        setIsFocused(false);
-    };
-
+    /**
+     * CREATE ROW SECTION
+     *
+     * This function makes the create row request and sets create row variables to default
+     */
     const handleSaveRowClick = async () => {
-        console.log(row);
         await createRow(row);
         setShowRowForm(false);
         setDefaultRow();
         setRow({ dataCollection: dataCollection?._id, docs: [] });
     };
 
+    /**
+     * CREATE ROW SECTION
+     *
+     * This creates the row if enter is pressed when an input is in focus
+     * @param event The event that holds the key being pressed
+     */
+    const handleAddRowOnEnter = async (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key == "Enter") {
+            await createRow(row);
+            setFirstInputFocus(true);
+            setDefaultRow();
+        }
+    };
+
+    /**
+     * UPDATE ROW SECTION
+     *
+     * MAY NEED TO BE DELETED -- 12/21/23
+     * @param cell The cell that needs to be updated by either UploadModal.tsx or DocDrawer.tsx
+     * @param doc The document added to the cell
+     */
+    // const handleCellDocsChange = (cell: TCell, doc: TDocument) => {
+    //     const docs: any = cell.docs;
+    //     updateCell({ ...cell, docs: [...docs, doc] });
+    // };
+
+    /**
+     * UPDATE AND CREATE ROW SECTION
+     *
+     * This function is used to update the row with existing docs picked in UploadMenu.tsx
+     * @param name This is the cell or column name that serves as the key in the row
+     * @param docs This is the documents array that holds the created docs
+     */
+    const handleAddExistingDoc = (name: string, docs: TDocument[]) => {
+        const rowDocs = row.docs || [];
+        setRow({ ...row, [name]: rowDocs.concat(docs) });
+    };
+
+    /**
+     * UPDATE ROW SECTION
+     *
+     * This function helps keep track of what cell is being focused and toggles it to edit mode
+     * @param event This serves as the current state of the input and is set as the initial value
+     * @param cell This provides the cell id to keep tracked of what is being focused
+     */
+    const handleUpdateRowOnFocus = (event: React.FocusEvent<HTMLInputElement, Element>, cell: any) => {
+        // Holds the initial value of the input so that when on blur, it does not send a request for update
+        // Since they are the same
+        setInitialValue(event.target.value);
+
+        // This adds a cell id to an array so that.
+        // The input then checks if it is in edit mode by checking if the cell id in the
+        // editMode array, if it isn't, it shows the cell value
+        const em: string[] = [];
+        em.push(cell._id);
+        setEditMode(em as any);
+
+        // Initiates the temp value with the value in the input that will be displayed when focused
+        // and flags it with is focused
+        setTempValue(event.target.value);
+        setIsFocused(true);
+    };
+
+    /**
+     * UPDATE Row SECTION
+     *
+     * This function updates a cell when it is a text input.
+     * @param event The event that will be checked against the initial value
+     * @param cell The cell that will be updated on blur
+     */
+    const handleUpdateRowOnBlur = async (event: React.FocusEvent<HTMLInputElement, Element>, cell: any) => {
+        // If the initial value is the same as the value when the blur happend do nothing
+        // otherwise update the cell with the new value
+        let newCell = cell;
+        newCell = { ...newCell, value: event.target.value };
+        if (initialValue != event.target.value) await updateCell(newCell);
+
+        // Remove this cell id from edit mode so that it displays the cell value
+        let tempEditMode = editMode;
+        tempEditMode.pop();
+        setEditMode(tempEditMode);
+
+        // Change the focus status
+        setIsFocused(false);
+    };
+
+    /**
+     * UPDATE ROW SECTION
+     *
+     * This function updates the value of the input when its in edit mode.
+     * When the input is blured, this value gets updated
+     * @param event This provides the current state of the input
+     */
+    const handleUpdateRowInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setTempValue(event.target.value);
+    };
+
+    /**
+     * UPDATE ROW SECTION
+     *
+     * This function is used to update the row with existing docs picked in UploadMenu.tsx
+     * @param cell Cell to be updated
+     * @param doc Document being added from existing documents
+     */
+    const handleAddExistingDocToCell = (cell: TCell, doc: TDocument) => {
+        const docs: any = cell.docs;
+        updateCell({ ...cell, docs: [...docs, doc] });
+    };
+
+    /**
+     * UPDATE ROW SECTION
+     *
+     * Takes the selected value and updates the cell
+     * @param newValue The new value from the cell
+     * @param cell The cell to be updated
+     */
+    const handleLabelSelectChange = async (newValue: any, cell: TCell) => {
+        let newCell = cell;
+        newCell = { ...newCell, value: newValue.value };
+        await updateCell(newCell);
+    };
+
+    /**
+     * ROW TOOLBAR
+     *
+     * This function counts the checkboxes and keeps the track of the rows to be deleted
+     * If there is anything in the the deleted rows array, it will show the delete rows bar
+     * @param event This provides the checked box
+     * @param row This is the row that is being checked
+     */
     const onDeleteRowCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>, row: any) => {
         const deleteRowsCopy = deleteRows;
 
@@ -297,6 +431,32 @@ const DataCollectionTable = ({
         }
     };
 
+    /**
+     * ROW TOOLBAR
+     *
+     * This toggles the reminder on and of for a row
+     * This is located in the row toolbar
+     * @param row The row is to be updated with the toggle reminder status
+     */
+    const handleReminderClick = (row: TRow) => {
+        updateRow({ ...row, reminder: !row.reminder });
+    };
+
+    /**
+     * ROW TOOLBAR
+     *
+     * Updates the row acknowledgement status
+     * @param row This is the row where the acknowledgement is being made
+     */
+    const handleAcknowledgeClick = (row: TRow) => {
+        updateRow({ ...row, acknowledged: !row.acknowledged });
+    };
+
+    /**
+     * ROW TOOLBAR
+     *
+     * Deletes the rows being tracked by the ckeckmarks and sets defaults to hide the delete bar
+     */
     const deleteItems = async () => {
         for (const row of deleteRows) {
             deleteRow(row);
@@ -307,38 +467,43 @@ const DataCollectionTable = ({
         setRow({ dataCollection: dataCollection?._id, docs: [] });
     };
 
-    const handleAddRowOnKeyUp = async (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key == "Enter") {
-            await createRow(row);
-            setFirstInputFocus(true);
-            setDefaultRow();
-        }
-    };
+    // MAY NEED TO BE DELETED -- 12/22/23
+    // const handleColumnHover = (index: number) => {
+    //     const headerMenuIsOpenCopy = headerMenuIsOpen;
+    //     headerMenuIsOpenCopy[index] = true;
+    //     setHeaderMenuIsOpen(headerMenuIsOpenCopy);
+    // };
 
-    const handleLabelSelectChange = async (newValue: any, cell: TCell) => {
-        let newCell = cell;
-        newCell = { ...newCell, value: newValue.value };
-        await updateCell(newCell);
-    };
-
+    /**
+     * ROW TOOLBAR
+     *
+     * Removes the tag from a row and also from the workspace if its the last of its kind
+     * @param row Row where tag needs to be removed
+     * @param tag Tag that needs to be removed
+     */
     const handleCloseTagButtonClick = async (row: TRow, tag: TTag) => {
         const { tags } = row;
 
+        // Filter out the selected tag
         const filteredTags = tags.filter((item) => {
             return tag.name !== item.name;
         });
 
+        // Update the row with the filtered tags
         const addNewRow = { ...row, tags: filteredTags };
         await updateRow(addNewRow);
 
+        // Get all the tags belonging to the workspace
         let workspaceTags;
-
         if (workspace) {
             workspaceTags = workspace.workspaceTags;
         }
 
+        // Check if the new tag exists in the workspace
         const thisTagExistsRes: any = await tagExists(tag);
 
+        // if it does not exist in any other parts of the workspace, delete it from the workspace
+        // and delete it all together
         if (!thisTagExistsRes.data.tagExists) {
             const filteredWorkspaceTags = workspaceTags?.filter((item: TTag) => {
                 return item.name !== tag.name;
@@ -434,7 +599,9 @@ const DataCollectionTable = ({
                                     <Th key={index} width={width}>
                                         {(permissions || 0) > 1 ? (
                                             <Menu>
-                                                <MenuButton onClick={() => handleColumnHover(index)}>
+                                                <MenuButton
+                                                // onClick={() => handleColumnHover(index)}
+                                                >
                                                     <Text as={"b"}>
                                                         {column.name.split("_").join(" ").toUpperCase()}
                                                     </Text>
@@ -564,7 +731,6 @@ const DataCollectionTable = ({
                                         </>
                                     ) : null}
                                     {row.cells.map((cell: TCell, index: number) => {
-                                        if (cell.type === "date") console.log(cell.value);
                                         let bgColor: string = "";
                                         for (const label of cell.labels || []) {
                                             if (cell.value == label.title) {
@@ -696,7 +862,7 @@ const DataCollectionTable = ({
                                                             cell={cell}
                                                             docs={cell.docs}
                                                             addToCell={true}
-                                                            handleDocsChange={handleCellDocsChange}
+                                                            // handleDocsChange={handleCellDocsChange}
                                                             handleAddExistingDoc={handleAddExistingDoc}
                                                             handleAddExistingDocToCell={handleAddExistingDocToCell}
                                                             create={false}
@@ -852,7 +1018,7 @@ const DataCollectionTable = ({
                                                             }
                                                         }}
                                                         onKeyUp={(event: React.KeyboardEvent<HTMLInputElement>) =>
-                                                            handleAddRowOnKeyUp(event)
+                                                            handleAddRowOnEnter(event)
                                                         }
                                                     />
                                                 </Box>
@@ -882,7 +1048,7 @@ const DataCollectionTable = ({
                                                             }
                                                         }}
                                                         onKeyUp={(event: React.KeyboardEvent<HTMLInputElement>) =>
-                                                            handleAddRowOnKeyUp(event)
+                                                            handleAddRowOnEnter(event)
                                                         }
                                                     />
                                                 </Box>

@@ -39,7 +39,6 @@ const Create = ({ addNewDataCollection }: IProps) => {
                 formattedDC.push({ value: dataCollection._id, label: dataCollection.asTemplate.name });
             }
         }
-        console.log(formattedDC);
         setSelectFormattedDataCollections(formattedDC);
     }, [dataCollections]);
 
@@ -53,7 +52,6 @@ const Create = ({ addNewDataCollection }: IProps) => {
 
     const createData = async () => {
         const newDataCollection = data;
-        console.log(newDataCollection);
         addNewDataCollection(newDataCollection);
         setData(defaultValues);
         onClose();

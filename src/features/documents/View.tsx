@@ -66,17 +66,13 @@ const View = () => {
 
     const handleCloseTagButtonClick = async (document: TDocument, tag: TTag) => {
         const { tags } = document;
-        console.log(tags);
 
         const filteredTags = tags.filter((item) => {
             return tag.name !== item.name;
         });
 
         const addNewDocument = { ...document, tags: filteredTags };
-        console.log(addNewDocument);
-        const updatedRowRes: any = await updateDocument(addNewDocument);
-        const updatedRow = updatedRowRes.data;
-        console.log(updatedRow);
+        await updateDocument(addNewDocument);
 
         let workspaceTags;
 
@@ -85,7 +81,6 @@ const View = () => {
         }
 
         const thisTagExistsRes: any = await tagExists(tag);
-        console.log(thisTagExistsRes);
 
         if (!thisTagExistsRes.data.tagExists) {
             const filteredWorkspaceTags = workspaceTags?.filter((item: TTag) => {
@@ -164,7 +159,6 @@ const View = () => {
                                         </Thead>
                                         <Tbody>
                                             {documents?.map((document, index) => {
-                                                console.log(document);
                                                 return (
                                                     <Tr key={index}>
                                                         <Td>

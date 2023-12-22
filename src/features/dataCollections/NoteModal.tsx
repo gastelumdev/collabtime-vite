@@ -85,7 +85,6 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
 
     const handleOpen = () => {
         notesOnOpen();
-        console.log(row);
 
         if (hasUnreadItems) {
             const rowCopy = row;
@@ -99,7 +98,6 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
             }
 
             const result = { ...rowCopy, notesList: newNote };
-            console.log(result);
 
             updateRow(result);
             setHasUnreadItems(false);
@@ -112,7 +110,6 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
-            console.log(event.target.files);
             setFiles(event.target.files);
             // const images = note.images;
             // setNote({ ...note, images: [...images, event.target.files[0].name] });
@@ -148,15 +145,9 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
                 persistedRes.data.files[i].url &&
                 res.data.files[i].url === persistedRes.data.files[i].url
             ) {
-                // let splitFilename = res.data.files[i].file.filename.split(".");
-                // let ext = splitFilename[splitFilename.length - 1];
-                console.log(res.data.files[i]);
                 fileUrls.push(res.data.files[i].url);
             }
         }
-
-        console.log(fileUrls);
-        // const imagesCopy = note.images;
 
         setNote({
             ...note,
@@ -167,7 +158,6 @@ const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
 
         const dataCopy = row;
         const notesList = dataCopy.notesList;
-        console.log(dataCopy);
 
         const result = [
             ...notesList,

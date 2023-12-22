@@ -55,7 +55,6 @@ const View = () => {
 
     const handleCloseTagButtonClick = async (dataCollection: TDataCollection, tag: TTag) => {
         const { tags } = dataCollection;
-        console.log(tags);
 
         // Filter out the tag clicked on from the data collection tags
         const filteredTags = tags.filter((item) => {
@@ -64,11 +63,9 @@ const View = () => {
 
         // Create a new data collection with the updated tags
         const addNewDataCollection = { ...dataCollection, tags: filteredTags };
-        console.log(addNewDataCollection);
         // update the data collection and get the updated data collection
-        const updatedDataCollectionRes: any = await updateDataCollection(addNewDataCollection);
-        const updatedDataCollection = updatedDataCollectionRes.data;
-        console.log(updatedDataCollection);
+        await updateDataCollection(addNewDataCollection);
+        // const updatedDataCollection = updatedDataCollectionRes.data;
 
         let workspaceTags;
 
@@ -77,7 +74,6 @@ const View = () => {
         }
 
         const thisTagExistsRes: any = await tagExists(tag);
-        console.log(thisTagExistsRes);
 
         if (!thisTagExistsRes.data.tagExists) {
             const filteredWorkspaceTags = workspaceTags?.filter((item: TTag) => {

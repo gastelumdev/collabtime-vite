@@ -13,15 +13,10 @@ export function PrivateOutlet({ redirectPath = "/login" }: PrivateOutletProps) {
     const toast = useToast();
     const { status } = useParams();
 
-    console.log(status);
-
     useEffect(() => {
-        console.log(status);
         const socket = io(import.meta.env.VITE_API_URL);
         socket.connect();
         socket.on("update", (item) => {
-            console.log("Notifications called for update");
-
             if (item) {
                 toast({
                     title: "Notification",
@@ -34,8 +29,6 @@ export function PrivateOutlet({ redirectPath = "/login" }: PrivateOutletProps) {
 
         if (status !== "active") {
             socket.on("update-message", (item) => {
-                console.log("Notifications called for update");
-
                 if (item) {
                     toast({
                         title: `New message from ${item.message.createdBy.firstname} ${item.message.createdBy.lastname} in ${item.workspace.name}`,
@@ -50,7 +43,6 @@ export function PrivateOutlet({ redirectPath = "/login" }: PrivateOutletProps) {
         }
 
         socket.on(localStorage.getItem("userId") || "", (item) => {
-            console.log(item);
             toast({
                 title: "Notification",
                 description: item.message,

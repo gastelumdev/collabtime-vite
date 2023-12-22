@@ -55,7 +55,6 @@ const CreateColumn = ({ columns, createColumn }: TProps) => {
      * This should be replaced by RTK
      */
     const handleAddColumn = () => {
-        console.log(columnName);
         if (!columnNameError) {
             const newColumn: TColumn = {
                 dataCollection: dataCollectionId || "",
@@ -272,7 +271,6 @@ const CreateColumn = ({ columns, createColumn }: TProps) => {
                             </Flex>
                             <Box>
                                 {labels.map((label: TLabel, index: number) => {
-                                    console.log(label);
                                     return (
                                         <Box key={index} bg={label.color} p={"5px"} m={"5px"}>
                                             <HStack>

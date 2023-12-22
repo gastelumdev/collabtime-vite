@@ -37,7 +37,6 @@ const EditRow = ({ cells }: IProps) => {
     };
 
     const handleUpdateRowInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(event.target.value);
         setTempValue(event.target.value);
     };
 
@@ -50,7 +49,6 @@ const EditRow = ({ cells }: IProps) => {
     };
 
     const handleUpdateRowOnBlur = async (event: React.FocusEvent<HTMLInputElement, Element>, cell: any) => {
-        console.log("******ON BLUR", event.target.value);
         let newCell = cell;
         newCell = { ...newCell, value: event.target.value };
         if (initialValue != event.target.value) await updateCell(newCell);
@@ -137,7 +135,6 @@ const EditRow = ({ cells }: IProps) => {
                                     }}
                                     name={cell.name}
                                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                        console.log(event);
                                         handleUpdateRowInputChange(event);
                                     }}
                                     onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) =>

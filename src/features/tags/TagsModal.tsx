@@ -58,30 +58,21 @@ const TagsModal = ({ data, tags, update, workspaceId, tagType }: IProps) => {
         for (const tag of tags || []) {
             tagIds.push(tag._id || "");
         }
-        console.log(tagIds);
-
-        console.log(tags);
 
         const filteredTags = workspaceTags?.filter((item) => {
             if (!tagIds.includes(item._id || "")) {
-                console.log(item);
                 return true;
             } else {
-                console.log(item);
                 return false;
             }
         });
-
-        console.log(filteredTags);
 
         setAvailableTags(filteredTags || []);
     };
 
     const handleTagInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(workspaceTags);
         setTagInputError(false);
         for (const workspaceTag of workspaceTags || []) {
-            console.log(workspaceTag.name, event.target.value);
             if (workspaceTag.name == event.target.value) {
                 setTagInputError(true);
             }
@@ -93,12 +84,9 @@ const TagsModal = ({ data, tags, update, workspaceId, tagType }: IProps) => {
         onClose();
         const res: any = await createTag({ tagType: tagType, tag: { workspace: workspaceId, name: tagInput } });
         const tagsCopy = tags || [];
-        console.log(res);
 
         const workspaceTagsCopy = workspace?.workspaceTags || [];
         const updateWorkspaceCopy: any = updateWorkspace;
-
-        console.log(workspaceTagsCopy);
 
         if (tagType === "workspace") {
             await update({

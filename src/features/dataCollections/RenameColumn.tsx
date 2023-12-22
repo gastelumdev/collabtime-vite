@@ -27,14 +27,12 @@ const RenameColumn = ({ column }: IProps) => {
     const [labelTitleError, setLabelTitleError] = useState<boolean>(false);
 
     useEffect(() => {
-        console.log(column);
         setData(column);
         setLabels(column.labels || []);
     }, [column]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value, name } = event.target;
-        console.log(data);
         setData({
             ...column,
             [name]: value,
@@ -59,12 +57,9 @@ const RenameColumn = ({ column }: IProps) => {
     };
 
     const removeLabel = (label: TLabel) => {
-        console.log(labels);
         const newLabels = labels.filter((item: TLabel) => {
             return label.title !== item.title;
         });
-
-        console.log(newLabels);
         setData({ ...data, labels: newLabels });
         setLabels(newLabels);
     };
@@ -149,7 +144,6 @@ const RenameColumn = ({ column }: IProps) => {
 
                             <Box>
                                 {labels?.map((label: TLabel, index: number) => {
-                                    // console.log(label);
                                     return (
                                         <Box key={index} bg={label.color} p={"5px"} m={"5px"}>
                                             <HStack>
