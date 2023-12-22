@@ -121,7 +121,7 @@ const UploadMenu = ({
                 )}
                 <MenuList w={"400px"}>
                     <MenuGroup title={(row?.length || 0) > 0 ? "Selected files" : ""}>
-                        <Box overflowY={"scroll"} h={"200px"}>
+                        <Box overflowY={row?.length > 8 ? "scroll" : "auto"} h={row?.length > 8 ? "200px" : "auto"}>
                             {row?.map((doc: any, index: number) => {
                                 return (
                                     <Box key={index} pl={"5px"}>
@@ -156,7 +156,11 @@ const UploadMenu = ({
                     </MenuGroup>
                     {filteredDocs.length || 0 > 0 ? <MenuDivider mt={"10px"} mb={"20px"} /> : null}
                     <MenuGroup title={filteredDocs.length || 0 > 0 ? "Or select an existing file" : ""}>
-                        <Box pl={"5px"} overflowY={"scroll"} h={"200px"}>
+                        <Box
+                            pl={"5px"}
+                            overflowY={filteredDocs.length > 8 ? "scroll" : "auto"}
+                            h={filteredDocs.length > 8 ? "200px" : "auto"}
+                        >
                             {filteredDocs?.map((document, index) => {
                                 return (
                                     <Box key={index}>
