@@ -64,7 +64,7 @@ import { io } from "socket.io-client";
 import { GoTag } from "react-icons/go";
 import TagsModal from "../tags/TagsModal";
 import { useParams } from "react-router-dom";
-import { FaRegBell, FaRegCheckSquare } from "react-icons/fa";
+import { FaRegBell, FaRegCheckSquare, FaRegFileAlt, FaRegFileExcel, FaRegImage } from "react-icons/fa";
 import UploadMenu from "./UploadMenu";
 
 interface IProps {

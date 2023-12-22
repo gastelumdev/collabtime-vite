@@ -18,6 +18,8 @@ import DocDrawer from "../documents/DocDrawer";
 import { TCell, TDocument } from "../../types";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { IconContext } from "react-icons";
+import { FaRegFileAlt, FaRegFileExcel, FaRegImage } from "react-icons/fa";
 
 interface IPreparedRow {
     docs: any[];
@@ -95,6 +97,12 @@ const UploadMenu = ({
         setFilteredDocs(ds);
     };
 
+    const getIcon = (type: string) => {
+        if (type === "jpg" || type === "png" || type === "jpeg") return <FaRegImage color={"rgb(123, 128, 154)"} />;
+        if (type === "xlsx") return <FaRegFileExcel color={"rgb(123, 128, 154)"} />;
+        return <FaRegFileAlt />;
+    };
+
     return (
         <Flex>
             <Menu closeOnSelect={false} placement={"left-start"}>
@@ -115,7 +123,16 @@ const UploadMenu = ({
                             {row?.map((doc: any, index: number) => {
                                 return (
                                     <Box key={index} pl={"5px"}>
-                                        <MenuItem>{doc.filename}</MenuItem>
+                                        <MenuItem>
+                                            <Flex>
+                                                <Box pt={"2px"} mr={"8px"}>
+                                                    <IconContext.Provider value={{ color: "#7b809a" }}>
+                                                        {getIcon(doc.ext || "")}
+                                                    </IconContext.Provider>
+                                                </Box>
+                                                <Text>{doc.filename}</Text>
+                                            </Flex>
+                                        </MenuItem>
                                     </Box>
                                 );
                             })}
@@ -164,7 +181,14 @@ const UploadMenu = ({
                                                 filterDocsInRow(document);
                                             }}
                                         >
-                                            {document.filename}
+                                            <Flex>
+                                                <Box pt={"2px"} mr={"8px"}>
+                                                    <IconContext.Provider value={{ color: "#7b809a" }}>
+                                                        {getIcon(document.ext || "")}
+                                                    </IconContext.Provider>
+                                                </Box>
+                                                <Text>{document.filename}</Text>
+                                            </Flex>
                                         </MenuItem>
                                     </Box>
                                 );
