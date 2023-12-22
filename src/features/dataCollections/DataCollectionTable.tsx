@@ -122,6 +122,10 @@ const DataCollectionTable = ({
 
     const [deleteRows, setDeleteRows] = useState<TRow[]>([]);
     const [showDeleteBox, setShowDeleteBox] = useState<boolean>(false);
+    /**
+     * Array that keeps track of the what rows are checked
+     */
+    const [checkboxes, setCheckboxes] = useState<boolean[]>([]);
 
     const [firstInputFocus, setFirstInputFocus] = useState(true);
 
@@ -146,6 +150,17 @@ const DataCollectionTable = ({
     useEffect(() => {
         setDefaultRow();
     }, []);
+
+    useEffect(() => {
+        const checkboxesArr = [];
+        for (const row of rows) {
+            row;
+
+            checkboxesArr.push(false);
+        }
+
+        setCheckboxes(checkboxesArr);
+    }, [rows]);
 
     /**
      * Sets Label styles
@@ -410,7 +425,7 @@ const DataCollectionTable = ({
      * @param event This provides the checked box
      * @param row This is the row that is being checked
      */
-    const onDeleteRowCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>, row: any) => {
+    const onDeleteRowCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>, row: any, index: number) => {
         const deleteRowsCopy = deleteRows;
 
         if (event.target.checked) {
@@ -429,6 +444,10 @@ const DataCollectionTable = ({
         } else {
             setShowDeleteBox(false);
         }
+
+        const checkboxesCopy = checkboxes;
+        checkboxesCopy[index] = !checkboxes[index];
+        setCheckboxes(checkboxesCopy);
     };
 
     /**
@@ -647,8 +666,9 @@ const DataCollectionTable = ({
                                                 <Flex>
                                                     <Checkbox
                                                         onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                                                            onDeleteRowCheckboxChange(event, row)
+                                                            onDeleteRowCheckboxChange(event, row, index)
                                                         }
+                                                        isChecked={checkboxes[index]}
                                                     />
                                                     <EditRow cells={row.cells} />
                                                     <NoteModal
