@@ -1,22 +1,33 @@
 import { Box, Flex, Input, MenuItem, Spacer, Text, useDisclosure } from "@chakra-ui/react";
 import PrimaryDrawer from "../../components/PrimaryDrawer";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
-import { useCreateDocumentMutation } from "../../app/services/api";
+import { useCreateDocumentMutation, useUpdateCellMutation } from "../../app/services/api";
 import { useRef, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
+import { TCell, TDocument } from "../../types";
 
-const DocDrawer = () => {
+interface IProps {
+    documents: TDocument[];
+    cell?: TCell;
+    addToCell?: boolean;
+    handleDocsChange?: any;
+    create?: boolean;
+    columnName?: string;
+}
+
+const DocDrawer = ({ documents, cell, addToCell = false, handleDocsChange, create = false, columnName }: IProps) => {
     const editorRef = useRef<any>(null);
     const { isOpen: createIsOpen, onOpen: createOnOpen, onClose: createOnClose } = useDisclosure();
 
     const [createDocument] = useCreateDocumentMutation();
+    const [updateCell] = useUpdateCellMutation();
 
     const [createdDocName, setCreatedDocName] = useState<string>("");
     const [editorValue, setEditorValue] = useState<string>("");
 
-    const handleDocumentClick = () => {
+    const handleDocumentClick = async () => {
         createOnClose();
-        createDocument({
+        const documentCreated: any = await createDocument({
             workspace: localStorage.getItem("workspaceId") || "",
             filename: createdDocName,
             type: "created",
@@ -24,6 +35,19 @@ const DocDrawer = () => {
             ext: "created",
             tags: [],
         });
+
+        if (addToCell) {
+            const cellCopy: any = cell;
+            const docsCopy: any = cell?.docs;
+            console.log(docsCopy);
+            console.log(documentCreated);
+            updateCell({ ...cellCopy, docs: [...docsCopy, documentCreated.data] });
+        }
+
+        if (create) {
+            console.log("CREATE***********");
+            handleDocsChange(columnName, [documentCreated.data]);
+        }
     };
     return (
         <>

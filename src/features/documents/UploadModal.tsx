@@ -17,21 +17,28 @@ import {
 import { useState } from "react";
 import {
     useCreateDocumentMutation,
+    useUpdateCellMutation,
     useUploadDocsMutation,
     useUploadPersistedDocsMutation,
 } from "../../app/services/api";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import { FaRegFileAlt, FaRegFileExcel, FaRegImage } from "react-icons/fa";
-import { TDocument } from "../../types";
+import { TCell, TDocument } from "../../types";
 
 interface IProps {
     documents: TDocument[];
+    cell?: TCell;
+    addToCell?: boolean;
+    handleDocsChange?: any;
+    create?: boolean;
+    columnName?: string;
 }
 
-const UploadModal = ({ documents }: IProps) => {
+const UploadModal = ({ documents, cell, addToCell = false, handleDocsChange, create = false, columnName }: IProps) => {
     const { isOpen: uploadIsOpen, onOpen: uploadOnOpen, onClose: uploadOnClose } = useDisclosure();
 
     const [createDocument, { isLoading: createIsLoading }] = useCreateDocumentMutation();
+    const [updateCell] = useUpdateCellMutation();
     const [uploadPersistedDocs] = useUploadPersistedDocsMutation();
     const [uploadDocs] = useUploadDocsMutation();
 
@@ -89,6 +96,8 @@ const UploadModal = ({ documents }: IProps) => {
         console.log(res.data);
         console.log(persistedRes.data);
 
+        const documentsCreated: any = [];
+
         for (let i = 0; i < res.data.files.length; i++) {
             if (
                 res.data.files[i].url &&
@@ -97,7 +106,7 @@ const UploadModal = ({ documents }: IProps) => {
             ) {
                 let splitFilename = res.data.files[i].file.filename.split(".");
                 let ext = splitFilename[splitFilename.length - 1];
-                await createDocument({
+                const doc: any = await createDocument({
                     workspace: localStorage.getItem("workspaceId") || "",
                     filename: res.data.files[i].originalname,
                     type: "upload",
@@ -107,8 +116,21 @@ const UploadModal = ({ documents }: IProps) => {
                     ext: ext,
                     tags: [],
                 });
+
+                documentsCreated.push(doc.data);
+
                 uploadOnClose();
             }
+        }
+
+        if (addToCell) {
+            const cellCopy: any = cell;
+            const docsCopy: any = cell?.docs;
+            updateCell({ ...cellCopy, docs: docsCopy.concat(documentsCreated) });
+        }
+
+        if (create) {
+            handleDocsChange(columnName, documentsCreated);
         }
     };
 
@@ -154,7 +176,6 @@ const UploadModal = ({ documents }: IProps) => {
                                 </Text>
                             )}
                             {documents?.map((document, index) => {
-                                console.log(duplicateFiles);
                                 return (
                                     <Box key={index}>
                                         {duplicateFiles.includes(document.filename) ? (

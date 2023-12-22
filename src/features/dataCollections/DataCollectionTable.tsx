@@ -58,13 +58,14 @@ import { cellColorStyles, createRowColorStyles } from "./select.styles";
 import NoteModal from "./NoteModal";
 import RenameColumn from "./RenameColumn";
 import EditRow from "./EditRow";
-import { TCell, TColumn, TRow, TTag } from "../../types";
+import { TCell, TColumn, TDocument, TRow, TTag } from "../../types";
 import CreateColumn from "./CreateColumn";
 import { io } from "socket.io-client";
 import { GoTag } from "react-icons/go";
 import TagsModal from "../tags/TagsModal";
 import { useParams } from "react-router-dom";
 import { FaRegBell, FaRegCheckSquare } from "react-icons/fa";
+import UploadMenu from "./UploadMenu";
 
 interface IProps {
     columns: TColumn[];
@@ -103,9 +104,10 @@ const DataCollectionTable = ({
     const [deleteTag] = useDeleteTagMutation();
     const [tagExists] = useTagExistsMutation();
 
-    const [row, setRow] = useState<any>({});
+    const [row, setRow] = useState<any>({ dataCollection: dataCollection?._id, docs: [] });
     const [labelStyles, setLabelStyles] = useState<any>({});
     const [labelValue, setLabelValue] = useState<any>({});
+    const [docValues, setDocValues] = useState<any[]>([]);
     const [numberChecked, setNumberChecked] = useState<number>(0);
     const [showRowForm, setShowRowForm] = useState<boolean>(false);
 
@@ -178,7 +180,7 @@ const DataCollectionTable = ({
     }, [rows]);
 
     const setDefaultRow = () => {
-        let temp: TRow = { dataCollection: dataCollectionId, notesList: [], cells: [], tags: [] };
+        let temp: TRow = { dataCollection: dataCollectionId, notesList: [], cells: [], tags: [], docs: [] };
         for (const column of columns || []) {
             temp = { ...temp, [column.name]: "" };
         }
@@ -195,6 +197,26 @@ const DataCollectionTable = ({
 
     const handleReminderClick = (row: TRow) => {
         updateRow({ ...row, reminder: !row.reminder });
+    };
+
+    const handleDocsChange = (name: string, docs: TDocument[]) => {
+        const rowDocs = row.docs || [];
+        setRow({ ...row, [name]: rowDocs.concat(docs) });
+    };
+
+    const handleCellDocsChange = (cell: TCell, doc: TDocument) => {
+        const docs: any = cell.docs;
+        updateCell({ ...cell, docs: [...docs, doc] });
+    };
+
+    const handleAddExistingDoc = (name: string, docs: TDocument[]) => {
+        const rowDocs = row.docs || [];
+        setRow({ ...row, [name]: rowDocs.concat(docs) });
+    };
+
+    const handleAddExistingDocToCell = (cell: TCell, doc: TDocument) => {
+        const docs: any = cell.docs;
+        updateCell({ ...cell, docs: [...docs, doc] });
     };
 
     const handleAcknowledgeClick = (row: TRow) => {
@@ -252,6 +274,7 @@ const DataCollectionTable = ({
         await createRow(row);
         setShowRowForm(false);
         setDefaultRow();
+        setRow({ dataCollection: dataCollection?._id, docs: [] });
     };
 
     const onDeleteRowCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>, row: any) => {
@@ -282,6 +305,7 @@ const DataCollectionTable = ({
 
         setShowDeleteBox(false);
         setDeleteRows([]);
+        setRow({ dataCollection: dataCollection?._id, docs: [] });
     };
 
     const handleAddRowOnKeyUp = async (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -668,6 +692,17 @@ const DataCollectionTable = ({
                                                                 paddingBottom: "4px",
                                                             }}
                                                         />
+                                                    ) : cell.type === "upload" ? (
+                                                        <UploadMenu
+                                                            cell={cell}
+                                                            docs={cell.docs}
+                                                            addToCell={true}
+                                                            handleDocsChange={handleCellDocsChange}
+                                                            handleAddExistingDoc={handleAddExistingDoc}
+                                                            handleAddExistingDocToCell={handleAddExistingDocToCell}
+                                                            create={false}
+                                                            columnName={cell.name}
+                                                        />
                                                     ) : (
                                                         <Input
                                                             value={
@@ -717,7 +752,10 @@ const DataCollectionTable = ({
                                                 icon={<AiOutlineCheck size={"15px"} />}
                                             ></IconButton>
                                             <IconButton
-                                                onClick={() => setShowRowForm(false)}
+                                                onClick={() => {
+                                                    setShowRowForm(false);
+                                                    setRow({ dataCollection: dataCollection?._id, docs: [] });
+                                                }}
                                                 size={"xs"}
                                                 variant={"unstyled"}
                                                 aria-label=""
@@ -819,6 +857,14 @@ const DataCollectionTable = ({
                                                         }
                                                     />
                                                 </Box>
+                                            ) : column.type == "upload" ? (
+                                                <UploadMenu
+                                                    preparedRow={row}
+                                                    handleDocsChange={handleDocsChange}
+                                                    handleAddExistingDoc={handleAddExistingDoc}
+                                                    create={true}
+                                                    columnName={column.name}
+                                                />
                                             ) : (
                                                 <Box>
                                                     <Input

@@ -105,6 +105,7 @@ export type TRow = {
     notesList: INote[];
     cells: string[] | TCell;
     tags: TTag[];
+    docs: TDocument[];
     reminder?: boolean;
     complete?: boolean;
     acknowledged?: boolean;
@@ -118,6 +119,7 @@ export type TCell = {
     type: string;
     people?: TUser[];
     labels?: TLabel[];
+    docs?: TDocument[];
     value: string;
 };
 
@@ -152,6 +154,7 @@ export interface LinkItemProps {
 }
 
 export type TDocument = {
+    _id?: string;
     workspace: string;
     createdBy?: any;
     filename: string;
