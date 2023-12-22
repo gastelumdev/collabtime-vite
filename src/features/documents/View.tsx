@@ -178,6 +178,7 @@ const View = () => {
                                                                     <Text
                                                                         color={"rgb(123, 128, 154)"}
                                                                         textOverflow={"ellipsis"}
+                                                                        overflow={"hidden"}
                                                                     >
                                                                         <a href={document.url} target="_blank">
                                                                             {document.filename}
