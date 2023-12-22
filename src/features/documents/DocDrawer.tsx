@@ -7,7 +7,7 @@ import { Editor } from "@tinymce/tinymce-react";
 import { TCell, TDocument } from "../../types";
 
 interface IProps {
-    documents: TDocument[];
+    documents?: TDocument[];
     cell?: TCell;
     addToCell?: boolean;
     handleDocsChange?: any;
@@ -15,7 +15,7 @@ interface IProps {
     columnName?: string;
 }
 
-const DocDrawer = ({ documents, cell, addToCell = false, handleDocsChange, create = false, columnName }: IProps) => {
+const DocDrawer = ({ cell, addToCell = false, handleDocsChange, create = false, columnName }: IProps) => {
     const editorRef = useRef<any>(null);
     const { isOpen: createIsOpen, onOpen: createOnOpen, onClose: createOnClose } = useDisclosure();
 

@@ -1,4 +1,4 @@
-import { CloseIcon, PlusSquareIcon } from "@chakra-ui/icons";
+import { PlusSquareIcon } from "@chakra-ui/icons";
 import {
     Box,
     Flex,
@@ -9,13 +9,11 @@ import {
     MenuGroup,
     MenuItem,
     MenuList,
-    Spacer,
     Text,
     useDisclosure,
 } from "@chakra-ui/react";
 import UploadModal from "../documents/UploadModal";
 import { useGetDocumentsQuery } from "../../app/services/api";
-import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import DocDrawer from "../documents/DocDrawer";
 import { TCell, TDocument } from "../../types";
 import { Link } from "react-router-dom";
@@ -50,7 +48,7 @@ const UploadMenu = ({
     columnName,
     docs = [],
 }: IProps) => {
-    const { onClose, onOpen, isOpen } = useDisclosure();
+    const { onClose, isOpen } = useDisclosure();
     const { data: documents } = useGetDocumentsQuery(null);
 
     const [filteredDocs, setFilteredDocs] = useState<TDocument[]>([]);

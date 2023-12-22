@@ -107,7 +107,6 @@ const DataCollectionTable = ({
     const [row, setRow] = useState<any>({ dataCollection: dataCollection?._id, docs: [] });
     const [labelStyles, setLabelStyles] = useState<any>({});
     const [labelValue, setLabelValue] = useState<any>({});
-    const [docValues, setDocValues] = useState<any[]>([]);
     const [numberChecked, setNumberChecked] = useState<number>(0);
     const [showRowForm, setShowRowForm] = useState<boolean>(false);
 
