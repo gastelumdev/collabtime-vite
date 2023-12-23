@@ -36,11 +36,9 @@ const LinksMenu = ({ cell, handleAddLinkClick }: IProps) => {
     };
 
     useEffect(() => {
-        console.log(import.meta.env.VITE_API_URL);
         const linksList = [];
 
         for (const link of cell?.links || []) {
-            console.log(link.split("/")[0]);
             linksList.push(link);
         }
 

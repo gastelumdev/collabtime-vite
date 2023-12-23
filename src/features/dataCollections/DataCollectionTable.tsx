@@ -314,7 +314,6 @@ const DataCollectionTable = ({
 
     const handleAddLinkClick = (link: string) => {
         const linksCopy: any = row.links;
-        console.log(linksCopy);
         setRow({ ...row, links: [...linksCopy, link] });
         setFirstInputFocus(false);
     };
