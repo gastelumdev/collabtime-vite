@@ -81,10 +81,10 @@ const ViewOne = () => {
 
     useEffect(() => {
         const acknowledgedRowId = queryParameters.get("acknowledgedRow");
-        if (acknowledgedRowId !== undefined) {
+        if (acknowledgedRowId && acknowledgedRowId !== undefined) {
             acknowledgeRow(acknowledgedRowId || "");
         }
-    }, []);
+    }, [queryParameters]);
 
     const handleAddAsTemplateClick = () => {
         if (templateNameValue === "") return;

@@ -98,10 +98,9 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
                     </Box>
                     <Divider gradient="radial-gradient(#5e5b5b 40%, #1c1c1c)" marginBottom="10px" />
                     <Box transition="3s ease">
-                        {linkItems.map((link) => (
-                            <>
+                        {linkItems.map((link, index) => (
+                            <Box key={index}>
                                 <Tooltip
-                                    key={link.name}
                                     label={link.name}
                                     openDelay={0}
                                     // isDisabled={isFocused}
@@ -120,7 +119,7 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
                                         marginTop="10px"
                                     />
                                 ) : null}
-                            </>
+                            </Box>
                         ))}
                         <Divider gradient="radial-gradient(#5e5b5b 40%, black)" marginBottom="10px" marginTop="10px" />
                         <Tooltip

@@ -120,6 +120,7 @@ export type TCell = {
     people?: TUser[];
     labels?: TLabel[];
     docs?: TDocument[];
+    links?: string[];
     value: string;
 };
 

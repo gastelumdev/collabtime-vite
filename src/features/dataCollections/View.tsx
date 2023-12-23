@@ -139,9 +139,8 @@ const View = () => {
                         >
                             {data?.map((dataCollection, index) => {
                                 return (
-                                    <>
+                                    <Box key={index}>
                                         <PrimaryCard
-                                            key={index}
                                             index={index}
                                             data={dataCollection}
                                             redirectUrl={`/workspaces/${workspace?._id}/dataCollections/${dataCollection._id}`}
@@ -176,7 +175,7 @@ const View = () => {
                                             }
                                             handleCloseTagButtonClick={handleCloseTagButtonClick}
                                         />
-                                    </>
+                                    </Box>
                                 );
                             })}
                         </SimpleGrid>

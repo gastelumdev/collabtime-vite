@@ -208,6 +208,7 @@ const CreateColumn = ({ columns, createColumn }: TProps) => {
                                 { value: "priority", label: "Priority" },
                                 { value: "status", label: "Status" },
                                 { value: "upload", label: "Uploads" },
+                                { value: "link", label: "Link" },
                             ]}
                             styles={
                                 {

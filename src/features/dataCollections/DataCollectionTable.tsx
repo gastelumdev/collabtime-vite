@@ -66,6 +66,9 @@ import TagsModal from "../tags/TagsModal";
 import { useParams } from "react-router-dom";
 import { FaRegBell, FaRegCheckSquare } from "react-icons/fa";
 import UploadMenu from "./UploadMenu";
+import LinksMenu from "./LinksMenu";
+
+import "./styles.css";
 
 interface IProps {
     columns: TColumn[];
@@ -307,6 +310,12 @@ const DataCollectionTable = ({
             setFirstInputFocus(true);
             setDefaultRow();
         }
+    };
+
+    const handleAddLinkClick = (link: string) => {
+        const linksCopy: any = row.links;
+        setRow({ ...row, links: [...linksCopy, link] });
+        setFirstInputFocus(false);
     };
 
     /**
@@ -557,9 +566,7 @@ const DataCollectionTable = ({
                             <AlertDialogBody>Are you sure? You can't undo this action afterwards.</AlertDialogBody>
 
                             <AlertDialogFooter>
-                                <Button ref={cancelRef} onClick={deleteColumnModalOnClose}>
-                                    Cancel
-                                </Button>
+                                <Button onClick={deleteColumnModalOnClose}>Cancel</Button>
                                 <Button
                                     colorScheme="red"
                                     onClick={() => {
@@ -853,6 +860,7 @@ const DataCollectionTable = ({
                                                             disabled={
                                                                 rowsLoading || rowsFetching || !((permissions || 0) > 1)
                                                             }
+                                                            className="datepicker-input"
                                                         />
                                                     ) : cell.type === "number" ? (
                                                         <input
@@ -878,16 +886,25 @@ const DataCollectionTable = ({
                                                             }}
                                                         />
                                                     ) : cell.type === "upload" ? (
-                                                        <UploadMenu
-                                                            cell={cell}
-                                                            docs={cell.docs}
-                                                            addToCell={true}
-                                                            // handleDocsChange={handleCellDocsChange}
-                                                            handleAddExistingDoc={handleAddExistingDoc}
-                                                            handleAddExistingDocToCell={handleAddExistingDocToCell}
-                                                            create={false}
-                                                            columnName={cell.name}
-                                                        />
+                                                        <Box>
+                                                            <UploadMenu
+                                                                cell={cell}
+                                                                docs={cell.docs}
+                                                                addToCell={true}
+                                                                // handleDocsChange={handleCellDocsChange}
+                                                                handleAddExistingDoc={handleAddExistingDoc}
+                                                                handleAddExistingDocToCell={handleAddExistingDocToCell}
+                                                                create={false}
+                                                                columnName={cell.name}
+                                                            />
+                                                        </Box>
+                                                    ) : cell.type === "link" ? (
+                                                        <Box>
+                                                            <LinksMenu
+                                                                cell={cell}
+                                                                // handleAddLinkClick={handleAddLinkClick}
+                                                            />
+                                                        </Box>
                                                     ) : (
                                                         <Input
                                                             value={
@@ -1050,6 +1067,8 @@ const DataCollectionTable = ({
                                                     create={true}
                                                     columnName={column.name}
                                                 />
+                                            ) : column.type == "link" ? (
+                                                <LinksMenu cell={null} handleAddLinkClick={handleAddLinkClick} />
                                             ) : (
                                                 <Box>
                                                     <Input
