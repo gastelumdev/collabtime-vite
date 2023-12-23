@@ -16,7 +16,6 @@ import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import { TCell } from "../../types";
 import { useEffect, useState } from "react";
 import { useUpdateCellMutation } from "../../app/services/api";
-import { Link } from "react-router-dom";
 
 interface IProps {
     cell: TCell | null;
@@ -104,7 +103,7 @@ const LinksMenu = ({ cell, handleAddLinkClick }: IProps) => {
                                     // >
                                     //     <MenuItem>{link}</MenuItem>
                                     // </Box>
-                                    <Box>
+                                    <Box key={index}>
                                         <MenuItem>
                                             <a
                                                 href={link}
