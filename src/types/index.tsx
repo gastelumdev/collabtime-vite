@@ -106,6 +106,7 @@ export type TRow = {
     cells: string[] | TCell;
     tags: TTag[];
     docs: TDocument[];
+    links: string[];
     reminder?: boolean;
     complete?: boolean;
     acknowledged?: boolean;

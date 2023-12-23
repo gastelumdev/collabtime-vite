@@ -225,7 +225,7 @@ const DataCollectionTable = ({
      * Set a row to a default state
      */
     const setDefaultRow = () => {
-        let temp: TRow = { dataCollection: dataCollectionId, notesList: [], cells: [], tags: [], docs: [] };
+        let temp: TRow = { dataCollection: dataCollectionId, notesList: [], cells: [], tags: [], docs: [], links: [] };
         for (const column of columns || []) {
             temp = { ...temp, [column.name]: "" };
         }
@@ -295,7 +295,7 @@ const DataCollectionTable = ({
         await createRow(row);
         setShowRowForm(false);
         setDefaultRow();
-        setRow({ dataCollection: dataCollection?._id, docs: [] });
+        setRow({ dataCollection: dataCollection?._id, docs: [], links: [] });
     };
 
     /**
@@ -314,6 +314,7 @@ const DataCollectionTable = ({
 
     const handleAddLinkClick = (link: string) => {
         const linksCopy: any = row.links;
+        console.log(linksCopy);
         setRow({ ...row, links: [...linksCopy, link] });
         setFirstInputFocus(false);
     };
