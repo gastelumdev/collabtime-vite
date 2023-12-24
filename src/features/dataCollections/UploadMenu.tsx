@@ -16,7 +16,6 @@ import UploadModal from "../documents/UploadModal";
 import { useGetDocumentsQuery } from "../../app/services/api";
 import DocDrawer from "../documents/DocDrawer";
 import { TCell, TDocument } from "../../types";
-import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { IconContext } from "react-icons";
 import { FaRegFileAlt, FaRegFileExcel, FaRegImage } from "react-icons/fa";
