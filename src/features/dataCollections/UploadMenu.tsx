@@ -35,6 +35,8 @@ interface IProps {
     create?: boolean;
     columnName?: string;
     docs?: TDocument[];
+    topPadding?: string;
+    border?: boolean;
 }
 
 const UploadMenu = ({
@@ -49,6 +51,8 @@ const UploadMenu = ({
     create = true,
     columnName,
     docs = [],
+    topPadding = "11px",
+    border = false,
 }: IProps) => {
     const { onClose, isOpen } = useDisclosure();
     const { data: documents } = useGetDocumentsQuery(null);
@@ -104,7 +108,7 @@ const UploadMenu = ({
     };
 
     return (
-        <Flex>
+        <Flex border={border ? "1px solid #e2e8f0" : "none"} borderRadius={border ? "5px" : "0"}>
             <Menu closeOnSelect={false} placement={"left-start"}>
                 {isOpen ? (
                     <MenuButton as={IconButton} aria-label="Options" icon={<PlusSquareIcon />} variant="ghost" />
@@ -201,11 +205,9 @@ const UploadMenu = ({
                     </MenuGroup>
                 </MenuList>
             </Menu>
-            <Box pt={"11px"} ml={"6px"} overflow={"hidden"}>
+            <Box pt={topPadding} ml={"6px"} overflow={"hidden"}>
                 <Text overflow={"hidden"} textOverflow={"ellipsis"}>
-                    {row?.map((doc: any, index: number) => {
-                        return <Link to={doc.url || ""} key={index} target="_blank">{`${doc.filename}, `}</Link>;
-                    })}
+                    {row?.length > 0 ? `${row?.length} ${row?.length > 1 ? "docs" : "doc"}` : "No files"}
                 </Text>
             </Box>
         </Flex>

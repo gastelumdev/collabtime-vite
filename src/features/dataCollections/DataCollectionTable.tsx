@@ -621,6 +621,8 @@ const DataCollectionTable = ({
                                 if (column.type === "date") width = "210px";
                                 if (column.type === "priority" || column.type === "status" || column.type === "label")
                                     width = "170px";
+                                if (column.type === "number") width = "120px";
+                                if (column.type === "link" || column.type === "upload") width = "120px";
                                 return (
                                     <Th key={index} width={width}>
                                         {(permissions || 0) > 1 ? (
@@ -669,6 +671,7 @@ const DataCollectionTable = ({
                                 <Tr key={index}>
                                     {(permissions || 0) > 1 ? (
                                         <>
+                                            {/* ROW TOOLBAR SECTION ***************************** */}
                                             <Td>
                                                 <Flex>
                                                     <Checkbox
@@ -710,6 +713,7 @@ const DataCollectionTable = ({
                                                     </Tooltip>
                                                 </Flex>
                                             </Td>
+                                            {/* TAGS COLLAPSABLE ******************************************* */}
                                             {showTagsColumn ? (
                                                 <Td>
                                                     <Box overflow={"revert"}>
@@ -757,6 +761,7 @@ const DataCollectionTable = ({
                                             ) : null}
                                         </>
                                     ) : null}
+                                    {/* CELLS *********************** */}
                                     {row.cells.map((cell: TCell, index: number) => {
                                         let bgColor: string = "";
                                         for (const label of cell.labels || []) {

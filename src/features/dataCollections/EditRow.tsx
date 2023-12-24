@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import PrimaryDrawer from "../../components/PrimaryDrawer";
 import { Box, Flex, Input, Spacer, Text, useDisclosure } from "@chakra-ui/react";
 import Select from "react-select";
-import { TCell } from "../../types";
+import { TCell, TDocument } from "../../types";
 import { FaRegEdit } from "react-icons/fa";
 import { cellColorStyles } from "./select.styles";
 import { useGetUserQuery, useUpdateCellMutation } from "../../app/services/api";
 import { IconContext } from "react-icons";
+import UploadMenu from "./UploadMenu";
+import LinksMenu from "./LinksMenu";
 
 interface IProps {
     cells: TCell[];
@@ -62,6 +64,11 @@ const EditRow = ({ cells }: IProps) => {
         let newCell = cell;
         newCell = { ...newCell, value: newValue.value };
         updateCell(newCell);
+    };
+
+    const handleAddExistingDocToCell = (cell: TCell, doc: TDocument) => {
+        const docs: any = cell.docs;
+        updateCell({ ...cell, docs: [...docs, doc] });
     };
     return (
         <>
@@ -144,6 +151,61 @@ const EditRow = ({ cells }: IProps) => {
                                         handleUpdateRowOnBlur(event, cell)
                                     }
                                 />
+                            ) : cell.type === "number" ? (
+                                <input
+                                    type="number"
+                                    defaultValue={cell.value}
+                                    name={cell.name}
+                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                        handleUpdateRowInputChange(event);
+                                    }}
+                                    onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) =>
+                                        handleUpdateRowOnFocus(event, cell)
+                                    }
+                                    onBlur={(event: React.FocusEvent<HTMLInputElement, Element>) =>
+                                        handleUpdateRowOnBlur(event, cell)
+                                    }
+                                    // disabled={
+                                    //     rowsLoading || rowsFetching || !((permissions || 0) > 1)
+                                    // }
+                                    style={{
+                                        outline: "none",
+                                        paddingLeft: "15px",
+                                        paddingTop: "6px",
+                                        paddingBottom: "6px",
+                                        border: "1px solid #e2e8f0",
+                                        borderRadius: "5px",
+                                        width: "100%",
+                                    }}
+                                />
+                            ) : cell.type === "upload" ? (
+                                <Box>
+                                    <Text>
+                                        <UploadMenu
+                                            cell={cell}
+                                            docs={cell.docs}
+                                            addToCell={true}
+                                            // handleDocsChange={handleCellDocsChange}
+                                            // handleAddExistingDoc={handleAddExistingDoc}
+                                            handleAddExistingDocToCell={handleAddExistingDocToCell}
+                                            create={false}
+                                            columnName={cell.name}
+                                            topPadding="7px"
+                                            border={true}
+                                        />
+                                    </Text>
+                                </Box>
+                            ) : cell.type === "link" ? (
+                                <Box>
+                                    <Text>
+                                        <LinksMenu
+                                            cell={cell}
+                                            topPadding="7px"
+                                            border={true}
+                                            // handleAddLinkClick={handleAddLinkClick}
+                                        />
+                                    </Text>
+                                </Box>
                             ) : (
                                 <Input
                                     value={editMode.includes(cell?._id) ? tempValue : cell.value}

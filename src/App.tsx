@@ -13,6 +13,7 @@ import ResetPasswordRequest from "./features/auth/ResetPasswordRequest";
 import ResetPassword from "./features/auth/ResetPassword";
 import ResetPasswordEmailSent from "./features/auth/ResetPasswordEmailSent";
 import Join from "./features/workspaces/Join";
+import Form from "./features/dataCollections/Form";
 
 function App() {
     return (
@@ -38,6 +39,7 @@ function App() {
                 <Route path="passwordReset" element={<ResetPassword />} />
                 <Route path="resetPasswordEmailSent" element={<ResetPasswordEmailSent />} />
                 <Route path="joinWorkspace" element={<Join />} />
+                <Route path="workspaces/:id/dataCollections/:dataCollectionId/form" element={<Form />} />
             </Routes>
         </>
     );

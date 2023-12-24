@@ -18,11 +18,13 @@ import { useEffect, useState } from "react";
 import { useUpdateCellMutation } from "../../app/services/api";
 
 interface IProps {
-    cell: TCell | null;
+    cell?: TCell | null;
     handleAddLinkClick?: any;
+    topPadding?: string;
+    border?: boolean;
 }
 
-const LinksMenu = ({ cell, handleAddLinkClick }: IProps) => {
+const LinksMenu = ({ cell, handleAddLinkClick, topPadding = "11px", border = false }: IProps) => {
     const [updateCell] = useUpdateCellMutation();
     const [link, setLink] = useState<string>("");
     const [links, setLinks] = useState<string[]>([]);
@@ -47,7 +49,12 @@ const LinksMenu = ({ cell, handleAddLinkClick }: IProps) => {
 
     return (
         <>
-            <Flex overflow={"hidden"} textOverflow={"ellipsis"}>
+            <Flex
+                overflow={"hidden"}
+                textOverflow={"ellipsis"}
+                border={border ? "1px solid #e2e8f0" : "none"}
+                borderRadius={border ? "5px" : "0"}
+            >
                 <Menu closeOnSelect={false}>
                     <MenuButton
                         as={IconButton}
@@ -118,7 +125,7 @@ const LinksMenu = ({ cell, handleAddLinkClick }: IProps) => {
                         </MenuGroup>
                     </MenuList>
                 </Menu>
-                <Box pt={"11px"}>
+                <Box pt={topPadding} ml={"6px"}>
                     <Text>{links.length > 0 ? `${links.length} ${links.length > 1 ? "links" : "link"}` : "Empty"}</Text>
                 </Box>
             </Flex>
