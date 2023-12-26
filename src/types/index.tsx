@@ -74,6 +74,7 @@ export type TDataCollection = {
     rows: string[];
     tags: TTag[];
     asTemplate?: { active: boolean; name: string };
+    formRecipients?: { sent: true; email: string }[];
 };
 
 export type TColumn = {

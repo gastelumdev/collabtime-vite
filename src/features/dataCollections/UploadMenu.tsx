@@ -127,7 +127,7 @@ const UploadMenu = ({
                                 return (
                                     <Box key={index} pl={"5px"}>
                                         <MenuItem>
-                                            <Flex>
+                                            <Flex overflow={"hidden"}>
                                                 <Box pt={"2px"} mr={"8px"}>
                                                     <IconContext.Provider value={{ color: "#7b809a" }}>
                                                         {getIcon(doc.ext || "")}
@@ -176,6 +176,7 @@ const UploadMenu = ({
                                     <Box key={index}>
                                         <MenuItem
                                             onClick={() => {
+                                                console.log(document);
                                                 if (create) {
                                                     handleAddExistingDoc(columnName, document);
                                                 } else {
@@ -184,7 +185,7 @@ const UploadMenu = ({
                                                 filterDocsInRow(document);
                                             }}
                                         >
-                                            <Flex>
+                                            <Flex overflow={"hidden"}>
                                                 <Box pt={"2px"} mr={"8px"}>
                                                     <IconContext.Provider value={{ color: "#7b809a" }}>
                                                         {getIcon(document.ext || "")}

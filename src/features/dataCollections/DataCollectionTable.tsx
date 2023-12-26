@@ -337,9 +337,11 @@ const DataCollectionTable = ({
      * @param name This is the cell or column name that serves as the key in the row
      * @param docs This is the documents array that holds the created docs
      */
-    const handleAddExistingDoc = (name: string, docs: TDocument[]) => {
+    const handleAddExistingDoc = (name: string, doc: TDocument) => {
+        console.log(doc);
         const rowDocs = row.docs || [];
-        setRow({ ...row, [name]: rowDocs.concat(docs) });
+        rowDocs.push(doc);
+        setRow({ ...row, [name]: rowDocs });
     };
 
     /**
