@@ -46,6 +46,7 @@ import { Link } from "react-router-dom";
 import UploadModal from "./UploadModal";
 import DocDrawer from "./DocDrawer";
 import DeleteFileAlert from "./DeleteFileAlert";
+import UpdateFileModal from "./UpdateFileModal";
 
 const View = () => {
     const { data: documents } = useGetDocumentsQuery(null);
@@ -195,7 +196,10 @@ const View = () => {
                                                             </Text>
                                                         </Td>
                                                         <Td>
-                                                            <DeleteFileAlert document={document} />
+                                                            <Flex>
+                                                                <UpdateFileModal document={document} />
+                                                                <DeleteFileAlert document={document} />
+                                                            </Flex>
                                                         </Td>
 
                                                         <Td>

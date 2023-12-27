@@ -32,10 +32,11 @@ const DeleteFileAlert = ({ document }: IProps) => {
         <>
             <Text
                 p={"2px"}
+                ml={"5px"}
                 onClick={deleteOnOpen}
                 cursor={"pointer"}
                 color={"rgb(123, 128, 154)"}
-                fontSize={"12px"}
+                fontSize={"14px"}
                 _hover={{ color: "red" }}
             >
                 <FaRegTrashAlt />
