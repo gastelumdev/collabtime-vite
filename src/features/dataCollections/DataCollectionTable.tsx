@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
     useDeleteColumnMutation,
     useCreateRowMutation,
@@ -118,6 +118,7 @@ const DataCollectionTable = ({
     const [editMode, setEditMode] = useState<string[]>([]);
     const [isFocused, setIsFocused] = useState<boolean>(false);
     const [tempValue, setTempValue] = useState("");
+    const [submittable, setSubmittable] = useState<boolean>(false);
     /**
      * Holds the value of an input when it gets focused
      */
@@ -152,6 +153,7 @@ const DataCollectionTable = ({
      */
     useEffect(() => {
         setDefaultRow();
+        console.log(window);
     }, []);
 
     useEffect(() => {
@@ -271,6 +273,9 @@ const DataCollectionTable = ({
         // This removes the first input from asking for focus
         // This is useful since a select input may not be requesting for focus
         setFirstInputFocus(false);
+
+        // This makes it so that if enter is pressed it submits the row
+        setSubmittable(true);
     };
 
     /**
@@ -304,13 +309,36 @@ const DataCollectionTable = ({
      * This creates the row if enter is pressed when an input is in focus
      * @param event The event that holds the key being pressed
      */
-    const handleAddRowOnEnter = async (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key == "Enter") {
-            await createRow(row);
-            setFirstInputFocus(true);
-            setDefaultRow();
-        }
-    };
+    // const handleAddRowOnEnter = async (event: React.KeyboardEvent<HTMLInputElement>) => {
+    //     if (event.key == "Enter") {
+    //         await createRow(row);
+    //         setFirstInputFocus(true);
+    //         setDefaultRow();
+    //     }
+    // };
+
+    useEffect(() => {
+        console.log(showRowForm);
+
+        const handleAddRowOnEnter = async (event: KeyboardEvent) => {
+            console.log(submittable);
+            console.log(event.key);
+            if (event.key == "Enter" && showRowForm) {
+                console.log(row);
+                await createRow(row);
+                setFirstInputFocus(true);
+                setDefaultRow();
+            }
+        };
+
+        console.log(handleAddRowOnEnter);
+
+        document.addEventListener("keyup", handleAddRowOnEnter, true);
+
+        return () => {
+            document.removeEventListener("keyup", handleAddRowOnEnter, true);
+        };
+    }, [showRowForm, row]);
 
     const handleAddLinkClick = (link: string) => {
         const linksCopy: any = row.links;
@@ -966,6 +994,7 @@ const DataCollectionTable = ({
                                                 onClick={() => {
                                                     setShowRowForm(false);
                                                     setRow({ dataCollection: dataCollection?._id, docs: [] });
+                                                    // document.removeEventListener("keyup", handleAddRowOnEnter);
                                                 }}
                                                 size={"xs"}
                                                 variant={"unstyled"}
@@ -1039,6 +1068,9 @@ const DataCollectionTable = ({
                                                             borderRadius: "4px",
                                                             color: "#828282",
                                                         }}
+                                                        // onKeyUp={(event: React.KeyboardEvent<HTMLInputElement>) =>
+                                                        //     handleAddRowOnEnter(event)
+                                                        // }
                                                     />
                                                 </Box>
                                             ) : column.type == "number" ? (
@@ -1063,9 +1095,9 @@ const DataCollectionTable = ({
                                                                 setFirstInputFocus(false);
                                                             }
                                                         }}
-                                                        onKeyUp={(event: React.KeyboardEvent<HTMLInputElement>) =>
-                                                            handleAddRowOnEnter(event)
-                                                        }
+                                                        // onKeyUp={(event: React.KeyboardEvent<HTMLInputElement>) =>
+                                                        //     handleAddRowOnEnter(event)
+                                                        // }
                                                     />
                                                 </Box>
                                             ) : column.type == "upload" ? (
@@ -1095,9 +1127,9 @@ const DataCollectionTable = ({
                                                                 setFirstInputFocus(false);
                                                             }
                                                         }}
-                                                        onKeyUp={(event: React.KeyboardEvent<HTMLInputElement>) =>
-                                                            handleAddRowOnEnter(event)
-                                                        }
+                                                        // onKeyUp={(event: React.KeyboardEvent<HTMLInputElement>) =>
+                                                        //     handleAddRowOnEnter(event)
+                                                        // }
                                                     />
                                                 </Box>
                                             )}
