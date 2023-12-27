@@ -97,10 +97,10 @@ const DocDrawer = ({ cell, addToCell = false, handleDocsChange, create = false, 
                             "help",
                             "wordcount",
                         ],
-                        toolbar:
-                            "undo redo | casechange blocks | bold italic backcolor | " +
-                            "alignleft aligncenter alignright alignjustify | " +
-                            "bullist numlist checklist outdent indent | removeformat | a11ycheck code table help",
+                        // toolbar:
+                        //     "undo redo | casechange blocks | bold italic backcolor | " +
+                        //     "alignleft aligncenter alignright alignjustify | " +
+                        //     "bullist numlist checklist outdent indent | removeformat | a11ycheck code table help",
                         content_style: " .tox-menu {z-index: 10000000000 !important} ",
                     }}
                 />

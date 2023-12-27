@@ -39,7 +39,7 @@ const UpdateFileModal = ({ document }: IProps) => {
                 cursor={"pointer"}
                 color={"rgb(123, 128, 154)"}
                 fontSize={"14px"}
-                _hover={{ color: "red" }}
+                _hover={{ color: "blue" }}
             >
                 <FaRegEdit />
             </Text>
