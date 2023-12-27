@@ -61,8 +61,9 @@ export const cellColorStyles: any = ({bgColor, padding, border}: TProps) => ({
         return {
             ...styles,
             margin: "0",
+            width: "200px",
             borderRadius: "0",
-            border: "1px solid #cccccc",
+            border: "6px solid rgba(0, 0, 0, 0.1)",
             padding: "0",
         };
     },
@@ -70,7 +71,7 @@ export const cellColorStyles: any = ({bgColor, padding, border}: TProps) => ({
         return {
             ...styles,
             padding: "0",
-            boxShadow: "8px 12px 26px 2px rgba(0,0,0,0.29)"
+            boxShadow: "8px 12px 26px 2px rgba(0,0,0,0.3)"
         };
     },
 });
