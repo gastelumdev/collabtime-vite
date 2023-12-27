@@ -241,6 +241,14 @@ export const api = createApi({
             }),
             invalidatesTags: ["Rows"]
         }),
+        deleteRows: builder.mutation<any, {rows: TRow[], dataCollectionId: string}>({
+            query: (data) => ({
+                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${data.dataCollectionId}/deleteRows`,
+                method: "POST",
+                body: data.rows,
+            }),
+            invalidatesTags: ["Rows"]
+        }),
         rowCallUpdate: builder.mutation<null, null>({
             query: () => ({
                 url: "rows/callUpdate",
@@ -427,6 +435,7 @@ export const {
     useCreateRowMutation,
     useUpdateRowMutation,
     useDeleteRowMutation,
+    useDeleteRowsMutation,
     useRowCallUpdateMutation,
     useAcknowledgeRowMutation,
     useUpdateCellMutation,

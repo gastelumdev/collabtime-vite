@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
     useDeleteColumnMutation,
     useCreateRowMutation,
-    useDeleteRowMutation,
+    useDeleteRowsMutation,
     useUpdateCellMutation,
     useUpdateRowMutation,
     useRowCallUpdateMutation,
@@ -99,7 +99,7 @@ const DataCollectionTable = ({
     const [deleteColumn] = useDeleteColumnMutation();
     const [createRow, { isLoading: creatingRow }] = useCreateRowMutation();
     const [updateRow] = useUpdateRowMutation();
-    const [deleteRow, { isLoading: deletingRows }] = useDeleteRowMutation();
+    const [deleteMultipleRows, { isLoading: deletingRows }] = useDeleteRowsMutation();
     const [updateCell] = useUpdateCellMutation();
     const [rowCallUpdate] = useRowCallUpdateMutation();
     const [updateWorkspace] = useUpdateWorkspaceMutation();
@@ -488,9 +488,11 @@ const DataCollectionTable = ({
      * Deletes the rows being tracked by the ckeckmarks and sets defaults to hide the delete bar
      */
     const deleteItems = async () => {
-        for (const row of deleteRows) {
-            deleteRow(row);
-        }
+        // for (const row of deleteRows) {
+        //     await deleteRow(row);
+        // }
+
+        await deleteMultipleRows({ rows: deleteRows, dataCollectionId: dataCollection?._id || "" });
 
         setShowDeleteBox(false);
         setDeleteRows([]);
