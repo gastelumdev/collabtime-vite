@@ -5,6 +5,7 @@ import {
     useGetDataCollectionQuery,
     useGetDataCollectionsQuery,
     useGetOneWorkspaceQuery,
+    useSendFormMutation,
     useUpdateColumnMutation,
     useUpdateDataCollectionMutation,
 } from "../../app/services/api";
@@ -45,6 +46,7 @@ import { TColumn } from "../../types";
 import UploadMenu from "./UploadMenu";
 import LinksMenu from "./LinksMenu";
 import { MdContentCopy } from "react-icons/md";
+import { CloseIcon } from "@chakra-ui/icons";
 
 const ViewOne = () => {
     const { id, dataCollectionId } = useParams();
@@ -64,6 +66,7 @@ const ViewOne = () => {
     const [updateColumn] = useUpdateColumnMutation();
 
     const [updateDataCollection] = useUpdateDataCollectionMutation();
+    const [sendForm] = useSendFormMutation();
 
     const [acknowledgeRow] = useAcknowledgeRowMutation();
 
@@ -122,9 +125,27 @@ const ViewOne = () => {
         const dataCollectionCopy: any = dataCollection;
         const formRecipientsCopy: any = dataCollection?.formRecipients;
 
+        sendForm({ email: recipientValue });
+
         updateDataCollection({
             ...dataCollectionCopy,
             formRecipients: [...formRecipientsCopy, { email: recipientValue, sent: false }],
+        });
+
+        setRecipientValue("");
+    };
+
+    const handleDeleteRecipientClick = (formRecipient: any) => {
+        const dataCollectionCopy: any = dataCollection;
+        const formRecipientsCopy: any = dataCollection?.formRecipients;
+
+        const filteredFormRecipients = formRecipientsCopy.filter((item: any) => {
+            return item.email !== formRecipient.email;
+        });
+
+        updateDataCollection({
+            ...dataCollectionCopy,
+            formRecipients: filteredFormRecipients,
         });
     };
 
@@ -232,11 +253,43 @@ const ViewOne = () => {
                     onClose={onCloseFormDrawer}
                     size="full"
                 >
-                    <Box w={{ md: "100%", lg: "30%" }} float={{ lg: "left" }} pr={{ lg: "20px" }}>
+                    <Box w={{ md: "100%", lg: "50%" }} float={{ lg: "left" }} pr={{ lg: "20px" }}>
+                        <Text fontSize={"14px"} mb={"5px"}>
+                            Form link
+                        </Text>
+                        <Box p={"10px"} h={"44px"} border={"1px solid #e2e8f0"} mb={"20px"}>
+                            <Flex>
+                                <Box overflow={"hidden"} h={"20px"} mr={"10px"} textOverflow={"ellipsis"}>
+                                    <Text fontSize={"14px"} overflow={"hidden"} textOverflow={"ellipsis"}>
+                                        <a
+                                            href={`${import.meta.env.VITE_HOST_URL}${pathname}/form`}
+                                            target="_blank"
+                                            style={{ overflow: "hidden", textOverflow: "ellipsis" }}
+                                        >{`${import.meta.env.VITE_HOST_URL}${pathname}/form`}</a>
+                                    </Text>
+                                </Box>
+                                <Box
+                                    pt={"3px"}
+                                    cursor={"pointer"}
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(
+                                            `${import.meta.env.VITE_HOST_URL}${pathname}/form`
+                                        );
+                                        toast({
+                                            title: `Copied to clipboard`,
+                                            position: "top-right",
+                                            status: "info",
+                                        });
+                                    }}
+                                >
+                                    <MdContentCopy />
+                                </Box>
+                            </Flex>
+                        </Box>
                         <Box>
-                            <Text fontSize={"14px"}>Recipient</Text>
+                            <Text fontSize={"14px"}>Send by email</Text>
                             <Flex mt={"5px"}>
-                                <Box mr={"5px"}>
+                                <Box mr={"5px"} w={"100%"}>
                                     <Input
                                         value={recipientValue}
                                         onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
@@ -252,7 +305,18 @@ const ViewOne = () => {
                                 dataCollection?.formRecipients?.map((formRecipient, index) => {
                                     return (
                                         <Box key={index}>
-                                            <Text>{formRecipient.email}</Text>
+                                            <Flex>
+                                                <Text
+                                                    fontSize={"12px"}
+                                                    pt={"4px"}
+                                                    mr={"10px"}
+                                                    onClick={() => handleDeleteRecipientClick(formRecipient)}
+                                                    cursor={"pointer"}
+                                                >
+                                                    <CloseIcon />
+                                                </Text>
+                                                <Text>{formRecipient.email}</Text>
+                                            </Flex>
                                         </Box>
                                     );
                                 })
@@ -261,41 +325,13 @@ const ViewOne = () => {
                             )}
                         </Box>
                     </Box>
-                    <Box w={{ md: "100%", lg: "70%" }} float={{ lg: "right" }} pl={{ lg: "20px" }}>
+                    <Box w={{ md: "100%", lg: "50%" }} float={{ lg: "right" }} pl={{ lg: "20px" }}>
                         <Box>
                             <Box mb={"20px"} fontSize={"14px"}>
                                 <Text>This form is not functional and only used to dispaly the form elements.</Text>
                                 <Text>Checkmark all the form elements to include in the form.</Text>
                             </Box>
-                            <Box p={"10px"} h={"44px"} border={"1px solid #e2e8f0"}>
-                                <Flex>
-                                    <Box overflow={"hidden"} h={"20px"} mr={"10px"} textOverflow={"ellipsis"}>
-                                        <Text fontSize={"14px"} overflow={"hidden"} textOverflow={"ellipsis"}>
-                                            <a
-                                                href={`${import.meta.env.VITE_HOST_URL}${pathname}/form`}
-                                                target="_blank"
-                                                style={{ overflow: "hidden", textOverflow: "ellipsis" }}
-                                            >{`${import.meta.env.VITE_HOST_URL}${pathname}/form`}</a>
-                                        </Text>
-                                    </Box>
-                                    <Box
-                                        pt={"3px"}
-                                        cursor={"pointer"}
-                                        onClick={() => {
-                                            navigator.clipboard.writeText(
-                                                `${import.meta.env.VITE_HOST_URL}${pathname}/form`
-                                            );
-                                            toast({
-                                                title: `Copied to clipboard`,
-                                                position: "top-right",
-                                                status: "info",
-                                            });
-                                        }}
-                                    >
-                                        <MdContentCopy />
-                                    </Box>
-                                </Flex>
-                            </Box>
+
                             <Box>
                                 {columns?.map((column: TColumn, index: number) => {
                                     let bgColor: string = "";

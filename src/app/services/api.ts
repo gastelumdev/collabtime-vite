@@ -175,6 +175,14 @@ export const api = createApi({
             }),
             providesTags: ["DataCollection"],
         }),
+        sendForm: builder.mutation<{success: Boolean}, {email: string}>({
+            query: (email) => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${localStorage.getItem("dataCollectionId")}/sendForm`,
+                method: "POST",
+                body: email,
+            }),
+            invalidatesTags: ["DataCollection"],
+        }),
         getColumns: builder.query<TColumn[], string>({
             query: (dataCollectionId) => ({
                 url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${dataCollectionId}/columns`
@@ -410,6 +418,7 @@ export const {
     useUpdateDataCollectionMutation,
     useDeleteDataCollectionMutation,
     useGetDataCollectionQuery,
+    useSendFormMutation,
     useGetColumnsQuery,
     useCreateColumnMutation,
     useUpdateColumnMutation,
