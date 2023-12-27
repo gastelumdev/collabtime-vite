@@ -126,16 +126,18 @@ const UploadMenu = ({
                             {row?.map((doc: any, index: number) => {
                                 return (
                                     <Box key={index} pl={"5px"}>
-                                        <MenuItem>
-                                            <Flex overflow={"hidden"}>
-                                                <Box pt={"2px"} mr={"8px"}>
-                                                    <IconContext.Provider value={{ color: "#7b809a" }}>
-                                                        {getIcon(doc.ext || "")}
-                                                    </IconContext.Provider>
-                                                </Box>
-                                                <Text>{doc.filename}</Text>
-                                            </Flex>
-                                        </MenuItem>
+                                        <a href={doc.url} target="_blank">
+                                            <MenuItem>
+                                                <Flex overflow={"hidden"}>
+                                                    <Box pt={"2px"} mr={"8px"}>
+                                                        <IconContext.Provider value={{ color: "#7b809a" }}>
+                                                            {getIcon(doc.ext || "")}
+                                                        </IconContext.Provider>
+                                                    </Box>
+                                                    <Text>{doc.filename}</Text>
+                                                </Flex>
+                                            </MenuItem>
+                                        </a>
                                     </Box>
                                 );
                             })}
