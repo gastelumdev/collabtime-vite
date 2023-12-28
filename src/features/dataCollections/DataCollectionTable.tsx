@@ -54,7 +54,7 @@ import Select from "react-select";
 
 import { AiOutlineCheck, AiOutlineClose, AiOutlinePlus } from "react-icons/ai";
 
-import { cellColorStyles, createRowColorStyles } from "./select.styles";
+import { createRowColorStyles } from "./select.styles";
 import NoteModal from "./NoteModal";
 import RenameColumn from "./RenameColumn";
 import EditRow from "./EditRow";
@@ -69,6 +69,7 @@ import UploadMenu from "./UploadMenu";
 import LinksMenu from "./LinksMenu";
 
 import "./styles.css";
+import LabelMenu from "./LabelMenu";
 
 interface IProps {
     columns: TColumn[];
@@ -451,6 +452,8 @@ const DataCollectionTable = ({
      * @param cell The cell to be updated
      */
     const handleLabelSelectChange = async (newValue: any, cell: TCell) => {
+        console.log(newValue);
+        console.log(cell);
         let newCell = cell;
         newCell = { ...newCell, value: newValue.value };
         await updateCell(newCell);
@@ -795,6 +798,7 @@ const DataCollectionTable = ({
                                     ) : null}
                                     {/* CELLS *********************** */}
                                     {row.cells.map((cell: TCell, index: number) => {
+                                        // console.log(cell.value);
                                         let bgColor: string = "";
                                         for (const label of cell.labels || []) {
                                             if (cell.value == label.title) {
@@ -827,25 +831,13 @@ const DataCollectionTable = ({
                                                     cell.type === "priority" ||
                                                     cell.type === "status" ? (
                                                         <Box>
-                                                            <Select
+                                                            <LabelMenu
+                                                                cell={cell}
+                                                                value={cell.value}
+                                                                label={cell.value}
+                                                                bgColor={bgColor}
                                                                 options={options}
-                                                                styles={cellColorStyles({
-                                                                    bgColor,
-                                                                    padding: "10px",
-                                                                    border: "none",
-                                                                })}
-                                                                defaultValue={{
-                                                                    value: cell.value,
-                                                                    label: cell.value == "" ? "Select..." : cell.value,
-                                                                }}
-                                                                onChange={(newValue) =>
-                                                                    handleLabelSelectChange(newValue, cell)
-                                                                }
-                                                                isDisabled={
-                                                                    rowsLoading ||
-                                                                    rowsFetching ||
-                                                                    !((permissions || 0) > 1)
-                                                                }
+                                                                handleLabelSelectChange={handleLabelSelectChange}
                                                             />
                                                         </Box>
                                                     ) : cell.type === "people" ? (
@@ -856,7 +848,17 @@ const DataCollectionTable = ({
                                                                 <Text cursor={"default"}>{cell.value}</Text>
                                                             ) : (
                                                                 <Box>
-                                                                    <Select
+                                                                    <LabelMenu
+                                                                        cell={cell}
+                                                                        value={cell.value}
+                                                                        label={cell.value}
+                                                                        bgColor={"white"}
+                                                                        options={peopleOptions}
+                                                                        handleLabelSelectChange={
+                                                                            handleLabelSelectChange
+                                                                        }
+                                                                    />
+                                                                    {/* <Select
                                                                         options={peopleOptions}
                                                                         styles={cellColorStyles({
                                                                             bgColor: "#ffffff",
@@ -876,7 +878,7 @@ const DataCollectionTable = ({
                                                                         // isDisabled={
                                                                         //     rowsLoading || rowsFetching || !((permissions || 0) > 1)
                                                                         // }
-                                                                    />
+                                                                    /> */}
                                                                 </Box>
                                                             )}
                                                         </Box>
@@ -1198,3 +1200,32 @@ const DataCollectionTable = ({
 };
 
 export default DataCollectionTable;
+
+{
+    /* {cell.type === "label" ||
+        cell.type === "priority" ||
+        cell.type === "status" ? (
+            <Box>
+                <Select
+                    options={options}
+                    styles={cellColorStyles({
+                        bgColor,
+                        padding: "10px",
+                        border: "none",
+                    })}
+                    defaultValue={{
+                        value: cell.value,
+                        label: cell.value == "" ? "Select..." : cell.value,
+                    }}
+                    onChange={(newValue) =>
+                        handleLabelSelectChange(newValue, cell)
+                    }
+                    isDisabled={
+                        rowsLoading ||
+                        rowsFetching ||
+                        !((permissions || 0) > 1)
+                    }
+                />
+            </Box>
+        ) : cell.type === "people" ? ( */
+}
