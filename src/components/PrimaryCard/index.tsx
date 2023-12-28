@@ -5,8 +5,6 @@ import {
     CardFooter,
     CardHeader,
     Center,
-    HStack,
-    Heading,
     Tag,
     TagCloseButton,
     TagLabel,
@@ -14,7 +12,7 @@ import {
     Wrap,
     WrapItem,
 } from "@chakra-ui/react";
-import { AiOutlineLike } from "react-icons/ai";
+// import { AiOutlineLike } from "react-icons/ai";
 import Divider from "../Divider/Divider";
 import { TTag } from "../../types";
 
@@ -50,13 +48,13 @@ const PrimaryCard = ({
             h={"250px"}
         >
             <CardHeader
-                pr={"0"}
+                // pr={"0"}
                 h={"60px"}
                 as={"a"}
                 href={redirectUrl}
                 onClick={() => localStorage.setItem(localStorageId, data._id)}
             >
-                <HStack
+                {/* <HStack
                     flex="1"
                     gap="2"
                     alignItems="center"
@@ -64,8 +62,8 @@ const PrimaryCard = ({
                     position={"relative"}
                     bottom={10}
                     left={"2px"}
-                >
-                    <Box
+                > */}
+                {/* <Box
                         bgImage={
                             "radial-gradient(circle at center top, rgb(73, 163, 241), rgb(26, 115, 232))"
                             // "radial-gradient(circle at center top, rgb(66, 66, 74), black)"
@@ -82,16 +80,24 @@ const PrimaryCard = ({
                                 color: "white",
                             }}
                         />
-                    </Box>
+                    </Box> */}
 
-                    <Box pt={7}>
-                        <Heading size="xs" color={"#575757"}>
+                <Box>
+                    <Center>
+                        <Text fontWeight={"semibold"} fontSize={"15px"} fontFamily={"sans-serif"} color={"#6b6b6b"}>
                             {data.name}
-                        </Heading>
-                    </Box>
-                </HStack>
+                        </Text>
+                    </Center>
+                </Box>
+                {/* </HStack> */}
             </CardHeader>
-            <CardBody py={0} as={"a"} href={redirectUrl} onClick={() => localStorage.setItem(localStorageId, data._id)}>
+            <CardBody
+                py={0}
+                pt={"10px"}
+                as={"a"}
+                href={redirectUrl}
+                onClick={() => localStorage.setItem(localStorageId, data._id)}
+            >
                 <Box position={"relative"}>
                     <Center>
                         <Text color={"rgb(123, 128, 154)"} fontSize={"sm"}>
