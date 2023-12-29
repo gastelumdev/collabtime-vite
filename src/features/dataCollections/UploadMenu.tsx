@@ -50,18 +50,20 @@ const UploadMenu = ({
     create = true,
     columnName,
     docs = [],
-    topPadding = "11px",
+    topPadding = "0px",
     border = false,
 }: IProps) => {
     const { onClose, isOpen } = useDisclosure();
     const { data: documents } = useGetDocumentsQuery(null);
 
     const [filteredDocs, setFilteredDocs] = useState<TDocument[]>([]);
-    const [row, setRow] = useState<any[]>([]);
+    const [thisDocs, setThisDocs] = useState<any[]>([]);
 
     useEffect(() => {
-        create ? setRow(preparedRow.docs) : setRow(docs);
-    }, [preparedRow, docs]);
+        console.log(preparedRow);
+        // if (preparedRow.docs == "") preparedRow.docs = [];
+        create ? setThisDocs([]) : setThisDocs(docs);
+    }, []);
 
     // Filters out the docs are already part of the row
     useEffect(() => {
@@ -72,7 +74,7 @@ const UploadMenu = ({
         const docIds: any[] = [];
         let filtered;
         if (create) {
-            for (const doc of row || []) {
+            for (const doc of thisDocs || []) {
                 docIds.push(doc._id);
             }
 
@@ -92,13 +94,13 @@ const UploadMenu = ({
         setFilteredDocs(filtered || []);
     };
 
-    const filterDocsInRow = (document: TDocument) => {
-        const ds = filteredDocs.filter((item: TDocument) => {
-            return item._id !== document._id;
-        });
+    // const filterDocsInRow = (document: TDocument) => {
+    //     const ds = filteredDocs.filter((item: TDocument) => {
+    //         return item._id !== document._id;
+    //     });
 
-        setFilteredDocs(ds);
-    };
+    //     setFilteredDocs(ds);
+    // };
 
     const getIcon = (type: string) => {
         if (type === "jpg" || type === "png" || type === "jpeg") return <FaRegImage color={"rgb(123, 128, 154)"} />;
@@ -121,9 +123,12 @@ const UploadMenu = ({
                     />
                 )}
                 <MenuList w={"400px"}>
-                    <MenuGroup title={(row?.length || 0) > 0 ? "Selected files" : ""}>
-                        <Box overflowY={row?.length > 8 ? "scroll" : "auto"} h={row?.length > 8 ? "200px" : "auto"}>
-                            {row?.map((doc: any, index: number) => {
+                    <MenuGroup title={(thisDocs?.length || 0) > 0 ? "Selected files" : ""}>
+                        <Box
+                            overflowY={thisDocs?.length > 8 ? "scroll" : "auto"}
+                            h={thisDocs?.length > 8 ? "200px" : "auto"}
+                        >
+                            {thisDocs?.map((doc: any, index: number) => {
                                 return (
                                     <Box key={index} pl={"5px"}>
                                         <a href={doc.url} target="_blank">
@@ -143,7 +148,7 @@ const UploadMenu = ({
                             })}
                         </Box>
                     </MenuGroup>
-                    {row?.length || 0 > 0 ? <MenuDivider mt={"10px"} mb={"20px"} /> : null}
+                    {thisDocs?.length || 0 > 0 ? <MenuDivider mt={"10px"} mb={"20px"} /> : null}
                     <MenuGroup title={"Upload or Create a document"}>
                         <Box pl={"5px"}>
                             <UploadModal
@@ -184,7 +189,9 @@ const UploadMenu = ({
                                                 } else {
                                                     handleAddExistingDocToCell(cell, document);
                                                 }
-                                                filterDocsInRow(document);
+
+                                                setThisDocs([...thisDocs, document]);
+                                                // filterDocsInRow(document);
                                             }}
                                         >
                                             <Flex overflow={"hidden"}>
@@ -206,12 +213,16 @@ const UploadMenu = ({
                         </Box>
                     </MenuGroup>
                 </MenuList>
+                <MenuButton>
+                    <Box pt={topPadding} ml={"6px"} overflow={"hidden"}>
+                        <Text overflow={"hidden"} textOverflow={"ellipsis"}>
+                            {thisDocs?.length > 0
+                                ? `${thisDocs?.length} ${thisDocs?.length > 1 ? "docs" : "doc"}`
+                                : "No files"}
+                        </Text>
+                    </Box>
+                </MenuButton>
             </Menu>
-            <Box pt={topPadding} ml={"6px"} overflow={"hidden"}>
-                <Text overflow={"hidden"} textOverflow={"ellipsis"}>
-                    {row?.length > 0 ? `${row?.length} ${row?.length > 1 ? "docs" : "doc"}` : "No files"}
-                </Text>
-            </Box>
         </Flex>
     );
 };

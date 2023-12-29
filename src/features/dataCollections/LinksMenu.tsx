@@ -24,7 +24,7 @@ interface IProps {
     border?: boolean;
 }
 
-const LinksMenu = ({ cell, handleAddLinkClick, topPadding = "11px", border = false }: IProps) => {
+const LinksMenu = ({ cell, handleAddLinkClick, topPadding = "0px", border = false }: IProps) => {
     const [updateCell] = useUpdateCellMutation();
     const [link, setLink] = useState<string>("");
     const [links, setLinks] = useState<string[]>([]);
@@ -97,37 +97,41 @@ const LinksMenu = ({ cell, handleAddLinkClick, topPadding = "11px", border = fal
                             </Box>
                         </Box>
                         <MenuDivider />
-                        <MenuGroup title="Links">
-                            {links.map((link, index) => {
-                                return (
-                                    // <Box
-                                    //     key={index}
-                                    //     onClick={() => {
-                                    //         window.location.replace(link);
-                                    //     }}
-                                    // >
-                                    //     <MenuItem>{link}</MenuItem>
-                                    // </Box>
-                                    <Box key={index}>
-                                        <MenuItem>
+                        {links.length > 0 ? (
+                            <MenuGroup title="Links">
+                                {links.map((link, index) => {
+                                    return (
+                                        // <Box
+                                        //     key={index}
+                                        //     onClick={() => {
+                                        //         window.location.replace(link);
+                                        //     }}
+                                        // >
+                                        //     <MenuItem>{link}</MenuItem>
+                                        // </Box>
+                                        <Box key={index}>
                                             <a
                                                 href={link}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 style={{ overflow: "hidden", textOverflow: "ellipsis" }}
                                             >
-                                                {link}
+                                                <MenuItem>{link}</MenuItem>
                                             </a>
-                                        </MenuItem>
-                                    </Box>
-                                );
-                            })}
-                        </MenuGroup>
+                                        </Box>
+                                    );
+                                })}
+                            </MenuGroup>
+                        ) : null}
                     </MenuList>
+                    <MenuButton>
+                        <Box pt={topPadding} ml={"6px"}>
+                            <Text>
+                                {links.length > 0 ? `${links.length} ${links.length > 1 ? "links" : "link"}` : "Empty"}
+                            </Text>
+                        </Box>
+                    </MenuButton>
                 </Menu>
-                <Box pt={topPadding} ml={"6px"}>
-                    <Text>{links.length > 0 ? `${links.length} ${links.length > 1 ? "links" : "link"}` : "Empty"}</Text>
-                </Box>
             </Flex>
         </>
     );

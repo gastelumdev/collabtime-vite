@@ -33,7 +33,7 @@ import {
     MenuButton,
     MenuItem,
     MenuList,
-    Progress,
+    // Progress,
     Spacer,
     Table,
     TableContainer,
@@ -70,6 +70,7 @@ import LinksMenu from "./LinksMenu";
 
 import "./styles.css";
 import LabelMenu from "./LabelMenu";
+import TextInput from "./TextInput";
 
 interface IProps {
     columns: TColumn[];
@@ -84,8 +85,8 @@ interface IProps {
 const DataCollectionTable = ({
     columns,
     rows,
-    rowsLoading,
-    rowsFetching,
+    // rowsLoading,
+    // rowsFetching,
     dataCollectionId,
     permissions = 2,
     type = "table",
@@ -98,9 +99,9 @@ const DataCollectionTable = ({
 
     const [createColumn] = useCreateColumnMutation();
     const [deleteColumn] = useDeleteColumnMutation();
-    const [createRow, { isLoading: creatingRow }] = useCreateRowMutation();
+    const [createRow] = useCreateRowMutation();
     const [updateRow] = useUpdateRowMutation();
-    const [deleteMultipleRows, { isLoading: deletingRows }] = useDeleteRowsMutation();
+    const [deleteMultipleRows] = useDeleteRowsMutation();
     const [updateCell] = useUpdateCellMutation();
     const [rowCallUpdate] = useRowCallUpdateMutation();
     const [updateWorkspace] = useUpdateWorkspaceMutation();
@@ -188,6 +189,7 @@ const DataCollectionTable = ({
      * without having to trigger it in anyway.
      */
     useEffect(() => {
+        tempValue;
         const socket = io(import.meta.env.VITE_API_URL);
         socket.connect();
         socket.on("update row", () => {
@@ -232,6 +234,7 @@ const DataCollectionTable = ({
         for (const column of columns || []) {
             temp = { ...temp, [column.name]: "" };
         }
+        temp.docs = [];
 
         setRow(temp);
     };
@@ -301,7 +304,7 @@ const DataCollectionTable = ({
         await createRow(row);
         setShowRowForm(false);
         setDefaultRow();
-        setRow({ dataCollection: dataCollection?._id, docs: [], links: [] });
+        // setRow({ dataCollection: dataCollection?._id, docs: [], links: [] });
     };
 
     /**
@@ -329,6 +332,7 @@ const DataCollectionTable = ({
                 await createRow(row);
                 setFirstInputFocus(true);
                 setDefaultRow();
+                // setRow({ dataCollection: dataCollection?._id, docs: [], links: [] });
             }
         };
 
@@ -621,13 +625,13 @@ const DataCollectionTable = ({
     };
     return (
         <>
-            {type === "table" ? (
+            {/* {type === "table" ? (
                 <Box h={"20px"}>
                     {rowsLoading || deletingRows || creatingRow || rowsFetching ? (
                         <Progress size="xs" isIndeterminate />
                     ) : null}
                 </Box>
-            ) : null}
+            ) : null} */}
             <TableContainer pb={type === "table" ? "300px" : "0"}>
                 <Table size="sm" style={{ tableLayout: "fixed" }}>
                     <Thead>
@@ -842,23 +846,24 @@ const DataCollectionTable = ({
                                                         </Box>
                                                     ) : cell.type === "people" ? (
                                                         <Box>
-                                                            {rowsLoading ||
-                                                            rowsFetching ||
-                                                            !((permissions || 0) > 1) ? (
-                                                                <Text cursor={"default"}>{cell.value}</Text>
-                                                            ) : (
-                                                                <Box>
-                                                                    <LabelMenu
-                                                                        cell={cell}
-                                                                        value={cell.value}
-                                                                        label={cell.value}
-                                                                        bgColor={"white"}
-                                                                        options={peopleOptions}
-                                                                        handleLabelSelectChange={
-                                                                            handleLabelSelectChange
-                                                                        }
-                                                                    />
-                                                                    {/* <Select
+                                                            {
+                                                                // rowsLoading ||
+                                                                // rowsFetching ||
+                                                                !((permissions || 0) > 1) ? (
+                                                                    <Text cursor={"default"}>{cell.value}</Text>
+                                                                ) : (
+                                                                    <Box>
+                                                                        <LabelMenu
+                                                                            cell={cell}
+                                                                            value={cell.value}
+                                                                            label={cell.value}
+                                                                            bgColor={"white"}
+                                                                            options={peopleOptions}
+                                                                            handleLabelSelectChange={
+                                                                                handleLabelSelectChange
+                                                                            }
+                                                                        />
+                                                                        {/* <Select
                                                                         options={peopleOptions}
                                                                         styles={cellColorStyles({
                                                                             bgColor: "#ffffff",
@@ -879,8 +884,9 @@ const DataCollectionTable = ({
                                                                         //     rowsLoading || rowsFetching || !((permissions || 0) > 1)
                                                                         // }
                                                                     /> */}
-                                                                </Box>
-                                                            )}
+                                                                    </Box>
+                                                                )
+                                                            }
                                                         </Box>
                                                     ) : cell.type === "date" ? (
                                                         <input
@@ -897,7 +903,9 @@ const DataCollectionTable = ({
                                                                 event: React.FocusEvent<HTMLInputElement, Element>
                                                             ) => handleUpdateRowOnBlur(event, cell)}
                                                             disabled={
-                                                                rowsLoading || rowsFetching || !((permissions || 0) > 1)
+                                                                // rowsLoading ||
+                                                                // rowsFetching ||
+                                                                !((permissions || 0) > 1)
                                                             }
                                                             className="datepicker-input"
                                                         />
@@ -915,9 +923,11 @@ const DataCollectionTable = ({
                                                             onBlur={(
                                                                 event: React.FocusEvent<HTMLInputElement, Element>
                                                             ) => handleUpdateRowOnBlur(event, cell)}
-                                                            disabled={
-                                                                rowsLoading || rowsFetching || !((permissions || 0) > 1)
-                                                            }
+                                                            // disabled={
+                                                            //     rowsLoading ||
+                                                            //     rowsFetching ||
+                                                            //     !((permissions || 0) > 1)
+                                                            // }
                                                             style={{
                                                                 outline: "none",
                                                                 paddingTop: "3px",
@@ -945,30 +955,43 @@ const DataCollectionTable = ({
                                                             />
                                                         </Box>
                                                     ) : (
-                                                        <Input
-                                                            value={
-                                                                editMode.includes(cell?._id) ? tempValue : cell.value
-                                                            }
-                                                            size={"sm"}
-                                                            variant={"unstyled"}
-                                                            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                                                                handleUpdateRowInputChange(event)
-                                                            }
-                                                            onFocus={(
-                                                                event: React.FocusEvent<HTMLInputElement, Element>
-                                                            ) => handleUpdateRowOnFocus(event, cell)}
-                                                            onBlur={(
-                                                                event: React.FocusEvent<HTMLInputElement, Element>
-                                                            ) => handleUpdateRowOnBlur(event, cell)}
-                                                            isDisabled={
-                                                                rowsLoading ||
-                                                                deletingRows ||
-                                                                creatingRow ||
-                                                                rowsFetching
-                                                            }
-                                                            isReadOnly={!((permissions || 0) > 1)}
-                                                            cursor={(permissions || 0) > 1 ? "text" : "default"}
-                                                            textOverflow={"ellipsis"}
+                                                        // <Input
+                                                        //     value={
+                                                        //         editMode.includes(cell?._id) ? tempValue : cell.value
+                                                        //     }
+                                                        //     size={"sm"}
+                                                        //     variant={"unstyled"}
+                                                        //     onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                                                        //         handleUpdateRowInputChange(event)
+                                                        //     }
+                                                        //     onFocus={(
+                                                        //         event: React.FocusEvent<HTMLInputElement, Element>
+                                                        //     ) => handleUpdateRowOnFocus(event, cell)}
+                                                        //     onBlur={(
+                                                        //         event: React.FocusEvent<HTMLInputElement, Element>
+                                                        //     ) => handleUpdateRowOnBlur(event, cell)}
+                                                        //     isDisabled={
+                                                        //         rowsLoading ||
+                                                        //         deletingRows ||
+                                                        //         creatingRow ||
+                                                        //         rowsFetching
+                                                        //     }
+                                                        //     isReadOnly={!((permissions || 0) > 1)}
+                                                        //     cursor={(permissions || 0) > 1 ? "text" : "default"}
+                                                        //     textOverflow={"ellipsis"}
+                                                        // />
+                                                        <TextInput
+                                                            cell={cell}
+                                                            // editMode={editMode}
+                                                            // tempValue={tempValue}
+                                                            // rowsLoading={rowsLoading}
+                                                            // rowsFetching={rowsFetching}
+                                                            // deletingRows={deletingRows}
+                                                            // creatingRow={creatingRow}
+                                                            permissions={permissions}
+                                                            handleUpdateRowInputChange={handleUpdateRowInputChange}
+                                                            handleUpdateRowOnFocus={handleUpdateRowOnFocus}
+                                                            handleUpdateRowOnBlur={handleUpdateRowOnBlur}
                                                         />
                                                     )}
                                                 </Tooltip>
@@ -1200,32 +1223,3 @@ const DataCollectionTable = ({
 };
 
 export default DataCollectionTable;
-
-{
-    /* {cell.type === "label" ||
-        cell.type === "priority" ||
-        cell.type === "status" ? (
-            <Box>
-                <Select
-                    options={options}
-                    styles={cellColorStyles({
-                        bgColor,
-                        padding: "10px",
-                        border: "none",
-                    })}
-                    defaultValue={{
-                        value: cell.value,
-                        label: cell.value == "" ? "Select..." : cell.value,
-                    }}
-                    onChange={(newValue) =>
-                        handleLabelSelectChange(newValue, cell)
-                    }
-                    isDisabled={
-                        rowsLoading ||
-                        rowsFetching ||
-                        !((permissions || 0) > 1)
-                    }
-                />
-            </Box>
-        ) : cell.type === "people" ? ( */
-}
