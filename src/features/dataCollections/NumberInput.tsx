@@ -24,11 +24,11 @@ const NumberInput = ({
     handleUpdateRowOnFocus,
     handleUpdateRowOnBlur,
 }: IProps) => {
-    const [inputValue, setInputValue] = useState<string>(cell.value);
+    const [inputValue, setInputValue] = useState<string>("");
 
     useEffect(() => {
-        setInputValue(tempValue || "")
-    }, [tempValue])
+        setInputValue(tempValue || "");
+    }, [tempValue]);
     return (
         <Input
             value={inputValue}
@@ -47,6 +47,6 @@ const NumberInput = ({
             textOverflow={"ellipsis"}
         />
     );
-}
+};
 
-export default NumberInput
+export default NumberInput;

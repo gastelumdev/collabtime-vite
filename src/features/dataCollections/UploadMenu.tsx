@@ -40,9 +40,9 @@ interface IProps {
 
 const UploadMenu = ({
     cell,
-    preparedRow = {
-        docs: [],
-    },
+    // preparedRow = {
+    //     docs: [],
+    // },
     addToCell = false,
     handleDocsChange,
     handleAddExistingDoc,
@@ -60,7 +60,6 @@ const UploadMenu = ({
     const [thisDocs, setThisDocs] = useState<any[]>([]);
 
     useEffect(() => {
-        console.log(preparedRow);
         // if (preparedRow.docs == "") preparedRow.docs = [];
         create ? setThisDocs([]) : setThisDocs(docs);
     }, []);
@@ -68,7 +67,6 @@ const UploadMenu = ({
     // Filters out the docs are already part of the row
     useEffect(() => {
         filter();
-        console.log("RUNNING");
     }, [documents, thisDocs]);
 
     const filter = () => {
@@ -184,7 +182,6 @@ const UploadMenu = ({
                                     <Box key={index}>
                                         <MenuItem
                                             onClick={() => {
-                                                console.log(document);
                                                 if (create) {
                                                     handleAddExistingDoc(columnName, document);
                                                 } else {

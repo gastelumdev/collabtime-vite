@@ -54,6 +54,7 @@ import {
     Tr,
     WrapItem,
     useDisclosure,
+    MenuGroup,
 } from "@chakra-ui/react";
 import Select from "react-select";
 
@@ -145,20 +146,25 @@ const DataCollectionTable = ({
 
     const [firstInputFocus, setFirstInputFocus] = useState(true);
 
-    
-
     const [limit, setLimit] = useState<number>(20);
     const [skip, setSkip] = useState<number>(0);
     const [pageNumber, setPageNumber] = useState<number>((skip + limit) / limit);
 
     const [sort, setSort] = useState<number>(1);
+    const [sortBy, setSortBy] = useState<string>("createdAt");
 
     const {
         data: rows,
         isLoading: rowsLoading,
         isFetching: rowsFetching,
         isSuccess: rowsSuccess,
-    } = useGetRowsQuery({ dataCollectionId: dataCollectionId || "", limit: limit, skip: skip, sort: sort });
+    } = useGetRowsQuery({
+        dataCollectionId: dataCollectionId || "",
+        limit: limit,
+        skip: skip,
+        sort: sort,
+        sortBy: sortBy,
+    });
     // const [dataCollectionRows, setDataCollectionRows] = useState(rows);
     const { data: totalRows } = useGetTotalRowsQuery({ dataCollectionId: dataCollectionId || "", limit: limit });
 
@@ -180,7 +186,8 @@ const DataCollectionTable = ({
 
     useEffect(() => {
         setSort(1);
-        setPages(totalRows)
+        setPages(totalRows);
+        setSortBy("createdAt");
     }, [totalRows]);
 
     useEffect(() => {
@@ -188,8 +195,7 @@ const DataCollectionTable = ({
         // setData(rows as TRow[]);
     }, [rowsSuccess, rows]);
 
-    useEffect(() => {
-    }, [columns]);
+    useEffect(() => {}, [columns]);
 
     /**
      * This converts data so that the react table can read it before the component
@@ -368,8 +374,6 @@ const DataCollectionTable = ({
     // };
 
     useEffect(() => {
-        console.log(showRowForm);
-
         const handleAddRowOnEnter = async (event: KeyboardEvent) => {
             if (event.key == "Enter" && showRowForm) {
                 await createRow(row);
@@ -622,6 +626,28 @@ const DataCollectionTable = ({
         }
     };
 
+    /**
+     * DESCENDING ORDER SORT
+     * @param param
+     * @returns
+     */
+    const handleDescendingSortClick = (columnName: string) => {
+        setSort(-1);
+        setSortBy(columnName);
+        setPageNumber(1);
+    };
+
+    /**
+     * DESCENDING ORDER SORT
+     * @param param
+     * @returns
+     */
+    const handleAscendingSortClick = (columnName: string) => {
+        setSort(1);
+        setSortBy(columnName);
+        setPageNumber(1);
+    };
+
     const DeleteColumnAlert = ({ column }: { column: TColumn }) => {
         const {
             isOpen: deleteColumnModalIsOpen,
@@ -680,13 +706,11 @@ const DataCollectionTable = ({
                         <CSelect
                             defaultValue={20}
                             size={"sm"}
-                            onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
-                            {
+                            onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
                                 setLimit(Number(event.target.value));
                                 setPageNumber(1);
                                 setSkip(0);
-                            }
-                            }
+                            }}
                             mr={"14px"}
                         >
                             <option value={20}>20</option>
@@ -764,6 +788,16 @@ const DataCollectionTable = ({
                                                 <MenuList>
                                                     <RenameColumn column={column} />
                                                     <DeleteColumnAlert column={column} />
+                                                    <MenuGroup title="Sort">
+                                                        <MenuItem
+                                                            onClick={() => handleDescendingSortClick(column.name)}
+                                                        >
+                                                            Sort Descending
+                                                        </MenuItem>
+                                                        <MenuItem onClick={() => handleAscendingSortClick(column.name)}>
+                                                            Sort Ascending
+                                                        </MenuItem>
+                                                    </MenuGroup>
                                                 </MenuList>
                                             </Menu>
                                         ) : (
@@ -794,6 +828,7 @@ const DataCollectionTable = ({
                         )}
 
                         {rows?.map((row: any, index: number) => {
+                            console.log(row);
                             return (
                                 <Tr key={index}>
                                     {(permissions || 0) > 1 ? (
@@ -890,7 +925,6 @@ const DataCollectionTable = ({
                                     ) : null}
                                     {/* CELLS *********************** */}
                                     {row.cells.map((cell: TCell, index: number) => {
-                                        // console.log(cell.value);
                                         let bgColor: string = "";
                                         for (const label of cell.labels || []) {
                                             if (cell.value == label.title) {
@@ -913,7 +947,6 @@ const DataCollectionTable = ({
                                         });
                                         return (
                                             <Td key={index} px={cell.type == "label" ? "1px" : "10px"} py={"0"} m={"0"}>
-                                                
                                                 {/* <Tooltip
                                                     label={cell.value}
                                                     openDelay={500}
@@ -991,30 +1024,30 @@ const DataCollectionTable = ({
                                                         handleUpdateRowOnFocus={handleUpdateRowOnFocus}
                                                         handleUpdateRowOnBlur={handleUpdateRowOnBlur}
                                                     />
-                                                    // <input
-                                                    //     type="datetime-local"
-                                                    //     defaultValue={cell.value}
-                                                    //     value={cell.value}
-                                                    //     name={cell.name}
-                                                    //     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                                    //         handleUpdateRowInputChange(event);
-                                                    //     }}
-                                                    //     onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) =>
-                                                    //         {
-                                                    //             handleUpdateRowOnFocus(event, cell);
-                                                    //         }
-                                                    //     }
-                                                    //     onBlur={(event: React.FocusEvent<HTMLInputElement, Element>) =>
-                                                    //         handleUpdateRowOnBlur(event, cell)
-                                                    //     }
-                                                    //     disabled={
-                                                    //         // rowsLoading ||
-                                                    //         // rowsFetching ||
-                                                    //         !((permissions || 0) > 1)
-                                                    //     }
-                                                    //     className="datepicker-input"
-                                                    // />
-                                                ) : cell.type === "number" ? (
+                                                ) : // <input
+                                                //     type="datetime-local"
+                                                //     defaultValue={cell.value}
+                                                //     value={cell.value}
+                                                //     name={cell.name}
+                                                //     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                //         handleUpdateRowInputChange(event);
+                                                //     }}
+                                                //     onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) =>
+                                                //         {
+                                                //             handleUpdateRowOnFocus(event, cell);
+                                                //         }
+                                                //     }
+                                                //     onBlur={(event: React.FocusEvent<HTMLInputElement, Element>) =>
+                                                //         handleUpdateRowOnBlur(event, cell)
+                                                //     }
+                                                //     disabled={
+                                                //         // rowsLoading ||
+                                                //         // rowsFetching ||
+                                                //         !((permissions || 0) > 1)
+                                                //     }
+                                                //     className="datepicker-input"
+                                                // />
+                                                cell.type === "number" ? (
                                                     <NumberInput
                                                         cell={cell}
                                                         // editMode={editMode}
@@ -1126,7 +1159,6 @@ const DataCollectionTable = ({
                                 {showTagsColumn ? <Td></Td> : null}
                                 {columns?.map((column: TColumn, index: number) => {
                                     // setDefaultRow();
-                                    console.log(column)
                                     const options = column.labels?.map((item) => {
                                         return {
                                             value: item.title,

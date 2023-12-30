@@ -27,8 +27,13 @@ const DateInput = ({
     const [inputValue, setInputValue] = useState<string>(cell.value);
 
     useEffect(() => {
-        setInputValue(tempValue || "")
-    }, [tempValue])
+        if (tempValue !== "Invalid Date") {
+            const newValue = tempValue?.slice(0, 16);
+            setInputValue(newValue || "");
+        } else {
+            setInputValue("");
+        }
+    }, [tempValue]);
     return (
         <Input
             value={inputValue}
@@ -47,6 +52,6 @@ const DateInput = ({
             textOverflow={"ellipsis"}
         />
     );
-}
+};
 
-export default DateInput
+export default DateInput;

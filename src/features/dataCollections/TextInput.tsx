@@ -18,18 +18,17 @@ interface IProps {
 
 const TextInput = ({
     cell,
-    tempValue,
+    tempValue = "",
     permissions,
     handleUpdateRowInputChange,
     handleUpdateRowOnFocus,
     handleUpdateRowOnBlur,
 }: IProps) => {
-    const [inputValue, setInputValue] = useState<string>(cell.value);
+    const [inputValue, setInputValue] = useState<string>("");
 
     useEffect(() => {
-        console.log(tempValue)
-        setInputValue(tempValue || "")
-    }, [tempValue])
+        setInputValue(tempValue || "");
+    }, [tempValue]);
     return (
         <Input
             value={inputValue}

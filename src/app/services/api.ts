@@ -33,7 +33,7 @@ export const api = createApi({
                 body: email
             })
         }),
-        resetPassword: builder.mutation<BasicResponse, {userId: string, token: string, password: string}>({
+        resetPassword: builder.mutation<BasicResponse, { userId: string, token: string, password: string }>({
             query: (params) => ({
                 url: "resetPassword",
                 method: "POST",
@@ -89,7 +89,7 @@ export const api = createApi({
             }),
             invalidatesTags: ["Workspace"]
         }),
-        joinWorkspace: builder.mutation<{success: boolean}, TJoinWorkspace>({
+        joinWorkspace: builder.mutation<{ success: boolean }, TJoinWorkspace>({
             query: (params) => ({
                 url: `workspaces/${params.workspaceId}/joinWorkspace`,
                 method: "POST",
@@ -97,7 +97,7 @@ export const api = createApi({
             }),
             invalidatesTags: ["Workspace"]
         }),
-        removeMember: builder.mutation<{success: boolean}, {userId: string} >({
+        removeMember: builder.mutation<{ success: boolean }, { userId: string }>({
             query: (userId) => ({
                 url: `workspaces/${localStorage.getItem("workspaceId")}/removeMember`,
                 method: "POST",
@@ -105,7 +105,7 @@ export const api = createApi({
             }),
             invalidatesTags: ["Workspace"]
         }),
-        removeInvitee: builder.mutation<{success: Boolean}, {userId: string}>({
+        removeInvitee: builder.mutation<{ success: Boolean }, { userId: string }>({
             query: (userId) => ({
                 url: `workspaces/${localStorage.getItem("workspaceId")}/removeInvitee`,
                 method: "POST",
@@ -113,14 +113,14 @@ export const api = createApi({
             }),
             invalidatesTags: ["Workspace"]
         }),
-        callUpdate: builder.mutation<{success: Boolean}, null>({
+        callUpdate: builder.mutation<{ success: Boolean }, null>({
             query: () => ({
                 url: "workspaces/callUpdate",
                 method: "POST"
             }),
             invalidatesTags: ["Workspace", "Messages"]
         }),
-        tagExists: builder.mutation<{tagExists: boolean}, TTag>({
+        tagExists: builder.mutation<{ tagExists: boolean }, TTag>({
             query: (tag) => ({
                 url: `workspaces/${tag.workspace}/tagExists`,
                 method: "POST",
@@ -133,7 +133,7 @@ export const api = createApi({
             }),
             providesTags: ["Notification"]
         }),
-        callNotificationsUpdate: builder.mutation<{success: Boolean}, string>({
+        callNotificationsUpdate: builder.mutation<{ success: Boolean }, string>({
             query: (priority) => ({
                 url: `workspaces/${localStorage.getItem("workspaceId")}/notifications/callUpdate/${priority}`,
                 method: "POST"
@@ -162,7 +162,7 @@ export const api = createApi({
             }),
             invalidatesTags: ["DataCollection"]
         }),
-        deleteDataCollection: builder.mutation<{success: boolean}, string>({
+        deleteDataCollection: builder.mutation<{ success: boolean }, string>({
             query: (dataCollectionId) => ({
                 url: `/workspaces/${localStorage.getItem("workspaceId")}/deleteDataCollections/${dataCollectionId}`,
                 method: "POST"
@@ -175,7 +175,7 @@ export const api = createApi({
             }),
             providesTags: ["DataCollection"],
         }),
-        sendForm: builder.mutation<{success: Boolean}, {email: string}>({
+        sendForm: builder.mutation<{ success: Boolean }, { email: string }>({
             query: (email) => ({
                 url: `/workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${localStorage.getItem("dataCollectionId")}/sendForm`,
                 method: "POST",
@@ -212,9 +212,9 @@ export const api = createApi({
             }),
             invalidatesTags: ["Column", "Rows"],
         }),
-        getRows: builder.query<any[], {dataCollectionId: string, limit: number, skip: number, sort: number}>({
+        getRows: builder.query<any[], { dataCollectionId: string, limit: number, skip: number, sort: number, sortBy: string }>({
             query: (options) => ({
-                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${options.dataCollectionId}/rows?limit=${options.limit}&skip=${options.skip}&sort=${options.sort}`
+                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${options.dataCollectionId}/rows?limit=${options.limit}&skip=${options.skip}&sort=${options.sort}&sortBy=${options.sortBy}`
             }),
             providesTags: ["Rows"]
         }),
@@ -241,7 +241,7 @@ export const api = createApi({
             }),
             invalidatesTags: ["Rows"]
         }),
-        deleteRows: builder.mutation<any, {rows: TRow[], dataCollectionId: string}>({
+        deleteRows: builder.mutation<any, { rows: TRow[], dataCollectionId: string }>({
             query: (data) => ({
                 url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${data.dataCollectionId}/deleteRows`,
                 method: "POST",
@@ -263,7 +263,7 @@ export const api = createApi({
             }),
             invalidatesTags: ["Rows"],
         }),
-        getTotalRows: builder.query<any, {dataCollectionId: string, limit: number}>({
+        getTotalRows: builder.query<any, { dataCollectionId: string, limit: number }>({
             query: (options) => ({
                 url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${options.dataCollectionId}/getTotalRows?limit=${options.limit}`,
             }),
@@ -328,14 +328,14 @@ export const api = createApi({
             }),
             invalidatesTags: ["Documents"]
         }),
-        searchAll: builder.mutation<{workspaces: TWorkspace[], dataCollections: TDataCollection[], docs: TDocument[]}, {key: string}>({
+        searchAll: builder.mutation<{ workspaces: TWorkspace[], dataCollections: TDataCollection[], docs: TDocument[] }, { key: string }>({
             query: (key) => ({
                 url: `/workspaces/${localStorage.getItem("workspaceId")}/searchAll`,
                 method: "POST",
                 body: key
             })
         }),
-        searchTags: builder.mutation<{workspaces: TWorkspace[], dataCollections: TDataCollection[], docs: TDocument[], data: any[]}, {tag: string}>({
+        searchTags: builder.mutation<{ workspaces: TWorkspace[], dataCollections: TDataCollection[], docs: TDocument[], data: any[] }, { tag: string }>({
             query: (tag) => ({
                 url: `/workspaces/${localStorage.getItem("workspaceId")}/searchTags`,
                 method: "POST",
@@ -356,7 +356,7 @@ export const api = createApi({
             }),
             invalidatesTags: ["Tags", "Workspace"]
         }),
-        deleteTag: builder.mutation<{success: boolean}, TTag>({
+        deleteTag: builder.mutation<{ success: boolean }, TTag>({
             query: (tag) => ({
                 url: `/workspaces/${tag.workspace}/tags/delete/${tag._id}`,
                 method: "POST",
@@ -408,11 +408,11 @@ export const api = createApi({
     })
 })
 
-export const { 
+export const {
     useLoginMutation,
     useGetUserQuery,
-    useResetPasswordRequestMutation, 
-    useResetPasswordMutation, 
+    useResetPasswordRequestMutation,
+    useResetPasswordMutation,
     useGetWorkspacesQuery,
     useGetOneWorkspaceQuery,
     useCreateWorkspaceMutation,

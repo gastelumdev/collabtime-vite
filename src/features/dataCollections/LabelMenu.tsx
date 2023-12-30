@@ -1,4 +1,4 @@
-import { Box, Button, Menu, MenuButton, MenuItem, MenuList, Text } from "@chakra-ui/react";
+import { Box, Button, Menu, MenuButton, MenuItem, MenuList, Text, Tooltip } from "@chakra-ui/react";
 import { getTextColor } from "../../utils/helpers";
 import { useEffect, useState } from "react";
 import { TCell } from "../../types";
@@ -25,28 +25,34 @@ const LabelMenu = ({
     const [labelColor, setLabelColor] = useState<string>(bgColor);
 
     useEffect(() => {
-        console.log(value);
         setLabelValue(value);
         setLabelLabel(value);
-        setLabelColor(bgColor)
+        setLabelColor(bgColor);
     }, [value]);
 
     return (
         <Menu matchWidth={true}>
-            <MenuButton
-                as={Button}
-                w={"100%"}
-                bgColor={labelColor}
-                color={bgColor == "white" ? "black" : getTextColor(labelColor)}
-                borderRadius={"none"}
-                variant={"ghost"}
-                fontSize={"14px"}
-                fontWeight={"normal"}
-                _hover={{ bgColor: "none" }}
-                _active={{ bgColor: "none" }}
+            <Tooltip
+                label={cell.value}
+                openDelay={500}
+                // isDisabled={isFocused}
+                placement={"top"}
             >
-                {labelLabel || labelValue}
-            </MenuButton>
+                <MenuButton
+                    as={Button}
+                    w={"100%"}
+                    bgColor={labelColor}
+                    color={bgColor == "white" ? "black" : getTextColor(labelColor)}
+                    borderRadius={"none"}
+                    variant={"ghost"}
+                    fontSize={"14px"}
+                    fontWeight={"normal"}
+                    _hover={{ bgColor: "none" }}
+                    _active={{ bgColor: "none" }}
+                >
+                    {labelLabel || labelValue}
+                </MenuButton>
+            </Tooltip>
             <MenuList px={"5px"}>
                 {options.map((item, index) => {
                     return (
