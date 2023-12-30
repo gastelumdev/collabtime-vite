@@ -12,6 +12,9 @@ import {
     useGetDataCollectionQuery,
     useGetOneWorkspaceQuery,
     useUpdateWorkspaceMutation,
+    useGetRowsQuery,
+    useGetColumnsQuery,
+    useGetTotalRowsQuery,
 } from "../../app/services/api";
 import {
     AlertDialog,
@@ -33,7 +36,9 @@ import {
     MenuButton,
     MenuItem,
     MenuList,
+    Progress,
     // Progress,
+    Select as CSelect,
     Spacer,
     Table,
     TableContainer,
@@ -64,17 +69,20 @@ import { io } from "socket.io-client";
 import { GoTag } from "react-icons/go";
 import TagsModal from "../tags/TagsModal";
 import { useParams } from "react-router-dom";
-import { FaRegBell, FaRegCheckSquare } from "react-icons/fa";
+import { FaAngleLeft, FaAngleRight, FaRegBell, FaRegCheckSquare } from "react-icons/fa";
 import UploadMenu from "./UploadMenu";
 import LinksMenu from "./LinksMenu";
 
 import "./styles.css";
 import LabelMenu from "./LabelMenu";
 import TextInput from "./TextInput";
+import NumberInput from "./NumberInput";
+import DateInput from "./DateInput";
+// import { ConsoleSqlOutlined } from "@ant-design/icons";
 
 interface IProps {
-    columns: TColumn[];
-    rows: TRow[];
+    columns?: TColumn[];
+    rows?: TRow[];
     rowsLoading?: boolean;
     rowsFetching?: boolean;
     dataCollectionId: string;
@@ -83,8 +91,8 @@ interface IProps {
 }
 
 const DataCollectionTable = ({
-    columns,
-    rows,
+    // columns,
+    // rows,
     // rowsLoading,
     // rowsFetching,
     dataCollectionId,
@@ -96,6 +104,7 @@ const DataCollectionTable = ({
 
     const { data: dataCollection } = useGetDataCollectionQuery(dataCollectionId || "");
     const { data: workspace } = useGetOneWorkspaceQuery(id || "");
+    const { data: columns } = useGetColumnsQuery(dataCollectionId || "");
 
     const [createColumn] = useCreateColumnMutation();
     const [deleteColumn] = useDeleteColumnMutation();
@@ -110,6 +119,7 @@ const DataCollectionTable = ({
     const [tagExists] = useTagExistsMutation();
 
     const [row, setRow] = useState<any>({ dataCollection: dataCollection?._id, docs: [] });
+    // const [columnsToCreateRow, setColumnsToCreateRow] = useState<TColumn[]>(columns || []);
     // const [labelStyles, setLabelStyles] = useState<any>({});
     // const [labelValue, setLabelValue] = useState<any>({});
     const [numberChecked, setNumberChecked] = useState<number>(0);
@@ -118,9 +128,9 @@ const DataCollectionTable = ({
      * holds the cell ids of the cell that is in focus
      */
     const [editMode, setEditMode] = useState<string[]>([]);
-    const [isFocused, setIsFocused] = useState<boolean>(false);
+    // const [isFocused, setIsFocused] = useState<boolean>(false);
     const [tempValue, setTempValue] = useState("");
-    const [submittable, setSubmittable] = useState<boolean>(false);
+    // const [submittable, setSubmittable] = useState<boolean>(false);
     /**
      * Holds the value of an input when it gets focused
      */
@@ -134,6 +144,25 @@ const DataCollectionTable = ({
     const [checkboxes, setCheckboxes] = useState<boolean[]>([]);
 
     const [firstInputFocus, setFirstInputFocus] = useState(true);
+
+    
+
+    const [limit, setLimit] = useState<number>(20);
+    const [skip, setSkip] = useState<number>(0);
+    const [pageNumber, setPageNumber] = useState<number>((skip + limit) / limit);
+
+    const [sort, setSort] = useState<number>(1);
+
+    const {
+        data: rows,
+        isLoading: rowsLoading,
+        isFetching: rowsFetching,
+        isSuccess: rowsSuccess,
+    } = useGetRowsQuery({ dataCollectionId: dataCollectionId || "", limit: limit, skip: skip, sort: sort });
+    // const [dataCollectionRows, setDataCollectionRows] = useState(rows);
+    const { data: totalRows } = useGetTotalRowsQuery({ dataCollectionId: dataCollectionId || "", limit: limit });
+
+    const [pages, setPages] = useState<number[]>(totalRows || []);
 
     // MAY NEED TO BE DELETED -- 12/22/23
     // const [headerMenuIsOpen, setHeaderMenuIsOpen] = useState(
@@ -149,20 +178,31 @@ const DataCollectionTable = ({
      */
     const [tagsColumnWidth, setTagsColumnWidth] = useState<string>("");
 
+    useEffect(() => {
+        setSort(1);
+        setPages(totalRows)
+    }, [totalRows]);
+
+    useEffect(() => {
+        localStorage.setItem("dataCollectionId", dataCollectionId || "");
+        // setData(rows as TRow[]);
+    }, [rowsSuccess, rows]);
+
+    useEffect(() => {
+    }, [columns]);
+
     /**
      * This converts data so that the react table can read it before the component
      * loads.
      */
     useEffect(() => {
         setDefaultRow();
-        console.log(window);
     }, []);
 
     useEffect(() => {
         const checkboxesArr = [];
-        for (const row of rows) {
+        for (const row of rows || []) {
             row;
-
             checkboxesArr.push(false);
         }
 
@@ -209,7 +249,7 @@ const DataCollectionTable = ({
     useEffect(() => {
         let max = 0;
         let maxTags = 0;
-        for (const row of rows) {
+        for (const row of rows || []) {
             let totalTagsWidth = 0;
             for (const tag of row.tags) {
                 totalTagsWidth += tag.name.length;
@@ -237,6 +277,12 @@ const DataCollectionTable = ({
         temp.docs = [];
 
         setRow(temp);
+    };
+
+    const handlePageNumberClick = (pageNum: number) => {
+        setPageNumber(pageNum);
+        setSkip((pageNum - 1) * limit);
+        // setSkip(40);
     };
 
     /**
@@ -279,7 +325,7 @@ const DataCollectionTable = ({
         setFirstInputFocus(false);
 
         // This makes it so that if enter is pressed it submits the row
-        setSubmittable(true);
+        // setSubmittable(true);
     };
 
     /**
@@ -325,23 +371,20 @@ const DataCollectionTable = ({
         console.log(showRowForm);
 
         const handleAddRowOnEnter = async (event: KeyboardEvent) => {
-            console.log(submittable);
-            console.log(event.key);
             if (event.key == "Enter" && showRowForm) {
-                console.log(row);
                 await createRow(row);
                 setFirstInputFocus(true);
                 setDefaultRow();
+                // setColumnsToCreateRow(columns || []);
                 // setRow({ dataCollection: dataCollection?._id, docs: [], links: [] });
             }
         };
-
-        console.log(handleAddRowOnEnter);
 
         document.addEventListener("keyup", handleAddRowOnEnter, true);
 
         return () => {
             document.removeEventListener("keyup", handleAddRowOnEnter, true);
+            // setDefaultRow();
         };
     }, [showRowForm, row]);
 
@@ -371,7 +414,6 @@ const DataCollectionTable = ({
      * @param docs This is the documents array that holds the created docs
      */
     const handleAddExistingDoc = (name: string, doc: TDocument) => {
-        console.log(doc);
         const rowDocs = row.docs || [];
         rowDocs.push(doc);
         setRow({ ...row, [name]: rowDocs });
@@ -399,7 +441,7 @@ const DataCollectionTable = ({
         // Initiates the temp value with the value in the input that will be displayed when focused
         // and flags it with is focused
         setTempValue(event.target.value);
-        setIsFocused(true);
+        // setIsFocused(true);
     };
 
     /**
@@ -422,7 +464,7 @@ const DataCollectionTable = ({
         setEditMode(tempEditMode);
 
         // Change the focus status
-        setIsFocused(false);
+        // setIsFocused(false);
     };
 
     /**
@@ -456,8 +498,6 @@ const DataCollectionTable = ({
      * @param cell The cell to be updated
      */
     const handleLabelSelectChange = async (newValue: any, cell: TCell) => {
-        console.log(newValue);
-        console.log(cell);
         let newCell = cell;
         newCell = { ...newCell, value: newValue.value };
         await updateCell(newCell);
@@ -625,13 +665,61 @@ const DataCollectionTable = ({
     };
     return (
         <>
-            {/* {type === "table" ? (
-                <Box h={"20px"}>
-                    {rowsLoading || deletingRows || creatingRow || rowsFetching ? (
-                        <Progress size="xs" isIndeterminate />
-                    ) : null}
+            {type === "table" ? (
+                <Box h={"20px"}>{rowsLoading || rowsFetching ? <Progress size="xs" isIndeterminate /> : null}</Box>
+            ) : null}
+            {/* {rows?.map((row, index) => {
+                return <Box>{row.cells.map((cell: TCell, index: number) => {
+                    return <Text>{cell.value}</Text>
+                })}</Box>
+            })} */}
+            <Flex mb={"20px"}>
+                <Spacer />
+                <Box>
+                    <Flex>
+                        <CSelect
+                            defaultValue={20}
+                            size={"sm"}
+                            onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
+                            {
+                                setLimit(Number(event.target.value));
+                                setPageNumber(1);
+                                setSkip(0);
+                            }
+                            }
+                            mr={"14px"}
+                        >
+                            <option value={20}>20</option>
+                            <option value={40}>40</option>
+                            <option value={60}>60</option>
+                        </CSelect>
+                        <Box pt={"7px"} mr={"5px"}>
+                            <FaAngleLeft />
+                        </Box>
+                        <Flex>
+                            {pages
+                                ? pages.map((page, index) => {
+                                      return (
+                                          <Box key={index} mx={"3px"}>
+                                              <Button
+                                                  size={"sm"}
+                                                  colorScheme="blue"
+                                                  variant={page === pageNumber ? "solid" : "outline"}
+                                                  onClick={() => handlePageNumberClick(page)}
+                                              >
+                                                  {page}
+                                              </Button>
+                                          </Box>
+                                      );
+                                  })
+                                : null}
+                        </Flex>
+                        <Box pt={"7px"} ml={"5px"}>
+                            <FaAngleRight />
+                        </Box>
+                    </Flex>
                 </Box>
-            ) : null} */}
+            </Flex>
             <TableContainer pb={type === "table" ? "300px" : "0"}>
                 <Table size="sm" style={{ tableLayout: "fixed" }}>
                     <Thead>
@@ -686,7 +774,7 @@ const DataCollectionTable = ({
                             })}
                             {(permissions || 0) > 1 ? (
                                 <Th>
-                                    <CreateColumn columns={columns} createColumn={createColumn} />
+                                    <CreateColumn columns={columns || []} createColumn={createColumn} />
                                 </Th>
                             ) : null}
                         </Tr>
@@ -825,45 +913,46 @@ const DataCollectionTable = ({
                                         });
                                         return (
                                             <Td key={index} px={cell.type == "label" ? "1px" : "10px"} py={"0"} m={"0"}>
-                                                <Tooltip
+                                                
+                                                {/* <Tooltip
                                                     label={cell.value}
                                                     openDelay={500}
                                                     isDisabled={isFocused}
                                                     placement={"top"}
-                                                >
-                                                    {cell.type === "label" ||
-                                                    cell.type === "priority" ||
-                                                    cell.type === "status" ? (
-                                                        <Box>
-                                                            <LabelMenu
-                                                                cell={cell}
-                                                                value={cell.value}
-                                                                label={cell.value}
-                                                                bgColor={bgColor}
-                                                                options={options}
-                                                                handleLabelSelectChange={handleLabelSelectChange}
-                                                            />
-                                                        </Box>
-                                                    ) : cell.type === "people" ? (
-                                                        <Box>
-                                                            {
-                                                                // rowsLoading ||
-                                                                // rowsFetching ||
-                                                                !((permissions || 0) > 1) ? (
-                                                                    <Text cursor={"default"}>{cell.value}</Text>
-                                                                ) : (
-                                                                    <Box>
-                                                                        <LabelMenu
-                                                                            cell={cell}
-                                                                            value={cell.value}
-                                                                            label={cell.value}
-                                                                            bgColor={"white"}
-                                                                            options={peopleOptions}
-                                                                            handleLabelSelectChange={
-                                                                                handleLabelSelectChange
-                                                                            }
-                                                                        />
-                                                                        {/* <Select
+                                                > */}
+                                                {cell.type === "label" ||
+                                                cell.type === "priority" ||
+                                                cell.type === "status" ? (
+                                                    <Box>
+                                                        <LabelMenu
+                                                            cell={cell}
+                                                            value={cell.value}
+                                                            label={cell.value}
+                                                            bgColor={bgColor}
+                                                            options={options}
+                                                            handleLabelSelectChange={handleLabelSelectChange}
+                                                        />
+                                                    </Box>
+                                                ) : cell.type === "people" ? (
+                                                    <Box>
+                                                        {
+                                                            // rowsLoading ||
+                                                            // rowsFetching ||
+                                                            !((permissions || 0) > 1) ? (
+                                                                <Text cursor={"default"}>{cell.value}</Text>
+                                                            ) : (
+                                                                <Box>
+                                                                    <LabelMenu
+                                                                        cell={cell}
+                                                                        value={cell.value}
+                                                                        label={cell.value}
+                                                                        bgColor={"white"}
+                                                                        options={peopleOptions}
+                                                                        handleLabelSelectChange={
+                                                                            handleLabelSelectChange
+                                                                        }
+                                                                    />
+                                                                    {/* <Select
                                                                         options={peopleOptions}
                                                                         styles={cellColorStyles({
                                                                             bgColor: "#ffffff",
@@ -884,117 +973,122 @@ const DataCollectionTable = ({
                                                                         //     rowsLoading || rowsFetching || !((permissions || 0) > 1)
                                                                         // }
                                                                     /> */}
-                                                                    </Box>
-                                                                )
-                                                            }
-                                                        </Box>
-                                                    ) : cell.type === "date" ? (
-                                                        <input
-                                                            type="datetime-local"
-                                                            defaultValue={cell.value}
-                                                            name={cell.name}
-                                                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                                                handleUpdateRowInputChange(event);
-                                                            }}
-                                                            onFocus={(
-                                                                event: React.FocusEvent<HTMLInputElement, Element>
-                                                            ) => handleUpdateRowOnFocus(event, cell)}
-                                                            onBlur={(
-                                                                event: React.FocusEvent<HTMLInputElement, Element>
-                                                            ) => handleUpdateRowOnBlur(event, cell)}
-                                                            disabled={
-                                                                // rowsLoading ||
-                                                                // rowsFetching ||
-                                                                !((permissions || 0) > 1)
-                                                            }
-                                                            className="datepicker-input"
-                                                        />
-                                                    ) : cell.type === "number" ? (
-                                                        <input
-                                                            type="number"
-                                                            defaultValue={cell.value}
-                                                            name={cell.name}
-                                                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                                                handleUpdateRowInputChange(event);
-                                                            }}
-                                                            onFocus={(
-                                                                event: React.FocusEvent<HTMLInputElement, Element>
-                                                            ) => handleUpdateRowOnFocus(event, cell)}
-                                                            onBlur={(
-                                                                event: React.FocusEvent<HTMLInputElement, Element>
-                                                            ) => handleUpdateRowOnBlur(event, cell)}
-                                                            // disabled={
-                                                            //     rowsLoading ||
-                                                            //     rowsFetching ||
-                                                            //     !((permissions || 0) > 1)
-                                                            // }
-                                                            style={{
-                                                                outline: "none",
-                                                                paddingTop: "3px",
-                                                                paddingBottom: "4px",
-                                                            }}
-                                                        />
-                                                    ) : cell.type === "upload" ? (
-                                                        <Box>
-                                                            <UploadMenu
-                                                                cell={cell}
-                                                                docs={cell.docs}
-                                                                addToCell={true}
-                                                                // handleDocsChange={handleCellDocsChange}
-                                                                handleAddExistingDoc={handleAddExistingDoc}
-                                                                handleAddExistingDocToCell={handleAddExistingDocToCell}
-                                                                create={false}
-                                                                columnName={cell.name}
-                                                            />
-                                                        </Box>
-                                                    ) : cell.type === "link" ? (
-                                                        <Box>
-                                                            <LinksMenu
-                                                                cell={cell}
-                                                                // handleAddLinkClick={handleAddLinkClick}
-                                                            />
-                                                        </Box>
-                                                    ) : (
-                                                        // <Input
-                                                        //     value={
-                                                        //         editMode.includes(cell?._id) ? tempValue : cell.value
-                                                        //     }
-                                                        //     size={"sm"}
-                                                        //     variant={"unstyled"}
-                                                        //     onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                                                        //         handleUpdateRowInputChange(event)
-                                                        //     }
-                                                        //     onFocus={(
-                                                        //         event: React.FocusEvent<HTMLInputElement, Element>
-                                                        //     ) => handleUpdateRowOnFocus(event, cell)}
-                                                        //     onBlur={(
-                                                        //         event: React.FocusEvent<HTMLInputElement, Element>
-                                                        //     ) => handleUpdateRowOnBlur(event, cell)}
-                                                        //     isDisabled={
-                                                        //         rowsLoading ||
-                                                        //         deletingRows ||
-                                                        //         creatingRow ||
-                                                        //         rowsFetching
-                                                        //     }
-                                                        //     isReadOnly={!((permissions || 0) > 1)}
-                                                        //     cursor={(permissions || 0) > 1 ? "text" : "default"}
-                                                        //     textOverflow={"ellipsis"}
-                                                        // />
-                                                        <TextInput
+                                                                </Box>
+                                                            )
+                                                        }
+                                                    </Box>
+                                                ) : cell.type === "date" ? (
+                                                    <DateInput
+                                                        cell={cell}
+                                                        // editMode={editMode}
+                                                        tempValue={cell.value}
+                                                        // rowsLoading={rowsLoading}
+                                                        // rowsFetching={rowsFetching}
+                                                        // deletingRows={deletingRows}
+                                                        // creatingRow={creatingRow}
+                                                        permissions={permissions}
+                                                        handleUpdateRowInputChange={handleUpdateRowInputChange}
+                                                        handleUpdateRowOnFocus={handleUpdateRowOnFocus}
+                                                        handleUpdateRowOnBlur={handleUpdateRowOnBlur}
+                                                    />
+                                                    // <input
+                                                    //     type="datetime-local"
+                                                    //     defaultValue={cell.value}
+                                                    //     value={cell.value}
+                                                    //     name={cell.name}
+                                                    //     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                    //         handleUpdateRowInputChange(event);
+                                                    //     }}
+                                                    //     onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) =>
+                                                    //         {
+                                                    //             handleUpdateRowOnFocus(event, cell);
+                                                    //         }
+                                                    //     }
+                                                    //     onBlur={(event: React.FocusEvent<HTMLInputElement, Element>) =>
+                                                    //         handleUpdateRowOnBlur(event, cell)
+                                                    //     }
+                                                    //     disabled={
+                                                    //         // rowsLoading ||
+                                                    //         // rowsFetching ||
+                                                    //         !((permissions || 0) > 1)
+                                                    //     }
+                                                    //     className="datepicker-input"
+                                                    // />
+                                                ) : cell.type === "number" ? (
+                                                    <NumberInput
+                                                        cell={cell}
+                                                        // editMode={editMode}
+                                                        tempValue={cell.value}
+                                                        // rowsLoading={rowsLoading}
+                                                        // rowsFetching={rowsFetching}
+                                                        // deletingRows={deletingRows}
+                                                        // creatingRow={creatingRow}
+                                                        permissions={permissions}
+                                                        handleUpdateRowInputChange={handleUpdateRowInputChange}
+                                                        handleUpdateRowOnFocus={handleUpdateRowOnFocus}
+                                                        handleUpdateRowOnBlur={handleUpdateRowOnBlur}
+                                                    />
+                                                ) : cell.type === "upload" ? (
+                                                    <Box>
+                                                        <UploadMenu
                                                             cell={cell}
-                                                            // editMode={editMode}
-                                                            // tempValue={tempValue}
-                                                            // rowsLoading={rowsLoading}
-                                                            // rowsFetching={rowsFetching}
-                                                            // deletingRows={deletingRows}
-                                                            // creatingRow={creatingRow}
-                                                            permissions={permissions}
-                                                            handleUpdateRowInputChange={handleUpdateRowInputChange}
-                                                            handleUpdateRowOnFocus={handleUpdateRowOnFocus}
-                                                            handleUpdateRowOnBlur={handleUpdateRowOnBlur}
+                                                            docs={cell.docs}
+                                                            addToCell={true}
+                                                            // handleDocsChange={handleCellDocsChange}
+                                                            handleAddExistingDoc={handleAddExistingDoc}
+                                                            handleAddExistingDocToCell={handleAddExistingDocToCell}
+                                                            create={false}
+                                                            columnName={cell.name}
                                                         />
-                                                    )}
-                                                </Tooltip>
+                                                    </Box>
+                                                ) : cell.type === "link" ? (
+                                                    <Box>
+                                                        <LinksMenu
+                                                            cell={cell}
+                                                            // handleAddLinkClick={handleAddLinkClick}
+                                                        />
+                                                    </Box>
+                                                ) : (
+                                                    // <Input
+                                                    //     value={
+                                                    //         editMode.includes(cell?._id) ? tempValue : cell.value
+                                                    //     }
+                                                    //     size={"sm"}
+                                                    //     variant={"unstyled"}
+                                                    //     onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                                                    //         handleUpdateRowInputChange(event)
+                                                    //     }
+                                                    //     onFocus={(
+                                                    //         event: React.FocusEvent<HTMLInputElement, Element>
+                                                    //     ) => handleUpdateRowOnFocus(event, cell)}
+                                                    //     onBlur={(
+                                                    //         event: React.FocusEvent<HTMLInputElement, Element>
+                                                    //     ) => handleUpdateRowOnBlur(event, cell)}
+                                                    //     isDisabled={
+                                                    //         rowsLoading ||
+                                                    //         deletingRows ||
+                                                    //         creatingRow ||
+                                                    //         rowsFetching
+                                                    //     }
+                                                    //     isReadOnly={!((permissions || 0) > 1)}
+                                                    //     cursor={(permissions || 0) > 1 ? "text" : "default"}
+                                                    //     textOverflow={"ellipsis"}
+                                                    // />
+                                                    <TextInput
+                                                        cell={cell}
+                                                        // editMode={editMode}
+                                                        tempValue={cell.value}
+                                                        // rowsLoading={rowsLoading}
+                                                        // rowsFetching={rowsFetching}
+                                                        // deletingRows={deletingRows}
+                                                        // creatingRow={creatingRow}
+                                                        permissions={permissions}
+                                                        handleUpdateRowInputChange={handleUpdateRowInputChange}
+                                                        handleUpdateRowOnFocus={handleUpdateRowOnFocus}
+                                                        handleUpdateRowOnBlur={handleUpdateRowOnBlur}
+                                                    />
+                                                )}
+                                                {/* </Tooltip> */}
                                             </Td>
                                         );
                                     })}
@@ -1031,6 +1125,8 @@ const DataCollectionTable = ({
                                 </Td>
                                 {showTagsColumn ? <Td></Td> : null}
                                 {columns?.map((column: TColumn, index: number) => {
+                                    // setDefaultRow();
+                                    console.log(column)
                                     const options = column.labels?.map((item) => {
                                         return {
                                             value: item.title,
@@ -1063,7 +1159,9 @@ const DataCollectionTable = ({
                                                         onChange={(selectedOption) =>
                                                             handleLabelChange(selectedOption, column.name)
                                                         }
+                                                        // defaultValue={{ label: "", value: "", color: "white" }}
                                                         styles={createRowColorStyles()}
+                                                        defaultInputValue=""
                                                     />
                                                 </Box>
                                             ) : column.type == "people" ? (
@@ -1106,8 +1204,9 @@ const DataCollectionTable = ({
                                                         onChange={handleAddRowInputChange}
                                                         defaultValue={""}
                                                         style={{
+                                                            width: "114px",
                                                             border: "1px solid #cccccc",
-                                                            padding: "9px",
+                                                            padding: "11px",
                                                             borderRadius: "4px",
                                                             color: "#828282",
                                                         }}
@@ -1140,9 +1239,10 @@ const DataCollectionTable = ({
                                                     <Input
                                                         name={column.name}
                                                         onChange={handleAddRowInputChange}
-                                                        placeholder="Enter text"
+                                                        placeholder=""
                                                         value={row[column.name]}
                                                         size={"md"}
+                                                        borderColor={"#cccccc"}
                                                         autoFocus={index == 0}
                                                         ref={(el) => {
                                                             if (index == 0 && firstInputFocus) {

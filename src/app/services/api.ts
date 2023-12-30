@@ -212,9 +212,9 @@ export const api = createApi({
             }),
             invalidatesTags: ["Column", "Rows"],
         }),
-        getRows: builder.query<any[], string>({
-            query: (dataCollectionId) => ({
-                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${dataCollectionId}/rows`
+        getRows: builder.query<any[], {dataCollectionId: string, limit: number, skip: number, sort: number}>({
+            query: (options) => ({
+                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${options.dataCollectionId}/rows?limit=${options.limit}&skip=${options.skip}&sort=${options.sort}`
             }),
             providesTags: ["Rows"]
         }),
@@ -262,6 +262,12 @@ export const api = createApi({
                 method: "POST",
             }),
             invalidatesTags: ["Rows"],
+        }),
+        getTotalRows: builder.query<any, {dataCollectionId: string, limit: number}>({
+            query: (options) => ({
+                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${options.dataCollectionId}/getTotalRows?limit=${options.limit}`,
+            }),
+            providesTags: ["Rows"]
         }),
         updateCell: builder.mutation<TCell, TCell>({
             query: (cell) => ({
@@ -438,6 +444,7 @@ export const {
     useDeleteRowsMutation,
     useRowCallUpdateMutation,
     useAcknowledgeRowMutation,
+    useGetTotalRowsQuery,
     useUpdateCellMutation,
     useUploadMutation,
     useUploadDocsMutation,

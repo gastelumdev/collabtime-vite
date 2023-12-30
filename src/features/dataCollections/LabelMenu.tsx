@@ -26,6 +26,9 @@ const LabelMenu = ({
 
     useEffect(() => {
         console.log(value);
+        setLabelValue(value);
+        setLabelLabel(value);
+        setLabelColor(bgColor)
     }, [value]);
 
     return (

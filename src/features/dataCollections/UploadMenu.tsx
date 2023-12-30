@@ -68,7 +68,8 @@ const UploadMenu = ({
     // Filters out the docs are already part of the row
     useEffect(() => {
         filter();
-    }, [documents, docs]);
+        console.log("RUNNING");
+    }, [documents, thisDocs]);
 
     const filter = () => {
         const docIds: any[] = [];
@@ -82,7 +83,7 @@ const UploadMenu = ({
                 return !docIds?.includes(item._id);
             });
         } else {
-            for (const doc of docs) {
+            for (const doc of thisDocs || []) {
                 docIds.push(doc._id);
             }
 

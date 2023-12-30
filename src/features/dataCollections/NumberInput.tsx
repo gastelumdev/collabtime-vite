@@ -16,7 +16,7 @@ interface IProps {
     handleUpdateRowOnBlur: any;
 }
 
-const TextInput = ({
+const NumberInput = ({
     cell,
     tempValue,
     permissions,
@@ -27,12 +27,12 @@ const TextInput = ({
     const [inputValue, setInputValue] = useState<string>(cell.value);
 
     useEffect(() => {
-        console.log(tempValue)
         setInputValue(tempValue || "")
     }, [tempValue])
     return (
         <Input
             value={inputValue}
+            type="number"
             size={"sm"}
             variant={"unstyled"}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,6 +47,6 @@ const TextInput = ({
             textOverflow={"ellipsis"}
         />
     );
-};
+}
 
-export default TextInput;
+export default NumberInput
