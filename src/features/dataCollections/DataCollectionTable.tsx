@@ -38,7 +38,7 @@ import {
     MenuList,
     Progress,
     // Progress,
-    Select as CSelect,
+    // Select as CSelect,
     Spacer,
     Table,
     TableContainer,
@@ -188,6 +188,7 @@ const DataCollectionTable = ({
         setSort(1);
         setPages(totalRows);
         setSortBy("createdAt");
+        setLimit(20);
     }, [totalRows]);
 
     useEffect(() => {
@@ -705,7 +706,7 @@ const DataCollectionTable = ({
                 <Spacer />
                 <Box>
                     <Flex>
-                        <CSelect
+                        {/* <CSelect
                             defaultValue={20}
                             size={"sm"}
                             onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -718,7 +719,7 @@ const DataCollectionTable = ({
                             <option value={20}>20</option>
                             <option value={40}>40</option>
                             <option value={60}>60</option>
-                        </CSelect>
+                        </CSelect> */}
                         <Box pt={"7px"} mr={"5px"}>
                             <FaAngleLeft />
                         </Box>
