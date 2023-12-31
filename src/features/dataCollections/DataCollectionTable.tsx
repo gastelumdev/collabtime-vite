@@ -635,6 +635,7 @@ const DataCollectionTable = ({
         setSort(-1);
         setSortBy(columnName);
         setPageNumber(1);
+        setSkip(0);
     };
 
     /**
@@ -646,6 +647,7 @@ const DataCollectionTable = ({
         setSort(1);
         setSortBy(columnName);
         setPageNumber(1);
+        setSkip(0);
     };
 
     const DeleteColumnAlert = ({ column }: { column: TColumn }) => {
