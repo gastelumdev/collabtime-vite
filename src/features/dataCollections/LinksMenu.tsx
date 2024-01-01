@@ -96,32 +96,35 @@ const LinksMenu = ({ cell, handleAddLinkClick, topPadding = "0px", border = fals
                                 </Box>
                             </Box>
                         </Box>
-                        <MenuDivider />
+
                         {links.length > 0 ? (
-                            <MenuGroup title="Links">
-                                {links.map((link, index) => {
-                                    return (
-                                        // <Box
-                                        //     key={index}
-                                        //     onClick={() => {
-                                        //         window.location.replace(link);
-                                        //     }}
-                                        // >
-                                        //     <MenuItem>{link}</MenuItem>
-                                        // </Box>
-                                        <Box key={index}>
-                                            <a
-                                                href={link}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                style={{ overflow: "hidden", textOverflow: "ellipsis" }}
-                                            >
-                                                <MenuItem>{link}</MenuItem>
-                                            </a>
-                                        </Box>
-                                    );
-                                })}
-                            </MenuGroup>
+                            <>
+                                <MenuDivider />
+                                <MenuGroup title="Links">
+                                    {links.map((link, index) => {
+                                        return (
+                                            // <Box
+                                            //     key={index}
+                                            //     onClick={() => {
+                                            //         window.location.replace(link);
+                                            //     }}
+                                            // >
+                                            //     <MenuItem>{link}</MenuItem>
+                                            // </Box>
+                                            <Box key={index}>
+                                                <a
+                                                    href={link}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    style={{ overflow: "hidden", textOverflow: "ellipsis" }}
+                                                >
+                                                    <MenuItem>{link}</MenuItem>
+                                                </a>
+                                            </Box>
+                                        );
+                                    })}
+                                </MenuGroup>
+                            </>
                         ) : null}
                     </MenuList>
                     <MenuButton>

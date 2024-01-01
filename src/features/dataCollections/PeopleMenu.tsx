@@ -19,7 +19,7 @@ interface IProps {
     // options: { value: string; label: string; color: string }[] | undefined;
 }
 
-const LabelMenu = ({ cell, value = "" }: IProps) => {
+const PeopleMenu = ({ cell, value = "" }: IProps) => {
     const [updateCell] = useUpdateCellMutation();
 
     const [labelValue, setLabelValue] = useState<string>("");
@@ -28,23 +28,23 @@ const LabelMenu = ({ cell, value = "" }: IProps) => {
     const [options, setOptions] = useState<ILabel[] | undefined>([]);
 
     useEffect(() => {
-        let bgColor: string = "";
-        for (const label of cell.labels || []) {
-            if (cell.value == label.title) {
-                bgColor = label.color;
-            }
-        }
-        const cellOptions: ILabel[] | undefined = cell.labels?.map((item) => {
+        // let bgColor: string = "";
+        // for (const label of cell.labels || []) {
+        //     if (cell.value == label.title) {
+        //         bgColor = label.color;
+        //     }
+        // }
+        const cellOptions: ILabel[] | undefined = cell.people?.map((item) => {
             return {
-                value: item.title,
-                label: item.title,
-                color: item.color,
+                value: item._id,
+                label: `${item.firstname} ${item.lastname}`,
+                color: "#ffffff",
             };
         });
 
         setLabelValue(value);
         setLabelLabel(value);
-        setLabelColor(bgColor);
+        setLabelColor("#ffffff");
         setOptions(cellOptions);
     }, [cell, value]);
 
@@ -83,7 +83,7 @@ const LabelMenu = ({ cell, value = "" }: IProps) => {
                 {options?.map((label, index) => {
                     return (
                         <Box key={index} bgColor={label.color} p={"6px"} onClick={() => handleLabelClick(label)}>
-                            <MenuItem bgColor={label.color}>
+                            <MenuItem bgColor={"white"}>
                                 <Text color={getTextColor(label.color)}>{label.label}</Text>
                             </MenuItem>
                         </Box>
@@ -94,4 +94,4 @@ const LabelMenu = ({ cell, value = "" }: IProps) => {
     );
 };
 
-export default LabelMenu;
+export default PeopleMenu;

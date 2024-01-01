@@ -275,7 +275,7 @@ export const api = createApi({
                 method: "POST",
                 body: cell,
             }),
-            invalidatesTags: ["Rows"],
+            // invalidatesTags: ["Rows"],
         }),
         upload: builder.mutation<any, any>({
             query: (item) => ({

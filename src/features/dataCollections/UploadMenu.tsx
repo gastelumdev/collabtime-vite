@@ -13,67 +13,65 @@ import {
     useDisclosure,
 } from "@chakra-ui/react";
 import UploadModal from "../documents/UploadModal";
-import { useGetDocumentsQuery } from "../../app/services/api";
+import { useGetDocumentsQuery, useUpdateCellMutation } from "../../app/services/api";
 import DocDrawer from "../documents/DocDrawer";
 import { TCell, TDocument } from "../../types";
 import { useEffect, useState } from "react";
 import { IconContext } from "react-icons";
 import { FaRegFileAlt, FaRegFileExcel, FaRegImage } from "react-icons/fa";
 
-interface IPreparedRow {
-    docs: any[];
-}
-
 interface IProps {
-    cell?: TCell;
-    preparedRow?: IPreparedRow;
+    cell?: TCell | null;
+    // preparedRow?: IPreparedRow;
     addToCell?: boolean;
     handleDocsChange?: any;
     handleAddExistingDoc?: any;
-    handleAddExistingDocToCell?: any;
+    // handleAddExistingDocToCell?: any;
     create?: boolean;
     columnName?: string;
-    docs?: TDocument[];
+    // docs?: TDocument[];
     topPadding?: string;
     border?: boolean;
 }
 
 const UploadMenu = ({
-    cell,
+    cell = null,
     // preparedRow = {
     //     docs: [],
     // },
-    addToCell = false,
+    // addToCell = false,
     handleDocsChange,
     handleAddExistingDoc,
-    handleAddExistingDocToCell,
-    create = true,
+    // handleAddExistingDocToCell,
+    // create = true,
     columnName,
-    docs = [],
+    // docs = [],
     topPadding = "0px",
     border = false,
 }: IProps) => {
     const { onClose, isOpen } = useDisclosure();
+
     const { data: documents } = useGetDocumentsQuery(null);
+    const [updateCell] = useUpdateCellMutation();
 
     const [filteredDocs, setFilteredDocs] = useState<TDocument[]>([]);
-    const [thisDocs, setThisDocs] = useState<any[]>([]);
+    const [docs, setDocs] = useState<any[]>([]);
 
     useEffect(() => {
         // if (preparedRow.docs == "") preparedRow.docs = [];
-        create ? setThisDocs([]) : setThisDocs(docs);
-    }, []);
+        cell === null ? setDocs([]) : setDocs(cell?.docs as any[]);
+    }, [cell]);
 
     // Filters out the docs are already part of the row
     useEffect(() => {
         filter();
-    }, [documents, thisDocs]);
+    }, [documents, docs]);
 
     const filter = () => {
         const docIds: any[] = [];
         let filtered;
-        if (create) {
-            for (const doc of thisDocs || []) {
+        if (cell === null) {
+            for (const doc of docs || []) {
                 docIds.push(doc._id);
             }
 
@@ -81,7 +79,7 @@ const UploadMenu = ({
                 return !docIds?.includes(item._id);
             });
         } else {
-            for (const doc of thisDocs || []) {
+            for (const doc of docs || []) {
                 docIds.push(doc._id);
             }
 
@@ -122,12 +120,9 @@ const UploadMenu = ({
                     />
                 )}
                 <MenuList w={"400px"}>
-                    <MenuGroup title={(thisDocs?.length || 0) > 0 ? "Selected files" : ""}>
-                        <Box
-                            overflowY={thisDocs?.length > 8 ? "scroll" : "auto"}
-                            h={thisDocs?.length > 8 ? "200px" : "auto"}
-                        >
-                            {thisDocs?.map((doc: any, index: number) => {
+                    <MenuGroup title={(docs?.length || 0) > 0 ? "Selected files" : ""}>
+                        <Box overflowY={docs?.length > 8 ? "scroll" : "auto"} h={docs?.length > 8 ? "200px" : "auto"}>
+                            {docs?.map((doc: any, index: number) => {
                                 return (
                                     <Box key={index} pl={"5px"}>
                                         <a href={doc.url} target="_blank">
@@ -147,14 +142,14 @@ const UploadMenu = ({
                             })}
                         </Box>
                     </MenuGroup>
-                    {thisDocs?.length || 0 > 0 ? <MenuDivider mt={"10px"} mb={"20px"} /> : null}
+                    {docs?.length || 0 > 0 ? <MenuDivider mt={"10px"} mb={"20px"} /> : null}
                     <MenuGroup title={"Upload or Create a document"}>
                         <Box pl={"5px"}>
                             <UploadModal
                                 documents={documents || []}
-                                cell={cell}
-                                addToCell={addToCell}
-                                create={create}
+                                cell={cell as any}
+                                addToCell={cell !== null}
+                                create={cell !== null}
                                 handleDocsChange={handleDocsChange}
                                 columnName={columnName}
                             />
@@ -162,9 +157,9 @@ const UploadMenu = ({
                         <Box pl={"5px"}>
                             <DocDrawer
                                 documents={documents || []}
-                                cell={cell}
-                                addToCell={addToCell}
-                                create={create}
+                                cell={cell as any}
+                                addToCell={cell !== null}
+                                create={cell !== null}
                                 handleDocsChange={handleDocsChange}
                                 columnName={columnName}
                             />
@@ -182,13 +177,14 @@ const UploadMenu = ({
                                     <Box key={index}>
                                         <MenuItem
                                             onClick={() => {
-                                                if (create) {
+                                                if (cell === null) {
                                                     handleAddExistingDoc(columnName, document);
                                                 } else {
-                                                    handleAddExistingDocToCell(cell, document);
+                                                    // handleAddExistingDocToCell(cell, document);
+                                                    updateCell({ ...cell, docs: [...docs, document] });
                                                 }
 
-                                                setThisDocs([...thisDocs, document]);
+                                                setDocs([...docs, document]);
                                                 // filterDocsInRow(document);
                                             }}
                                         >
@@ -214,9 +210,7 @@ const UploadMenu = ({
                 <MenuButton>
                     <Box pt={topPadding} ml={"6px"} overflow={"hidden"}>
                         <Text overflow={"hidden"} textOverflow={"ellipsis"}>
-                            {thisDocs?.length > 0
-                                ? `${thisDocs?.length} ${thisDocs?.length > 1 ? "docs" : "doc"}`
-                                : "No files"}
+                            {docs?.length > 0 ? `${docs?.length} ${docs?.length > 1 ? "docs" : "doc"}` : "No files"}
                         </Text>
                     </Box>
                 </MenuButton>
