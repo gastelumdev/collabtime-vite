@@ -213,11 +213,11 @@ const Form = () => {
                                         <Box>
                                             <Text>
                                                 <UploadMenu
-                                                    preparedRow={row}
-                                                    addToCell={false}
+                                                    // preparedRow={row}
+                                                    // addToCell={false}
                                                     handleDocsChange={handleDocsChange}
                                                     handleAddExistingDoc={handleAddExistingDoc}
-                                                    create={false}
+                                                    // create={false}
                                                     columnName={column.name}
                                                     topPadding="7px"
                                                     border={true}

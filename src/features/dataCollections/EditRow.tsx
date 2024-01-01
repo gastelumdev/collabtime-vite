@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import PrimaryDrawer from "../../components/PrimaryDrawer";
 import { Box, Flex, Input, Spacer, Text, useDisclosure } from "@chakra-ui/react";
 import Select from "react-select";
-import { TCell, TDocument } from "../../types";
+import { TCell } from "../../types";
 import { FaRegEdit } from "react-icons/fa";
 import { cellColorStyles } from "./select.styles";
 import { useGetUserQuery, useUpdateCellMutation } from "../../app/services/api";
@@ -66,10 +66,10 @@ const EditRow = ({ cells }: IProps) => {
         updateCell(newCell);
     };
 
-    const handleAddExistingDocToCell = (cell: TCell, doc: TDocument) => {
-        const docs: any = cell.docs;
-        updateCell({ ...cell, docs: [...docs, doc] });
-    };
+    // const handleAddExistingDocToCell = (cell: TCell, doc: TDocument) => {
+    //     const docs: any = cell.docs;
+    //     updateCell({ ...cell, docs: [...docs, doc] });
+    // };
     return (
         <>
             <Box ml={"12px"} pb={"2px"} onClick={onOpen}>
@@ -183,12 +183,11 @@ const EditRow = ({ cells }: IProps) => {
                                     <Text>
                                         <UploadMenu
                                             cell={cell}
-                                            docs={cell.docs}
                                             addToCell={true}
                                             // handleDocsChange={handleCellDocsChange}
                                             // handleAddExistingDoc={handleAddExistingDoc}
-                                            handleAddExistingDocToCell={handleAddExistingDocToCell}
-                                            create={false}
+                                            // handleAddExistingDocToCell={handleAddExistingDocToCell}
+                                            // create={false}
                                             columnName={cell.name}
                                             topPadding="7px"
                                             border={true}
