@@ -1,4 +1,4 @@
-import { Input } from "@chakra-ui/react";
+import { Input, Tooltip } from "@chakra-ui/react";
 import { TCell } from "../../types";
 import { useEffect, useState } from "react";
 import { useUpdateCellMutation } from "../../app/services/api";
@@ -27,16 +27,18 @@ const TextInput = ({ cell, value = "", permissions }: IProps) => {
     };
 
     return (
-        <Input
-            value={inputValue}
-            size={"sm"}
-            variant={"unstyled"}
-            onChange={handleInputChange}
-            onBlur={handleUpdateRowOnBlur}
-            isReadOnly={!((permissions || 0) > 1)}
-            cursor={(permissions || 0) > 1 ? "text" : "default"}
-            textOverflow={"ellipsis"}
-        />
+        <Tooltip label={inputValue} placement="top-start">
+            <Input
+                value={inputValue}
+                size={"sm"}
+                variant={"unstyled"}
+                onChange={handleInputChange}
+                onBlur={handleUpdateRowOnBlur}
+                isReadOnly={!((permissions || 0) > 1)}
+                cursor={(permissions || 0) > 1 ? "text" : "default"}
+                textOverflow={"ellipsis"}
+            />
+        </Tooltip>
     );
 };
 
