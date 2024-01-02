@@ -706,16 +706,14 @@ const DataCollectionTable = ({
                             <option value={60}>60</option>
                         </CSelect> */}
                         <Box w={"20px"}>
-                            {pageNumber !== 1 ? (
-                                <Box
-                                    pt={"7px"}
-                                    mr={"5px"}
-                                    onClick={() => handlePageNumberClick(pageNumber - 1)}
-                                    cursor={"pointer"}
-                                >
-                                    <FaAngleLeft />
-                                </Box>
-                            ) : null}
+                            <Box
+                                pt={"7px"}
+                                mr={"5px"}
+                                onClick={() => handlePageNumberClick(pageNumber - 1)}
+                                cursor={"pointer"}
+                            >
+                                <FaAngleLeft />
+                            </Box>
                         </Box>
                         <Flex>
                             {pages
@@ -736,16 +734,14 @@ const DataCollectionTable = ({
                                 : null}
                         </Flex>
                         <Box w={"22px"}>
-                            {pageNumber !== pages.length ? (
-                                <Box
-                                    pt={"7px"}
-                                    ml={"5px"}
-                                    onClick={() => handlePageNumberClick(pageNumber + 1)}
-                                    cursor={"pointer"}
-                                >
-                                    <FaAngleRight />
-                                </Box>
-                            ) : null}
+                            <Box
+                                pt={"7px"}
+                                ml={"5px"}
+                                onClick={() => handlePageNumberClick(pageNumber + 1)}
+                                cursor={"pointer"}
+                            >
+                                <FaAngleRight />
+                            </Box>
                         </Box>
                     </Flex>
                 </Box>
