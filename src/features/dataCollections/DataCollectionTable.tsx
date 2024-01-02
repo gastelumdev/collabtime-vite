@@ -1174,6 +1174,7 @@ const DataCollectionTable = ({
                                             <Button
                                                 variant={"unstyled"}
                                                 onClick={() => {
+                                                    handlePageNumberClick(pages[pages.length - 1]);
                                                     setShowRowForm(true);
                                                 }}
                                                 leftIcon={<AiOutlinePlus />}
