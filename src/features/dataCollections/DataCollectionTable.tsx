@@ -270,9 +270,11 @@ const DataCollectionTable = ({
     };
 
     const handlePageNumberClick = (pageNum: number) => {
-        setPageNumber(pageNum);
-        setSkip((pageNum - 1) * limit);
-        // setSkip(40);
+        if (pageNum > 0 && pageNum <= pages.length) {
+            setPageNumber(pageNum);
+            setSkip((pageNum - 1) * limit);
+            // setSkip(40);
+        }
     };
 
     /**
@@ -703,8 +705,17 @@ const DataCollectionTable = ({
                             <option value={40}>40</option>
                             <option value={60}>60</option>
                         </CSelect> */}
-                        <Box pt={"7px"} mr={"5px"}>
-                            <FaAngleLeft />
+                        <Box w={"20px"}>
+                            {pageNumber !== 1 ? (
+                                <Box
+                                    pt={"7px"}
+                                    mr={"5px"}
+                                    onClick={() => handlePageNumberClick(pageNumber - 1)}
+                                    cursor={"pointer"}
+                                >
+                                    <FaAngleLeft />
+                                </Box>
+                            ) : null}
                         </Box>
                         <Flex>
                             {pages
@@ -724,8 +735,17 @@ const DataCollectionTable = ({
                                   })
                                 : null}
                         </Flex>
-                        <Box pt={"7px"} ml={"5px"}>
-                            <FaAngleRight />
+                        <Box w={"22px"}>
+                            {pageNumber !== pages.length ? (
+                                <Box
+                                    pt={"7px"}
+                                    ml={"5px"}
+                                    onClick={() => handlePageNumberClick(pageNumber + 1)}
+                                    cursor={"pointer"}
+                                >
+                                    <FaAngleRight />
+                                </Box>
+                            ) : null}
                         </Box>
                     </Flex>
                 </Box>
