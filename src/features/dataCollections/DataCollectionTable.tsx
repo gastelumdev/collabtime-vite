@@ -35,7 +35,7 @@ import {
     MenuButton,
     MenuItem,
     MenuList,
-    Progress,
+    // Progress,
     // Progress,
     // Select as CSelect,
     Spacer,
@@ -140,8 +140,8 @@ const DataCollectionTable = ({
 
     const {
         data: rows,
-        isLoading: rowsLoading,
-        isFetching: rowsFetching,
+        // isLoading: rowsLoading,
+        // isFetching: rowsFetching,
         isSuccess: rowsSuccess,
     } = useGetRowsQuery({
         dataCollectionId: dataCollectionId || "",
@@ -679,9 +679,9 @@ const DataCollectionTable = ({
     };
     return (
         <>
-            {type === "table" ? (
+            {/* {type === "table" ? (
                 <Box h={"20px"}>{rowsLoading || rowsFetching ? <Progress size="xs" isIndeterminate /> : null}</Box>
-            ) : null}
+            ) : null} */}
             {/* {rows?.map((row, index) => {
                 return <Box>{row.cells.map((cell: TCell, index: number) => {
                     return <Text>{cell.value}</Text>
