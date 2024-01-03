@@ -27,6 +27,7 @@ const UpdateModal = ({ document }: IProps) => {
     }, [document]);
 
     const handleDocumentClick = () => {
+        updateDocOnClose();
         updateDocument({
             ...document,
             filename: createdDocName,
