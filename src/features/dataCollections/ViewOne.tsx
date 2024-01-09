@@ -452,7 +452,6 @@ const ViewOne = () => {
                                                 />
                                             ) : column.type === "upload" ? (
                                                 <Box>
-                                                    <Text>
                                                         <UploadMenu
                                                             // cell={cell}
                                                             // docs={cell.docs}
@@ -465,18 +464,15 @@ const ViewOne = () => {
                                                             topPadding="7px"
                                                             border={true}
                                                         />
-                                                    </Text>
                                                 </Box>
                                             ) : column.type === "link" ? (
                                                 <Box>
-                                                    <Text>
                                                         <LinksMenu
                                                             // cell={cell}
                                                             topPadding="7px"
                                                             border={true}
                                                             // handleAddLinkClick={handleAddLinkClick}
                                                         />
-                                                    </Text>
                                                 </Box>
                                             ) : (
                                                 <Input
@@ -484,9 +480,7 @@ const ViewOne = () => {
                                                     size={"md"}
                                                     w={"100%"}
                                                     // variant={"unstyled"}
-                                                    // onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                                                    //     handleUpdateRowInputChange(event)
-                                                    // }
+                                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>{}}
                                                     // onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) =>
                                                     //     handleUpdateRowOnFocus(event, cell)
                                                     // }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useGetUserQuery } from "../../app/services/api";
 import { useParams } from "react-router-dom";
 import DataCollectionTable from "./DataCollectionTable";
@@ -78,4 +78,4 @@ const DataCollection = () => {
     );
 };
 
-export default DataCollection;
+export default memo(DataCollection);
