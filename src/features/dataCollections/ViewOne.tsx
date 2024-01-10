@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 import {
     useAcknowledgeRowMutation,
     useGetColumnsQuery,
@@ -8,7 +8,7 @@ import {
     useSendFormMutation,
     useUpdateColumnMutation,
     useUpdateDataCollectionMutation,
-} from "../../app/services/api";
+} from '../../app/services/api';
 import {
     Box,
     Card,
@@ -31,38 +31,45 @@ import {
     Text,
     useDisclosure,
     useToast,
-} from "@chakra-ui/react";
-import Select from "react-select";
+} from '@chakra-ui/react';
+import Select from 'react-select';
 
-import LinkItems from "../../utils/linkItems";
+import LinkItems from '../../utils/linkItems';
 
-import SideBarLayout from "../../components/Layouts/SideBarLayout";
-import DataCollection from "./DataCollection";
-import { useLocation, useParams, useSearchParams } from "react-router-dom";
-import PrimaryButton from "../../components/Buttons/PrimaryButton";
-import PrimaryDrawer from "../../components/PrimaryDrawer";
-import { cellColorStyles } from "./select.styles";
-import { TColumn } from "../../types";
-import UploadMenu from "./UploadMenu";
-import LinksMenu from "./LinksMenu";
-import { MdContentCopy } from "react-icons/md";
-import { CloseIcon } from "@chakra-ui/icons";
+import SideBarLayout from '../../components/Layouts/SideBarLayout';
+import DataCollection from './DataCollection';
+import { useLocation, useParams, useSearchParams } from 'react-router-dom';
+import PrimaryButton from '../../components/Buttons/PrimaryButton';
+import PrimaryDrawer from '../../components/PrimaryDrawer';
+import { cellColorStyles } from './select.styles';
+import { TColumn } from '../../types';
+import UploadMenu from './UploadMenu';
+import LinksMenu from './LinksMenu';
+import { MdContentCopy } from 'react-icons/md';
+import { CloseIcon } from '@chakra-ui/icons';
 
 const ViewOne = () => {
     const { id, dataCollectionId } = useParams();
     const { pathname } = useLocation();
     const [queryParameters] = useSearchParams();
     const { onClose, onOpen, isOpen } = useDisclosure();
-    const { onClose: onCloseFormDrawer, onOpen: onOpenFormDrawer, isOpen: isOpenFormDrawer } = useDisclosure();
+    const {
+        onClose: onCloseFormDrawer,
+        onOpen: onOpenFormDrawer,
+        isOpen: isOpenFormDrawer,
+    } = useDisclosure();
     const toast = useToast();
     const finalRef = useRef<any>(null);
 
-    const { data: dataCollection } = useGetDataCollectionQuery(dataCollectionId || "");
-    const { data: workspace, isFetching: workspaceIsFetching } = useGetOneWorkspaceQuery(
-        localStorage.getItem("workspaceId") || ""
+    const { data: dataCollection } = useGetDataCollectionQuery(
+        dataCollectionId || ''
     );
+    const { data: workspace, isFetching: workspaceIsFetching } =
+        useGetOneWorkspaceQuery(localStorage.getItem('workspaceId') || '');
     const { data: dataCollections } = useGetDataCollectionsQuery(null);
-    const { data: columns } = useGetColumnsQuery(localStorage.getItem("dataCollectionId") || "");
+    const { data: columns } = useGetColumnsQuery(
+        localStorage.getItem('dataCollectionId') || ''
+    );
     const [updateColumn] = useUpdateColumnMutation();
 
     const [updateDataCollection] = useUpdateDataCollectionMutation();
@@ -71,20 +78,25 @@ const ViewOne = () => {
     const [acknowledgeRow] = useAcknowledgeRowMutation();
 
     const [isTemplate, setIsTemplate] = useState<boolean>(false);
-    const [templateNameValue, setTemplateNameValue] = useState<string>("");
+    const [templateNameValue, setTemplateNameValue] = useState<string>('');
 
-    const [existingTemplateNames, setExistingTemplateNames] = useState<string[]>([]);
+    const [existingTemplateNames, setExistingTemplateNames] = useState<
+        string[]
+    >([]);
     const [templateExists, setTemplateExists] = useState<boolean>(false);
 
-    const [recipientValue, setRecipientValue] = useState<string>("");
+    const [recipientValue, setRecipientValue] = useState<string>('');
 
     useEffect(() => {
-        localStorage.setItem("workspaceId", id || "");
-        localStorage.setItem("dataCollectionId", dataCollectionId || "");
+        localStorage.setItem('workspaceId', id || '');
+        localStorage.setItem('dataCollectionId', dataCollectionId || '');
 
         const dataCollectionCopy: any = dataCollection;
 
-        if (dataCollectionCopy?.asTemplate !== undefined && dataCollectionCopy?.asTemplate?.active == true) {
+        if (
+            dataCollectionCopy?.asTemplate !== undefined &&
+            dataCollectionCopy?.asTemplate?.active == true
+        ) {
             setIsTemplate(true);
         }
     }, [dataCollection]);
@@ -92,30 +104,38 @@ const ViewOne = () => {
     useEffect(() => {
         const templateNames = [];
         for (const dataCollection of dataCollections || []) {
-            if (dataCollection.asTemplate !== undefined && dataCollection.asTemplate.active) {
-                templateNames.push(dataCollection.asTemplate.name.toLowerCase());
+            if (
+                dataCollection.asTemplate !== undefined &&
+                dataCollection.asTemplate.active
+            ) {
+                templateNames.push(
+                    dataCollection.asTemplate.name.toLowerCase()
+                );
             }
         }
         setExistingTemplateNames(templateNames);
     }, [dataCollections]);
 
     useEffect(() => {
-        const acknowledgedRowId = queryParameters.get("acknowledgedRow");
+        const acknowledgedRowId = queryParameters.get('acknowledgedRow');
         if (acknowledgedRowId && acknowledgedRowId !== undefined) {
-            acknowledgeRow(acknowledgedRowId || "");
+            acknowledgeRow(acknowledgedRowId || '');
         }
     }, [queryParameters]);
 
     const handleAddAsTemplateClick = () => {
-        if (templateNameValue === "") return;
+        if (templateNameValue === '') return;
         const dataCollectionCopy: any = dataCollection;
-        updateDataCollection({ ...dataCollectionCopy, asTemplate: { active: true, name: templateNameValue } });
+        updateDataCollection({
+            ...dataCollectionCopy,
+            asTemplate: { active: true, name: templateNameValue },
+        });
         onClose();
 
         toast({
             title: `Your template has been created.`,
             description: `Click "NEW COLLECTION" in the Data Collections page and select "${templateNameValue}" in the template dropdown to use this template.`,
-            status: "info",
+            status: 'info',
             duration: 9000,
             isClosable: true,
         });
@@ -129,19 +149,24 @@ const ViewOne = () => {
 
         updateDataCollection({
             ...dataCollectionCopy,
-            formRecipients: [...formRecipientsCopy, { email: recipientValue, sent: false }],
+            formRecipients: [
+                ...formRecipientsCopy,
+                { email: recipientValue, sent: false },
+            ],
         });
 
-        setRecipientValue("");
+        setRecipientValue('');
     };
 
     const handleDeleteRecipientClick = (formRecipient: any) => {
         const dataCollectionCopy: any = dataCollection;
         const formRecipientsCopy: any = dataCollection?.formRecipients;
 
-        const filteredFormRecipients = formRecipientsCopy.filter((item: any) => {
-            return item.email !== formRecipient.email;
-        });
+        const filteredFormRecipients = formRecipientsCopy.filter(
+            (item: any) => {
+                return item.email !== formRecipient.email;
+            }
+        );
 
         updateDataCollection({
             ...dataCollectionCopy,
@@ -154,15 +179,15 @@ const ViewOne = () => {
             <SideBarLayout linkItems={LinkItems}>
                 <Box>
                     <Flex
-                        minH={"100vh"}
+                        minH={'100vh'}
                         // justify={"center"}
-                        bg={"#eff2f5"}
+                        bg={'#eff2f5'}
                     >
                         <Container
-                            maxW={"full"}
+                            maxW={'full'}
                             // w={"100%"}
                             mt={{ base: 4, sm: 0 }}
-                            px={"20px"}
+                            px={'20px'}
                         >
                             {/* <SimpleGrid
                                 spacing={6}
@@ -181,27 +206,42 @@ const ViewOne = () => {
                                     </Box>
                                 </Flex>
                             </SimpleGrid> */}
-                            <Card mb={"60px"} w={"100%"}>
+                            <Card mb={'60px'} w={'100%'}>
                                 <CardHeader>
                                     <Flex>
                                         <Box>
-                                            <Heading size={"sm"} mt={"5px"} mb={"4px"}>
+                                            <Heading
+                                                size={'sm'}
+                                                mt={'5px'}
+                                                mb={'4px'}
+                                            >
                                                 {!workspaceIsFetching
                                                     ? `${workspace?.name} - ${dataCollection?.name}`
                                                     : null}
                                             </Heading>
-                                            <Text fontSize={"md"} color={"rgb(123, 128, 154)"}>
+                                            <Text
+                                                fontSize={'md'}
+                                                color={'rgb(123, 128, 154)'}
+                                            >
                                                 {dataCollection?.description}
                                             </Text>
                                         </Box>
                                         <Spacer />
-                                        <Box mr={"5px"}>
-                                            <PrimaryButton onClick={onOpenFormDrawer}>FORM</PrimaryButton>
+                                        <Box mr={'5px'}>
+                                            <PrimaryButton
+                                                onClick={onOpenFormDrawer}
+                                            >
+                                                FORM
+                                            </PrimaryButton>
                                         </Box>
-                                        {!isTemplate ? <PrimaryButton onClick={onOpen}>TEMPLATE</PrimaryButton> : null}
+                                        {!isTemplate ? (
+                                            <PrimaryButton onClick={onOpen}>
+                                                TEMPLATE
+                                            </PrimaryButton>
+                                        ) : null}
                                     </Flex>
                                 </CardHeader>
-                                <CardBody pt={"0"}>
+                                <CardBody pt={'0'}>
                                     <DataCollection />
                                 </CardBody>
                             </Card>
@@ -210,22 +250,35 @@ const ViewOne = () => {
                         </Container>
                     </Flex>
                 </Box>
-                <Modal finalFocusRef={finalRef} isOpen={isOpen} onClose={onClose} size={"2xl"}>
+                <Modal
+                    finalFocusRef={finalRef}
+                    isOpen={isOpen}
+                    onClose={onClose}
+                    size={'2xl'}
+                >
                     <ModalOverlay />
                     <ModalContent>
                         <ModalHeader>Create template</ModalHeader>
                         <ModalCloseButton />
                         <ModalBody>
-                            <Text mb={"30px"}>
-                                Creating a template will allow you to create a data collection with the same columns.
-                                After naming and creating it, go to create a new data collection and your new template
-                                will be available under the template options.
+                            <Text mb={'30px'}>
+                                Creating a template will allow you to create a
+                                data collection with the same columns. After
+                                naming and creating it, go to create a new data
+                                collection and your new template will be
+                                available under the template options.
                             </Text>
-                            <Text mb={"5px"}>Template Name</Text>
+                            <Text mb={'5px'}>Template Name</Text>
                             <Input
                                 value={templateNameValue}
-                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                    if (existingTemplateNames.includes(event.target.value.toLowerCase())) {
+                                onChange={(
+                                    event: React.ChangeEvent<HTMLInputElement>
+                                ) => {
+                                    if (
+                                        existingTemplateNames.includes(
+                                            event.target.value.toLowerCase()
+                                        )
+                                    ) {
                                         setTemplateExists(true);
                                     } else {
                                         setTemplateExists(false);
@@ -233,15 +286,21 @@ const ViewOne = () => {
                                     setTemplateNameValue(event.target.value);
                                 }}
                             />
-                            <Box h={"15px"}>
+                            <Box h={'15px'}>
                                 {templateExists ? (
-                                    <Text color={"red"}>A template with that name already exists.</Text>
+                                    <Text color={'red'}>
+                                        A template with that name already
+                                        exists.
+                                    </Text>
                                 ) : null}
                             </Box>
                         </ModalBody>
 
                         <ModalFooter>
-                            <PrimaryButton onClick={handleAddAsTemplateClick} isDisabled={templateExists}>
+                            <PrimaryButton
+                                onClick={handleAddAsTemplateClick}
+                                isDisabled={templateExists}
+                            >
                                 CREATE
                             </PrimaryButton>
                         </ModalFooter>
@@ -253,32 +312,59 @@ const ViewOne = () => {
                     onClose={onCloseFormDrawer}
                     size="full"
                 >
-                    <Box w={{ md: "100%", lg: "50%" }} float={{ lg: "left" }} pr={{ lg: "20px" }}>
-                        <Text fontSize={"14px"} mb={"5px"}>
+                    <Box
+                        w={{ md: '100%', lg: '50%' }}
+                        float={{ lg: 'left' }}
+                        pr={{ lg: '20px' }}
+                    >
+                        <Text fontSize={'14px'} mb={'5px'}>
                             Form link
                         </Text>
-                        <Box p={"10px"} h={"44px"} border={"1px solid #e2e8f0"} mb={"20px"}>
+                        <Box
+                            p={'10px'}
+                            h={'44px'}
+                            border={'1px solid #e2e8f0'}
+                            mb={'20px'}
+                        >
                             <Flex>
-                                <Box overflow={"hidden"} h={"20px"} mr={"10px"} textOverflow={"ellipsis"}>
-                                    <Text fontSize={"14px"} overflow={"hidden"} textOverflow={"ellipsis"}>
+                                <Box
+                                    overflow={'hidden'}
+                                    h={'20px'}
+                                    mr={'10px'}
+                                    textOverflow={'ellipsis'}
+                                >
+                                    <Text
+                                        fontSize={'14px'}
+                                        overflow={'hidden'}
+                                        textOverflow={'ellipsis'}
+                                    >
                                         <a
-                                            href={`${import.meta.env.VITE_HOST_URL}${pathname}/form`}
+                                            href={`${
+                                                import.meta.env.VITE_HOST_URL
+                                            }${pathname}/form`}
                                             target="_blank"
-                                            style={{ overflow: "hidden", textOverflow: "ellipsis" }}
-                                        >{`${import.meta.env.VITE_HOST_URL}${pathname}/form`}</a>
+                                            style={{
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                            }}
+                                        >{`${
+                                            import.meta.env.VITE_HOST_URL
+                                        }${pathname}/form`}</a>
                                     </Text>
                                 </Box>
                                 <Box
-                                    pt={"3px"}
-                                    cursor={"pointer"}
+                                    pt={'3px'}
+                                    cursor={'pointer'}
                                     onClick={() => {
                                         navigator.clipboard.writeText(
-                                            `${import.meta.env.VITE_HOST_URL}${pathname}/form`
+                                            `${
+                                                import.meta.env.VITE_HOST_URL
+                                            }${pathname}/form`
                                         );
                                         toast({
                                             title: `Copied to clipboard`,
-                                            position: "top-right",
-                                            status: "info",
+                                            position: 'top-right',
+                                            status: 'info',
                                         });
                                     }}
                                 >
@@ -287,171 +373,224 @@ const ViewOne = () => {
                             </Flex>
                         </Box>
                         <Box>
-                            <Text fontSize={"14px"}>Send by email</Text>
-                            <Flex mt={"5px"}>
-                                <Box mr={"5px"} w={"100%"}>
+                            <Text fontSize={'14px'}>Send by email</Text>
+                            <Flex mt={'5px'}>
+                                <Box mr={'5px'} w={'100%'}>
                                     <Input
                                         value={recipientValue}
-                                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                                            setRecipientValue(event.target.value)
+                                        onChange={(
+                                            event: React.ChangeEvent<HTMLInputElement>
+                                        ) =>
+                                            setRecipientValue(
+                                                event.target.value
+                                            )
                                         }
                                     />
                                 </Box>
-                                <PrimaryButton onClick={handleAddRecipientClick}>ADD</PrimaryButton>
+                                <PrimaryButton
+                                    onClick={handleAddRecipientClick}
+                                >
+                                    ADD
+                                </PrimaryButton>
                             </Flex>
                         </Box>
-                        <Box mt={"20px"}>
-                            {(dataCollection?.formRecipients?.length || 0) > 0 ? (
-                                dataCollection?.formRecipients?.map((formRecipient, index) => {
-                                    return (
-                                        <Box key={index}>
-                                            <Flex>
-                                                <Text
-                                                    fontSize={"12px"}
-                                                    pt={"4px"}
-                                                    mr={"10px"}
-                                                    onClick={() => handleDeleteRecipientClick(formRecipient)}
-                                                    cursor={"pointer"}
-                                                >
-                                                    <CloseIcon />
-                                                </Text>
-                                                <Text>{formRecipient.email}</Text>
-                                            </Flex>
-                                        </Box>
-                                    );
-                                })
+                        <Box mt={'20px'}>
+                            {(dataCollection?.formRecipients?.length || 0) >
+                            0 ? (
+                                dataCollection?.formRecipients?.map(
+                                    (formRecipient, index) => {
+                                        return (
+                                            <Box key={index}>
+                                                <Flex>
+                                                    <Text
+                                                        fontSize={'12px'}
+                                                        pt={'4px'}
+                                                        mr={'10px'}
+                                                        onClick={() =>
+                                                            handleDeleteRecipientClick(
+                                                                formRecipient
+                                                            )
+                                                        }
+                                                        cursor={'pointer'}
+                                                    >
+                                                        <CloseIcon />
+                                                    </Text>
+                                                    <Text>
+                                                        {formRecipient.email}
+                                                    </Text>
+                                                </Flex>
+                                            </Box>
+                                        );
+                                    }
+                                )
                             ) : (
                                 <Text>No Recipients</Text>
                             )}
                         </Box>
                     </Box>
-                    <Box w={{ md: "100%", lg: "50%" }} float={{ lg: "right" }} pl={{ lg: "20px" }}>
+                    <Box
+                        w={{ md: '100%', lg: '50%' }}
+                        float={{ lg: 'right' }}
+                        pl={{ lg: '20px' }}
+                    >
                         <Box>
-                            <Box mb={"20px"} fontSize={"14px"}>
-                                <Text>This form is not functional and only used to dispaly the form elements.</Text>
-                                <Text>Checkmark all the form elements to include in the form.</Text>
+                            <Box mb={'20px'} fontSize={'14px'}>
+                                <Text>
+                                    This form is not functional and only used to
+                                    dispaly the form elements.
+                                </Text>
+                                <Text>
+                                    Checkmark all the form elements to include
+                                    in the form.
+                                </Text>
                             </Box>
 
                             <Box>
-                                {columns?.map((column: TColumn, index: number) => {
-                                    let bgColor: string = "";
-                                    const labels: any = column?.labels || [];
-                                    const label: any = labels[0] || null;
-                                    bgColor = label ? label.color : "";
+                                {columns?.map(
+                                    (column: TColumn, index: number) => {
+                                        let bgColor: string = '';
+                                        const labels: any =
+                                            column?.labels || [];
+                                        const label: any = labels[0] || null;
+                                        bgColor = label ? label.color : '';
 
-                                    const options: any = column.labels?.map((item) => {
-                                        return {
-                                            value: item.title,
-                                            label: item.title,
-                                            color: item.color,
-                                        };
-                                    });
-                                    const peopleOptions: any = column.people?.map((item) => {
-                                        return {
-                                            value: item._id,
-                                            label: `${item.firstname} ${item.lastname}`,
-                                            color: "#ffffff",
-                                        };
-                                    });
+                                        const options: any = column.labels?.map(
+                                            (item) => {
+                                                return {
+                                                    value: item.title,
+                                                    label: item.title,
+                                                    color: item.color,
+                                                };
+                                            }
+                                        );
+                                        const peopleOptions: any =
+                                            column.people?.map((item) => {
+                                                return {
+                                                    value: item._id,
+                                                    label: `${item.firstname} ${item.lastname}`,
+                                                    color: '#ffffff',
+                                                };
+                                            });
 
-                                    let option = options[0];
-                                    // let peopleOption = peopleOptions[0];
+                                        let option = options[0];
+                                        // let peopleOption = peopleOptions[0];
 
-                                    return (
-                                        <Box mb={"20px"} key={index}>
-                                            <Divider mb={"25px"} mt={"10px"} />
-                                            <Flex>
-                                                <Text mb={"6px"}>
-                                                    {(column.name[0].toUpperCase() + column.name.slice(1))
-                                                        .split("_")
-                                                        .join(" ")}
-                                                </Text>
-                                                <Spacer />
-                                                <Checkbox
-                                                    mb={"6px"}
-                                                    isChecked={column.includeInForm}
-                                                    onChange={() => {
-                                                        updateColumn({
-                                                            ...column,
-                                                            includeInForm: !column.includeInForm,
-                                                        });
-                                                    }}
+                                        return (
+                                            <Box mb={'20px'} key={index}>
+                                                <Divider
+                                                    mb={'25px'}
+                                                    mt={'10px'}
                                                 />
-                                            </Flex>
-                                            {column.type === "label" ||
-                                            column.type === "priority" ||
-                                            column.type === "status" ? (
-                                                <Box w={"100%"}>
+                                                <Flex>
+                                                    <Text mb={'6px'}>
+                                                        {(
+                                                            column.name[0].toUpperCase() +
+                                                            column.name.slice(1)
+                                                        )
+                                                            .split('_')
+                                                            .join(' ')}
+                                                    </Text>
+                                                    <Spacer />
+                                                    <Checkbox
+                                                        mb={'6px'}
+                                                        isChecked={
+                                                            column.includeInForm
+                                                        }
+                                                        onChange={() => {
+                                                            updateColumn({
+                                                                ...column,
+                                                                includeInForm:
+                                                                    !column.includeInForm,
+                                                            });
+                                                        }}
+                                                    />
+                                                </Flex>
+                                                {column.type === 'label' ||
+                                                column.type === 'priority' ||
+                                                column.type === 'status' ? (
+                                                    <Box w={'100%'}>
+                                                        <Select
+                                                            options={options}
+                                                            styles={cellColorStyles(
+                                                                {
+                                                                    bgColor,
+                                                                    padding:
+                                                                        '7px',
+                                                                }
+                                                            )}
+                                                            defaultValue={
+                                                                option
+                                                            }
+                                                            // onChange={(newValue) => handleLabelSelectChange(newValue, cell)}
+                                                            // isDisabled={rowsLoading || rowsFetching || !((permissions || 0) > 1)}
+                                                        />
+                                                    </Box>
+                                                ) : column.type === 'people' ? (
                                                     <Select
-                                                        options={options}
-                                                        styles={cellColorStyles({ bgColor, padding: "7px" })}
-                                                        defaultValue={option}
+                                                        options={peopleOptions}
+                                                        styles={cellColorStyles(
+                                                            {
+                                                                bgColor:
+                                                                    '#ffffff',
+                                                                padding: '7px',
+                                                                border: '1px solid #e2e8f0',
+                                                            }
+                                                        )}
+                                                        // defaultValue={peopleOption}
                                                         // onChange={(newValue) => handleLabelSelectChange(newValue, cell)}
                                                         // isDisabled={rowsLoading || rowsFetching || !((permissions || 0) > 1)}
                                                     />
-                                                </Box>
-                                            ) : column.type === "people" ? (
-                                                <Select
-                                                    options={peopleOptions}
-                                                    styles={cellColorStyles({
-                                                        bgColor: "#ffffff",
-                                                        padding: "7px",
-                                                        border: "1px solid #e2e8f0",
-                                                    })}
-                                                    // defaultValue={peopleOption}
-                                                    // onChange={(newValue) => handleLabelSelectChange(newValue, cell)}
-                                                    // isDisabled={rowsLoading || rowsFetching || !((permissions || 0) > 1)}
-                                                />
-                                            ) : column.type === "date" ? (
-                                                <input
-                                                    type="datetime-local"
-                                                    // defaultValue={column.value.slice(0, 16)}
-                                                    style={{
-                                                        border: "1px solid #e2e8f0",
-                                                        borderRadius: "5px",
-                                                        width: "100%",
-                                                        padding: "6px",
-                                                    }}
-                                                    name={column.name}
-                                                    // onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                                    //     handleUpdateRowInputChange(event);
-                                                    // }}
-                                                    // onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) =>
-                                                    //     handleUpdateRowOnFocus(event, cell)
-                                                    // }
-                                                    // onBlur={(event: React.FocusEvent<HTMLInputElement, Element>) =>
-                                                    //     handleUpdateRowOnBlur(event, cell)
-                                                    // }
-                                                />
-                                            ) : column.type === "number" ? (
-                                                <input
-                                                    type="number"
-                                                    // defaultValue={cell.value}
-                                                    name={column.name}
-                                                    // onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                                    //     handleUpdateRowInputChange(event);
-                                                    // }}
-                                                    // onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) =>
-                                                    //     handleUpdateRowOnFocus(event, cell)
-                                                    // }
-                                                    // onBlur={(event: React.FocusEvent<HTMLInputElement, Element>) =>
-                                                    //     handleUpdateRowOnBlur(event, cell)
-                                                    // }
-                                                    // disabled={
-                                                    //     rowsLoading || rowsFetching || !((permissions || 0) > 1)
-                                                    // }
-                                                    style={{
-                                                        outline: "none",
-                                                        paddingLeft: "15px",
-                                                        paddingTop: "6px",
-                                                        paddingBottom: "6px",
-                                                        border: "1px solid #e2e8f0",
-                                                        borderRadius: "5px",
-                                                        width: "100%",
-                                                    }}
-                                                />
-                                            ) : column.type === "upload" ? (
-                                                <Box>
+                                                ) : column.type === 'date' ? (
+                                                    <input
+                                                        type="datetime-local"
+                                                        // defaultValue={column.value.slice(0, 16)}
+                                                        style={{
+                                                            border: '1px solid #e2e8f0',
+                                                            borderRadius: '5px',
+                                                            width: '100%',
+                                                            padding: '6px',
+                                                        }}
+                                                        name={column.name}
+                                                        // onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                        //     handleUpdateRowInputChange(event);
+                                                        // }}
+                                                        // onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) =>
+                                                        //     handleUpdateRowOnFocus(event, cell)
+                                                        // }
+                                                        // onBlur={(event: React.FocusEvent<HTMLInputElement, Element>) =>
+                                                        //     handleUpdateRowOnBlur(event, cell)
+                                                        // }
+                                                    />
+                                                ) : column.type === 'number' ? (
+                                                    <input
+                                                        type="number"
+                                                        // defaultValue={cell.value}
+                                                        name={column.name}
+                                                        // onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                        //     handleUpdateRowInputChange(event);
+                                                        // }}
+                                                        // onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) =>
+                                                        //     handleUpdateRowOnFocus(event, cell)
+                                                        // }
+                                                        // onBlur={(event: React.FocusEvent<HTMLInputElement, Element>) =>
+                                                        //     handleUpdateRowOnBlur(event, cell)
+                                                        // }
+                                                        // disabled={
+                                                        //     rowsLoading || rowsFetching || !((permissions || 0) > 1)
+                                                        // }
+                                                        style={{
+                                                            outline: 'none',
+                                                            paddingLeft: '15px',
+                                                            paddingTop: '6px',
+                                                            paddingBottom:
+                                                                '6px',
+                                                            border: '1px solid #e2e8f0',
+                                                            borderRadius: '5px',
+                                                            width: '100%',
+                                                        }}
+                                                    />
+                                                ) : column.type === 'upload' ? (
+                                                    <Box>
                                                         <UploadMenu
                                                             // cell={cell}
                                                             // docs={cell.docs}
@@ -460,40 +599,47 @@ const ViewOne = () => {
                                                             // handleAddExistingDoc={handleAddExistingDoc}
                                                             // handleAddExistingDocToCell={handleAddExistingDocToCell}
                                                             create={false}
-                                                            columnName={column.name}
+                                                            columnName={
+                                                                column.name
+                                                            }
                                                             topPadding="7px"
                                                             border={true}
                                                         />
-                                                </Box>
-                                            ) : column.type === "link" ? (
-                                                <Box>
+                                                    </Box>
+                                                ) : column.type === 'link' ? (
+                                                    <Box>
                                                         <LinksMenu
                                                             // cell={cell}
                                                             topPadding="7px"
                                                             border={true}
                                                             // handleAddLinkClick={handleAddLinkClick}
                                                         />
-                                                </Box>
-                                            ) : (
-                                                <Input
-                                                    value={""}
-                                                    size={"md"}
-                                                    w={"100%"}
-                                                    // variant={"unstyled"}
-                                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>{}}
-                                                    // onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) =>
-                                                    //     handleUpdateRowOnFocus(event, cell)
-                                                    // }
-                                                    // onBlur={(event: React.FocusEvent<HTMLInputElement, Element>) =>
-                                                    //     handleUpdateRowOnBlur(event, cell)
-                                                    // }
-                                                    // // isDisabled={rowsLoading || deletingRows || creatingRow || rowsFetching}
-                                                    // isReadOnly={!((permissions || 0) > 1)}
-                                                />
-                                            )}
-                                        </Box>
-                                    );
-                                })}
+                                                    </Box>
+                                                ) : (
+                                                    <Input
+                                                        value={''}
+                                                        size={'md'}
+                                                        w={'100%'}
+                                                        // variant={"unstyled"}
+                                                        onChange={(
+                                                            event: React.ChangeEvent<HTMLInputElement>
+                                                        ) => {
+                                                            event;
+                                                        }}
+                                                        // onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) =>
+                                                        //     handleUpdateRowOnFocus(event, cell)
+                                                        // }
+                                                        // onBlur={(event: React.FocusEvent<HTMLInputElement, Element>) =>
+                                                        //     handleUpdateRowOnBlur(event, cell)
+                                                        // }
+                                                        // // isDisabled={rowsLoading || deletingRows || creatingRow || rowsFetching}
+                                                        // isReadOnly={!((permissions || 0) > 1)}
+                                                    />
+                                                )}
+                                            </Box>
+                                        );
+                                    }
+                                )}
                             </Box>
                         </Box>
                     </Box>
