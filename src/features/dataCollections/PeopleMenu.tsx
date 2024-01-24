@@ -1,8 +1,8 @@
-import { Box, Button, Menu, MenuButton, MenuItem, MenuList, Text, Tooltip } from "@chakra-ui/react";
-import { getTextColor } from "../../utils/helpers";
-import { useEffect, useState } from "react";
-import { TCell } from "../../types";
-import { useUpdateCellMutation } from "../../app/services/api";
+import { Box, Button, Menu, MenuButton, MenuItem, MenuList, Text, Tooltip } from '@chakra-ui/react';
+import { getTextColor } from '../../utils/helpers';
+import { memo, useEffect, useState } from 'react';
+import { TCell, TRow, TUser } from '../../types';
+import { useUpdateCellMutation, useUpdateRowMutation } from '../../app/services/api';
 
 interface ILabel {
     value: string;
@@ -11,20 +11,21 @@ interface ILabel {
 }
 
 interface IProps {
-    cell: TCell;
-    // handleLabelSelectChange: any;
+    row: TRow;
+    columnName: string;
+    people: TUser[];
     value: string;
     // label?: string;
     // bgColor?: string;
     // options: { value: string; label: string; color: string }[] | undefined;
 }
 
-const PeopleMenu = ({ cell, value = "" }: IProps) => {
-    const [updateCell] = useUpdateCellMutation();
+const PeopleMenu = ({ row, columnName, people, value = '' }: IProps) => {
+    const [updateRow] = useUpdateRowMutation();
 
-    const [labelValue, setLabelValue] = useState<string>("");
-    const [labelLabel, setLabelLabel] = useState<string>("");
-    const [labelColor, setLabelColor] = useState<string>("");
+    const [labelValue, setLabelValue] = useState<string>('');
+    const [labelLabel, setLabelLabel] = useState<string>('');
+    const [labelColor, setLabelColor] = useState<string>('');
     const [options, setOptions] = useState<ILabel[] | undefined>([]);
 
     useEffect(() => {
@@ -34,22 +35,22 @@ const PeopleMenu = ({ cell, value = "" }: IProps) => {
         //         bgColor = label.color;
         //     }
         // }
-        const cellOptions: ILabel[] | undefined = cell.people?.map((item) => {
+        const cellOptions: ILabel[] | undefined = people?.map((item) => {
             return {
                 value: item._id,
                 label: `${item.firstname} ${item.lastname}`,
-                color: "#ffffff",
+                color: '#ffffff',
             };
         });
 
         setLabelValue(value);
         setLabelLabel(value);
-        setLabelColor("#ffffff");
+        setLabelColor('#ffffff');
         setOptions(cellOptions);
-    }, [cell, value]);
+    }, [value]);
 
     const handleLabelClick = (label: ILabel) => {
-        updateCell({ ...cell, value: label.value });
+        updateRow({ ...row, values: { ...row.values, [columnName]: label.label } });
 
         setLabelValue(label.value);
         setLabelColor(label.color);
@@ -59,31 +60,31 @@ const PeopleMenu = ({ cell, value = "" }: IProps) => {
     return (
         <Menu matchWidth={true}>
             <Tooltip
-                label={cell.value}
+                label={labelLabel}
                 openDelay={500}
                 // isDisabled={isFocused}
-                placement={"top"}
+                placement={'top'}
             >
                 <MenuButton
                     as={Button}
-                    w={"100%"}
+                    w={'100%'}
                     bgColor={labelColor}
-                    color={labelColor == "white" ? "black" : getTextColor(labelColor)}
-                    borderRadius={"none"}
-                    variant={"ghost"}
-                    fontSize={"14px"}
-                    fontWeight={"normal"}
-                    _hover={{ bgColor: "none" }}
-                    _active={{ bgColor: "none" }}
+                    color={labelColor == 'white' ? 'black' : getTextColor(labelColor)}
+                    borderRadius={'none'}
+                    variant={'ghost'}
+                    fontSize={'14px'}
+                    fontWeight={'normal'}
+                    _hover={{ bgColor: 'none' }}
+                    _active={{ bgColor: 'none' }}
                 >
                     {labelLabel || labelValue}
                 </MenuButton>
             </Tooltip>
-            <MenuList px={"5px"}>
+            <MenuList px={'5px'}>
                 {options?.map((label, index) => {
                     return (
-                        <Box key={index} bgColor={label.color} p={"6px"} onClick={() => handleLabelClick(label)}>
-                            <MenuItem bgColor={"white"}>
+                        <Box key={index} bgColor={label.color} p={'6px'} onClick={() => handleLabelClick(label)}>
+                            <MenuItem bgColor={'white'}>
                                 <Text color={getTextColor(label.color)}>{label.label}</Text>
                             </MenuItem>
                         </Box>

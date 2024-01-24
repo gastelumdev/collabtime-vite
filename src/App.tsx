@@ -1,19 +1,20 @@
-import "./App.css";
-import { default as Workspaces } from "./features/workspaces/View";
-import { default as Workspace } from "./features/workspaces/ViewOne";
-import { default as DataCollections } from "./features/dataCollections/View";
-import { default as DataCollection } from "./features/dataCollections/ViewOne";
-import { default as Documents } from "./features/documents/View";
-import { default as Tasks } from "./features/tasks/View";
-import { default as MessageBoard } from "./features/messageBoard/View";
-import { Route, Routes } from "react-router-dom";
-import Login from "./features/auth/Login";
-import { PrivateOutlet } from "./utils/PrivateOutlet";
-import ResetPasswordRequest from "./features/auth/ResetPasswordRequest";
-import ResetPassword from "./features/auth/ResetPassword";
-import ResetPasswordEmailSent from "./features/auth/ResetPasswordEmailSent";
-import Join from "./features/workspaces/Join";
-import Form from "./features/dataCollections/Form";
+import './App.css';
+import { default as Workspaces } from './features/workspaces/View';
+import { default as Workspace } from './features/workspaces/ViewOne';
+import { default as DataCollections } from './features/dataCollections/View';
+import { default as DataCollection } from './features/dataCollections/ViewOne';
+import { default as Documents } from './features/documents/View';
+import { default as Tasks } from './features/tasks/View';
+import { default as MessageBoard } from './features/messageBoard/View';
+import { Route, Routes } from 'react-router-dom';
+import Login from './features/auth/Login';
+import { PrivateOutlet } from './utils/PrivateOutlet';
+import ResetPasswordRequest from './features/auth/ResetPasswordRequest';
+import ResetPassword from './features/auth/ResetPassword';
+import ResetPasswordEmailSent from './features/auth/ResetPasswordEmailSent';
+import Join from './features/workspaces/Join';
+import Form from './features/dataCollections/Form';
+import DataCollectionWorkbench from './features/dataCollections/DataCollectionWorkbench';
 
 function App() {
     return (
@@ -26,6 +27,7 @@ function App() {
                     <Route path="workspaces/:id" element={<Workspace />} />
                     <Route path="workspaces/:id/dataCollections" element={<DataCollections />} />
                     <Route path="workspaces/:id/dataCollections/:dataCollectionId" element={<DataCollection />} />
+                    {/* <Route path="workspaces/:id/dataCollections/:dataCollectionId/workbench" element={<DataCollectionWorkbench />} /> */}
                     <Route path="workspaces/:id/documents" element={<Documents />} />
                     <Route path="workspaces/:id/taskLists" element={<Tasks />} />
                     <Route path="workspaces/:id/messageBoard/:status" element={<MessageBoard />} />

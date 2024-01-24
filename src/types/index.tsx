@@ -1,4 +1,4 @@
-import { IconType } from "react-icons";
+import { IconType } from 'react-icons';
 
 export type TProps = {
     workspaces: any;
@@ -87,6 +87,8 @@ export type TColumn = {
     labels?: TLabel[];
     includeInForm: boolean;
     includeInExport: boolean;
+    position: number;
+    width?: string;
 };
 
 export interface INote {
@@ -111,6 +113,7 @@ export type TRow = {
     reminder?: boolean;
     complete?: boolean;
     acknowledged?: boolean;
+    values?: any;
 };
 
 export type TCell = {

@@ -187,7 +187,7 @@ export const api = createApi({
             query: (dataCollectionId) => ({
                 url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${dataCollectionId}/columns`
             }),
-            providesTags: ["Column"]
+            // providesTags: ["Column"]
         }),
         createColumn: builder.mutation<TColumn, TColumn>({
             query: (column) => ({
@@ -195,7 +195,7 @@ export const api = createApi({
                 method: "POST",
                 body: column
             }),
-            invalidatesTags: ["Column", "Rows"]
+            // invalidatesTags: ["Column", "Rows"]
         }),
         updateColumn: builder.mutation<TColumn, TColumn>({
             query: (column) => ({
@@ -203,14 +203,21 @@ export const api = createApi({
                 method: "POST",
                 body: column
             }),
-            invalidatesTags: ["Column", "Rows"],
+            // invalidatesTags: ["Column", "Rows"],
         }),
         deleteColumn: builder.mutation<TColumn, TColumn>({
             query: (column) => ({
                 url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${column.dataCollection}/columns/delete/${column._id}`,
                 method: "POST",
             }),
-            invalidatesTags: ["Column", "Rows"],
+            // invalidatesTags: ["Column", "Rows"],
+        }),
+        reorderColumns: builder.mutation<TColumn[], any>({
+            query: (columns) => ({
+                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${localStorage.getItem("dataCollectionId")}/columns/reorderColumns`,
+                method: "POST",
+                body: columns,
+            }),
         }),
         getRows: builder.query<any[], { dataCollectionId: string, limit: number, skip: number, sort: number, sortBy: string }>({
             query: (options) => ({
@@ -224,7 +231,7 @@ export const api = createApi({
                 method: "POST",
                 body: row
             }),
-            invalidatesTags: ["Rows"]
+            // invalidatesTags: ["Rows"]
         }),
         updateRow: builder.mutation<TRow, TRow>({
             query: (row) => ({
@@ -232,7 +239,7 @@ export const api = createApi({
                 method: "POST",
                 body: row,
             }),
-            invalidatesTags: ["Rows"],
+            // invalidatesTags: ["Rows"],
         }),
         deleteRow: builder.mutation<TRow, TRow>({
             query: (row) => ({
@@ -437,6 +444,7 @@ export const {
     useCreateColumnMutation,
     useUpdateColumnMutation,
     useDeleteColumnMutation,
+    useReorderColumnsMutation,
     useGetRowsQuery,
     useCreateRowMutation,
     useUpdateRowMutation,

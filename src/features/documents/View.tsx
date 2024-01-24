@@ -22,13 +22,13 @@ import {
     Thead,
     Tr,
     WrapItem,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react';
 
-import "./styles.css";
-import SideBarLayout from "../../components/Layouts/SideBarLayout";
-import LinkItems from "../../utils/linkItems";
-import { IconContext } from "react-icons";
-import { FaRegFileAlt, FaRegFileExcel } from "react-icons/fa";
+import './styles.css';
+import SideBarLayout from '../../components/Layouts/SideBarLayout';
+import LinkItems from '../../utils/linkItems';
+import { IconContext } from 'react-icons';
+import { FaRegFileAlt, FaRegFileExcel } from 'react-icons/fa';
 import {
     useDeleteTagMutation,
     useGetDocumentsQuery,
@@ -36,21 +36,21 @@ import {
     useTagExistsMutation,
     useUpdateDocumentMutation,
     useUpdateWorkspaceMutation,
-} from "../../app/services/api";
-import { ChevronDownIcon } from "@chakra-ui/icons";
-import { FaRegImage } from "react-icons/fa";
-import UpdateModal from "./UpdateModal";
-import { TDocument, TTag } from "../../types";
-import TagsModal from "../tags/TagsModal";
-import { Link } from "react-router-dom";
-import UploadModal from "./UploadModal";
-import DocDrawer from "./DocDrawer";
-import DeleteFileAlert from "./DeleteFileAlert";
-import UpdateFileModal from "./UpdateFileModal";
+} from '../../app/services/api';
+import { ChevronDownIcon } from '@chakra-ui/icons';
+import { FaRegImage } from 'react-icons/fa';
+import UpdateModal from './UpdateModal';
+import { TDocument, TTag } from '../../types';
+import TagsModal from '../tags/TagsModal';
+import { Link } from 'react-router-dom';
+import UploadModal from './UploadModal';
+import DocDrawer from './DocDrawer';
+import DeleteFileAlert from './DeleteFileAlert';
+import UpdateFileModal from './UpdateFileModal';
 
 const View = () => {
     const { data: documents } = useGetDocumentsQuery(null);
-    const { data: workspace, isFetching } = useGetOneWorkspaceQuery(localStorage.getItem("workspaceId") || "");
+    const { data: workspace, isFetching } = useGetOneWorkspaceQuery(localStorage.getItem('workspaceId') || '');
 
     const [updateDocument] = useUpdateDocumentMutation();
 
@@ -60,8 +60,8 @@ const View = () => {
     const [tagExists] = useTagExistsMutation();
 
     const getIcon = (type: string) => {
-        if (type === "jpg" || type === "png" || type === "jpeg") return <FaRegImage color={"rgb(123, 128, 154)"} />;
-        if (type === "xlsx") return <FaRegFileExcel color={"rgb(123, 128, 154)"} />;
+        if (type === 'jpg' || type === 'png' || type === 'jpeg') return <FaRegImage color={'rgb(123, 128, 154)'} />;
+        if (type === 'xlsx') return <FaRegFileExcel color={'rgb(123, 128, 154)'} />;
         return <FaRegFileAlt />;
     };
 
@@ -102,39 +102,31 @@ const View = () => {
                     // justify={"center"}
                     bg={"#eff2f5"}
                 > */}
-                <Container maxW={"full"} mt={{ base: 4, sm: 0 }}>
-                    <Box mb={{ base: "15px" }}>
-                        <Heading size={"sm"} mb={"12px"} color={"rgb(52, 71, 103)"}>
+                <Container maxW={'full'} mt={{ base: 4, sm: 0 }}>
+                    <Box mb={{ base: '15px' }}>
+                        <Heading size={'sm'} mb={'12px'} color={'rgb(52, 71, 103)'}>
                             <>
                                 {!isFetching ? (
                                     <>
-                                        <Link to={`/workspaces/${localStorage.getItem("workspaceId")}`}>
-                                            <Text
-                                                display={"inline"}
-                                                textDecor={"underline"}
-                                            >{`${workspace?.name}`}</Text>
+                                        <Link to={`/workspaces/${localStorage.getItem('workspaceId')}`}>
+                                            <Text display={'inline'} textDecor={'underline'}>{`${workspace?.name}`}</Text>
                                         </Link>
 
-                                        <Text display={"inline"}>{" / Documents"}</Text>
+                                        <Text display={'inline'}>{' / Documents'}</Text>
                                     </>
                                 ) : null}
                             </>
                         </Heading>
-                        <Text color={"rgb(123, 128, 154)"} fontSize={"md"} fontWeight={300}>
+                        <Text color={'rgb(123, 128, 154)'} fontSize={'md'} fontWeight={300}>
                             Upload files or create them with a Rich-Text editor.
                         </Text>
                     </Box>
 
                     <Flex>
                         <Spacer />
-                        <Card w={"150px"}>
+                        <Card w={'150px'}>
                             <Menu>
-                                <MenuButton
-                                    as={Button}
-                                    bgColor={"white"}
-                                    color={"rgb(123, 128, 154)"}
-                                    rightIcon={<ChevronDownIcon />}
-                                >
+                                <MenuButton as={Button} bgColor={'white'} color={'rgb(123, 128, 154)'} rightIcon={<ChevronDownIcon />}>
                                     Actions
                                 </MenuButton>
                                 <MenuList>
@@ -144,17 +136,17 @@ const View = () => {
                             </Menu>
                         </Card>
                     </Flex>
-                    <Card mt={"10px"}>
+                    <Card mt={'10px'}>
                         <CardBody>
                             {documents?.length || 0 > 0 ? (
                                 <TableContainer>
-                                    <Table size={"sm"} style={{ tableLayout: "fixed" }}>
+                                    <Table size={'sm'} style={{ tableLayout: 'fixed' }} gridTemplateColumns={'300px 180px 180px 100px 100px'}>
                                         <Thead>
                                             <Tr>
-                                                <Th width={"300px"}>Filename</Th>
-                                                <Th width={"180px"}>Uploaded by</Th>
-                                                <Th width={"180px"}>Size</Th>
-                                                <Th width={"100px"}>Actions</Th>
+                                                <Th width={'300px'}>Filename</Th>
+                                                <Th width={'180px'}>Uploaded by</Th>
+                                                <Th width={'180px'}>Size</Th>
+                                                <Th width={'100px'}>Actions</Th>
                                                 <Th>Tags</Th>
                                             </Tr>
                                         </Thead>
@@ -164,17 +156,13 @@ const View = () => {
                                                     <Tr key={index}>
                                                         <Td>
                                                             <Flex>
-                                                                <Box pt={"0px"} mr={"6px"}>
-                                                                    <IconContext.Provider value={{ color: "#7b809a" }}>
-                                                                        {getIcon(document.ext || "")}
+                                                                <Box pt={'0px'} mr={'6px'}>
+                                                                    <IconContext.Provider value={{ color: '#7b809a' }}>
+                                                                        {getIcon(document.ext || '')}
                                                                     </IconContext.Provider>
                                                                 </Box>
-                                                                {document.type === "upload" ? (
-                                                                    <Text
-                                                                        color={"rgb(123, 128, 154)"}
-                                                                        textOverflow={"ellipsis"}
-                                                                        overflow={"hidden"}
-                                                                    >
+                                                                {document.type === 'upload' ? (
+                                                                    <Text color={'rgb(123, 128, 154)'} textOverflow={'ellipsis'} overflow={'hidden'}>
                                                                         <a href={document.url} target="_blank">
                                                                             {document.filename}
                                                                         </a>
@@ -186,13 +174,13 @@ const View = () => {
                                                         </Td>
                                                         <Td>
                                                             <Text
-                                                                color={"rgb(123, 128, 154)"}
-                                                                fontSize={"14px"}
+                                                                color={'rgb(123, 128, 154)'}
+                                                                fontSize={'14px'}
                                                             >{`${document.createdBy.firstname} ${document.createdBy.lastname}`}</Text>
                                                         </Td>
                                                         <Td>
-                                                            <Text color={"rgb(123, 128, 154)"} fontSize={"14px"}>
-                                                                {document.file ? document.file.size : ""}
+                                                            <Text color={'rgb(123, 128, 154)'} fontSize={'14px'}>
+                                                                {document.file ? document.file.size : ''}
                                                             </Text>
                                                         </Td>
                                                         <Td>
@@ -203,46 +191,37 @@ const View = () => {
                                                         </Td>
 
                                                         <Td>
-                                                            <Box overflow={"revert"}>
+                                                            <Box overflow={'revert'}>
                                                                 <Flex>
                                                                     <TagsModal
-                                                                        tagType={"document"}
+                                                                        tagType={'document'}
                                                                         data={document}
                                                                         tags={document.tags}
                                                                         update={updateDocument}
-                                                                        workspaceId={document?.workspace || ""}
+                                                                        workspaceId={document?.workspace || ''}
                                                                     />
                                                                     {document.tags !== undefined
-                                                                        ? document.tags.map(
-                                                                              (tag: TTag, index: number) => {
-                                                                                  return (
-                                                                                      <>
-                                                                                          <WrapItem key={index}>
-                                                                                              <Tag
-                                                                                                  size={"sm"}
-                                                                                                  variant="subtle"
-                                                                                                  colorScheme="blue"
-                                                                                                  mr={"5px"}
+                                                                        ? document.tags.map((tag: TTag, index: number) => {
+                                                                              return (
+                                                                                  <>
+                                                                                      <WrapItem key={index}>
+                                                                                          <Tag
+                                                                                              size={'sm'}
+                                                                                              variant="subtle"
+                                                                                              colorScheme="blue"
+                                                                                              mr={'5px'}
+                                                                                              zIndex={1000}
+                                                                                          >
+                                                                                              <TagLabel pb={'2px'}>{tag.name}</TagLabel>
+                                                                                              <TagCloseButton
+                                                                                                  onClick={() => handleCloseTagButtonClick(document, tag)}
                                                                                                   zIndex={1000}
-                                                                                              >
-                                                                                                  <TagLabel pb={"2px"}>
-                                                                                                      {tag.name}
-                                                                                                  </TagLabel>
-                                                                                                  <TagCloseButton
-                                                                                                      onClick={() =>
-                                                                                                          handleCloseTagButtonClick(
-                                                                                                              document,
-                                                                                                              tag
-                                                                                                          )
-                                                                                                      }
-                                                                                                      zIndex={1000}
-                                                                                                  />
-                                                                                              </Tag>
-                                                                                          </WrapItem>
-                                                                                      </>
-                                                                                  );
-                                                                              }
-                                                                          )
+                                                                                              />
+                                                                                          </Tag>
+                                                                                      </WrapItem>
+                                                                                  </>
+                                                                              );
+                                                                          })
                                                                         : null}
                                                                 </Flex>
                                                             </Box>
@@ -254,7 +233,7 @@ const View = () => {
                                     </Table>
                                 </TableContainer>
                             ) : (
-                                <Text color={"rgb(123, 128, 154)"}>You currently have no uploads.</Text>
+                                <Text color={'rgb(123, 128, 154)'}>You currently have no uploads.</Text>
                             )}
                         </CardBody>
                     </Card>

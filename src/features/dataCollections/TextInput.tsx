@@ -1,45 +1,62 @@
-import { Input, Tooltip } from "@chakra-ui/react";
-import { TCell } from "../../types";
-import { useEffect, useState } from "react";
-import { useUpdateCellMutation } from "../../app/services/api";
+import { Box, Input, Text, Tooltip } from '@chakra-ui/react';
+import { TCell, TRow } from '../../types';
+import { memo, useEffect, useState } from 'react';
+import { useUpdateCellMutation, useUpdateRowMutation } from '../../app/services/api';
 
 interface IProps {
-    cell: TCell;
+    row: TRow;
+    columnName: string;
     editMode?: any;
     value?: string;
     permissions: any;
+    rowIndex: number;
+    updateRows: any;
 }
 
-const TextInput = ({ cell, value = "", permissions }: IProps) => {
-    const [updateCell] = useUpdateCellMutation();
-    const [inputValue, setInputValue] = useState<string>("");
+interface ITextInputProps {
+    id: any;
+    columnName: string;
+    value: string;
+    onChange: any;
+}
+
+const TextInput = ({ id, columnName, value, onChange }: ITextInputProps) => {
+    console.log(id, columnName);
+    console.info(id, columnName);
+    const [active, setActive] = useState<boolean>(true);
+    const [val, setVal] = useState<string>(value);
 
     useEffect(() => {
-        setInputValue(value || "");
+        setVal(value);
     }, [value]);
 
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setInputValue(event.target.value);
+    const onTextChange = (value: string) => {
+        setVal(value);
     };
 
-    const handleUpdateRowOnBlur = (event: React.FocusEvent<HTMLInputElement, Element>) => {
-        updateCell({ ...cell, value: event.target.value });
+    const handleBlur = (value: string) => {
+        onChange(id, columnName, value);
     };
-
     return (
-        <Tooltip label={inputValue} placement="top-start">
-            <Input
-                value={inputValue}
-                size={"sm"}
-                variant={"unstyled"}
-                onChange={handleInputChange}
-                onBlur={handleUpdateRowOnBlur}
-                isReadOnly={!((permissions || 0) > 1)}
-                cursor={(permissions || 0) > 1 ? "text" : "default"}
-                textOverflow={"ellipsis"}
-            />
-        </Tooltip>
+        <>
+            {!active ? (
+                <Text>{val}</Text>
+            ) : (
+                <Box>
+                    <Input
+                        p={'3px'}
+                        px={'14px'}
+                        textOverflow={'ellipsis'}
+                        fontSize={'12px'}
+                        variant={'unstyled'}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => onTextChange(event.target.value)}
+                        onBlur={(event: React.FocusEvent<HTMLInputElement, Element>) => handleBlur(event.target.value)}
+                        value={val}
+                    />
+                </Box>
+            )}
+        </>
     );
 };
 
-export default TextInput;
+export default memo(TextInput);

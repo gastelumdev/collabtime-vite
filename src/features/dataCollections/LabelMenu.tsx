@@ -1,8 +1,25 @@
-import { Box, Button, Menu, MenuButton, MenuItem, MenuList, Text, Tooltip } from "@chakra-ui/react";
-import { getTextColor } from "../../utils/helpers";
-import { useEffect, useState } from "react";
-import { TCell } from "../../types";
-import { useUpdateCellMutation } from "../../app/services/api";
+import {
+    Box,
+    Button,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
+    Popover,
+    PopoverArrow,
+    PopoverBody,
+    PopoverCloseButton,
+    PopoverContent,
+    PopoverHeader,
+    PopoverTrigger,
+    Text,
+    Tooltip,
+    useDisclosure,
+} from '@chakra-ui/react';
+import { getTextColor } from '../../utils/helpers';
+import { memo, useEffect, useState } from 'react';
+import { TCell, TRow } from '../../types';
+import { useUpdateCellMutation, useUpdateRowMutation } from '../../app/services/api';
 
 interface ILabel {
     value: string;
@@ -11,30 +28,39 @@ interface ILabel {
 }
 
 interface IProps {
-    cell: TCell;
-    // handleLabelSelectChange: any;
+    id: number;
+    labels: any;
+    columnName: string;
     value: string;
+    onChange: any;
     // label?: string;
     // bgColor?: string;
     // options: { value: string; label: string; color: string }[] | undefined;
 }
 
-const LabelMenu = ({ cell, value = "" }: IProps) => {
-    const [updateCell] = useUpdateCellMutation();
+const LabelMenu = ({ id, columnName, labels, value = '', onChange }: IProps) => {
+    console.log(value);
+    const { onClose } = useDisclosure();
+    const [updateRow] = useUpdateRowMutation();
 
-    const [labelValue, setLabelValue] = useState<string>("");
-    const [labelLabel, setLabelLabel] = useState<string>("");
-    const [labelColor, setLabelColor] = useState<string>("");
+    const [labelValue, setLabelValue] = useState<string>('');
+    const [labelLabel, setLabelLabel] = useState<string>('');
+    const [labelColor, setLabelColor] = useState<string>('');
     const [options, setOptions] = useState<ILabel[] | undefined>([]);
 
+    const [active, setActive] = useState<boolean>(false);
+
+    // console.log(`${columnName} rendered`);
+    // console.info(`${columnName} rendered`);
+
     useEffect(() => {
-        let bgColor: string = "";
-        for (const label of cell.labels || []) {
-            if (cell.value == label.title) {
+        let bgColor: string = '';
+        for (const label of labels || []) {
+            if (value == label.title) {
                 bgColor = label.color;
             }
         }
-        const cellOptions: ILabel[] | undefined = cell.labels?.map((item) => {
+        const cellOptions: ILabel[] | undefined = labels?.map((item: any) => {
             return {
                 value: item.title,
                 label: item.title,
@@ -46,52 +72,83 @@ const LabelMenu = ({ cell, value = "" }: IProps) => {
         setLabelLabel(value);
         setLabelColor(bgColor);
         setOptions(cellOptions);
-    }, [cell, value]);
+    }, [labels, value]);
 
     const handleLabelClick = (label: ILabel) => {
-        updateCell({ ...cell, value: label.value });
+        // updateRow({ ...row, values: { ...row.values, [columnName]: label.value } });
+        // console.log({ ...row, values: { ...row.values, [columnName]: label.value } });
 
         setLabelValue(label.value);
         setLabelColor(label.color);
         setLabelLabel(label.label);
+
+        onClose();
+        setActive(false);
+
+        onChange(id, columnName, labelValue);
+    };
+
+    const handleClose = () => {
+        onClose();
+        setActive(false);
     };
 
     return (
-        <Menu matchWidth={true}>
-            <Tooltip
-                label={cell.value}
-                openDelay={500}
-                // isDisabled={isFocused}
-                placement={"top"}
-            >
-                <MenuButton
-                    as={Button}
-                    w={"100%"}
-                    bgColor={labelColor}
-                    color={labelColor == "white" ? "black" : getTextColor(labelColor)}
-                    borderRadius={"none"}
-                    variant={"ghost"}
-                    fontSize={"14px"}
-                    fontWeight={"normal"}
-                    _hover={{ bgColor: "none" }}
-                    _active={{ bgColor: "none" }}
+        <>
+            {active ? (
+                <div
+                // onBlur={(event: React.FocusEvent<HTMLDivElement, Element>) => {
+                //     setActive(false);
+                // }}
                 >
-                    {labelLabel || labelValue}
-                </MenuButton>
-            </Tooltip>
-            <MenuList px={"5px"}>
-                {options?.map((label, index) => {
-                    return (
-                        <Box key={index} bgColor={label.color} p={"6px"} onClick={() => handleLabelClick(label)}>
-                            <MenuItem bgColor={label.color}>
-                                <Text color={getTextColor(label.color)}>{label.label}</Text>
-                            </MenuItem>
-                        </Box>
-                    );
-                })}
-            </MenuList>
-        </Menu>
+                    <Popover isOpen={active} onClose={handleClose}>
+                        <PopoverTrigger>
+                            <Button
+                                w={'100%'}
+                                h={'24px'}
+                                fontSize={'12px'}
+                                bgColor={labelColor}
+                                color={labelColor == 'white' ? 'black' : getTextColor(labelColor)}
+                                borderRadius={'0'}
+                                fontWeight={'normal'}
+                                _hover={{ bgColor: labelColor }}
+                            >
+                                {labelValue}
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent>
+                            <PopoverArrow />
+                            <PopoverBody>
+                                {options?.map((label, index) => {
+                                    return (
+                                        <Box key={index} bgColor={label.color} p={'6px'} cursor={'pointer'} onClick={() => handleLabelClick(label)}>
+                                            <Box bgColor={label.color}>
+                                                <Text color={getTextColor(label.color)}>{label.label}</Text>
+                                            </Box>
+                                        </Box>
+                                    );
+                                })}
+                            </PopoverBody>
+                        </PopoverContent>
+                    </Popover>
+                </div>
+            ) : (
+                <Text
+                    backgroundColor={labelColor}
+                    color={getTextColor(labelColor)}
+                    h={'100%'}
+                    textAlign={'center'}
+                    paddingY={'3px'}
+                    cursor={'pointer'}
+                    onMouseDown={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+                        setActive(true);
+                    }}
+                >
+                    {labelLabel}
+                </Text>
+            )}
+        </>
     );
 };
 
-export default LabelMenu;
+export default memo(LabelMenu);
