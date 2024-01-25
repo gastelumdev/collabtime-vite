@@ -39,7 +39,6 @@ interface IProps {
 }
 
 const LabelMenu = ({ id, columnName, labels, value = '', onChange }: IProps) => {
-    console.log(value);
     const { onClose } = useDisclosure();
     const [updateRow] = useUpdateRowMutation();
 

@@ -103,7 +103,6 @@ const TableHeader = ({
                 const gridTemplateColumns = getComputedStyle(row).getPropertyValue('grid-template-columns');
                 console.log(gridTemplateColumns);
                 // Reorder the column widths and set the gridTemplateColumns
-                // const splitGridTemplateColumns = ;
                 const columnWidths: any = gridTemplateColumns.split(' ');
                 columnWidths.shift();
                 const [columnWidth] = columnWidths.splice(draggedColumnIndex as number, 1);
@@ -112,7 +111,7 @@ const TableHeader = ({
 
                 console.log(columnWidths);
 
-                // handleGridTemplateColumns(columnWidths.join(' '));
+                handleGridTemplateColumns(columnWidths.join(' '));
                 // API call needed persist column order
                 updateBackendColumns(newColumns);
             }
@@ -145,12 +144,17 @@ const TableHeader = ({
 
             // set the width by getting the new position of the resize handle on the page minus the width of the sidebar
             // and additional left padding
-            const width = e.clientX - columnResizingOffset - th.offsetLeft;
+            const table: any = document.getElementById('data-collection-table');
+            console.log({ windowScrollX: table.scrollLeft });
+            const width = e.clientX - columnResizingOffset - th.offsetLeft + Math.floor(table.scrollLeft);
+            console.log(e.clientX - columnResizingOffset);
+            console.log({ clientX: e.clientX, columnResizingOffset, offsetLeft: th.offsetLeft, width });
 
             // If the width is greater than minumum allowed header width, resize based on the width calculation
             // else set it to the minumum header width
             th.children[1].style.position = 'absolute';
             if (width > minCellWidth) {
+                console.log({ width });
                 th.children[1].style.left = `${width}px`;
             } else {
                 th.children[1].style.left = `${minCellWidth}px`;
@@ -164,7 +168,7 @@ const TableHeader = ({
                 const th: any = document.getElementById(String(i));
 
                 if (i === activeIndex) {
-                    const width = e.clientX - columnResizingOffset - th.offsetLeft;
+                    const width = e.clientX - columnResizingOffset - th.offsetLeft + Math.floor(table.scrollLeft);
 
                     return width >= minCellWidth ? `${width}px` : `${minCellWidth}px`;
                 }

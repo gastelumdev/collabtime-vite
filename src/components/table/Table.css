@@ -15,6 +15,7 @@
 }
 
 .table-content {
+    position: relative;
     grid-area: content;
     overflow-y: auto;
     overflow-x: hidden;
@@ -55,6 +56,16 @@
 }
 
 .table-row span {
+    display: block;
+    height: 29px;
+    position: relative;
+    /* padding: 8px 4px; */
+    border-right: 1px solid lightgray;
+    /* border-bottom: 1px solid lightgray; */
+    user-select: none;
+}
+
+.table-row .cell {
     display: block;
     height: 29px;
     position: relative;

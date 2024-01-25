@@ -84,7 +84,7 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
     }, []);
 
     return (
-        <div className={'table'}>
+        <div id={'data-collection-table'} className={'table'}>
             <TableHeader
                 columns={columns}
                 gridTemplateColumns={gridTemplateColumns}
