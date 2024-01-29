@@ -47,11 +47,13 @@ const TableHeader = ({
 
     const handleDragOver = useCallback(
         (event: any, columnIndex: number) => {
-            event.preventDefault();
-            setDropColumnIndex(columnIndex);
             // If the header being dragged is over a header other than it's self,
             // turn it blue else set it back to white
-            if (draggedColumnIndex !== columnIndex) {
+            if (draggedColumnIndex !== null && draggedColumnIndex !== columnIndex) {
+                event.preventDefault();
+                console.log(event);
+                setDropColumnIndex(columnIndex);
+
                 for (let i = 0; i < currentColumns.length; i++) {
                     const th: any = document.getElementById(String(i));
                     th.style.backgroundColor = 'white';

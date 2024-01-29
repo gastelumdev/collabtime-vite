@@ -209,13 +209,15 @@ const Row = memo(
         const [overId, setOverId] = useState<number | null>(null);
         const [draggedId, setDraggedId] = useState<number | null>(null);
 
+        let tableContent = true;
+
         const handleDragStart = useCallback(
             (event: React.DragEvent<HTMLDivElement>, rowIndex: number) => {
-                console.log({ rowIndex });
+                localStorage.setItem('rowDragged', `${rowIndex}`);
                 handleSetDraggedId(rowIndex);
                 setDraggedId(rowIndex);
-                const reorderHandle: any = document.getElementById(`reorder-handle-${rowIndex}`);
-                reorderHandle.style.cursor = 'move';
+                // const reorderHandle: any = document.getElementById(`reorder-handle-${rowIndex}`);
+                // reorderHandle.style.cursor = 'move';
                 // setRows((prev) => prev.filter((_, index) => index !== rowIndex));
             },
             [draggedId, setDraggedId, handleSetDraggedId]
@@ -223,6 +225,7 @@ const Row = memo(
 
         const handleDragEnter = useCallback(
             (event: React.DragEvent<HTMLDivElement>) => {
+                // console.log(draggedId);
                 // if (draggedId !== null) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -240,21 +243,16 @@ const Row = memo(
 
         const handleDragOver = useCallback(
             (event: React.DragEvent<HTMLDivElement>, rowIndex: number) => {
-                event.preventDefault();
-                event.stopPropagation();
+                console.log(localStorage.getItem('rowDragged'));
+                if (localStorage.getItem('rowDragged') !== null) {
+                    event.preventDefault();
+                    event.stopPropagation();
 
-                // const tableRowContainer: any = document.getElementById(`table-row-container-${rowIndex}`);
-                // tableRowContainer.style.backgroundColor = '#85bcff';
-
-                // console.log(rowIndex);
-                // const dropIndicator: any = document.getElementById(`drop-indicator-${rowIndex}`);
-                // console.log(dropIndicator);
-                // dropIndicator.style.visibility = 'visible';
-                handleSetOverId(rowIndex);
-
-                // }
+                    handleSetOverId(rowIndex);
+                    setOverId(rowIndex);
+                }
             },
-            [handleSetOverId, overId]
+            [handleSetOverId, draggedId]
         );
 
         const handleDragEnd = useCallback(
@@ -270,6 +268,7 @@ const Row = memo(
                 setDraggedId(null);
                 handleSetOverId(null);
                 handleSwap();
+                localStorage.removeItem('rowDragged');
             },
             [handleSwap, overId, draggedId]
         );
@@ -277,6 +276,7 @@ const Row = memo(
         const [opened, setOpened] = useState<boolean>(false);
         return (
             <Box key={rowIndex}>
+                <>{console.log('ROW RENDERED')}</>
                 <Box
                     key={rowIndex}
                     id={`table-row-container-${rowIndex}`}
@@ -292,7 +292,11 @@ const Row = memo(
                         style={{
                             gridTemplateColumns: '180px ' + gridTemplateColumns,
                         }}
+                        onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, rowIndex)}
                         onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, rowIndex)}
+                        onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
+                        onDragEnter={(event: React.DragEvent<HTMLDivElement>) => handleDragEnter(event)}
+                        onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
                     >
                         <span>
                             <Flex>
@@ -309,6 +313,39 @@ const Row = memo(
                                     onDragEnter={(event: React.DragEvent<HTMLDivElement>) => handleDragEnter(event)}
                                     onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
                                 ></Box>
+                                <Button
+                                    variant={'unstyled'}
+                                    h={'20px'}
+                                    onClick={() => {
+                                        console.log('BUTTON CLICKED on INDEX', rowIndex);
+                                        // setSubrowDrawers((prev) => prev.map((state, index) => (index === rowIndex ? !state : state)));
+                                        setOpened(!opened);
+                                    }}
+                                >
+                                    <Text>{opened ? <ChevronDownIcon /> : <ChevronRightIcon />}</Text>
+                                </Button>
+                                <Button
+                                    variant={'unstyled'}
+                                    h={'20px'}
+                                    onClick={() => {
+                                        console.log('BUTTON CLICKED on INDEX', rowIndex);
+                                        // setSubrowDrawers((prev) => prev.map((state, index) => (index === rowIndex ? !state : state)));
+                                        setOpened(!opened);
+                                    }}
+                                >
+                                    <Text>{opened ? <ChevronDownIcon /> : <ChevronRightIcon />}</Text>
+                                </Button>
+                                <Button
+                                    variant={'unstyled'}
+                                    h={'20px'}
+                                    onClick={() => {
+                                        console.log('BUTTON CLICKED on INDEX', rowIndex);
+                                        // setSubrowDrawers((prev) => prev.map((state, index) => (index === rowIndex ? !state : state)));
+                                        setOpened(!opened);
+                                    }}
+                                >
+                                    <Text>{opened ? <ChevronDownIcon /> : <ChevronRightIcon />}</Text>
+                                </Button>
                                 <Button
                                     variant={'unstyled'}
                                     h={'20px'}
@@ -354,6 +391,33 @@ const Row = memo(
                 <SubRowsContent rows={rowsData} columns={columns} gridTemplateColumns={'170px ' + gridTemplateColumns} opened={opened} />
             </Box>
         );
+    },
+    (prevProps, nextProps) => {
+        const {
+            row: prevrow,
+            rowIndex: prevrowIndex,
+            columns: prevcolumns,
+            gridTemplateColumns: prevgridTemplateColumns,
+            handleSetDraggedId: prevhandleSetDraggedId,
+            handleSetOverId: prevhandleSetOverId,
+            handleSwap: prevhandleSwap,
+        } = prevProps;
+        const {
+            row: nextrow,
+            rowIndex: nextrowIndex,
+            columns: nextcolumns,
+            gridTemplateColumns: nextgridTemplateColumns,
+            handleSetDraggedId: nexthandleSetDraggedId,
+            handleSetOverId: nexthandleSetOverId,
+            handleSwap: nexthandleSwap,
+        } = nextProps;
+
+        console.log({ prevrow, prevrowIndex, prevcolumns, prevgridTemplateColumns, prevhandleSetDraggedId, prevhandleSetOverId, prevhandleSwap });
+        console.log({ nextrow, nextrowIndex, nextcolumns, nextgridTemplateColumns, nexthandleSetDraggedId, nexthandleSetOverId, nexthandleSwap });
+
+        console.log({ row: prevrow === nextrow, rowIndex: prevrowIndex === nextrowIndex, columns: prevcolumns === nextcolumns });
+
+        return prevProps === nextProps;
     }
 );
 
@@ -379,6 +443,9 @@ const TableContent = ({ rows, columns, setRows, gridTemplateColumnsIn, minCellWi
 
     const handleDragEnter = useCallback(
         (event: React.DragEvent<HTMLDivElement>) => {
+            console.log(draggedId);
+            event.preventDefault();
+            event.stopPropagation();
             if (draggedId !== null) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -394,6 +461,8 @@ const TableContent = ({ rows, columns, setRows, gridTemplateColumnsIn, minCellWi
     const handleDragOver = useCallback(
         (event: React.DragEvent<HTMLDivElement>, rowIndex: number) => {
             console.log(draggedId !== null);
+            event.preventDefault();
+            event.stopPropagation();
             if (draggedId !== null) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -456,7 +525,7 @@ const TableContent = ({ rows, columns, setRows, gridTemplateColumnsIn, minCellWi
             console.log({ rowIndex });
             setOverId(rowIndex);
         },
-        [overId, draggedId]
+        [overId]
     );
 
     const handleSwap = useCallback(() => {
@@ -477,6 +546,7 @@ const TableContent = ({ rows, columns, setRows, gridTemplateColumnsIn, minCellWi
             onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
         >
             {rows.map((row: any, rowIndex) => {
+                console.log('ROW RENDERED');
                 return (
                     <div key={rowIndex}>
                         <div className="drop-indicator-container" onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, rowIndex)}>
@@ -498,17 +568,17 @@ const TableContent = ({ rows, columns, setRows, gridTemplateColumnsIn, minCellWi
                             row={row}
                             rowIndex={rowIndex}
                             columns={columns}
+                            gridTemplateColumns={gridTemplateColumns}
+                            handleSetDraggedId={handleSetDraggedId}
+                            handleSetOverId={handleSetOverId}
+                            handleSwap={handleSwap}
                             // draggedId={draggedId}
                             // overId={overId}
-                            gridTemplateColumns={gridTemplateColumns}
                             // handleDragOver={handleDragOver}
                             // handleDragStart={handleDragStart}
                             // handleDragEnd={handleDragEnd}
                             // handleDragEnter={handleDragEnter}
                             // handleDragLeave={handleDragLeave}
-                            handleSetDraggedId={handleSetDraggedId}
-                            handleSetOverId={handleSetOverId}
-                            handleSwap={handleSwap}
                         />
                     </div>
                 );
