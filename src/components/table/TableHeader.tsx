@@ -1,5 +1,8 @@
-import { Box } from '@chakra-ui/react';
-import { memo, useCallback, useEffect, useState } from 'react';
+import { Box, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
+import { memo, useCallback, useEffect, useState, useTransition } from 'react';
+import CreateColumn from '../../features/dataCollections/CreateColumn';
+import { TColumn } from '../../types';
+import ColumnMenu from './ColumnMenu';
 
 interface IProps {
     columns: any[];
@@ -12,6 +15,8 @@ interface IProps {
     updateBackendColumns: any;
     updateBackendColumnWidth: any;
     handleGridTemplateColumns: any;
+    handleAddNewColumnToRows: any;
+    deleteColumn: any;
 }
 
 const TableHeader = ({
@@ -24,6 +29,8 @@ const TableHeader = ({
     updateBackendColumns,
     updateBackendColumnWidth,
     handleGridTemplateColumns,
+    handleAddNewColumnToRows,
+    deleteColumn,
 }: IProps) => {
     const [currentColumns, setCurrentColumns] = useState(columns);
     // ******************* COLUMN REORDERING ******************************
@@ -126,6 +133,7 @@ const TableHeader = ({
 
     // ******************* COLUMN WIDTH RESIZING ********************************
     // **************************************************************************
+    const [isPending, startTransition] = useTransition();
 
     const [columnWidth, setColumnWidth] = useState('');
     const [resizedWidth, setResizedWidth] = useState<string | null>(null);
@@ -142,21 +150,24 @@ const TableHeader = ({
     const mouseMove = useCallback(
         (e: any) => {
             // On mouse move, change the opacity of the resize handle so that it is visible
+            console.log(activeIndex);
             const th: any = document.getElementById(String(activeIndex));
+            console.log(th);
 
             // set the width by getting the new position of the resize handle on the page minus the width of the sidebar
             // and additional left padding
             const table: any = document.getElementById('data-collection-table');
+            console.log(table);
             console.log({ windowScrollX: table.scrollLeft });
             const width = e.clientX - columnResizingOffset - th.offsetLeft + Math.floor(table.scrollLeft);
             console.log(e.clientX - columnResizingOffset);
             console.log({ clientX: e.clientX, columnResizingOffset, offsetLeft: th.offsetLeft, width });
+            console.log({ width });
 
             // If the width is greater than minumum allowed header width, resize based on the width calculation
             // else set it to the minumum header width
             th.children[1].style.position = 'absolute';
             if (width > minCellWidth) {
-                console.log({ width });
                 th.children[1].style.left = `${width}px`;
             } else {
                 th.children[1].style.left = `${minCellWidth}px`;
@@ -177,10 +188,11 @@ const TableHeader = ({
                 return `${th.offsetWidth}px`;
             });
 
+            console.log({ gridColumns });
+
             setResizedWidth(gridColumns[activeIndex as number]);
 
             // Add the gridTemplateColumns string to state
-            // setColumnWidth(`120px ${gridColumns.join(' ')}`);
             setColumnWidth(`${gridColumns.join(' ')}`);
 
             // Event listener needs to be set here so that it does not go up the DOM tree
@@ -196,21 +208,26 @@ const TableHeader = ({
     };
 
     const mouseUp = useCallback(() => {
+        console.log(resizedWidth);
         if (resizedWidth !== null) {
             // Set the column widths
             const tableRows: any = document.getElementsByClassName('table-row');
             for (const tableRow of tableRows) {
-                tableRow.style.gridTemplateColumns = `180px ${columnWidth}`;
+                tableRow.style.gridTemplateColumns = `210px ${columnWidth} 100px`;
             }
 
             const subTableRows: any = document.getElementsByClassName('table-row subrow');
             for (const tableRow of subTableRows) {
-                tableRow.style.gridTemplateColumns = `170px ${columnWidth}`;
+                tableRow.style.gridTemplateColumns = `200px ${columnWidth} 100px`;
             }
 
             // Set the defaults of the handle
             const th: any = document.getElementById(String(activeIndex));
             th.children[1].style.left = '100%';
+
+            startTransition(() => {
+                handleGridTemplateColumns(columnWidth);
+            });
 
             // More defaults
             setMouseIsUp(true);
@@ -250,22 +267,35 @@ const TableHeader = ({
         }
     }, [activeIndex]);
 
+    const handleAddColumn = useCallback(
+        (column: TColumn) => {
+            console.log(column);
+            handleAddNewColumnToRows(column);
+        },
+        [handleAddNewColumnToRows]
+    );
+
+    const handleDeleteColumn = useCallback((column: any) => {
+        deleteColumn(column);
+    }, []);
+
     return (
         <div className="table-header">
             <div
                 className="table-row header"
                 style={{
-                    gridTemplateColumns: '180px ' + gridTemplateColumns,
+                    gridTemplateColumns: '210px ' + gridTemplateColumns + ' 100px',
                     position: 'sticky',
                     top: '0',
                     height: headerHeight,
-                    borderBottom: '1px solid lightgray',
+                    borderBottom: '1px solid #edf2f7',
                 }}
             >
                 <span
                     style={{
                         height: '39px',
                         padding: '0px 20px',
+                        borderRight: '1px solid #edf2f7',
                     }}
                 ></span>
                 {currentColumns.map((column: any, columnIndex) => {
@@ -273,12 +303,13 @@ const TableHeader = ({
                         <span
                             key={columnIndex}
                             id={String(columnIndex)}
+                            className="resize-header"
                             style={{
                                 height: '39px',
                                 padding: '0px 20px',
                                 cursor: 'grab',
                                 zIndex: `${100 - columnIndex}`,
-                                backgroundColor: draggedColumnIndex === columnIndex ? 'lightgray' : 'unset',
+                                backgroundColor: draggedColumnIndex === columnIndex ? '#edf2f7' : 'unset',
                                 borderLeft:
                                     draggedColumnIndex !== null && dropColumnIndex === columnIndex && draggedColumnIndex >= columnIndex
                                         ? '3px solid #2d82eb'
@@ -288,7 +319,7 @@ const TableHeader = ({
                                 borderRight:
                                     draggedColumnIndex !== null && dropColumnIndex === columnIndex && draggedColumnIndex < columnIndex
                                         ? '3px solid #2d82eb'
-                                        : '1px solid lightgray',
+                                        : '1px solid #edf2f7',
                             }}
                         >
                             {/* Reorder column box */}
@@ -311,7 +342,7 @@ const TableHeader = ({
                                 onDragLeave={() => handleDragLeave(columnIndex)}
                                 onClick={() => console.log('HEADER CLICKED')}
                             >
-                                {`${column.name[0].toUpperCase()}${column.name.slice(1, column.name.length).split('_').join(' ')}`}
+                                <ColumnMenu column={column} handleDeleteColumn={handleDeleteColumn} />
                             </div>
                             {/* Resize column box */}
                             <Box
@@ -328,6 +359,14 @@ const TableHeader = ({
                         </span>
                     );
                 })}
+                <span
+                    style={{
+                        height: '39px',
+                        padding: '0px 20px',
+                    }}
+                >
+                    <CreateColumn columns={columns} createColumn={handleAddColumn} />
+                </span>
             </div>
         </div>
     );

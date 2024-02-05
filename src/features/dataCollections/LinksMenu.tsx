@@ -1,21 +1,9 @@
-import { PlusSquareIcon } from "@chakra-ui/icons";
-import {
-    Box,
-    Flex,
-    IconButton,
-    Input,
-    Menu,
-    MenuButton,
-    MenuDivider,
-    MenuGroup,
-    MenuItem,
-    MenuList,
-    Text,
-} from "@chakra-ui/react";
-import PrimaryButton from "../../components/Buttons/PrimaryButton";
-import { TCell } from "../../types";
-import { useEffect, useState } from "react";
-import { useUpdateCellMutation } from "../../app/services/api";
+import { PlusSquareIcon } from '@chakra-ui/icons';
+import { Box, Flex, IconButton, Input, Menu, MenuButton, MenuDivider, MenuGroup, MenuItem, MenuList, Text } from '@chakra-ui/react';
+import PrimaryButton from '../../components/Buttons/PrimaryButton';
+import { TCell } from '../../types';
+import { useEffect, useState } from 'react';
+import { useUpdateCellMutation } from '../../app/services/api';
 
 interface IProps {
     cell?: TCell | null;
@@ -24,9 +12,9 @@ interface IProps {
     border?: boolean;
 }
 
-const LinksMenu = ({ cell, handleAddLinkClick, topPadding = "0px", border = false }: IProps) => {
+const LinksMenu = ({ cell, handleAddLinkClick, topPadding = '0px', border = false }: IProps) => {
     const [updateCell] = useUpdateCellMutation();
-    const [link, setLink] = useState<string>("");
+    const [link, setLink] = useState<string>('');
     const [links, setLinks] = useState<string[]>([]);
     const [linkValueError, setLinkValueError] = useState<boolean>(false);
 
@@ -38,41 +26,29 @@ const LinksMenu = ({ cell, handleAddLinkClick, topPadding = "0px", border = fals
     };
 
     useEffect(() => {
-        const linksList = [];
-
-        for (const link of cell?.links || []) {
-            linksList.push(link);
-        }
-
-        setLinks(linksList);
+        // const linksList = [];
+        // for (const link of cell?.links || []) {
+        //     linksList.push(link);
+        // }
+        // setLinks(linksList);
     }, [cell]);
 
     return (
         <>
-            <Flex
-                overflow={"hidden"}
-                textOverflow={"ellipsis"}
-                border={border ? "1px solid #e2e8f0" : "none"}
-                borderRadius={border ? "5px" : "0"}
-            >
+            <Flex overflow={'hidden'} textOverflow={'ellipsis'} border={border ? '1px solid #e2e8f0' : 'none'} borderRadius={border ? '5px' : '0'}>
                 <Menu closeOnSelect={false}>
-                    <MenuButton
-                        as={IconButton}
-                        aria-label="Options"
-                        icon={<PlusSquareIcon />}
-                        variant="ghost"
-                    ></MenuButton>
-                    <MenuList w={"400px"}>
-                        <Box p={"5px"}>
-                            <Text ml={"2px"} mb={"3px"}>
+                    <MenuButton as={IconButton} aria-label="Options" icon={<PlusSquareIcon />} variant="ghost"></MenuButton>
+                    <MenuList w={'400px'}>
+                        <Box p={'5px'}>
+                            <Text ml={'2px'} mb={'3px'}>
                                 Enter link
                             </Text>
                             <Flex>
-                                <Input w={"385px"} mr={"4px"} onChange={handleOnLinkChange} value={link} />
+                                <Input w={'385px'} mr={'4px'} onChange={handleOnLinkChange} value={link} />
 
                                 <PrimaryButton
                                     onClick={() => {
-                                        if (link.startsWith("https://")) {
+                                        if (link.startsWith('https://')) {
                                             if (cell) {
                                                 const links: any = cell.links;
                                                 updateCell({ ...cell, links: [...links, link] });
@@ -81,7 +57,7 @@ const LinksMenu = ({ cell, handleAddLinkClick, topPadding = "0px", border = fals
                                             }
 
                                             setLinks([...links, link]);
-                                            setLink("");
+                                            setLink('');
                                         } else {
                                             setLinkValueError(true);
                                         }
@@ -91,9 +67,7 @@ const LinksMenu = ({ cell, handleAddLinkClick, topPadding = "0px", border = fals
                                 </PrimaryButton>
                             </Flex>
                             <Box>
-                                <Box mt={"3px"}>
-                                    {linkValueError ? <Text color={"red"}>Link needs to be full url.</Text> : null}
-                                </Box>
+                                <Box mt={'3px'}>{linkValueError ? <Text color={'red'}>Link needs to be full url.</Text> : null}</Box>
                             </Box>
                         </Box>
 
@@ -116,7 +90,7 @@ const LinksMenu = ({ cell, handleAddLinkClick, topPadding = "0px", border = fals
                                                     href={link}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    style={{ overflow: "hidden", textOverflow: "ellipsis" }}
+                                                    style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}
                                                 >
                                                     <MenuItem>{link}</MenuItem>
                                                 </a>
@@ -128,10 +102,8 @@ const LinksMenu = ({ cell, handleAddLinkClick, topPadding = "0px", border = fals
                         ) : null}
                     </MenuList>
                     <MenuButton>
-                        <Box pt={topPadding} ml={"6px"}>
-                            <Text>
-                                {links.length > 0 ? `${links.length} ${links.length > 1 ? "links" : "link"}` : "Empty"}
-                            </Text>
+                        <Box pt={topPadding} ml={'6px'}>
+                            <Text>{links.length > 0 ? `${links.length} ${links.length > 1 ? 'links' : 'link'}` : 'Empty'}</Text>
                         </Box>
                     </MenuButton>
                 </Menu>

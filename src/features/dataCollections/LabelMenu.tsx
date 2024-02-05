@@ -84,7 +84,7 @@ const LabelMenu = ({ id, columnName, labels, value = '', onChange }: IProps) => 
         onClose();
         setActive(false);
 
-        onChange(id, columnName, labelValue);
+        onChange(columnName, label.value);
     };
 
     const handleClose = () => {
@@ -104,8 +104,9 @@ const LabelMenu = ({ id, columnName, labels, value = '', onChange }: IProps) => 
                         <PopoverTrigger>
                             <Button
                                 w={'100%'}
-                                h={'24px'}
+                                h={'29px'}
                                 fontSize={'12px'}
+                                pb={'3px'}
                                 bgColor={labelColor}
                                 color={labelColor == 'white' ? 'black' : getTextColor(labelColor)}
                                 borderRadius={'0'}
@@ -135,9 +136,10 @@ const LabelMenu = ({ id, columnName, labels, value = '', onChange }: IProps) => 
                 <Text
                     backgroundColor={labelColor}
                     color={getTextColor(labelColor)}
-                    h={'100%'}
+                    // h={'100%'}
+                    h={'29px'}
                     textAlign={'center'}
-                    paddingY={'3px'}
+                    paddingY={'4px'}
                     cursor={'pointer'}
                     onMouseDown={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
                         setActive(true);

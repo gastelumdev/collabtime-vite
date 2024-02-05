@@ -233,7 +233,7 @@ export const api = createApi({
             }),
             // invalidatesTags: ["Rows"]
         }),
-        updateRow: builder.mutation<TRow, TRow>({
+        updateRow: builder.mutation<TRow[], TRow>({
             query: (row) => ({
                 url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${row.dataCollection}/rows/update/${row._id}`,
                 method: "POST",
@@ -269,6 +269,13 @@ export const api = createApi({
                 method: "POST",
             }),
             invalidatesTags: ["Rows"],
+        }),
+        reorderRows: builder.mutation<any, string[]>({
+            query: (positions) => ({
+                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${localStorage.getItem("dataCollectionId")}/rows/reorder`,
+                method: "POST",
+                body: positions
+            })
         }),
         getTotalRows: builder.query<any, { dataCollectionId: string, limit: number }>({
             query: (options) => ({
@@ -452,6 +459,7 @@ export const {
     useDeleteRowsMutation,
     useRowCallUpdateMutation,
     useAcknowledgeRowMutation,
+    useReorderRowsMutation,
     useGetTotalRowsQuery,
     useUpdateCellMutation,
     useUploadMutation,

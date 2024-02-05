@@ -1,4 +1,17 @@
-import { Box, Input, Text, Tooltip } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    Input,
+    Popover,
+    PopoverArrow,
+    PopoverBody,
+    PopoverContent,
+    PopoverHeader,
+    PopoverTrigger,
+    Text,
+    Textarea,
+    Tooltip,
+} from '@chakra-ui/react';
 import { TCell, TRow } from '../../types';
 import { memo, useEffect, useState } from 'react';
 import { useUpdateCellMutation, useUpdateRowMutation } from '../../app/services/api';
@@ -17,13 +30,14 @@ interface ITextInputProps {
     id: any;
     columnName: string;
     value: string;
+    type?: string;
     onChange: any;
 }
 
-const TextInput = ({ id, columnName, value, onChange }: ITextInputProps) => {
+const TextInput = ({ id, columnName, value, type = 'tableCell', onChange }: ITextInputProps) => {
     console.log(id, columnName);
     console.info(id, columnName);
-    const [active, setActive] = useState<boolean>(true);
+    const [active, setActive] = useState<boolean>(false);
     const [val, setVal] = useState<string>(value);
 
     useEffect(() => {
@@ -31,27 +45,66 @@ const TextInput = ({ id, columnName, value, onChange }: ITextInputProps) => {
     }, [value]);
 
     const onTextChange = (value: string) => {
+        console.log(value);
+        // onChange(columnName, value);
         setVal(value);
     };
 
     const handleBlur = (value: string) => {
-        onChange(id, columnName, value);
+        console.log(value);
+        onChange(columnName, value);
     };
+
+    // useEffect(() => {
+    //     return () => {
+    //         onChange(id, columnName, val);
+    //     };
+    // }, []);
     return (
         <>
             {!active ? (
-                <Text>{val}</Text>
-            ) : (
-                <Box>
-                    <Input
-                        p={'3px'}
-                        px={'14px'}
-                        textOverflow={'ellipsis'}
-                        fontSize={'12px'}
+                <Box
+                    w={'100%'}
+                    p={val ? '0px' : type === 'tableCell' ? '14px' : '0px'}
+                    onDoubleClick={() => setActive(!active)}
+                    px={type === 'tableCell' ? '20px' : '0px'}
+                    overflow={'hidden'}
+                >
+                    <Button
                         variant={'unstyled'}
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => onTextChange(event.target.value)}
-                        onBlur={(event: React.FocusEvent<HTMLInputElement, Element>) => handleBlur(event.target.value)}
+                        border={type === 'tableCell' ? 'none' : '1px solid #edf2f7'}
+                        fontSize={'12px'}
+                        fontWeight={'normal'}
+                        padding={0}
+                        pl={type === 'tableCell' ? '0px' : '12px'}
+                        overflow={'hidden'}
+                        textOverflow={'ellipsis'}
+                        w={'100%'}
+                        h={'29px'}
+                        textAlign={'left'}
+                        cursor={'text'}
+                    >
+                        {val}
+                    </Button>
+                </Box>
+            ) : (
+                <Box pos={'relative'}>
+                    <Textarea
+                        fontSize={'12px'}
                         value={val}
+                        position={'absolute'}
+                        zIndex={1000000}
+                        onBlur={() => setActive(!active)}
+                        bgColor={'white'}
+                        autoFocus={true}
+                        onFocus={(event: React.FocusEvent<HTMLTextAreaElement, Element>) => {
+                            // event.target.select();
+                            let v = event.target.value;
+                            event.target.value = '';
+                            event.target.value = v;
+                        }}
+                        onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => onTextChange(event.target.value)}
+                        onBlurCapture={(event: React.FocusEvent<HTMLTextAreaElement, Element>) => handleBlur(event.target.value)}
                     />
                 </Box>
             )}

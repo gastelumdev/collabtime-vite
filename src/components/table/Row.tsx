@@ -1,0 +1,260 @@
+import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import { Box, Button, Checkbox, Flex, Text } from '@chakra-ui/react';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import LabelMenu from '../../features/dataCollections/LabelMenu';
+import PeopleMenu from '../../features/dataCollections/PeopleMenu';
+import DateInput from '../../features/dataCollections/DateInput';
+import TextInput from '../../features/dataCollections/TextInput';
+import SubRowsContent from './SubRowsContent';
+import EditRow from '../../features/dataCollections/EditRow';
+import NoteModal from '../../features/dataCollections/NoteModal';
+import { FaRegBell } from 'react-icons/fa';
+import { FaRegSquareCheck } from 'react-icons/fa6';
+
+const Row = ({
+    row,
+    rowIndex,
+    columns,
+    gridTemplateColumns,
+    handleSetDraggedId,
+    handleSetOverId,
+    handleSwap,
+    handleChange,
+    deleteBoxIsChecked,
+    handleDeleteBoxChange,
+    rowCallUpdate,
+}: {
+    row: any;
+    rowIndex: number;
+    columns: any;
+    gridTemplateColumns: string;
+    handleSetDraggedId: any;
+    handleSetOverId: any;
+    handleSwap: any;
+    handleChange: any;
+    deleteBoxIsChecked: boolean;
+    handleDeleteBoxChange: any;
+    rowCallUpdate: any;
+}) => {
+    const rowsData = useMemo(
+        () => [
+            { _id: '12345', values: { assigned_to: 'Omar', task: 'Task 1', status: 'Done', priority: 'Low', due_date: 'tomorrow' } },
+            { _id: '12346', values: { assigned_to: 'Omar', task: 'Task 2', status: 'Done', priority: 'Low', due_date: 'tomorrow' } },
+            { _id: '12347', values: { assigned_to: 'Omar', task: 'Task 3', status: 'Done', priority: 'Low', due_date: 'tomorrow' } },
+        ],
+        []
+    );
+
+    const [overId, setOverId] = useState<number | null>(null);
+    const [draggedId, setDraggedId] = useState<number | null>(null);
+
+    const [deleteCheckboxIsChecked, setDeleteCheckboxIsChecked] = useState(deleteBoxIsChecked);
+
+    const handleDragStart = useCallback(
+        (event: React.DragEvent<HTMLDivElement>, rowIndex: number) => {
+            localStorage.setItem('rowDragged', `${rowIndex}`);
+            handleSetDraggedId(rowIndex);
+            setDraggedId(rowIndex);
+            // const reorderHandle: any = document.getElementById(`reorder-handle-${rowIndex}`);
+            // reorderHandle.style.cursor = 'move';
+            // setRows((prev) => prev.filter((_, index) => index !== rowIndex));
+        },
+        [draggedId, setDraggedId, handleSetDraggedId]
+    );
+
+    const handleDragEnter = useCallback(
+        (event: React.DragEvent<HTMLDivElement>) => {
+            // console.log(draggedId);
+            // if (draggedId !== null) {
+            event.preventDefault();
+            event.stopPropagation();
+            // }
+        },
+        [draggedId]
+    );
+
+    const handleDragLeave = useCallback((event: React.DragEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        // setOver(false);
+    }, []);
+
+    const handleDragOver = useCallback(
+        (event: React.DragEvent<HTMLDivElement>, rowIndex: number) => {
+            console.log(localStorage.getItem('rowDragged'));
+            if (localStorage.getItem('rowDragged') !== null) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                handleSetOverId(rowIndex);
+                setOverId(rowIndex);
+            }
+        },
+        [handleSetOverId, draggedId]
+    );
+
+    const handleDragEnd = useCallback(
+        (event: any) => {
+            // const newRows = [...rows];
+            // const [draggedRow] = newRows.splice(draggedId as number, 1);
+            // newRows.splice(overId as number, 0, draggedRow);
+
+            // setRows(newRows);
+
+            // setOverId(null);
+            // setDraggedId(null);
+            setDraggedId(null);
+            handleSetOverId(null);
+            handleSwap();
+            localStorage.removeItem('rowDragged');
+        },
+        [handleSwap, overId, draggedId]
+    );
+
+    const handleDeleteCheckboxChange = () => {
+        setDeleteCheckboxIsChecked(!deleteCheckboxIsChecked);
+        handleDeleteBoxChange(!deleteCheckboxIsChecked, rowIndex);
+    };
+
+    const onChange = useCallback(
+        (columnName: string, value: string) => {
+            console.log(value);
+            handleChange({ ...row, values: { ...row.values, [columnName]: value } });
+        },
+        [row]
+    );
+
+    const editRowOnChange = useCallback(
+        (row: any) => {
+            console.log(row);
+            handleChange(row);
+        },
+        [handleChange]
+    );
+
+    const handleRemindersChange = useCallback(() => {
+        console.log(!row.reminder);
+        handleChange({ ...row, reminder: !row.reminder });
+    }, [row]);
+
+    const handleAcknowledgeClick = useCallback(() => {
+        console.log(!row.reminder);
+        handleChange({ ...row, acknowledged: !row.acknowledged });
+    }, [row]);
+
+    const [opened, setOpened] = useState<boolean>(row.subRowsAreOpen);
+
+    useEffect(() => {
+        setOpened(row.subRowsAreOpen);
+    }, [row]);
+    return (
+        <Box key={rowIndex} pos={'relative'} _hover={{ bgColor: '#f1f7ff' }} backgroundColor={row.markedForDeletion ? '#e1eeff' : 'unset'}>
+            <Box
+                key={rowIndex}
+                id={`table-row-container-${rowIndex}`}
+                className="table-row-container"
+                style={{
+                    // backgroundColor: draggedId === rowIndex ? '#85bcff' : 'white',
+                    borderTop: '1px solid #edf2f7',
+                    // height: draggedId !== null && overId === rowIndex && draggedId >= rowIndex ? '26px' : '29px',
+                }}
+            >
+                <div
+                    className="table-row content"
+                    style={{
+                        gridTemplateColumns: '210px ' + gridTemplateColumns,
+                    }}
+                    onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, rowIndex)}
+                    onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, rowIndex)}
+                    onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
+                    onDragEnter={(event: React.DragEvent<HTMLDivElement>) => handleDragEnter(event)}
+                    onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
+                >
+                    <span style={{ borderRight: '1px solid #edf2f7' }}>
+                        <Flex>
+                            <Box
+                                id={`reorder-handle-${rowIndex}`}
+                                w={'15px'}
+                                h={'30px'}
+                                bgColor={'#2d82eb'}
+                                cursor={'move'}
+                                draggable
+                                onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, rowIndex)}
+                                onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, rowIndex)}
+                                onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
+                                onDragEnter={(event: React.DragEvent<HTMLDivElement>) => handleDragEnter(event)}
+                                onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
+                            ></Box>
+                            <Box mt={'6px'} ml={'14px'}>
+                                <Checkbox mr={'1px'} isChecked={row.markedForDeletion} onChange={handleDeleteCheckboxChange} />
+                            </Box>
+                            <Box pt={'6px'}>
+                                <EditRow row={row} columns={columns} handleChange={editRowOnChange} />
+                            </Box>
+                            <Box pt={'6px'}>
+                                <NoteModal row={row} updateRow={editRowOnChange} rowCallUpdate={rowCallUpdate} />
+                            </Box>
+                            <Box pt={'7px'} ml={'10px'} onClick={handleRemindersChange} cursor={'pointer'}>
+                                <Text fontSize={'15px'} color={row.reminder ? '#16b2fc' : '#cccccc'}>
+                                    <FaRegBell />
+                                </Text>
+                            </Box>
+                            <Box pt={'7px'} ml={'10px'} onClick={handleAcknowledgeClick} cursor={'pointer'}>
+                                <Text fontSize={'15px'} color={row.acknowledged ? '#16b2fc' : '#cccccc'}>
+                                    <FaRegSquareCheck />
+                                </Text>
+                            </Box>
+                            <Button
+                                variant={'unstyled'}
+                                h={'20px'}
+                                outline="unset"
+                                onClick={() => {
+                                    console.log('BUTTON CLICKED on INDEX', rowIndex);
+                                    // setSubrowDrawers((prev) => prev.map((state, index) => (index === rowIndex ? !state : state)));
+                                    setOpened(!opened);
+                                    handleChange({ ...row, subRowsAreOpen: !opened });
+                                }}
+                            >
+                                <Text>{opened ? <ChevronDownIcon /> : <ChevronRightIcon />}</Text>
+                            </Button>
+                        </Flex>
+                    </span>
+                    {columns.map((column: any, columnIndex: number) => {
+                        return (
+                            <div
+                                key={columnIndex}
+                                className={'cell'}
+                                style={{
+                                    whiteSpace: 'nowrap',
+                                    fontSize: '12px',
+                                    borderBottom: '1px solid #edf2f7',
+                                }}
+                            >
+                                {column.type === 'label' || column.type === 'priority' || column.type === 'status' ? (
+                                    <LabelMenu
+                                        id={rowIndex}
+                                        labels={column.labels}
+                                        columnName={column.name}
+                                        value={row.values[column.name]}
+                                        onChange={onChange}
+                                    />
+                                ) : column.type === 'people' ? (
+                                    <PeopleMenu row={row} columnName={column.name} people={column.people} value={row.values[column.name]} onChange={onChange} />
+                                ) : column.type === 'date' ? (
+                                    <DateInput value={row.values[column.name]} columnName={column.name} onChange={onChange} />
+                                ) : (
+                                    <TextInput id={row._id} columnName={column.name} value={row.values[column.name]} onChange={onChange} />
+                                )}
+                                {/* {row.values[column.name]} */}
+                            </div>
+                        );
+                    })}
+                </div>
+            </Box>
+            <SubRowsContent rows={rowsData} columns={columns} gridTemplateColumns={'170px ' + gridTemplateColumns} opened={opened} />
+        </Box>
+    );
+};
+
+export default memo(Row);

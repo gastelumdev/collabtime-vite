@@ -1,47 +1,52 @@
-import { Input } from "@chakra-ui/react";
-import { TCell } from "../../types";
-import { useEffect, useState } from "react";
-import { useUpdateCellMutation } from "../../app/services/api";
+import { Box, Input } from '@chakra-ui/react';
+import { TCell } from '../../types';
+import { useEffect, useState } from 'react';
+import { useUpdateCellMutation } from '../../app/services/api';
 
 interface IProps {
-    cell: TCell;
-    value?: string;
-    permissions: any;
+    value: string;
+    columnName: string;
+    permissions?: any;
+    onChange: any;
 }
 
-const DateInput = ({ cell, value, permissions }: IProps) => {
+const DateInput = ({ value, columnName, permissions = 4, onChange }: IProps) => {
     const [updateCell] = useUpdateCellMutation();
-    const [inputValue, setInputValue] = useState<string>(cell.value);
+    const [inputValue, setInputValue] = useState<string>(value);
 
     useEffect(() => {
-        if (value !== "Invalid Date") {
+        if (value !== 'Invalid Date') {
             const newValue = value?.slice(0, 16);
-            setInputValue(newValue || "");
+            setInputValue(newValue || '');
         } else {
-            setInputValue("");
+            setInputValue('');
         }
     }, [value]);
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue(event.target.value);
+        onChange(columnName, event.target.value);
     };
 
     const handleUpdateRowOnBlur = (event: React.FocusEvent<HTMLInputElement, Element>) => {
-        updateCell({ ...cell, value: event.target.value });
+        // updateCell({ ...cell, value: event.target.value });
     };
 
     return (
-        <Input
-            value={inputValue}
-            type="datetime-local"
-            size={"sm"}
-            variant={"unstyled"}
-            onChange={handleInputChange}
-            onBlur={handleUpdateRowOnBlur}
-            isReadOnly={!((permissions || 0) > 1)}
-            cursor={(permissions || 0) > 1 ? "text" : "default"}
-            textOverflow={"ellipsis"}
-        />
+        <Box px={'20px'} pt={'5px'}>
+            <Input
+                value={inputValue}
+                type="datetime-local"
+                size={'sm'}
+                variant={'unstyled'}
+                onChange={handleInputChange}
+                // onBlur={handleUpdateRowOnBlur}
+                isReadOnly={!((permissions || 0) > 1)}
+                cursor={(permissions || 0) > 1 ? 'text' : 'default'}
+                textOverflow={'ellipsis'}
+                fontSize={'12px'}
+            />
+        </Box>
     );
 };
 
