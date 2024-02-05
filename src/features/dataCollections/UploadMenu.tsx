@@ -1,6 +1,7 @@
-import { PlusSquareIcon } from "@chakra-ui/icons";
+import { PlusSquareIcon } from '@chakra-ui/icons';
 import {
     Box,
+    Button,
     Flex,
     IconButton,
     Menu,
@@ -9,28 +10,35 @@ import {
     MenuGroup,
     MenuItem,
     MenuList,
+    Popover,
+    PopoverArrow,
+    PopoverBody,
+    PopoverCloseButton,
+    PopoverContent,
+    PopoverHeader,
+    PopoverTrigger,
     Text,
     useDisclosure,
-} from "@chakra-ui/react";
-import UploadModal from "../documents/UploadModal";
-import { useGetDocumentsQuery, useUpdateCellMutation } from "../../app/services/api";
-import DocDrawer from "../documents/DocDrawer";
-import { TCell, TDocument } from "../../types";
-import { useEffect, useState } from "react";
-import { IconContext } from "react-icons";
-import { FaRegFileAlt, FaRegFileExcel, FaRegImage } from "react-icons/fa";
+} from '@chakra-ui/react';
+import UploadModal from '../documents/UploadModal';
+import { useGetDocumentsQuery, useUpdateCellMutation } from '../../app/services/api';
+import DocDrawer from '../documents/DocDrawer';
+import { TCell, TDocument } from '../../types';
+import { useEffect, useState } from 'react';
+import { IconContext } from 'react-icons';
+import { FaRegFileAlt, FaRegFileExcel, FaRegImage } from 'react-icons/fa';
 
 interface IProps {
     cell?: TCell | null;
     // preparedRow?: IPreparedRow;
-    addToCell?: boolean;
+    // addToCell?: boolean;
     handleDocsChange?: any;
     handleAddExistingDoc?: any;
     // handleAddExistingDocToCell?: any;
-    create?: boolean;
+    // create?: boolean;
     columnName?: string;
     // docs?: TDocument[];
-    topPadding?: string;
+    // topPadding?: string;
     border?: boolean;
 }
 
@@ -46,10 +54,10 @@ const UploadMenu = ({
     // create = true,
     columnName,
     // docs = [],
-    topPadding = "0px",
+    // topPadding = '0px',
     border = false,
 }: IProps) => {
-    const { onClose, isOpen } = useDisclosure();
+    // const { onClose, isOpen } = useDisclosure();
 
     const { data: documents } = useGetDocumentsQuery(null);
     const [updateCell] = useUpdateCellMutation();
@@ -100,38 +108,27 @@ const UploadMenu = ({
     // };
 
     const getIcon = (type: string) => {
-        if (type === "jpg" || type === "png" || type === "jpeg") return <FaRegImage color={"rgb(123, 128, 154)"} />;
-        if (type === "xlsx") return <FaRegFileExcel color={"rgb(123, 128, 154)"} />;
+        if (type === 'jpg' || type === 'png' || type === 'jpeg') return <FaRegImage color={'rgb(123, 128, 154)'} />;
+        if (type === 'xlsx') return <FaRegFileExcel color={'rgb(123, 128, 154)'} />;
         return <FaRegFileAlt />;
     };
 
     return (
-        <Flex border={border ? "1px solid #e2e8f0" : "none"} borderRadius={border ? "5px" : "0"}>
-            <Menu closeOnSelect={false} placement={"left-start"}>
-                {isOpen ? (
-                    <MenuButton as={IconButton} aria-label="Options" icon={<PlusSquareIcon />} variant="ghost" />
-                ) : (
-                    <MenuButton
-                        as={IconButton}
-                        aria-label="Options"
-                        icon={<PlusSquareIcon />}
-                        onClick={onClose}
-                        variant="ghost"
-                    />
-                )}
-                <MenuList w={"400px"}>
-                    <MenuGroup title={(docs?.length || 0) > 0 ? "Selected files" : ""}>
-                        <Box overflowY={docs?.length > 8 ? "scroll" : "auto"} h={docs?.length > 8 ? "200px" : "auto"}>
+        <>
+            <Box></Box>
+            {/* <Button as={IconButton} aria-label="Options" icon={<PlusSquareIcon />} onClick={onClose} variant="unstyled" w={'10px'} h={'10px'} />
+            <Menu closeOnSelect={false} placement={'left-start'}>
+                <MenuList w={'400px'}>
+                    <MenuGroup title={(docs?.length || 0) > 0 ? 'Selected files' : ''}>
+                        <Box overflowY={docs?.length > 8 ? 'scroll' : 'auto'} h={docs?.length > 8 ? '200px' : 'auto'}>
                             {docs?.map((doc: any, index: number) => {
                                 return (
-                                    <Box key={index} pl={"5px"}>
+                                    <Box key={index} pl={'5px'}>
                                         <a href={doc.url} target="_blank">
                                             <MenuItem>
-                                                <Flex overflow={"hidden"}>
-                                                    <Box pt={"2px"} mr={"8px"}>
-                                                        <IconContext.Provider value={{ color: "#7b809a" }}>
-                                                            {getIcon(doc.ext || "")}
-                                                        </IconContext.Provider>
+                                                <Flex overflow={'hidden'}>
+                                                    <Box pt={'2px'} mr={'8px'}>
+                                                        <IconContext.Provider value={{ color: '#7b809a' }}>{getIcon(doc.ext || '')}</IconContext.Provider>
                                                     </Box>
                                                     <Text>{doc.filename}</Text>
                                                 </Flex>
@@ -142,9 +139,9 @@ const UploadMenu = ({
                             })}
                         </Box>
                     </MenuGroup>
-                    {docs?.length || 0 > 0 ? <MenuDivider mt={"10px"} mb={"20px"} /> : null}
-                    <MenuGroup title={"Upload or Create a document"}>
-                        <Box pl={"5px"}>
+                    {docs?.length || 0 > 0 ? <MenuDivider mt={'10px'} mb={'20px'} /> : null}
+                    <MenuGroup title={'Upload or Create a document'}>
+                        <Box pl={'5px'}>
                             <UploadModal
                                 documents={documents || []}
                                 cell={cell as any}
@@ -154,7 +151,7 @@ const UploadMenu = ({
                                 columnName={columnName}
                             />
                         </Box>
-                        <Box pl={"5px"}>
+                        <Box pl={'5px'}>
                             <DocDrawer
                                 documents={documents || []}
                                 cell={cell as any}
@@ -165,13 +162,9 @@ const UploadMenu = ({
                             />
                         </Box>
                     </MenuGroup>
-                    {filteredDocs.length || 0 > 0 ? <MenuDivider mt={"10px"} mb={"20px"} /> : null}
-                    <MenuGroup title={filteredDocs.length || 0 > 0 ? "Or select an existing file" : ""}>
-                        <Box
-                            pl={"5px"}
-                            overflowY={filteredDocs.length > 8 ? "scroll" : "auto"}
-                            h={filteredDocs.length > 8 ? "200px" : "auto"}
-                        >
+                    {filteredDocs.length || 0 > 0 ? <MenuDivider mt={'10px'} mb={'20px'} /> : null}
+                    <MenuGroup title={filteredDocs.length || 0 > 0 ? 'Or select an existing file' : ''}>
+                        <Box pl={'5px'} overflowY={filteredDocs.length > 8 ? 'scroll' : 'auto'} h={filteredDocs.length > 8 ? '200px' : 'auto'}>
                             {filteredDocs?.map((document, index) => {
                                 return (
                                     <Box key={index}>
@@ -188,11 +181,9 @@ const UploadMenu = ({
                                                 // filterDocsInRow(document);
                                             }}
                                         >
-                                            <Flex overflow={"hidden"}>
-                                                <Box pt={"2px"} mr={"8px"}>
-                                                    <IconContext.Provider value={{ color: "#7b809a" }}>
-                                                        {getIcon(document.ext || "")}
-                                                    </IconContext.Provider>
+                                            <Flex overflow={'hidden'}>
+                                                <Box pt={'2px'} mr={'8px'}>
+                                                    <IconContext.Provider value={{ color: '#7b809a' }}>{getIcon(document.ext || '')}</IconContext.Provider>
                                                 </Box>
                                                 <Text>{document.filename}</Text>
                                             </Flex>
@@ -200,10 +191,7 @@ const UploadMenu = ({
                                     </Box>
                                 );
                             })}
-                            {/* <Flex pr={"15px"} mt={"15px"}>
-                            <Spacer />
-                            <PrimaryButton size="sm">SAVE</PrimaryButton>
-                        </Flex> */}
+                            
                         </Box>
                     </MenuGroup>
                 </MenuList>
@@ -213,9 +201,9 @@ const UploadMenu = ({
                             {docs?.length > 0 ? `${docs?.length} ${docs?.length > 1 ? "docs" : "doc"}` : "No files"}
                         </Text>
                     </Box>
-                </MenuButton>
-            </Menu>
-        </Flex>
+                </MenuButton> 
+            </Menu> */}
+        </>
     );
 };
 

@@ -171,32 +171,26 @@ const TableContent = ({
         setDraggedId(null);
     }, [overId, draggedId]);
 
-    const handleChange = useCallback(
-        (row: any) => {
-            console.log(row);
-            handleUpdateRow(row);
-            handleUpdateRowNoRender(row);
-            setCurrentRows((prev) => prev.map((prevRow) => (prevRow._id === row._id ? row : prevRow)));
-        },
-        [currentRows]
-    );
+    const handleChange = (row: any) => {
+        console.log(row);
+        handleUpdateRow(row);
+        handleUpdateRowNoRender(row);
+        setCurrentRows((prev) => prev.map((prevRow) => (prevRow._id === row._id ? row : prevRow)));
+    };
 
-    const handleDeleteBoxChangeForRow = useCallback(
-        (status: boolean, index: number) => {
-            console.log(currentRows);
-            // setCurrentRows((prevRows) => prevRows.map((prevRow, rowIndex) => (index === rowIndex ? { ...prevRow, markedForDeletion: status } : prevRow)));
-            // if (status) {
-            //     setNumberOfDeleteItems(numberOfDeleteItems + 1);
-            // } else {
-            //     setNumberOfDeleteItems(numberOfDeleteItems - 1);
-            // }
+    const handleDeleteBoxChangeForRow = (status: boolean, index: number) => {
+        console.log(currentRows);
+        // setCurrentRows((prevRows) => prevRows.map((prevRow, rowIndex) => (index === rowIndex ? { ...prevRow, markedForDeletion: status } : prevRow)));
+        // if (status) {
+        //     setNumberOfDeleteItems(numberOfDeleteItems + 1);
+        // } else {
+        //     setNumberOfDeleteItems(numberOfDeleteItems - 1);
+        // }
 
-            // Allows Table component to set
-            handleDeleteBoxChange(status, index);
-            setRows(currentRows.map((prevRow, rowIndex) => (index === rowIndex ? { ...prevRow, markedForDeletion: status } : prevRow)));
-        },
-        [currentRows]
-    );
+        // Allows Table component to set
+        handleDeleteBoxChange(status, index);
+        setRows(currentRows.map((prevRow, rowIndex) => (index === rowIndex ? { ...prevRow, markedForDeletion: status } : prevRow)));
+    };
 
     const [show, setShow] = useState(true);
     return (
@@ -245,7 +239,7 @@ const TableContent = ({
                                     handleSetOverId={handleSetOverId}
                                     handleSwap={handleSwap}
                                     handleChange={handleChange}
-                                    deleteBoxIsChecked={deleteCheckboxStatusList[rowIndex]}
+                                    deleteBoxIsChecked={row.markedForDeletion}
                                     handleDeleteBoxChange={handleDeleteBoxChangeForRow}
                                     rowCallUpdate={rowCallUpdate}
                                 />

@@ -1,6 +1,6 @@
 import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { Box, Button, Checkbox, Flex, Text } from '@chakra-ui/react';
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState, useTransition } from 'react';
 import LabelMenu from '../../features/dataCollections/LabelMenu';
 import PeopleMenu from '../../features/dataCollections/PeopleMenu';
 import DateInput from '../../features/dataCollections/DateInput';
@@ -10,6 +10,7 @@ import EditRow from '../../features/dataCollections/EditRow';
 import NoteModal from '../../features/dataCollections/NoteModal';
 import { FaRegBell } from 'react-icons/fa';
 import { FaRegSquareCheck } from 'react-icons/fa6';
+import UploadMenu from '../../features/dataCollections/UploadMenu';
 
 const Row = ({
     row,
@@ -45,54 +46,51 @@ const Row = ({
         []
     );
 
+    const [isPending, startTransition] = useTransition();
+
     const [overId, setOverId] = useState<number | null>(null);
     const [draggedId, setDraggedId] = useState<number | null>(null);
 
     const [deleteCheckboxIsChecked, setDeleteCheckboxIsChecked] = useState(deleteBoxIsChecked);
 
-    const handleDragStart = useCallback(
-        (event: React.DragEvent<HTMLDivElement>, rowIndex: number) => {
-            localStorage.setItem('rowDragged', `${rowIndex}`);
-            handleSetDraggedId(rowIndex);
-            setDraggedId(rowIndex);
-            // const reorderHandle: any = document.getElementById(`reorder-handle-${rowIndex}`);
-            // reorderHandle.style.cursor = 'move';
-            // setRows((prev) => prev.filter((_, index) => index !== rowIndex));
-        },
-        [draggedId, setDraggedId, handleSetDraggedId]
-    );
+    useEffect(() => {
+        setDeleteCheckboxIsChecked(deleteBoxIsChecked);
+    }, []);
 
-    const handleDragEnter = useCallback(
-        (event: React.DragEvent<HTMLDivElement>) => {
-            // console.log(draggedId);
-            // if (draggedId !== null) {
-            event.preventDefault();
-            event.stopPropagation();
-            // }
-        },
-        [draggedId]
-    );
+    const handleDragStart = (event: React.DragEvent<HTMLDivElement>, rowIndex: number) => {
+        localStorage.setItem('rowDragged', `${rowIndex}`);
+        handleSetDraggedId(rowIndex);
+        setDraggedId(rowIndex);
+        // const reorderHandle: any = document.getElementById(`reorder-handle-${rowIndex}`);
+        // reorderHandle.style.cursor = 'move';
+        // setRows((prev) => prev.filter((_, index) => index !== rowIndex));
+    };
 
-    const handleDragLeave = useCallback((event: React.DragEvent<HTMLDivElement>) => {
+    const handleDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
+        // console.log(draggedId);
+        // if (draggedId !== null) {
+        event.preventDefault();
+        event.stopPropagation();
+        // }
+    };
+
+    const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
         event.preventDefault();
         event.stopPropagation();
 
         // setOver(false);
-    }, []);
+    };
 
-    const handleDragOver = useCallback(
-        (event: React.DragEvent<HTMLDivElement>, rowIndex: number) => {
-            console.log(localStorage.getItem('rowDragged'));
-            if (localStorage.getItem('rowDragged') !== null) {
-                event.preventDefault();
-                event.stopPropagation();
+    const handleDragOver = (event: React.DragEvent<HTMLDivElement>, rowIndex: number) => {
+        console.log(localStorage.getItem('rowDragged'));
+        if (localStorage.getItem('rowDragged') !== null) {
+            event.preventDefault();
+            event.stopPropagation();
 
-                handleSetOverId(rowIndex);
-                setOverId(rowIndex);
-            }
-        },
-        [handleSetOverId, draggedId]
-    );
+            handleSetOverId(rowIndex);
+            setOverId(rowIndex);
+        }
+    };
 
     const handleDragEnd = useCallback(
         (event: any) => {
@@ -114,34 +112,30 @@ const Row = ({
 
     const handleDeleteCheckboxChange = () => {
         setDeleteCheckboxIsChecked(!deleteCheckboxIsChecked);
-        handleDeleteBoxChange(!deleteCheckboxIsChecked, rowIndex);
+        startTransition(() => {
+            handleDeleteBoxChange(!deleteCheckboxIsChecked, rowIndex);
+        });
     };
 
-    const onChange = useCallback(
-        (columnName: string, value: string) => {
-            console.log(value);
-            handleChange({ ...row, values: { ...row.values, [columnName]: value } });
-        },
-        [row]
-    );
+    const onChange = (columnName: string, value: string) => {
+        console.log(value);
+        handleChange({ ...row, values: { ...row.values, [columnName]: value } });
+    };
 
-    const editRowOnChange = useCallback(
-        (row: any) => {
-            console.log(row);
-            handleChange(row);
-        },
-        [handleChange]
-    );
+    const editRowOnChange = (row: any) => {
+        console.log(row);
+        handleChange(row);
+    };
 
-    const handleRemindersChange = useCallback(() => {
+    const handleRemindersChange = () => {
         console.log(!row.reminder);
         handleChange({ ...row, reminder: !row.reminder });
-    }, [row]);
+    };
 
-    const handleAcknowledgeClick = useCallback(() => {
+    const handleAcknowledgeClick = () => {
         console.log(!row.reminder);
         handleChange({ ...row, acknowledged: !row.acknowledged });
-    }, [row]);
+    };
 
     const [opened, setOpened] = useState<boolean>(row.subRowsAreOpen);
 
@@ -150,6 +144,7 @@ const Row = ({
     }, [row]);
     return (
         <Box key={rowIndex} pos={'relative'} _hover={{ bgColor: '#f1f7ff' }} backgroundColor={row.markedForDeletion ? '#e1eeff' : 'unset'}>
+            <>{console.log('ROW RENDERED')}</>
             <Box
                 key={rowIndex}
                 id={`table-row-container-${rowIndex}`}
@@ -163,7 +158,7 @@ const Row = ({
                 <div
                     className="table-row content"
                     style={{
-                        gridTemplateColumns: '210px ' + gridTemplateColumns,
+                        gridTemplateColumns: '220px ' + gridTemplateColumns,
                     }}
                     onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, rowIndex)}
                     onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, rowIndex)}
@@ -186,8 +181,8 @@ const Row = ({
                                 onDragEnter={(event: React.DragEvent<HTMLDivElement>) => handleDragEnter(event)}
                                 onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
                             ></Box>
-                            <Box mt={'6px'} ml={'14px'}>
-                                <Checkbox mr={'1px'} isChecked={row.markedForDeletion} onChange={handleDeleteCheckboxChange} />
+                            {/* <Box mt={'6px'} ml={'14px'}>
+                                <Checkbox mr={'1px'} isChecked={deleteCheckboxIsChecked && !isPending} onChange={handleDeleteCheckboxChange} />
                             </Box>
                             <Box pt={'6px'}>
                                 <EditRow row={row} columns={columns} handleChange={editRowOnChange} />
@@ -205,7 +200,10 @@ const Row = ({
                                     <FaRegSquareCheck />
                                 </Text>
                             </Box>
-                            <Button
+                            <Box pt={'7px'} ml={'10px'} onClick={handleAcknowledgeClick} cursor={'pointer'}>
+                                <UploadMenu />
+                            </Box> */}
+                            {/* <Button
                                 variant={'unstyled'}
                                 h={'20px'}
                                 outline="unset"
@@ -217,7 +215,7 @@ const Row = ({
                                 }}
                             >
                                 <Text>{opened ? <ChevronDownIcon /> : <ChevronRightIcon />}</Text>
-                            </Button>
+                            </Button> */}
                         </Flex>
                     </span>
                     {columns.map((column: any, columnIndex: number) => {

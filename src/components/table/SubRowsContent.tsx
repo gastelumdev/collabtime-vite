@@ -14,7 +14,7 @@ const SubRowsContent = ({ rows, columns, gridTemplateColumns, opened }: { rows: 
         const columnWidths: any = gtcs.split(' ');
         columnWidths.shift();
 
-        const fullWidths = '170px ' + columnWidths.join(' ');
+        const fullWidths = '210px ' + columnWidths.join(' ');
 
         const subTableRows: any = document.getElementsByClassName('table-row subrow');
         for (const tableRow of subTableRows) {
@@ -105,7 +105,7 @@ const SubRowsContent = ({ rows, columns, gridTemplateColumns, opened }: { rows: 
                                 <div
                                     className="table-row content subrow"
                                     style={{
-                                        gridTemplateColumns: gridTemplateColumns,
+                                        gridTemplateColumns: '210px ' + gridTemplateColumns + ' 100px',
                                     }}
                                     onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, rowIndex)}
                                 >

@@ -35,8 +35,6 @@ interface ITextInputProps {
 }
 
 const TextInput = ({ id, columnName, value, type = 'tableCell', onChange }: ITextInputProps) => {
-    console.log(id, columnName);
-    console.info(id, columnName);
     const [active, setActive] = useState<boolean>(false);
     const [val, setVal] = useState<string>(value);
 

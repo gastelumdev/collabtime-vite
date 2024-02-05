@@ -213,12 +213,12 @@ const TableHeader = ({
             // Set the column widths
             const tableRows: any = document.getElementsByClassName('table-row');
             for (const tableRow of tableRows) {
-                tableRow.style.gridTemplateColumns = `210px ${columnWidth} 100px`;
+                tableRow.style.gridTemplateColumns = `220px ${columnWidth} 100px`;
             }
 
             const subTableRows: any = document.getElementsByClassName('table-row subrow');
             for (const tableRow of subTableRows) {
-                tableRow.style.gridTemplateColumns = `200px ${columnWidth} 100px`;
+                tableRow.style.gridTemplateColumns = `210px ${columnWidth} 100px`;
             }
 
             // Set the defaults of the handle
@@ -284,7 +284,7 @@ const TableHeader = ({
             <div
                 className="table-row header"
                 style={{
-                    gridTemplateColumns: '210px ' + gridTemplateColumns + ' 100px',
+                    gridTemplateColumns: '220px ' + gridTemplateColumns + ' 100px',
                     position: 'sticky',
                     top: '0',
                     height: headerHeight,
