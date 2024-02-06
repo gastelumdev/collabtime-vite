@@ -58,8 +58,9 @@ const Row = ({
     }, []);
 
     const handleDragStart = (event: React.DragEvent<HTMLDivElement>, rowIndex: number) => {
+        event.dataTransfer.setData('text', '');
         localStorage.setItem('rowDragged', `${rowIndex}`);
-        handleSetDraggedId(rowIndex);
+        // handleSetDraggedId(rowIndex);
         setDraggedId(rowIndex);
         // const reorderHandle: any = document.getElementById(`reorder-handle-${rowIndex}`);
         // reorderHandle.style.cursor = 'move';
@@ -75,6 +76,9 @@ const Row = ({
     };
 
     const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+        console.log('Left row ' + rowIndex);
+        setOverId(null);
+        localStorage.removeItem('rowOver');
         event.preventDefault();
         event.stopPropagation();
 
@@ -82,33 +86,21 @@ const Row = ({
     };
 
     const handleDragOver = (event: React.DragEvent<HTMLDivElement>, rowIndex: number) => {
-        console.log(localStorage.getItem('rowDragged'));
         if (localStorage.getItem('rowDragged') !== null) {
             event.preventDefault();
             event.stopPropagation();
 
-            handleSetOverId(rowIndex);
+            // handleSetOverId(rowIndex);
             setOverId(rowIndex);
+            localStorage.setItem('rowOver', `${rowIndex}`);
         }
     };
 
-    const handleDragEnd = useCallback(
-        (event: any) => {
-            // const newRows = [...rows];
-            // const [draggedRow] = newRows.splice(draggedId as number, 1);
-            // newRows.splice(overId as number, 0, draggedRow);
-
-            // setRows(newRows);
-
-            // setOverId(null);
-            // setDraggedId(null);
-            setDraggedId(null);
-            handleSetOverId(null);
-            handleSwap();
-            localStorage.removeItem('rowDragged');
-        },
-        [handleSwap, overId, draggedId]
-    );
+    const handleDragEnd = (event: any) => {
+        handleSwap();
+        setDraggedId(null);
+        setOverId(null);
+    };
 
     const handleDeleteCheckboxChange = () => {
         setDeleteCheckboxIsChecked(!deleteCheckboxIsChecked);
@@ -143,67 +135,87 @@ const Row = ({
         setOpened(row.subRowsAreOpen);
     }, [row]);
     return (
-        <Box key={rowIndex} pos={'relative'} _hover={{ bgColor: '#f1f7ff' }} backgroundColor={row.markedForDeletion ? '#e1eeff' : 'unset'}>
-            <>{console.log('ROW RENDERED')}</>
-            <Box
-                key={rowIndex}
-                id={`table-row-container-${rowIndex}`}
-                className="table-row-container"
-                style={{
-                    // backgroundColor: draggedId === rowIndex ? '#85bcff' : 'white',
-                    borderTop: '1px solid #edf2f7',
-                    // height: draggedId !== null && overId === rowIndex && draggedId >= rowIndex ? '26px' : '29px',
-                }}
+        <>
+            <div
+                className="drop-indicator-container"
+                onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, rowIndex)}
+                onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
             >
-                <div
-                    className="table-row content"
+                <Box
+                    id={`drop-indicator-${rowIndex}`}
+                    className="drop-indicator"
                     style={{
-                        gridTemplateColumns: '220px ' + gridTemplateColumns,
+                        visibility: overId !== null && overId === rowIndex ? 'visible' : 'hidden',
+                        bottom:
+                            overId === 0 && Number(localStorage.getItem('rowDragged')) >= rowIndex
+                                ? '-4px'
+                                : overId === rowIndex && Number(localStorage.getItem('rowDragged')) < rowIndex
+                                ? '-29px'
+                                : '0px',
                     }}
-                    onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, rowIndex)}
-                    onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, rowIndex)}
-                    onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
-                    onDragEnter={(event: React.DragEvent<HTMLDivElement>) => handleDragEnter(event)}
-                    onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
+                ></Box>
+            </div>
+            <Box key={rowIndex} pos={'relative'} _hover={{ bgColor: '#f1f7ff' }} backgroundColor={row.markedForDeletion ? '#e1eeff' : 'unset'}>
+                <>{console.log(`ROW ${rowIndex} RENDERED`)}</>
+                <Box
+                    key={rowIndex}
+                    id={`table-row-container-${rowIndex}`}
+                    className="table-row-container"
+                    style={{
+                        // backgroundColor: draggedId === rowIndex ? '#85bcff' : 'white',
+                        borderTop: '1px solid #edf2f7',
+                        // height: draggedId !== null && overId === rowIndex && draggedId >= rowIndex ? '26px' : '29px',
+                    }}
                 >
-                    <span style={{ borderRight: '1px solid #edf2f7' }}>
-                        <Flex>
-                            <Box
-                                id={`reorder-handle-${rowIndex}`}
-                                w={'15px'}
-                                h={'30px'}
-                                bgColor={'#2d82eb'}
-                                cursor={'move'}
-                                draggable
-                                onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, rowIndex)}
-                                onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, rowIndex)}
-                                onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
-                                onDragEnter={(event: React.DragEvent<HTMLDivElement>) => handleDragEnter(event)}
-                                onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
-                            ></Box>
-                            {/* <Box mt={'6px'} ml={'14px'}>
-                                <Checkbox mr={'1px'} isChecked={deleteCheckboxIsChecked && !isPending} onChange={handleDeleteCheckboxChange} />
-                            </Box>
-                            <Box pt={'6px'}>
-                                <EditRow row={row} columns={columns} handleChange={editRowOnChange} />
-                            </Box>
-                            <Box pt={'6px'}>
-                                <NoteModal row={row} updateRow={editRowOnChange} rowCallUpdate={rowCallUpdate} />
-                            </Box>
-                            <Box pt={'7px'} ml={'10px'} onClick={handleRemindersChange} cursor={'pointer'}>
-                                <Text fontSize={'15px'} color={row.reminder ? '#16b2fc' : '#cccccc'}>
-                                    <FaRegBell />
-                                </Text>
-                            </Box>
-                            <Box pt={'7px'} ml={'10px'} onClick={handleAcknowledgeClick} cursor={'pointer'}>
-                                <Text fontSize={'15px'} color={row.acknowledged ? '#16b2fc' : '#cccccc'}>
-                                    <FaRegSquareCheck />
-                                </Text>
-                            </Box>
-                            <Box pt={'7px'} ml={'10px'} onClick={handleAcknowledgeClick} cursor={'pointer'}>
-                                <UploadMenu />
-                            </Box> */}
-                            {/* <Button
+                    <div
+                        className="table-row content"
+                        style={{
+                            gridTemplateColumns: '220px ' + gridTemplateColumns,
+                        }}
+                        onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, rowIndex)}
+                        onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, rowIndex)}
+                        onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
+                        onDragEnter={(event: React.DragEvent<HTMLDivElement>) => handleDragEnter(event)}
+                        onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
+                    >
+                        <span style={{ borderRight: '1px solid #edf2f7' }}>
+                            <Flex>
+                                <Box
+                                    id={`reorder-handle-${rowIndex}`}
+                                    w={'15px'}
+                                    h={'30px'}
+                                    bgColor={'#2d82eb'}
+                                    cursor={'move'}
+                                    draggable
+                                    onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, rowIndex)}
+                                    onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, rowIndex)}
+                                    onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
+                                    onDragEnter={(event: React.DragEvent<HTMLDivElement>) => handleDragEnter(event)}
+                                    onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
+                                ></Box>
+                                <Box mt={'6px'} ml={'14px'}>
+                                    <Checkbox mr={'1px'} isChecked={deleteCheckboxIsChecked && !isPending} onChange={handleDeleteCheckboxChange} />
+                                </Box>
+                                <Box pt={'6px'}>
+                                    <EditRow row={row} columns={columns} handleChange={editRowOnChange} />
+                                </Box>
+                                <Box pt={'6px'}>
+                                    <NoteModal row={row} updateRow={editRowOnChange} rowCallUpdate={rowCallUpdate} />
+                                </Box>
+                                <Box pt={'7px'} ml={'10px'} onClick={handleRemindersChange} cursor={'pointer'}>
+                                    <Text fontSize={'15px'} color={row.reminder ? '#16b2fc' : '#cccccc'}>
+                                        <FaRegBell />
+                                    </Text>
+                                </Box>
+                                <Box pt={'7px'} ml={'10px'} onClick={handleAcknowledgeClick} cursor={'pointer'}>
+                                    <Text fontSize={'15px'} color={row.acknowledged ? '#16b2fc' : '#cccccc'}>
+                                        <FaRegSquareCheck />
+                                    </Text>
+                                </Box>
+                                <Box pt={'7px'} ml={'10px'} onClick={handleAcknowledgeClick} cursor={'pointer'}>
+                                    <UploadMenu />
+                                </Box>
+                                {/* <Button
                                 variant={'unstyled'}
                                 h={'20px'}
                                 outline="unset"
@@ -216,42 +228,49 @@ const Row = ({
                             >
                                 <Text>{opened ? <ChevronDownIcon /> : <ChevronRightIcon />}</Text>
                             </Button> */}
-                        </Flex>
-                    </span>
-                    {columns.map((column: any, columnIndex: number) => {
-                        return (
-                            <div
-                                key={columnIndex}
-                                className={'cell'}
-                                style={{
-                                    whiteSpace: 'nowrap',
-                                    fontSize: '12px',
-                                    borderBottom: '1px solid #edf2f7',
-                                }}
-                            >
-                                {column.type === 'label' || column.type === 'priority' || column.type === 'status' ? (
-                                    <LabelMenu
-                                        id={rowIndex}
-                                        labels={column.labels}
-                                        columnName={column.name}
-                                        value={row.values[column.name]}
-                                        onChange={onChange}
-                                    />
-                                ) : column.type === 'people' ? (
-                                    <PeopleMenu row={row} columnName={column.name} people={column.people} value={row.values[column.name]} onChange={onChange} />
-                                ) : column.type === 'date' ? (
-                                    <DateInput value={row.values[column.name]} columnName={column.name} onChange={onChange} />
-                                ) : (
-                                    <TextInput id={row._id} columnName={column.name} value={row.values[column.name]} onChange={onChange} />
-                                )}
-                                {/* {row.values[column.name]} */}
-                            </div>
-                        );
-                    })}
-                </div>
+                            </Flex>
+                        </span>
+                        {columns.map((column: any, columnIndex: number) => {
+                            return (
+                                <div
+                                    key={columnIndex}
+                                    className={'cell'}
+                                    style={{
+                                        whiteSpace: 'nowrap',
+                                        fontSize: '12px',
+                                        borderBottom: '1px solid #edf2f7',
+                                    }}
+                                >
+                                    {column.type === 'label' || column.type === 'priority' || column.type === 'status' ? (
+                                        <LabelMenu
+                                            id={rowIndex}
+                                            labels={column.labels}
+                                            columnName={column.name}
+                                            value={row.values[column.name]}
+                                            onChange={onChange}
+                                        />
+                                    ) : column.type === 'people' ? (
+                                        <PeopleMenu
+                                            row={row}
+                                            columnName={column.name}
+                                            people={column.people}
+                                            value={row.values[column.name]}
+                                            onChange={onChange}
+                                        />
+                                    ) : column.type === 'date' ? (
+                                        <DateInput value={row.values[column.name]} columnName={column.name} onChange={onChange} />
+                                    ) : (
+                                        <TextInput id={row._id} columnName={column.name} value={row.values[column.name]} onChange={onChange} />
+                                    )}
+                                    {/* {row.values[column.name]} */}
+                                </div>
+                            );
+                        })}
+                    </div>
+                </Box>
+                <SubRowsContent rows={rowsData} columns={columns} gridTemplateColumns={'170px ' + gridTemplateColumns} opened={opened} />
             </Box>
-            <SubRowsContent rows={rowsData} columns={columns} gridTemplateColumns={'170px ' + gridTemplateColumns} opened={opened} />
-        </Box>
+        </>
     );
 };
 

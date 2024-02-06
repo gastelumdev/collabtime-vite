@@ -138,38 +138,36 @@ const TableContent = ({
     }, [rows]);
 
     //****************************************************** */
-    const handleSetDraggedId = useCallback(
-        (rowIndex: number) => {
-            console.log(rowIndex);
-            setDraggedId(rowIndex);
+    const handleSetDraggedId = useCallback((rowIndex: number) => {
+        console.log(rowIndex);
+        setDraggedId(rowIndex);
+    }, []);
+
+    const handleSetOverId = useCallback((rowIndex: number | null) => {
+        console.log({ rowIndex });
+        setOverId(rowIndex);
+    }, []);
+
+    const handleSwap = useCallback(
+        (overId: number, draggedId: number) => {
+            console.log({ rowDragged: Number(localStorage.getItem('rowDragged')), rowOver: Number(localStorage.getItem('rowOver')) });
+            console.log({ overId, draggedId, currentRows });
+            const newRows = [...currentRows];
+            const [draggedRow] = newRows.splice(Number(localStorage.getItem('rowDragged')) as number, 1);
+            newRows.splice(Number(localStorage.getItem('rowOver')) as number, 0, draggedRow);
+
+            setCurrentRows(newRows);
+            setRows(newRows);
+
+            // const rowIds = newRows.map((newRow) => newRow._id);
+
+            handleReorderRows({ draggedRowPosition: Number(localStorage.getItem('rowDragged')), overRowPosition: Number(localStorage.getItem('rowOver')) });
+
+            setOverId(null);
+            setDraggedId(null);
         },
-        [draggedId]
+        [overId, draggedId, currentRows]
     );
-
-    const handleSetOverId = useCallback(
-        (rowIndex: number | null) => {
-            console.log({ rowIndex });
-            setOverId(rowIndex);
-        },
-        [overId]
-    );
-
-    const handleSwap = useCallback(() => {
-        console.log({ overId, draggedId });
-        const newRows = [...currentRows];
-        const [draggedRow] = newRows.splice(draggedId as number, 1);
-        newRows.splice(overId as number, 0, draggedRow);
-
-        setCurrentRows(newRows);
-        setRows(newRows);
-
-        const rowIds = newRows.map((newRow) => newRow._id);
-
-        handleReorderRows({ draggedRowPosition: draggedId, overRowPosition: overId });
-
-        setOverId(null);
-        setDraggedId(null);
-    }, [overId, draggedId]);
 
     const handleChange = (row: any) => {
         console.log(row);
@@ -207,48 +205,48 @@ const TableContent = ({
                 setShow(true);
             }}
         >
-            {show ? (
-                <ViewportList viewportRef={ref} items={currentRows} overscan={25}>
-                    {(row, rowIndex) => (
-                        <div key={row._id} className="item">
-                            <div key={row._id}>
-                                <div
-                                    className="drop-indicator-container"
-                                    onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, rowIndex)}
-                                >
-                                    <Box
-                                        id={`drop-indicator-${rowIndex}`}
-                                        className="drop-indicator"
-                                        style={{
-                                            visibility: overId !== null && overId === rowIndex ? 'visible' : 'hidden',
-                                            bottom:
-                                                draggedId !== null && overId === 0 && draggedId >= rowIndex
-                                                    ? '-4px'
-                                                    : draggedId !== null && overId === rowIndex && draggedId < rowIndex
-                                                    ? '-29px'
-                                                    : '0px',
-                                        }}
-                                    ></Box>
-                                </div>
-                                <Row
-                                    row={row}
-                                    rowIndex={rowIndex}
-                                    columns={columns}
-                                    gridTemplateColumns={gridTemplateColumns}
-                                    handleSetDraggedId={handleSetDraggedId}
-                                    handleSetOverId={handleSetOverId}
-                                    handleSwap={handleSwap}
-                                    handleChange={handleChange}
-                                    deleteBoxIsChecked={row.markedForDeletion}
-                                    handleDeleteBoxChange={handleDeleteBoxChangeForRow}
-                                    rowCallUpdate={rowCallUpdate}
-                                />
-                            </div>
-                            <div></div>
+            {/* {currentRows.map((row, rowIndex) => (
+                <div key={row._id} className="item">
+                    <div key={row._id}>
+                        <Row
+                            row={row}
+                            rowIndex={rowIndex}
+                            columns={columns}
+                            gridTemplateColumns={gridTemplateColumns}
+                            handleSetDraggedId={handleSetDraggedId}
+                            handleSetOverId={handleSetOverId}
+                            handleSwap={handleSwap}
+                            handleChange={handleChange}
+                            deleteBoxIsChecked={row.markedForDeletion}
+                            handleDeleteBoxChange={handleDeleteBoxChangeForRow}
+                            rowCallUpdate={rowCallUpdate}
+                        />
+                    </div>
+                    <div></div>
+                </div>
+            ))} */}
+            <ViewportList viewportRef={ref} items={currentRows} overscan={25}>
+                {(row, rowIndex) => (
+                    <div key={row._id} className="item">
+                        <div key={row._id}>
+                            <Row
+                                row={row}
+                                rowIndex={rowIndex}
+                                columns={columns}
+                                gridTemplateColumns={gridTemplateColumns}
+                                handleSetDraggedId={handleSetDraggedId}
+                                handleSetOverId={handleSetOverId}
+                                handleSwap={handleSwap}
+                                handleChange={handleChange}
+                                deleteBoxIsChecked={row.markedForDeletion}
+                                handleDeleteBoxChange={handleDeleteBoxChangeForRow}
+                                rowCallUpdate={rowCallUpdate}
+                            />
                         </div>
-                    )}
-                </ViewportList>
-            ) : null}
+                        <div></div>
+                    </div>
+                )}
+            </ViewportList>
         </div>
     );
 };
