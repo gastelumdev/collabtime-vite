@@ -27,10 +27,10 @@ import { io } from 'socket.io-client';
 interface IProps {
     row: TRow;
     updateRow: any;
-    rowCallUpdate: any;
+    rowCallUpdate?: any;
 }
 
-const NoteModal = ({ row, updateRow, rowCallUpdate }: IProps) => {
+const NoteModal = ({ row, updateRow }: IProps) => {
     const { isOpen: notesIsOpen, onOpen: notesOnOpen, onClose: notesOnClose } = useDisclosure();
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
     const { data: workspace } = useGetOneWorkspaceQuery(localStorage.getItem('workspaceId') || '');

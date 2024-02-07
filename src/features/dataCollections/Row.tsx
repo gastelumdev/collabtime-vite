@@ -1,5 +1,4 @@
-import { Checkbox } from '@chakra-ui/react';
-import React, { memo } from 'react';
+import { memo } from 'react';
 import TextInput from './TextInput';
 import LabelMenu from './LabelMenu';
 

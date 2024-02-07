@@ -1,15 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import PrimaryDrawer from '../../components/PrimaryDrawer';
-import { Box, Flex, Input, Spacer, Text, useDisclosure } from '@chakra-ui/react';
-import Select from 'react-select';
+import { Box, Flex, Spacer, Text, useDisclosure } from '@chakra-ui/react';
 import { TCell } from '../../types';
-import { FaRegEdit } from 'react-icons/fa';
 import { RiEditBoxLine } from 'react-icons/ri';
-import { cellColorStyles } from './select.styles';
-import { useGetUserQuery, useUpdateCellMutation } from '../../app/services/api';
+import { useGetUserQuery } from '../../app/services/api';
 import { IconContext } from 'react-icons';
-import UploadMenu from './UploadMenu';
-import LinksMenu from './LinksMenu';
 import LabelMenu from './LabelMenu';
 import PeopleMenu from './PeopleMenu';
 import DateInput from './DateInput';
@@ -22,17 +17,17 @@ interface IProps {
     handleChange: any;
 }
 
-const EditRow = ({ cells, columns, row, handleChange }: IProps) => {
+const EditRow = ({ columns, row, handleChange }: IProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
-    const [updateCell] = useUpdateCellMutation();
+    // const [updateCell] = useUpdateCellMutation();
 
-    const [editMode, setEditMode] = useState<string[]>([]);
-    const [tempValue, setTempValue] = useState('');
-    const [initialValue, setInitialValue] = useState('');
+    // const [editMode, setEditMode] = useState<string[]>([]);
+    // const [tempValue, setTempValue] = useState('');
+    // const [initialValue, setInitialValue] = useState('');
 
-    const [permissions, setPermissions] = useState<number>();
+    const [_, setPermissions] = useState<number>();
 
     useEffect(() => {
         getPermissions();

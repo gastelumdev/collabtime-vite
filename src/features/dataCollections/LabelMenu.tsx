@@ -1,25 +1,6 @@
-import {
-    Box,
-    Button,
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuList,
-    Popover,
-    PopoverArrow,
-    PopoverBody,
-    PopoverCloseButton,
-    PopoverContent,
-    PopoverHeader,
-    PopoverTrigger,
-    Text,
-    Tooltip,
-    useDisclosure,
-} from '@chakra-ui/react';
+import { Box, Button, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text, useDisclosure } from '@chakra-ui/react';
 import { getTextColor } from '../../utils/helpers';
 import { memo, useEffect, useState } from 'react';
-import { TCell, TRow } from '../../types';
-import { useUpdateCellMutation, useUpdateRowMutation } from '../../app/services/api';
 
 interface ILabel {
     value: string;
@@ -28,7 +9,7 @@ interface ILabel {
 }
 
 interface IProps {
-    id: number;
+    id?: number;
     labels: any;
     columnName: string;
     value: string;
@@ -38,9 +19,9 @@ interface IProps {
     // options: { value: string; label: string; color: string }[] | undefined;
 }
 
-const LabelMenu = ({ id, columnName, labels, value = '', onChange }: IProps) => {
+const LabelMenu = ({ columnName, labels, value = '', onChange }: IProps) => {
     const { onClose } = useDisclosure();
-    const [updateRow] = useUpdateRowMutation();
+    // const [updateRow] = useUpdateRowMutation();
 
     const [labelValue, setLabelValue] = useState<string>('');
     const [labelLabel, setLabelLabel] = useState<string>('');
@@ -142,6 +123,7 @@ const LabelMenu = ({ id, columnName, labels, value = '', onChange }: IProps) => 
                     paddingY={'4px'}
                     cursor={'pointer'}
                     onMouseDown={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+                        event;
                         setActive(true);
                     }}
                 >

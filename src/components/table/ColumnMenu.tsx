@@ -1,20 +1,4 @@
-import {
-    Box,
-    Button,
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuList,
-    Popover,
-    PopoverArrow,
-    PopoverBody,
-    PopoverCloseButton,
-    PopoverContent,
-    PopoverHeader,
-    PopoverTrigger,
-    Portal,
-} from '@chakra-ui/react';
-import React from 'react';
+import { Box, Button, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Portal } from '@chakra-ui/react';
 
 const ColumnMenu = ({ column, handleDeleteColumn }: { column: any; handleDeleteColumn: any }) => {
     const handleDeleteColumnClick = () => {

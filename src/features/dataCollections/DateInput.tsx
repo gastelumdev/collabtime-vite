@@ -1,7 +1,5 @@
 import { Box, Input } from '@chakra-ui/react';
-import { TCell } from '../../types';
 import { useEffect, useState } from 'react';
-import { useUpdateCellMutation } from '../../app/services/api';
 
 interface IProps {
     value: string;
@@ -11,7 +9,7 @@ interface IProps {
 }
 
 const DateInput = ({ value, columnName, permissions = 4, onChange }: IProps) => {
-    const [updateCell] = useUpdateCellMutation();
+    // const [updateCell] = useUpdateCellMutation();
     const [inputValue, setInputValue] = useState<string>(value);
 
     useEffect(() => {
@@ -28,9 +26,9 @@ const DateInput = ({ value, columnName, permissions = 4, onChange }: IProps) => 
         onChange(columnName, event.target.value);
     };
 
-    const handleUpdateRowOnBlur = (event: React.FocusEvent<HTMLInputElement, Element>) => {
-        // updateCell({ ...cell, value: event.target.value });
-    };
+    // const handleUpdateRowOnBlur = (event: React.FocusEvent<HTMLInputElement, Element>) => {
+    //     // updateCell({ ...cell, value: event.target.value });
+    // };
 
     return (
         <Box px={'20px'} pt={'5px'}>

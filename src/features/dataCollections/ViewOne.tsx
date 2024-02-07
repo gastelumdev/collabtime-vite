@@ -43,7 +43,6 @@ import PrimaryButton from '../../components/Buttons/PrimaryButton';
 import PrimaryDrawer from '../../components/PrimaryDrawer';
 import { cellColorStyles } from './select.styles';
 import { TColumn } from '../../types';
-import UploadMenu from './UploadMenu';
 import LinksMenu from './LinksMenu';
 import { MdContentCopy } from 'react-icons/md';
 import { CloseIcon } from '@chakra-ui/icons';
@@ -438,7 +437,7 @@ const ViewOne = () => {
                                                 />
                                             ) : column.type === 'upload' ? (
                                                 <Box>
-                                                    <UploadMenu
+                                                    {/* <UploadMenu
                                                         // cell={cell}
                                                         // docs={cell.docs}
                                                         addToCell={false}
@@ -449,7 +448,7 @@ const ViewOne = () => {
                                                         columnName={column.name}
                                                         topPadding="7px"
                                                         border={true}
-                                                    />
+                                                    /> */}
                                                 </Box>
                                             ) : column.type === 'link' ? (
                                                 <Box>

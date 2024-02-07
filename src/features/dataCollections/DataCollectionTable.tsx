@@ -62,23 +62,16 @@ import { AiOutlineCheck, AiOutlineClose, AiOutlinePlus } from 'react-icons/ai';
 import { createRowColorStyles } from './select.styles';
 import NoteModal from './NoteModal';
 import RenameColumn from './RenameColumn';
-import EditRow from './EditRow';
-import { TCell, TColumn, TDocument, TRow, TTag } from '../../types';
+import { TColumn, TRow, TTag } from '../../types';
 import CreateColumn from './CreateColumn';
 import { io } from 'socket.io-client';
 import { GoTag } from 'react-icons/go';
 import TagsModal from '../tags/TagsModal';
 import { useParams } from 'react-router-dom';
 import { FaAngleLeft, FaAngleRight, FaRegBell, FaRegCheckSquare } from 'react-icons/fa';
-import UploadMenu from './UploadMenu';
 import LinksMenu from './LinksMenu';
 
 import './styles.css';
-import LabelMenu from './LabelMenu';
-import TextInput from './TextInput';
-import NumberInput from './NumberInput';
-import DateInput from './DateInput';
-import PeopleMenu from './PeopleMenu';
 // import { ConsoleSqlOutlined } from "@ant-design/icons";
 
 const DeleteColumnAlert = ({ column }: { column: TColumn }) => {
@@ -375,10 +368,10 @@ const DataCollectionTable = ({
      * @param name This is the cell or column name that serves as the key in the row
      * @param docs This is the documents array that holds the created docs
      */
-    const handleDocsChange = (name: string, docs: TDocument[]) => {
-        const rowDocs = row.docs || [];
-        setRow({ ...row, [name]: rowDocs.concat(docs) });
-    };
+    // const handleDocsChange = (name: string, docs: TDocument[]) => {
+    //     const rowDocs = row.docs || [];
+    //     setRow({ ...row, [name]: rowDocs.concat(docs) });
+    // };
 
     /**
      * CREATE ROW SECTION
@@ -450,11 +443,11 @@ const DataCollectionTable = ({
      * @param name This is the cell or column name that serves as the key in the row
      * @param docs This is the documents array that holds the created docs
      */
-    const handleAddExistingDoc = (name: string, doc: TDocument) => {
-        const rowDocs = row.docs || [];
-        rowDocs.push(doc);
-        setRow({ ...row, [name]: rowDocs });
-    };
+    // const handleAddExistingDoc = (name: string, doc: TDocument) => {
+    //     const rowDocs = row.docs || [];
+    //     rowDocs.push(doc);
+    //     setRow({ ...row, [name]: rowDocs });
+    // };
 
     /**
      * UPDATE ROW SECTION
@@ -831,7 +824,7 @@ const DataCollectionTable = ({
                                                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => onDeleteRowCheckboxChange(event, row, index)}
                                                         isChecked={checkboxes[index]}
                                                     />
-                                                    <EditRow cells={row.cells} />
+                                                    {/* <EditRow cells={row.cells} /> */}
                                                     <NoteModal row={row} updateRow={updateRow} rowCallUpdate={rowCallUpdate} />
                                                     <Box ml={'10px'} pt={'2px'} cursor={'pointer'} onClick={() => handleReminderClick(row)}>
                                                         <FaRegBell color={row.reminder ? '#16b2fc' : '#b8b8b8'} />
@@ -890,7 +883,7 @@ const DataCollectionTable = ({
                                                 > */}
                                                 {column.type === 'label' || column.type === 'priority' || column.type === 'status' ? (
                                                     <Box>
-                                                        <LabelMenu row={row} columnName={column.name} labels={column.labels} value={row.values[column.name]} />
+                                                        {/* <LabelMenu row={row} columnName={column.name} labels={column.labels} value={row.values[column.name]} /> */}
                                                     </Box>
                                                 ) : column.type === 'people' ? (
                                                     <Box>
@@ -1055,13 +1048,14 @@ const DataCollectionTable = ({
                                                     />
                                                 </Box>
                                             ) : column.type == 'upload' ? (
-                                                <UploadMenu
-                                                    // preparedRow={row}
-                                                    handleDocsChange={handleDocsChange}
-                                                    handleAddExistingDoc={handleAddExistingDoc}
-                                                    create={true}
-                                                    columnName={column.name}
-                                                />
+                                                // <UploadMenu
+                                                //     // preparedRow={row}
+                                                //     handleDocsChange={handleDocsChange}
+                                                //     handleAddExistingDoc={handleAddExistingDoc}
+                                                //     create={true}
+                                                //     columnName={column.name}
+                                                // />
+                                                <Box></Box>
                                             ) : column.type == 'link' ? (
                                                 <LinksMenu cell={null} handleAddLinkClick={handleAddLinkClick} />
                                             ) : (

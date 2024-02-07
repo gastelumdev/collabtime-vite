@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { useCreateRowMutation, useGetColumnsQuery } from "../../app/services/api";
-import { TColumn, TDocument, TRow } from "../../types";
-import { Box, Card, CardBody, Container, Flex, Input, Spacer, Text } from "@chakra-ui/react";
-import Select from "react-select";
-import { createRowColorStyles } from "./select.styles";
-import UploadMenu from "./UploadMenu";
-import LinksMenu from "./LinksMenu";
-import PrimaryButton from "../../components/Buttons/PrimaryButton";
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useCreateRowMutation, useGetColumnsQuery } from '../../app/services/api';
+import { TColumn, TRow } from '../../types';
+import { Box, Card, CardBody, Container, Flex, Input, Spacer, Text } from '@chakra-ui/react';
+import Select from 'react-select';
+import { createRowColorStyles } from './select.styles';
+import LinksMenu from './LinksMenu';
+import PrimaryButton from '../../components/Buttons/PrimaryButton';
 
 const Form = () => {
     const { dataCollectionId } = useParams();
-    const { data: columns } = useGetColumnsQuery(dataCollectionId || "");
+    const { data: columns } = useGetColumnsQuery(dataCollectionId || '');
     const [createRow] = useCreateRowMutation();
     // const [updateRow] = useUpdateRowMutation();
 
@@ -30,7 +29,7 @@ const Form = () => {
      */
     const setDefaultRow = () => {
         let temp: TRow = {
-            dataCollection: dataCollectionId || "",
+            dataCollection: dataCollectionId || '',
             notesList: [],
             cells: [],
             tags: [],
@@ -38,7 +37,7 @@ const Form = () => {
             links: [],
         };
         for (const column of columns || []) {
-            temp = { ...temp, [column.name]: "" };
+            temp = { ...temp, [column.name]: '' };
         }
 
         setRow(temp);
@@ -81,10 +80,10 @@ const Form = () => {
      * @param name This is the cell or column name that serves as the key in the row
      * @param docs This is the documents array that holds the created docs
      */
-    const handleDocsChange = (name: string, docs: TDocument[]) => {
-        const rowDocs = row.docs || [];
-        setRow({ ...row, [name]: rowDocs.concat(docs) });
-    };
+    // const handleDocsChange = (name: string, docs: TDocument[]) => {
+    //     const rowDocs = row.docs || [];
+    //     setRow({ ...row, [name]: rowDocs.concat(docs) });
+    // };
 
     /**
      * CREATE ROW SECTION
@@ -125,14 +124,14 @@ const Form = () => {
      * @param name This is the cell or column name that serves as the key in the row
      * @param docs This is the documents array that holds the created docs
      */
-    const handleAddExistingDoc = (name: string, docs: TDocument[]) => {
-        const rowDocs = row.docs || [];
-        setRow({ ...row, [name]: rowDocs.concat(docs) });
-    };
+    // const handleAddExistingDoc = (name: string, docs: TDocument[]) => {
+    //     const rowDocs = row.docs || [];
+    //     setRow({ ...row, [name]: rowDocs.concat(docs) });
+    // };
     return (
         <>
             <Container>
-                <Card mt={"60px"}>
+                <Card mt={'60px'}>
                     <CardBody>
                         {columns?.map((column: TColumn, index: number) => {
                             const options: any = column.labels?.map((item) => {
@@ -146,73 +145,65 @@ const Form = () => {
                                 return {
                                     value: item._id,
                                     label: `${item.firstname} ${item.lastname}`,
-                                    color: "#ffffff",
+                                    color: '#ffffff',
                                 };
                             });
 
                             if (!column.includeInForm) return null;
 
                             return (
-                                <Box mb={"20px"} key={index}>
+                                <Box mb={'20px'} key={index}>
                                     <Flex>
-                                        <Text mb={"6px"}>
-                                            {(column.name[0].toUpperCase() + column.name.slice(1)).split("_").join(" ")}
-                                        </Text>
+                                        <Text mb={'6px'}>{(column.name[0].toUpperCase() + column.name.slice(1)).split('_').join(' ')}</Text>
                                     </Flex>
 
-                                    {column.type === "label" ||
-                                    column.type === "priority" ||
-                                    column.type === "status" ? (
-                                        <Box w={"100%"}>
+                                    {column.type === 'label' || column.type === 'priority' || column.type === 'status' ? (
+                                        <Box w={'100%'}>
                                             <Select
                                                 options={options}
                                                 styles={createRowColorStyles()}
-                                                onChange={(selectedOption) =>
-                                                    handleLabelChange(selectedOption, column.name)
-                                                }
+                                                onChange={(selectedOption) => handleLabelChange(selectedOption, column.name)}
                                             />
                                         </Box>
-                                    ) : column.type === "people" ? (
+                                    ) : column.type === 'people' ? (
                                         <Select
                                             options={peopleOptions}
                                             styles={createRowColorStyles()}
-                                            onChange={(selectedOption) =>
-                                                handleLabelChange(selectedOption, column.name)
-                                            }
+                                            onChange={(selectedOption) => handleLabelChange(selectedOption, column.name)}
                                         />
-                                    ) : column.type === "date" ? (
+                                    ) : column.type === 'date' ? (
                                         <input
                                             type="datetime-local"
                                             name={column.name}
                                             onChange={handleAddRowInputChange}
-                                            defaultValue={""}
+                                            defaultValue={''}
                                             style={{
-                                                border: "1px solid #e2e8f0",
-                                                borderRadius: "5px",
-                                                width: "100%",
-                                                padding: "6px",
+                                                border: '1px solid #e2e8f0',
+                                                borderRadius: '5px',
+                                                width: '100%',
+                                                padding: '6px',
                                             }}
                                         />
-                                    ) : column.type === "number" ? (
+                                    ) : column.type === 'number' ? (
                                         <input
                                             type="number"
-                                            defaultValue={""}
+                                            defaultValue={''}
                                             name={column.name}
                                             onChange={handleAddRowInputChange}
                                             style={{
-                                                outline: "none",
-                                                paddingLeft: "15px",
-                                                paddingTop: "6px",
-                                                paddingBottom: "6px",
-                                                border: "1px solid #e2e8f0",
-                                                borderRadius: "5px",
-                                                width: "100%",
+                                                outline: 'none',
+                                                paddingLeft: '15px',
+                                                paddingTop: '6px',
+                                                paddingBottom: '6px',
+                                                border: '1px solid #e2e8f0',
+                                                borderRadius: '5px',
+                                                width: '100%',
                                             }}
                                         />
-                                    ) : column.type === "upload" ? (
+                                    ) : column.type === 'upload' ? (
                                         <Box>
                                             <Text>
-                                                <UploadMenu
+                                                {/* <UploadMenu
                                                     // preparedRow={row}
                                                     // addToCell={false}
                                                     handleDocsChange={handleDocsChange}
@@ -221,18 +212,13 @@ const Form = () => {
                                                     columnName={column.name}
                                                     topPadding="7px"
                                                     border={true}
-                                                />
+                                                /> */}
                                             </Text>
                                         </Box>
-                                    ) : column.type === "link" ? (
+                                    ) : column.type === 'link' ? (
                                         <Box>
                                             <Text>
-                                                <LinksMenu
-                                                    cell={null}
-                                                    handleAddLinkClick={handleAddLinkClick}
-                                                    topPadding="7px"
-                                                    border={true}
-                                                />
+                                                <LinksMenu cell={null} handleAddLinkClick={handleAddLinkClick} topPadding="7px" border={true} />
                                             </Text>
                                         </Box>
                                     ) : (
@@ -241,8 +227,8 @@ const Form = () => {
                                             onChange={handleAddRowInputChange}
                                             placeholder="Enter text"
                                             value={row[column.name]}
-                                            size={"md"}
-                                            w={"100%"}
+                                            size={'md'}
+                                            w={'100%'}
                                         />
                                     )}
                                 </Box>

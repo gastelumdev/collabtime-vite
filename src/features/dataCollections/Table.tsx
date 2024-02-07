@@ -1,6 +1,6 @@
-import { createRef, memo, useRef } from 'react';
+import { createRef } from 'react';
 import { useState, useCallback, useEffect } from 'react';
-import { Box, Button, Card, Checkbox, Flex, IconButton, Input, Text } from '@chakra-ui/react';
+import { Box, Card, Checkbox, Flex, IconButton, Text } from '@chakra-ui/react';
 import './table.css';
 import Columns from './Columns';
 import { TColumn } from '../../types';
@@ -18,9 +18,7 @@ interface IProps {
 
 const Table = ({ headers, rows, headerHeight = '30px', minCellWidth, columnResizingOffset }: IProps) => {
     const tableElement = createRef<any>();
-    const dragItem = useRef<any>(null);
-    const dragOverItem = useRef<any>(null);
-    const [headerRefs, setHeaderRefs] = useState<any>([]);
+    const [setHeaderRefs] = useState<any>([]);
     const [currentColumns, setCurrentColumns] = useState<any[]>(headers || []);
     const [currentRows, setCurrentRows] = useState<any[]>(rows || []);
     const [tableHeight, setTableHeight] = useState<number>(window.innerHeight - 146 - 40);
@@ -184,13 +182,14 @@ const Table = ({ headers, rows, headerHeight = '30px', minCellWidth, columnResiz
     //     [draggedRowIndex]
     // );
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
-    const [dropIndex, setDropIndex] = useState<number | null>(null);
+    const [_, setDropIndex] = useState<number | null>(null);
     const [draggedRow, setDraggedRow] = useState<any | null>(null);
     const [dragging, setDragging] = useState<boolean>(false);
     const [mouseDown, setMouseDown] = useState<boolean>(false);
 
     const handleMouseEnter = useCallback(
         (e: any, rowIndex: number) => {
+            e;
             if (activeIndex === null) {
                 console.log('No active index');
             } else {
@@ -203,6 +202,7 @@ const Table = ({ headers, rows, headerHeight = '30px', minCellWidth, columnResiz
 
     const handleMouseDown = useCallback(
         (e: any, rowIndex: number) => {
+            e;
             console.log(rowIndex);
             setActiveIndex(rowIndex);
             setMouseDown(true);
@@ -211,6 +211,7 @@ const Table = ({ headers, rows, headerHeight = '30px', minCellWidth, columnResiz
     );
     const handleMouseLeave = useCallback(
         (e: any) => {
+            e;
             console.log(dragging);
             if (!dragging && mouseDown) {
                 setDraggedRow(currentRows[activeIndex as number]);
@@ -313,7 +314,7 @@ const Table = ({ headers, rows, headerHeight = '30px', minCellWidth, columnResiz
                                     onMouseDown={(event) => handleMouseDown(event, rowIndex)}
                                     onMouseEnter={(event) => handleMouseEnter(event, rowIndex)}
                                     onMouseLeave={(event) => handleMouseLeave(event)}
-                                    onMouseUp={(event) => handleMouseUp()}
+                                    onMouseUp={() => handleMouseUp()}
                                     // onMouseMove={(event) => handleMouseMove(event)}
                                 >
                                     <td>

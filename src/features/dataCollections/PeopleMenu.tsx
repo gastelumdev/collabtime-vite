@@ -1,23 +1,8 @@
-import {
-    Box,
-    Button,
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuList,
-    Popover,
-    PopoverArrow,
-    PopoverBody,
-    PopoverContent,
-    PopoverTrigger,
-    Text,
-    Tooltip,
-    useDisclosure,
-} from '@chakra-ui/react';
+import { Box, Button, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text, useDisclosure } from '@chakra-ui/react';
 import { getTextColor } from '../../utils/helpers';
-import { memo, useEffect, useState } from 'react';
-import { TCell, TRow, TUser } from '../../types';
-import { useUpdateCellMutation, useUpdateRowMutation } from '../../app/services/api';
+import { useEffect, useState } from 'react';
+import { TRow, TUser } from '../../types';
+import { useUpdateRowMutation } from '../../app/services/api';
 
 interface ILabel {
     value: string;
@@ -130,6 +115,7 @@ const PeopleMenu = ({ row, columnName, people, value = '', onChange }: IProps) =
                     paddingY={'4px'}
                     cursor={'pointer'}
                     onMouseDown={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+                        event;
                         setActive(true);
                     }}
                 >

@@ -1,6 +1,5 @@
 import { memo, useCallback, useEffect, useState } from 'react';
 import { TColumn } from '../../types';
-import { Box } from '@chakra-ui/react';
 import './table.css';
 
 interface IProps {
@@ -14,7 +13,7 @@ interface IProps {
 const Columns = ({ columns, rearangeColumns, headerHeight, minCellWidth, columnResizingOffset }: IProps) => {
     console.log('COLUMNS RENDERED');
     const [currentColumns, setCurrentColumns] = useState(columns);
-    const [headerRefs, setHeaderRefs] = useState<any>([]);
+    const [headerRefs] = useState<any>([]);
     const [columnWidth, setColumnWidth] = useState('');
 
     useEffect(() => {

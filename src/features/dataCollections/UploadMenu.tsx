@@ -1,32 +1,8 @@
-import { PlusSquareIcon } from '@chakra-ui/icons';
-import {
-    Box,
-    Button,
-    Flex,
-    IconButton,
-    Menu,
-    MenuButton,
-    MenuDivider,
-    MenuGroup,
-    MenuItem,
-    MenuList,
-    Popover,
-    PopoverArrow,
-    PopoverBody,
-    PopoverCloseButton,
-    PopoverContent,
-    PopoverHeader,
-    PopoverTrigger,
-    Text,
-    useDisclosure,
-} from '@chakra-ui/react';
-import UploadModal from '../documents/UploadModal';
-import { useGetDocumentsQuery, useUpdateCellMutation } from '../../app/services/api';
-import DocDrawer from '../documents/DocDrawer';
-import { TCell, TDocument } from '../../types';
+import { Box } from '@chakra-ui/react';
+import { useGetDocumentsQuery } from '../../app/services/api';
+
+import { TCell } from '../../types';
 import { useEffect, useState } from 'react';
-import { IconContext } from 'react-icons';
-import { FaRegFileAlt, FaRegFileExcel, FaRegImage } from 'react-icons/fa';
 
 interface IProps {
     cell?: TCell | null;
@@ -44,25 +20,21 @@ interface IProps {
 
 const UploadMenu = ({
     cell = null,
-    // preparedRow = {
-    //     docs: [],
-    // },
-    // addToCell = false,
-    handleDocsChange,
-    handleAddExistingDoc,
-    // handleAddExistingDocToCell,
-    // create = true,
-    columnName,
-    // docs = [],
-    // topPadding = '0px',
-    border = false,
-}: IProps) => {
+}: // preparedRow = {
+//     docs: [],
+// },
+// addToCell = false,
+// handleAddExistingDocToCell,
+// create = true,
+// docs = [],
+// topPadding = '0px',
+IProps) => {
     // const { onClose, isOpen } = useDisclosure();
 
     const { data: documents } = useGetDocumentsQuery(null);
-    const [updateCell] = useUpdateCellMutation();
+    // const [updateCell] = useUpdateCellMutation();
 
-    const [filteredDocs, setFilteredDocs] = useState<TDocument[]>([]);
+    // const [setFilteredDocs] = useState<TDocument[]>([]);
     const [docs, setDocs] = useState<any[]>([]);
 
     useEffect(() => {
@@ -96,7 +68,7 @@ const UploadMenu = ({
             });
         }
 
-        setFilteredDocs(filtered || []);
+        // setFilteredDocs(filtered || []);
     };
 
     // const filterDocsInRow = (document: TDocument) => {
@@ -107,11 +79,11 @@ const UploadMenu = ({
     //     setFilteredDocs(ds);
     // };
 
-    const getIcon = (type: string) => {
-        if (type === 'jpg' || type === 'png' || type === 'jpeg') return <FaRegImage color={'rgb(123, 128, 154)'} />;
-        if (type === 'xlsx') return <FaRegFileExcel color={'rgb(123, 128, 154)'} />;
-        return <FaRegFileAlt />;
-    };
+    // const getIcon = (type: string) => {
+    //     if (type === 'jpg' || type === 'png' || type === 'jpeg') return <FaRegImage color={'rgb(123, 128, 154)'} />;
+    //     if (type === 'xlsx') return <FaRegFileExcel color={'rgb(123, 128, 154)'} />;
+    //     return <FaRegFileAlt />;
+    // };
 
     return (
         <>

@@ -1,40 +1,25 @@
-import {
-    Box,
-    Button,
-    Input,
-    Popover,
-    PopoverArrow,
-    PopoverBody,
-    PopoverContent,
-    PopoverHeader,
-    PopoverTrigger,
-    Text,
-    Textarea,
-    Tooltip,
-} from '@chakra-ui/react';
-import { TCell, TRow } from '../../types';
+import { Box, Button, Textarea } from '@chakra-ui/react';
 import { memo, useEffect, useState } from 'react';
-import { useUpdateCellMutation, useUpdateRowMutation } from '../../app/services/api';
 
-interface IProps {
-    row: TRow;
-    columnName: string;
-    editMode?: any;
-    value?: string;
-    permissions: any;
-    rowIndex: number;
-    updateRows: any;
-}
+// interface IProps {
+//     row: TRow;
+//     columnName: string;
+//     editMode?: any;
+//     value?: string;
+//     permissions: any;
+//     rowIndex: number;
+//     updateRows: any;
+// }
 
 interface ITextInputProps {
-    id: any;
+    id?: any;
     columnName: string;
     value: string;
     type?: string;
     onChange: any;
 }
 
-const TextInput = ({ id, columnName, value, type = 'tableCell', onChange }: ITextInputProps) => {
+const TextInput = ({ columnName, value, type = 'tableCell', onChange }: ITextInputProps) => {
     const [active, setActive] = useState<boolean>(false);
     const [val, setVal] = useState<string>(value);
 
