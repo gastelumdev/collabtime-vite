@@ -24,6 +24,7 @@ const SubRowsContent = ({ rows, columns, gridTemplateColumns, opened }: { rows: 
 
     const handleDragStart = useCallback(
         (event: React.DragEvent<HTMLDivElement>, rowIndex: number) => {
+            event;
             setDraggedId(rowIndex);
             const reorderHandle: any = document.getElementById(`reorder-handle-${rowIndex}`);
             reorderHandle.style.cursor = 'move';
@@ -58,6 +59,7 @@ const SubRowsContent = ({ rows, columns, gridTemplateColumns, opened }: { rows: 
 
     const handleDragEnd = useCallback(
         (event: any) => {
+            event;
             console.log({ draggedId, overId });
             const newRows = [...rows];
             const [draggedRow] = newRows.splice(draggedId as number, 1);

@@ -1,9 +1,7 @@
-import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { useGetColumnsQuery, useGetRowsQuery, useGetUserQuery, useReorderColumnsMutation, useUpdateColumnMutation } from '../../app/services/api';
 import { useParams } from 'react-router-dom';
-import DataCollectionTable from './DataCollectionTable';
 import { Box } from '@chakra-ui/react';
-import DataCollectionWorkbench from './DataCollectionWorkbench';
 // import Table from './Table';
 import Table from '../../components/table/Table';
 import { TColumn } from '../../types';
@@ -41,6 +39,7 @@ const DataCollection = () => {
     // }, [totalRows]);
 
     useEffect(() => {
+        permissions;
         getPermissions();
     }, [user]);
 
@@ -64,7 +63,7 @@ const DataCollection = () => {
         }
     };
 
-    const tableHeaders = [{ name: 'name' }, { name: 'level' }, { name: 'status' }];
+    // const tableHeaders = [{ name: 'name' }, { name: 'level' }, { name: 'status' }];
 
     const handleColumnUpdate = useCallback((column: any) => {
         updateColumn(column);

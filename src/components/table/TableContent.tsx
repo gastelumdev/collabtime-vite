@@ -1,4 +1,3 @@
-import { Box } from '@chakra-ui/react';
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { ViewportList } from 'react-viewport-list';
 import Row from './Row';
@@ -8,10 +7,10 @@ interface IProps {
     columns: any[];
     setRows: any;
     gridTemplateColumnsIn: string;
-    minCellWidth: number;
-    columnResizingOffset: number;
-    updateColumn: any;
-    reorderColumns: any;
+    minCellWidth?: number;
+    columnResizingOffset?: number;
+    updateColumn?: any;
+    reorderColumns?: any;
     handleUpdateRowNoRender: any;
     handleUpdateRow: any;
     handleDeleteBoxChange: any;
@@ -24,10 +23,10 @@ const TableContent = ({
     columns,
     setRows,
     gridTemplateColumnsIn,
-    minCellWidth,
-    columnResizingOffset,
-    updateColumn,
-    reorderColumns,
+    // minCellWidth,
+    // columnResizingOffset,
+    // updateColumn,
+    // reorderColumns,
     handleUpdateRowNoRender,
     handleUpdateRow,
     handleDeleteBoxChange,
@@ -39,14 +38,15 @@ const TableContent = ({
 
     const [currentRows, setCurrentRows] = useState(rows);
 
-    const [deleteCheckboxStatusList, setDeleteCheckboxStatusList] = useState(
-        Array(rows.length)
-            .fill(null)
-            .map(() => false)
-    );
-    const [numberOfDeleteItems, setNumberOfDeleteItems] = useState(0);
+    // const [deleteCheckboxStatusList, setDeleteCheckboxStatusList] = useState(
+    //     Array(rows.length)
+    //         .fill(null)
+    //         .map(() => false)
+    // );
+    // const [numberOfDeleteItems, setNumberOfDeleteItems] = useState(0);
 
     useEffect(() => {
+        console.log(rows);
         setCurrentRows(rows);
     }, [rows]);
 
@@ -57,15 +57,15 @@ const TableContent = ({
     const [overId, setOverId] = useState<number | null>(null);
     const [draggedId, setDraggedId] = useState<number | null>(null);
 
-    const handleDragStart = useCallback(
-        (event: React.DragEvent<HTMLDivElement>, rowIndex: number) => {
-            setDraggedId(rowIndex);
-            const reorderHandle: any = document.getElementById(`reorder-handle-${rowIndex}`);
-            reorderHandle.style.cursor = 'move';
-            // setRows((prev) => prev.filter((_, index) => index !== rowIndex));
-        },
-        [draggedId]
-    );
+    // const handleDragStart = useCallback(
+    //     (event: React.DragEvent<HTMLDivElement>, rowIndex: number) => {
+    //         setDraggedId(rowIndex);
+    //         const reorderHandle: any = document.getElementById(`reorder-handle-${rowIndex}`);
+    //         reorderHandle.style.cursor = 'move';
+    //         // setRows((prev) => prev.filter((_, index) => index !== rowIndex));
+    //     },
+    //     [draggedId]
+    // );
 
     const handleDragEnter = useCallback(
         (event: React.DragEvent<HTMLDivElement>) => {
@@ -84,58 +84,58 @@ const TableContent = ({
         event.stopPropagation();
     };
 
-    const handleDragOver = useCallback(
-        (event: React.DragEvent<HTMLDivElement>, rowIndex: number) => {
-            console.log(draggedId !== null);
-            event.preventDefault();
-            event.stopPropagation();
-            if (draggedId !== null) {
-                event.preventDefault();
-                event.stopPropagation();
+    // const handleDragOver = useCallback(
+    //     (event: React.DragEvent<HTMLDivElement>, rowIndex: number) => {
+    //         console.log(draggedId !== null);
+    //         event.preventDefault();
+    //         event.stopPropagation();
+    //         if (draggedId !== null) {
+    //             event.preventDefault();
+    //             event.stopPropagation();
 
-                // const tableRowContainer: any = document.getElementById(`table-row-container-${rowIndex}`);
-                // tableRowContainer.style.backgroundColor = '#85bcff';
+    //             // const tableRowContainer: any = document.getElementById(`table-row-container-${rowIndex}`);
+    //             // tableRowContainer.style.backgroundColor = '#85bcff';
 
-                // const dropIndicator = document.getElementById(`drop-indicator-${rowIndex}`);
+    //             // const dropIndicator = document.getElementById(`drop-indicator-${rowIndex}`);
 
-                setOverId(rowIndex);
-            }
+    //             setOverId(rowIndex);
+    //         }
 
-            // }
-        },
-        [overId, draggedId]
-    );
+    //         // }
+    //     },
+    //     [overId, draggedId]
+    // );
 
-    const handleDragEnd = useCallback(
-        (event: any) => {
-            console.log({ draggedId, overId });
-            const newRows = [...currentRows];
-            const [draggedRow] = newRows.splice(draggedId as number, 1);
-            console.log({ draggedRow });
+    // const handleDragEnd = useCallback(
+    //     (event: any) => {
+    //         console.log({ draggedId, overId });
+    //         const newRows = [...currentRows];
+    //         const [draggedRow] = newRows.splice(draggedId as number, 1);
+    //         console.log({ draggedRow });
 
-            // if ((draggedId as number) >= (overId as number)) {
-            newRows.splice(overId as number, 0, draggedRow);
-            // } else {
-            //   newRows.splice((overId as number) - 1, 0, draggedRow);
-            // }
+    //         // if ((draggedId as number) >= (overId as number)) {
+    //         newRows.splice(overId as number, 0, draggedRow);
+    //         // } else {
+    //         //   newRows.splice((overId as number) - 1, 0, draggedRow);
+    //         // }
 
-            setCurrentRows(newRows);
+    //         setCurrentRows(newRows);
 
-            setOverId(null);
-            setDraggedId(null);
-        },
-        [overId, setOverId]
-    );
+    //         setOverId(null);
+    //         setDraggedId(null);
+    //     },
+    //     [overId, setOverId]
+    // );
 
-    const [subrowDrawers, setSubrowDrawers] = useState<boolean[]>([]);
+    // const [subrowDrawers, setSubrowDrawers] = useState<boolean[]>([]);
 
-    useEffect(() => {
-        setSubrowDrawers(
-            Array(rows.length)
-                .fill(null)
-                .map((_) => false)
-        );
-    }, [rows]);
+    // useEffect(() => {
+    //     setSubrowDrawers(
+    //         Array(rows.length)
+    //             .fill(null)
+    //             .map((_) => false)
+    //     );
+    // }, [rows]);
 
     //****************************************************** */
     const handleSetDraggedId = useCallback((rowIndex: number) => {
@@ -198,6 +198,7 @@ const TableContent = ({
             onDragEnter={(event: React.DragEvent<HTMLDivElement>) => handleDragEnter(event)}
             onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
             onScroll={(event: React.UIEvent<HTMLDivElement, UIEvent>) => {
+                event;
                 if (show) {
                     setShow(false);
                 }

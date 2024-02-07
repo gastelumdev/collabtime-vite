@@ -1,4 +1,4 @@
-import { Box, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import { memo, useCallback, useEffect, useState, useTransition } from 'react';
 import CreateColumn from '../../features/dataCollections/CreateColumn';
 import { TColumn } from '../../types';
@@ -133,7 +133,7 @@ const TableHeader = ({
 
     // ******************* COLUMN WIDTH RESIZING ********************************
     // **************************************************************************
-    const [isPending, startTransition] = useTransition();
+    const [_, startTransition] = useTransition();
 
     const [columnWidth, setColumnWidth] = useState('');
     const [resizedWidth, setResizedWidth] = useState<string | null>(null);
@@ -141,11 +141,11 @@ const TableHeader = ({
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
     const [mouseIsUp, setMouseIsUp] = useState<boolean>(false);
 
-    const mouseEnter = useCallback(() => {
-        setActiveIndex(null);
-        setResizedWidth(null);
-        setMouseIsUp(false);
-    }, [activeIndex, resizedWidth, mouseIsUp]);
+    // const mouseEnter = useCallback(() => {
+    //     setActiveIndex(null);
+    //     setResizedWidth(null);
+    //     setMouseIsUp(false);
+    // }, [activeIndex, resizedWidth, mouseIsUp]);
 
     const mouseMove = useCallback(
         (e: any) => {

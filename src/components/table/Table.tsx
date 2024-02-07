@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useCallback, useState, memo } from 'react';
 import './Table.css';
 import TableContent from './TableContent';
@@ -24,8 +24,8 @@ interface ITableProps {
 }
 
 const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, updateColumn, reorderColumns }: ITableProps) => {
-    const [overId, setOverId] = useState<number | null>(null);
-    const [draggedId, setDraggedId] = useState<number | null>(null);
+    // const [overId, setOverId] = useState<number | null>(null);
+    // const [draggedId, setDraggedId] = useState<number | null>(null);
 
     const [rows, setRows] = useState<any[]>(rowsData);
     const [columns, setColumns] = useState<any[]>(columnsData);
@@ -116,20 +116,20 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
         [rows]
     );
 
-    const [deleteCheckboxStatusList, setDeleteCheckboxStatusList] = useState(
-        Array(rows.length)
-            .fill(null)
-            .map(() => false)
-    );
+    // const [deleteCheckboxStatusList, setDeleteCheckboxStatusList] = useState(
+    //     Array(rows.length)
+    //         .fill(null)
+    //         .map(() => false)
+    // );
     const [numberOfDeleteItems, setNumberOfDeleteItems] = useState(0);
 
-    useEffect(() => {
-        setDeleteCheckboxStatusList(
-            Array(rowsData.length)
-                .fill(null)
-                .map(() => false)
-        );
-    }, [rowsData]);
+    // useEffect(() => {
+    //     setDeleteCheckboxStatusList(
+    //         Array(rowsData.length)
+    //             .fill(null)
+    //             .map(() => false)
+    //     );
+    // }, [rowsData]);
 
     const handleDeleteBoxChange = useCallback(
         (status: boolean, index: number) => {

@@ -1,6 +1,6 @@
-import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import { Box, Button, Checkbox, Flex, Text } from '@chakra-ui/react';
-import React, { memo, useCallback, useEffect, useMemo, useState, useTransition } from 'react';
+// import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import { Box, Checkbox, Flex, Text } from '@chakra-ui/react';
+import React, { memo, useEffect, useMemo, useState, useTransition } from 'react';
 import LabelMenu from '../../features/dataCollections/LabelMenu';
 import PeopleMenu from '../../features/dataCollections/PeopleMenu';
 import DateInput from '../../features/dataCollections/DateInput';
@@ -10,15 +10,17 @@ import EditRow from '../../features/dataCollections/EditRow';
 import NoteModal from '../../features/dataCollections/NoteModal';
 import { FaRegBell } from 'react-icons/fa';
 import { FaRegSquareCheck } from 'react-icons/fa6';
-import UploadMenu from '../../features/dataCollections/UploadMenu';
+// import UploadMenu from '../../features/dataCollections/UploadMenu';
+import UploadModal from './UploadModal';
+import { TDocument } from '../../types';
 
 const Row = ({
     row,
     rowIndex,
     columns,
     gridTemplateColumns,
-    handleSetDraggedId,
-    handleSetOverId,
+    // handleSetDraggedId,
+    // handleSetOverId,
     handleSwap,
     handleChange,
     deleteBoxIsChecked,
@@ -61,6 +63,7 @@ const Row = ({
         event.dataTransfer.setData('text', '');
         localStorage.setItem('rowDragged', `${rowIndex}`);
         // handleSetDraggedId(rowIndex);
+        draggedId;
         setDraggedId(rowIndex);
         // const reorderHandle: any = document.getElementById(`reorder-handle-${rowIndex}`);
         // reorderHandle.style.cursor = 'move';
@@ -97,6 +100,7 @@ const Row = ({
     };
 
     const handleDragEnd = (event: any) => {
+        event;
         handleSwap();
         setDraggedId(null);
         setOverId(null);
@@ -134,6 +138,25 @@ const Row = ({
     useEffect(() => {
         setOpened(row.subRowsAreOpen);
     }, [row]);
+
+    const getDocs = (documents: any[]) => {
+        handleChange({ ...row, docs: [...row.docs, ...documents] });
+    };
+
+    const getUpdatedDoc = (document: TDocument) => {
+        const newDocs: any = row.docs.map((rowDoc: any) => {
+            return rowDoc._id === document._id ? document : rowDoc;
+        });
+        handleChange({ ...row, docs: newDocs });
+    };
+
+    const removeDoc = (document: TDocument) => {
+        const newDocs: any = row.docs.filter((rowDoc: any) => {
+            return rowDoc._id !== document._id;
+        });
+
+        handleChange({ ...row, docs: newDocs });
+    };
     return (
         <>
             <div
@@ -213,7 +236,7 @@ const Row = ({
                                     </Text>
                                 </Box>
                                 <Box pt={'7px'} ml={'10px'} onClick={handleAcknowledgeClick} cursor={'pointer'}>
-                                    <UploadMenu />
+                                    <UploadModal rowDocuments={row.docs} getDocs={getDocs} getUpdatedDoc={getUpdatedDoc} removeDoc={removeDoc} />
                                 </Box>
                                 {/* <Button
                                 variant={'unstyled'}
