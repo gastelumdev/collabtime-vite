@@ -68,6 +68,7 @@ IProps) => {
             });
         }
 
+        filtered;
         // setFilteredDocs(filtered || []);
     };
 

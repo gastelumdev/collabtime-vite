@@ -15,10 +15,10 @@ import {
     useDisclosure,
 } from '@chakra-ui/react';
 import { useState } from 'react';
-import { useCreateDocumentMutation, useUpdateCellMutation, useUploadDocsMutation, useUploadPersistedDocsMutation } from '../../app/services/api';
+import { useCreateDocumentMutation, useUploadDocsMutation, useUploadPersistedDocsMutation } from '../../app/services/api';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
 import { FaRegFileAlt, FaRegFileExcel, FaRegImage } from 'react-icons/fa';
-import { TCell, TDocument } from '../../types';
+import { TDocument } from '../../types';
 
 interface IProps {
     documents: TDocument[];

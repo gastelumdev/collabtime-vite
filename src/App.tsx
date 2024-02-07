@@ -14,7 +14,7 @@ import ResetPassword from './features/auth/ResetPassword';
 import ResetPasswordEmailSent from './features/auth/ResetPasswordEmailSent';
 import Join from './features/workspaces/Join';
 import Form from './features/dataCollections/Form';
-import DataCollectionWorkbench from './features/dataCollections/DataCollectionWorkbench';
+// import DataCollectionWorkbench from './features/dataCollections/DataCollectionWorkbench';
 
 function App() {
     return (
