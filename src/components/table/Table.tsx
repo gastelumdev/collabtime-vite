@@ -12,7 +12,8 @@ import {
     useRowCallUpdateMutation,
     useUpdateRowMutation,
 } from '../../app/services/api';
-import { Box, Button, Flex, Spacer, Text } from '@chakra-ui/react';
+import { Box, Center, Flex, Spacer, Text } from '@chakra-ui/react';
+import { ArrowDownIcon, ArrowUpIcon, DeleteIcon } from '@chakra-ui/icons';
 
 interface ITableProps {
     rowsData: any[];
@@ -42,7 +43,7 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
     useEffect(() => {
         setRows(
             rowsData.map((row) => {
-                return { ...row, markedForDeletion: false, subRowsAreOpen: false };
+                return { ...row, checked: false, subRowsAreOpen: false };
             })
         );
         setColumns(columnsData);
@@ -133,7 +134,8 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
 
     const handleDeleteBoxChange = useCallback(
         (status: boolean, index: number) => {
-            setRows((prevRows) => prevRows.map((prevRow, rowIndex) => (index === rowIndex ? { ...prevRow, markedForDeletion: true } : prevRow)));
+            setRows((prevRows) => prevRows.map((prevRow, rowIndex) => (index === rowIndex ? { ...prevRow, checked: true } : prevRow)));
+
             if (status) {
                 setNumberOfDeleteItems(numberOfDeleteItems + 1);
             } else {
@@ -146,15 +148,15 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
     const deleteItems = useCallback(() => {
         const rowsCopy = rows;
 
-        setRows((prevRows) => prevRows.filter((row) => !row.markedForDeletion));
+        setRows((prevRows) => prevRows.filter((row) => !row.checked));
         setRows((prevRows) =>
             prevRows.map((row) => {
-                return { ...row, markedForDeletion: false };
+                return { ...row, checked: false };
             })
         );
 
         for (const currentRow of rowsCopy) {
-            if (currentRow.markedForDeletion) {
+            if (currentRow.checked) {
                 console.log({ currentRow });
                 deleteRow(currentRow);
             }
@@ -192,6 +194,82 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
         [columns]
     );
 
+    const setAsMainrow = useCallback(() => {
+        let currentParentId: any = null;
+        let updateChild = false;
+        setRows((prevRows) =>
+            prevRows.map((prevRow) => {
+                if (prevRow.checked) {
+                    currentParentId = prevRow._id;
+                    updateChild = true;
+                    updateRow({ ...prevRow, parentRowId: null, checked: false, isParent: false });
+                    return { ...prevRow, parentRowId: null, checked: false, isParent: false };
+                }
+
+                if (prevRow.parentRowId === undefined || prevRow.parentRowId === null) {
+                    currentParentId = null;
+                }
+                if (currentParentId !== null) {
+                    updateRow({ ...prevRow, parentRowId: currentParentId });
+                    return { ...prevRow, parentRowId: currentParentId };
+                }
+                return prevRow;
+            })
+        );
+
+        setNumberOfDeleteItems(0);
+    }, [rows]);
+
+    const setAsSubrow = useCallback(() => {
+        // const rowsCopy = rows;
+        let currentParentId: any;
+        let isPreviousRowAParent: any = true;
+        let parentRowIds: any = [];
+
+        setRows((prevRows) =>
+            prevRows.map((prevRow) => {
+                if (prevRow.parentRowId === undefined || prevRow.parentRowId === null) {
+                    if (!prevRow.checked) {
+                        currentParentId = prevRow._id;
+                    }
+                } else {
+                    isPreviousRowAParent = false;
+                }
+
+                console.log(currentParentId);
+
+                let result = prevRow;
+
+                if (prevRow.checked) {
+                    result = { ...prevRow, parentRowId: currentParentId, checked: false };
+                    parentRowIds.push(currentParentId);
+                    updateRow(result);
+                } else {
+                    result = prevRow;
+                }
+
+                return result;
+            })
+        );
+
+        console.log(parentRowIds);
+
+        setRows((prevRows) =>
+            prevRows.map((prevRow) => {
+                if (parentRowIds.includes(prevRow._id)) updateRow({ ...prevRow, isParent: true });
+                return parentRowIds.includes(prevRow._id) ? { ...prevRow, isParent: true } : prevRow;
+            })
+        );
+
+        // setRows((prevRows) =>
+        //     prevRows.map((row) => {
+        //         return { ...row, checked: false };
+        //     })
+        // );
+
+        setNumberOfDeleteItems(0);
+    }, [rows]);
+
     return (
         <div id={'data-collection-table'} className={'table'} style={{ position: 'relative' }}>
             {numberOfDeleteItems > 0 ? (
@@ -200,7 +278,7 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
                     bottom={'30px'}
                     left={'60px'}
                     w={'450px'}
-                    h={'80px'}
+                    h={'120px'}
                     background={'white'}
                     border={'1px solid lightgray'}
                     boxShadow={'2xl'}
@@ -211,10 +289,46 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
                             <Text>{`${numberOfDeleteItems} Selected`}</Text>
                         </Box>
                         <Spacer />
-                        <Box pt={'20px'} pr={'30px'}>
-                            <Button colorScheme="red" mb={'10px'} onClick={deleteItems}>
+                        <Box pt={'30px'} pr={'30px'} onClick={setAsMainrow} cursor={'pointer'}>
+                            {/* <Button colorScheme="blue" mb={'10px'}>
+                                Sub Item
+                            </Button> */}
+                            <Center mb={'10px'}>
+                                <Text>
+                                    <ArrowUpIcon />
+                                </Text>
+                            </Center>
+                            <Center>
+                                <Text>Main Item</Text>
+                            </Center>
+                        </Box>
+
+                        <Box pt={'30px'} pr={'30px'} onClick={setAsSubrow} cursor={'pointer'}>
+                            {/* <Button colorScheme="blue" mb={'10px'}>
+                                Sub Item
+                            </Button> */}
+                            <Center mb={'10px'}>
+                                <Text>
+                                    <ArrowDownIcon />
+                                </Text>
+                            </Center>
+                            <Center>
+                                <Text>Sub Item</Text>
+                            </Center>
+                        </Box>
+                        {/* <Spacer /> */}
+                        <Box pt={'30px'} pr={'30px'} onClick={deleteItems}>
+                            {/* <Button colorScheme="red" mb={'10px'}>
                                 Delete
-                            </Button>
+                            </Button> */}
+                            <Center mb={'10px'}>
+                                <Text>
+                                    <DeleteIcon />
+                                </Text>
+                            </Center>
+                            <Center>
+                                <Text>Delete</Text>
+                            </Center>
                         </Box>
                     </Flex>
                 </Box>

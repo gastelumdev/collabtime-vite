@@ -114,6 +114,9 @@ export type TRow = {
     complete?: boolean;
     acknowledged?: boolean;
     values?: any;
+    parentRowId?: string;
+    isVisible?: boolean;
+    isParent?: boolean;
 };
 
 export type TCell = {

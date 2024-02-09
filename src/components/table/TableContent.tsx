@@ -1,6 +1,7 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { ViewportList } from 'react-viewport-list';
 import Row from './Row';
+import { swapItems } from '../../utils/helpers';
 
 interface IProps {
     rows: any[];
@@ -30,7 +31,6 @@ const TableContent = ({
     handleUpdateRowNoRender,
     handleUpdateRow,
     handleDeleteBoxChange,
-    handleReorderRows,
     rowCallUpdate,
 }: IProps) => {
     const ref = useRef<HTMLDivElement | null>(null);
@@ -152,16 +152,72 @@ const TableContent = ({
         (overId: number, draggedId: number) => {
             console.log({ rowDragged: Number(localStorage.getItem('rowDragged')), rowOver: Number(localStorage.getItem('rowOver')) });
             console.log({ overId, draggedId, currentRows });
+
             const newRows = [...currentRows];
-            const [draggedRow] = newRows.splice(Number(localStorage.getItem('rowDragged')) as number, 1);
-            newRows.splice(Number(localStorage.getItem('rowOver')) as number, 0, draggedRow);
+            const draggedRowData = newRows[Number(localStorage.getItem('rowDragged'))];
+            const overRowData = newRows[Number(localStorage.getItem('rowOver'))];
+            const isParent = draggedRowData.isParent;
+            const overIsChild = overRowData.parentRowId !== null;
 
-            setCurrentRows(newRows);
-            setRows(newRows);
+            console.log(isParent && overIsChild);
 
-            // const rowIds = newRows.map((newRow) => newRow._id);
+            const childRows = newRows.filter((row) => {
+                return isParent && row.parentRowId === draggedRowData._id;
+            });
 
-            handleReorderRows({ draggedRowPosition: Number(localStorage.getItem('rowDragged')), overRowPosition: Number(localStorage.getItem('rowOver')) });
+            const reorderedRows = swapItems(newRows, Number(localStorage.getItem('rowDragged')), Number(localStorage.getItem('rowOver')), childRows.length + 1);
+
+            if (isParent) {
+                setCurrentRows(reorderedRows);
+                setRows(reorderedRows);
+            } else {
+                let currentParentId: any;
+
+                setCurrentRows(
+                    reorderedRows.map((row: any, index: number) => {
+                        console.log(row);
+                        if (index === Number(localStorage.getItem('rowOver'))) {
+                            let result = { ...row, parentRowId: currentParentId };
+                            currentParentId = null;
+                            handleUpdateRow(result);
+                            return result;
+                        }
+
+                        if (row.isParent && row.parentRowId === null) {
+                            currentParentId = row._id;
+                        } else {
+                            currentParentId = null;
+                        }
+                        return row;
+                    })
+                );
+
+                // setRows(
+                //     reorderedRows.map((row: any, index: number) => {
+                //         if (index === Number(localStorage.getItem('rowOver'))) {
+                //             let result = { ...row, parentRowId: currentParentId };
+                //             currentParentId = null;
+                //             // handleUpdateRow(result);
+                //             return result;
+                //         }
+
+                //         if (row.isParent && row.parentRowId === null) {
+                //             currentParentId = row._id;
+                //         } else {
+                //             currentParentId = null;
+                //         }
+
+                //         return row;
+                //     })
+                // );
+            }
+
+            // handleReorderRows({
+            //     draggedRowPosition: Number(localStorage.getItem('rowDragged')),
+            //     overRowPosition: Number(localStorage.getItem('rowOver')),
+            //     numberOfItems: childRows.length + 1,
+            // });
+            // handleReorderRows({ draggedRowPosition: Number(localStorage.getItem('rowDragged')), overRowPosition: Number(localStorage.getItem('rowOver')) });
 
             setOverId(null);
             setDraggedId(null);
@@ -178,7 +234,7 @@ const TableContent = ({
 
     const handleDeleteBoxChangeForRow = (status: boolean, index: number) => {
         console.log(currentRows);
-        // setCurrentRows((prevRows) => prevRows.map((prevRow, rowIndex) => (index === rowIndex ? { ...prevRow, markedForDeletion: status } : prevRow)));
+        // setCurrentRows((prevRows) => prevRows.map((prevRow, rowIndex) => (index === rowIndex ? { ...prevRow, checked: status } : prevRow)));
         // if (status) {
         //     setNumberOfDeleteItems(numberOfDeleteItems + 1);
         // } else {
@@ -187,7 +243,7 @@ const TableContent = ({
 
         // Allows Table component to set
         handleDeleteBoxChange(status, index);
-        setRows(currentRows.map((prevRow, rowIndex) => (index === rowIndex ? { ...prevRow, markedForDeletion: status } : prevRow)));
+        setRows(currentRows.map((prevRow, rowIndex) => (index === rowIndex ? { ...prevRow, checked: status } : prevRow)));
     };
 
     const [show, setShow] = useState(true);
@@ -218,7 +274,7 @@ const TableContent = ({
                             handleSetOverId={handleSetOverId}
                             handleSwap={handleSwap}
                             handleChange={handleChange}
-                            deleteBoxIsChecked={row.markedForDeletion}
+                            deleteBoxIsChecked={row.checked}
                             handleDeleteBoxChange={handleDeleteBoxChangeForRow}
                             rowCallUpdate={rowCallUpdate}
                         />
@@ -239,7 +295,7 @@ const TableContent = ({
                                 handleSetOverId={handleSetOverId}
                                 handleSwap={handleSwap}
                                 handleChange={handleChange}
-                                deleteBoxIsChecked={row.markedForDeletion}
+                                deleteBoxIsChecked={row.checked}
                                 handleDeleteBoxChange={handleDeleteBoxChangeForRow}
                                 rowCallUpdate={rowCallUpdate}
                             />

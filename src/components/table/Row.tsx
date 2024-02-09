@@ -1,6 +1,6 @@
 // import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { Box, Checkbox, Flex, Text } from '@chakra-ui/react';
-import React, { memo, useEffect, useMemo, useState, useTransition } from 'react';
+import React, { memo, useEffect, useMemo, useState } from 'react';
 import LabelMenu from '../../features/dataCollections/LabelMenu';
 import PeopleMenu from '../../features/dataCollections/PeopleMenu';
 import DateInput from '../../features/dataCollections/DateInput';
@@ -48,7 +48,7 @@ const Row = ({
         []
     );
 
-    const [isPending, startTransition] = useTransition();
+    // const [isPending, startTransition] = useTransition();
 
     const [overId, setOverId] = useState<number | null>(null);
     const [draggedId, setDraggedId] = useState<number | null>(null);
@@ -57,7 +57,7 @@ const Row = ({
 
     useEffect(() => {
         setDeleteCheckboxIsChecked(deleteBoxIsChecked);
-    }, []);
+    }, [deleteBoxIsChecked]);
 
     const handleDragStart = (event: React.DragEvent<HTMLDivElement>, rowIndex: number) => {
         event.dataTransfer.setData('text', '');
@@ -108,9 +108,9 @@ const Row = ({
 
     const handleDeleteCheckboxChange = () => {
         setDeleteCheckboxIsChecked(!deleteCheckboxIsChecked);
-        startTransition(() => {
-            handleDeleteBoxChange(!deleteCheckboxIsChecked, rowIndex);
-        });
+        // startTransition(() => {
+        handleDeleteBoxChange(!deleteCheckboxIsChecked, rowIndex);
+        // });
     };
 
     const onChange = (columnName: string, value: string) => {
@@ -178,7 +178,7 @@ const Row = ({
                     }}
                 ></Box>
             </div>
-            <Box key={rowIndex} pos={'relative'} _hover={{ bgColor: '#f1f7ff' }} backgroundColor={row.markedForDeletion ? '#e1eeff' : 'unset'}>
+            <Box key={rowIndex} pos={'relative'} _hover={{ bgColor: '#f1f7ff' }} backgroundColor={row.checked ? '#e1eeff' : 'unset'}>
                 <>{console.log(`ROW ${rowIndex} RENDERED`)}</>
                 <Box
                     key={rowIndex}
@@ -215,9 +215,10 @@ const Row = ({
                                     onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
                                     onDragEnter={(event: React.DragEvent<HTMLDivElement>) => handleDragEnter(event)}
                                     onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
+                                    style={{ backgroundColor: row.parentRowId ? 'lightblue' : '#2d82eb' }}
                                 ></Box>
                                 <Box mt={'6px'} ml={'14px'}>
-                                    <Checkbox mr={'1px'} isChecked={deleteCheckboxIsChecked && !isPending} onChange={handleDeleteCheckboxChange} />
+                                    <Checkbox mr={'1px'} isChecked={deleteCheckboxIsChecked} onChange={handleDeleteCheckboxChange} />
                                 </Box>
                                 <Box pt={'6px'}>
                                     <EditRow row={row} columns={columns} handleChange={editRowOnChange} />
@@ -262,6 +263,7 @@ const Row = ({
                                         whiteSpace: 'nowrap',
                                         fontSize: '12px',
                                         borderBottom: '1px solid #edf2f7',
+                                        paddingLeft: row.parentRowId && columnIndex == 0 ? '20px' : '0px',
                                     }}
                                 >
                                     {column.type === 'label' || column.type === 'priority' || column.type === 'status' ? (
