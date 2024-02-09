@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import {
     useGetWorkspacesQuery,
     useCreateWorkspaceMutation,
@@ -8,23 +8,25 @@ import {
     useGetUserQuery,
     useDeleteTagMutation,
     useTagExistsMutation,
-} from "../../app/services/api";
+} from '../../app/services/api';
 
-import { io } from "socket.io-client";
+import { io } from 'socket.io-client';
 
-import { Box, Container, Flex, Heading, SimpleGrid, Spacer, Text, Center, useToast } from "@chakra-ui/react";
+import { Box, Container, Flex, Heading, SimpleGrid, Spacer, Text, Center, useToast } from '@chakra-ui/react';
 
-import { TWorkspace, LinkItemProps, TTag } from "../../types";
-import Create from "./Create";
-import Edit from "./Edit";
+import { TWorkspace, LinkItemProps, TTag } from '../../types';
+import Create from './Create';
+import Edit from './Edit';
 
-import SideBarLayout from "../../components/Layouts/SideBarLayout";
-import PrimaryCard from "../../components/PrimaryCard";
-import { BsPersonWorkspace } from "react-icons/bs";
-import TagsModal from "../tags/TagsModal";
-import Delete from "./Delete";
+import SideBarLayout from '../../components/Layouts/SideBarLayout';
+import PrimaryCard from '../../components/PrimaryCard';
+import { BsPersonWorkspace } from 'react-icons/bs';
+import TagsModal from '../tags/TagsModal';
+import Delete from './Delete';
+import logo from '../../assets/logo-no-background.png';
+import mvpLogo from '../../assets/MVPOriginalLogo.png';
 
-const LinkItems: Array<LinkItemProps> = [{ name: "Workspaces", icon: BsPersonWorkspace, path: "/workspaces" }];
+const LinkItems: Array<LinkItemProps> = [{ name: 'Workspaces', icon: BsPersonWorkspace, path: '/workspaces' }];
 
 /**
  * This is the default workspace view that renders all workspaces
@@ -33,14 +35,18 @@ const LinkItems: Array<LinkItemProps> = [{ name: "Workspaces", icon: BsPersonWor
  */
 const View = () => {
     const { data } = useGetWorkspacesQuery(null);
-    const { data: user } = useGetUserQuery(localStorage.getItem("userId") || "");
-    const [createWorkspace, { isError: createWorkspaceIsError, error: createWorkspaceError }] =
-        useCreateWorkspaceMutation();
+    const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
+    const [createWorkspace, { isError: createWorkspaceIsError, error: createWorkspaceError }] = useCreateWorkspaceMutation();
     const [updateWorkspace] = useUpdateWorkspaceMutation();
     const [deleteWorkspace] = useDeleteWorkspaceMutation();
     const [callUpdate] = useCallUpdateMutation();
     const [deleteTag] = useDeleteTagMutation();
     const [tagExists] = useTagExistsMutation();
+    const [pageLogo, setPageLogo] = useState('');
+
+    useEffect(() => {
+        setPageLogo(user?.email !== 'islas@mvpsecuritysystems.com' ? logo : mvpLogo);
+    }, [user]);
 
     const toast = useToast();
 
@@ -53,11 +59,11 @@ const View = () => {
         const socket = io(import.meta.env.VITE_API_URL);
         socket.connect();
 
-        socket.on("update", () => {
+        socket.on('update', () => {
             callUpdate(null);
         });
 
-        socket.on("getWorkspaces-" + localStorage.getItem("userId"), () => {});
+        socket.on('getWorkspaces-' + localStorage.getItem('userId'), () => {});
 
         return () => {
             socket.disconnect();
@@ -101,48 +107,39 @@ const View = () => {
 
     if (createWorkspaceIsError) {
         toast({
-            title: "Create Workspace Error",
+            title: 'Create Workspace Error',
             description: (createWorkspaceError as any)?.data.error._message,
-            status: "error",
+            status: 'error',
         });
     }
 
     return (
         <SideBarLayout
             linkItems={LinkItems}
-            // leftContent={
-            //     <Box pt={"6px"} pb={"4px"}>
-            //         <Center>
-            //             <IconContext.Provider value={{ color: "#7b809a", size: "20px" }}>
-            //                 <Box display={"inline-block"} mr={"3px"}>
-            //                     <AiOutlineLike />
-            //                 </Box>
-            //             </IconContext.Provider>
-            //             <Text as={"b"} fontSize={"16px"} color={"#7b809a"}>
-            //                 Collabtime
-            //             </Text>
-            //         </Center>
-            //     </Box>
-            // }
+            leftContent={
+                <Box pt={'30px'} pb={'4px'}>
+                    <img src={pageLogo} width={user?.email === 'islas@mvpsecuritysystems.com' ? '90px' : '30px'} />
+                </Box>
+            }
             sidebar={false}
         >
             <Box>
-                <Flex minH={"100vh"} bg={"#eff2f5"}>
-                    <Container maxW={"full"} mt={{ base: 4, sm: 0 }}>
-                        <SimpleGrid spacing={6} columns={{ base: 1, sm: 2 }} pb={"50px"}>
+                <Flex minH={'100vh'} bg={'#eff2f5'}>
+                    <Container maxW={'full'} mt={{ base: 4, sm: 0 }}>
+                        <SimpleGrid spacing={6} columns={{ base: 1, sm: 2 }} pb={'50px'}>
                             <Flex>
                                 <Box>
-                                    <Heading size={"sm"} mb={"12px"} color={"rgb(52, 71, 103)"}>
+                                    <Heading size={'sm'} mb={'12px'} color={'rgb(52, 71, 103)'}>
                                         <Text>Workspaces</Text>
                                     </Heading>
-                                    <Text color={"rgb(123, 128, 154)"} fontSize={"md"} fontWeight={300}>
+                                    <Text color={'rgb(123, 128, 154)'} fontSize={'md'} fontWeight={300}>
                                         Create a new workspace to manage your projects and teams.
                                     </Text>
                                 </Box>
                             </Flex>
                             <Flex>
                                 <Spacer />
-                                <Box pb={"20px"}>
+                                <Box pb={'20px'}>
                                     <Create addNewWorkspace={createWorkspace} />
                                 </Box>
                             </Flex>
@@ -166,27 +163,25 @@ const View = () => {
                                             data={workspace}
                                             redirectUrl={`/workspaces/${workspace._id}`}
                                             localStorageId="workspaceId"
-                                            divider={
-                                                workspace?.owner === localStorage.getItem("userId") || isAuthorized
-                                            }
+                                            divider={workspace?.owner === localStorage.getItem('userId') || isAuthorized}
                                             editButton={
-                                                workspace?.owner === localStorage.getItem("userId") || isAuthorized ? (
+                                                workspace?.owner === localStorage.getItem('userId') || isAuthorized ? (
                                                     <Edit workspace={workspace} updateWorkspace={updateWorkspace} />
                                                 ) : null
                                             }
                                             deleteButton={
-                                                workspace?.owner === localStorage.getItem("userId") || isAuthorized ? (
+                                                workspace?.owner === localStorage.getItem('userId') || isAuthorized ? (
                                                     <Delete workspace={workspace} deleteWorkspace={deleteWorkspace} />
                                                 ) : null
                                             }
                                             tagButton={
-                                                workspace?.owner === localStorage.getItem("userId") || isAuthorized ? (
+                                                workspace?.owner === localStorage.getItem('userId') || isAuthorized ? (
                                                     <TagsModal
-                                                        tagType={"workspace"}
+                                                        tagType={'workspace'}
                                                         data={workspace}
                                                         tags={workspace.tags}
                                                         update={updateWorkspace}
-                                                        workspaceId={workspace._id || ""}
+                                                        workspaceId={workspace._id || ''}
                                                     />
                                                 ) : null
                                             }
@@ -197,7 +192,7 @@ const View = () => {
                             </SimpleGrid>
                         ) : (
                             <Center>
-                                <Text color={"rgb(123, 128, 154)"}>Your workspaces list is empty.</Text>
+                                <Text color={'rgb(123, 128, 154)'}>Your workspaces list is empty.</Text>
                             </Center>
                         )}
                     </Container>

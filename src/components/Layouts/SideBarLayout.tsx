@@ -34,6 +34,7 @@ import { FaSignOutAlt, FaUserCircle } from 'react-icons/fa';
 import View from '../../features/notifications/View';
 import Search from '../../features/search/View';
 import logo from '../../assets/logo-no-background.png';
+import mvpLogo from '../../assets/MVPOriginalLogo.png';
 
 interface LinkItemProps {
     name: string;
@@ -66,12 +67,19 @@ interface SidebarContentProps {
 }
 
 const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) => {
+    const { data: userData } = useGetUserQuery(localStorage.getItem('userId') as string);
     const height = window.innerHeight - 48;
     const [sidebarHeight, setSidebarHeight] = useState(height);
 
     const resizeSidebar = useCallback(() => {
         setSidebarHeight(window.innerHeight - 48);
     }, [sidebarHeight]);
+
+    const [user, setUser] = useState(userData);
+
+    useEffect(() => {
+        setUser(userData);
+    }, [userData]);
 
     useEffect(() => {
         window.addEventListener('resize', resizeSidebar);
@@ -91,7 +99,12 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
             {...rest}
         >
             <Box bg={'black'} h={height} borderRadius={'xl'}>
-                <Box pt={'20px'} bgImage={'radial-gradient(circle at center top, rgb(66, 66, 74), black)'} height={'full'} borderRadius={'xl'}>
+                <Box
+                    pt={'20px'}
+                    bgImage={user?.email === 'islas@mvpsecuritysystems.com' ? 'black' : 'radial-gradient(circle at center top, rgb(66, 66, 74), black)'}
+                    height={'full'}
+                    borderRadius={'xl'}
+                >
                     <Box pt={'6px'} pb={'4px'}>
                         <Center>
                             <Text as={'b'} fontSize={'16px'} color={'white'}>
@@ -101,7 +114,11 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
                                         fontSize: "20px",
                                     }}
                                 /> */}
-                                <img src={logo} width={'30px'} />
+                                {user?.email === 'islas@mvpsecuritysystems.com' ? (
+                                    <img src={mvpLogo} width={user?.email === 'islas@mvpsecuritysystems.com' ? '55px' : '30px'} />
+                                ) : (
+                                    <img src={logo} width={user?.email === 'islas@mvpsecuritysystems.com' ? '55px' : '30px'} />
+                                )}
                             </Text>
                         </Center>
                     </Box>
@@ -257,6 +274,9 @@ const TopNav = ({ sidebar = true, onOpen, leftContent, ...rest }: TopNavProps) =
                                         <MenuDivider />
                                         <MenuItem color={'#7b809a'} onClick={() => navigate('/resetPasswordRequest')}>
                                             Reset Password
+                                        </MenuItem>
+                                        <MenuItem color={'#7b809a'} onClick={() => navigate('/resetPasswordRequest')}>
+                                            Change Logo
                                         </MenuItem>
                                         <MenuItem onClick={logout} color={'#7b809a'}>
                                             Logout
