@@ -114,11 +114,7 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
                                         fontSize: "20px",
                                     }}
                                 /> */}
-                                {user?.email === 'islas@mvpsecuritysystems.com' ? (
-                                    <img src={mvpLogo} width={user?.email === 'islas@mvpsecuritysystems.com' ? '55px' : '30px'} />
-                                ) : (
-                                    <img src={logo} width={user?.email === 'islas@mvpsecuritysystems.com' ? '55px' : '30px'} />
-                                )}
+                                <img src={user?.logoURL} width={user?.email === 'islas@mvpsecuritysystems.com' ? '55px' : '30px'} />
                             </Text>
                         </Center>
                     </Box>
@@ -275,9 +271,9 @@ const TopNav = ({ sidebar = true, onOpen, leftContent, ...rest }: TopNavProps) =
                                         <MenuItem color={'#7b809a'} onClick={() => navigate('/resetPasswordRequest')}>
                                             Reset Password
                                         </MenuItem>
-                                        <MenuItem color={'#7b809a'} onClick={() => navigate('/resetPasswordRequest')}>
+                                        {/* <MenuItem color={'#7b809a'} onClick={() => navigate('/resetPasswordRequest')}>
                                             Change Logo
-                                        </MenuItem>
+                                        </MenuItem> */}
                                         <MenuItem onClick={logout} color={'#7b809a'}>
                                             Logout
                                         </MenuItem>
@@ -302,6 +298,8 @@ const TopNav = ({ sidebar = true, onOpen, leftContent, ...rest }: TopNavProps) =
 const SideBarLayout = ({ linkItems, leftContent, sidebar = true, children }: SidebarContentProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
+    const { data: userData } = useGetUserQuery(localStorage.getItem('userId') as string);
+
     return (
         <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')} pl={{ base: 0, lg: 6 }} pr={0} pt={6}>
             {sidebar ? <SidebarContent linkItems={linkItems} onClose={onClose} isOpen={isOpen} display={{ base: 'none', lg: 'block' }} /> : null}
@@ -309,7 +307,16 @@ const SideBarLayout = ({ linkItems, leftContent, sidebar = true, children }: Sid
                 <Drawer isOpen={isOpen} placement="left" onClose={onClose} returnFocusOnClose={false} onOverlayClick={onClose} size="xs">
                     <DrawerContent boxShadow={'none'}>
                         <Box py={6} pl={6} height={'full'} bg={useColorModeValue('gray.100', 'gray.900')}>
-                            <Box pt={'20px'} bgImage={'radial-gradient(circle at center top, rgb(66, 66, 74), black)'} height={'full'} borderRadius={'xl'}>
+                            <Box
+                                pt={'20px'}
+                                bgImage={
+                                    userData?.email === 'islas@mvpsecuritysystems.com'
+                                        ? 'radial-gradient(black, black)'
+                                        : 'radial-gradient(circle at center top, rgb(66, 66, 74), black)'
+                                }
+                                height={'full'}
+                                borderRadius={'xl'}
+                            >
                                 <Box pt={'6px'} pb={'4px'}>
                                     <Center>
                                         <Text as={'b'} fontSize={'16px'} color={'white'}>
@@ -319,7 +326,7 @@ const SideBarLayout = ({ linkItems, leftContent, sidebar = true, children }: Sid
                                                     fontSize: "20px",
                                                 }}
                                             /> */}
-                                            <img src={logo} width={'80px'} />
+                                            <img src={userData?.logoURL} width={userData?.email === 'islas@mvpsecuritysystems.com' ? '120px' : '30px'} />
                                         </Text>
                                     </Center>
                                 </Box>

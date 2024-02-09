@@ -17,6 +17,8 @@ export type TUser = {
     email: string;
     password: string;
     role: number;
+    organization: string;
+    logoURL: string;
     workspaces: TUserWorkspace[];
 };
 
