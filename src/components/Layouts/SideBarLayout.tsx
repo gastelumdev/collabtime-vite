@@ -33,8 +33,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaSignOutAlt, FaUserCircle } from 'react-icons/fa';
 import View from '../../features/notifications/View';
 import Search from '../../features/search/View';
-import logo from '../../assets/logo-no-background.png';
-import mvpLogo from '../../assets/MVPOriginalLogo.png';
 
 interface LinkItemProps {
     name: string;
