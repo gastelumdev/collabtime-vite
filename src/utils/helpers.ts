@@ -54,9 +54,9 @@ export const formatTime = (date: Date) => {
 const relocateSectionOfList = (arr: any, draggedId: number, overId: number) => {
 
 
-  const [draggedItem] = arr.splice(draggedId, 1);
+  const [draggedItem] = arr.splice(draggedId - 1, 1);
 
-  arr.splice(overId, 0, draggedItem);
+  arr.splice(overId - 1, 0, draggedItem);
 
   return arr;
 }
@@ -65,14 +65,17 @@ const relocateSectionOfList = (arr: any, draggedId: number, overId: number) => {
 
 
 export const swapItems = (arr: any, draggedId: number, overId: number, numberOfItems: number) => {
+  console.log({ draggedId, overId, numberOfItems })
   let result;
 
   if (draggedId <= overId) {
-    for (let i = 0; i < numberOfItems; i++) {
+    console.log(`Dragged id is less than over id`)
+    for (let i = 1; i <= numberOfItems; i++) {
+
       result = relocateSectionOfList(arr, draggedId, overId);
     }
   } else {
-    for (let i = 0; i < numberOfItems; i++) {
+    for (let i = 1; i <= numberOfItems; i++) {
       result = relocateSectionOfList(arr, draggedId + i, overId + i);
     }
   }

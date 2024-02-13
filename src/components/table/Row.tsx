@@ -1,6 +1,6 @@
 // import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { Box, Checkbox, Flex, Text } from '@chakra-ui/react';
-import React, { memo, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import LabelMenu from '../../features/dataCollections/LabelMenu';
 import PeopleMenu from '../../features/dataCollections/PeopleMenu';
 import DateInput from '../../features/dataCollections/DateInput';
@@ -60,8 +60,10 @@ const Row = ({
     }, [deleteBoxIsChecked]);
 
     const handleDragStart = (event: React.DragEvent<HTMLDivElement>, rowIndex: number) => {
+        console.log(`Dragging ${rowIndex}`);
         event.dataTransfer.setData('text', '');
         localStorage.setItem('rowDragged', `${rowIndex}`);
+        localStorage.setItem('dragging', 'true');
         // handleSetDraggedId(rowIndex);
         draggedId;
         setDraggedId(rowIndex);
@@ -89,6 +91,7 @@ const Row = ({
     };
 
     const handleDragOver = (event: React.DragEvent<HTMLDivElement>, rowIndex: number) => {
+        console.log(`Dragged over ${rowIndex}`);
         if (localStorage.getItem('rowDragged') !== null) {
             event.preventDefault();
             event.stopPropagation();
@@ -99,12 +102,12 @@ const Row = ({
         }
     };
 
-    const handleDragEnd = (event: any) => {
+    const handleDragEnd = useCallback((event: any) => {
         event;
-        handleSwap();
         setDraggedId(null);
         setOverId(null);
-    };
+        handleSwap();
+    }, []);
 
     const handleDeleteCheckboxChange = () => {
         setDeleteCheckboxIsChecked(!deleteCheckboxIsChecked);
@@ -164,22 +167,23 @@ const Row = ({
                 onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, rowIndex)}
                 onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
             >
+                {/* <>{console.log(Boolean(localStorage.getItem('dragging')))}</> */}
                 <Box
                     id={`drop-indicator-${rowIndex}`}
                     className="drop-indicator"
                     style={{
-                        visibility: overId !== null && overId === rowIndex ? 'visible' : 'hidden',
+                        visibility: Boolean(localStorage.getItem('dragging')) && overId !== null && overId === row.position ? 'visible' : 'hidden',
                         bottom:
-                            overId === 0 && Number(localStorage.getItem('rowDragged')) >= rowIndex
+                            overId === 1 && Number(localStorage.getItem('rowDragged')) >= row.position
                                 ? '-4px'
-                                : overId === rowIndex && Number(localStorage.getItem('rowDragged')) < rowIndex
+                                : overId === row.position && Number(localStorage.getItem('rowDragged')) < row.position
                                 ? '-29px'
                                 : '0px',
                     }}
                 ></Box>
             </div>
             <Box key={rowIndex} pos={'relative'} _hover={{ bgColor: '#f1f7ff' }} backgroundColor={row.checked ? '#e1eeff' : 'unset'}>
-                <>{console.log(`ROW ${rowIndex} RENDERED`)}</>
+                {/* <>{console.log(`ROW ${rowIndex} RENDERED`)}</> */}
                 <Box
                     key={rowIndex}
                     id={`table-row-container-${rowIndex}`}
@@ -195,8 +199,8 @@ const Row = ({
                         style={{
                             gridTemplateColumns: '220px ' + gridTemplateColumns,
                         }}
-                        onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, rowIndex)}
-                        onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, rowIndex)}
+                        onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, row.position)}
+                        onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, row.position)}
                         onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
                         onDragEnter={(event: React.DragEvent<HTMLDivElement>) => handleDragEnter(event)}
                         onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
@@ -210,8 +214,8 @@ const Row = ({
                                     bgColor={'#2d82eb'}
                                     cursor={'move'}
                                     draggable
-                                    onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, rowIndex)}
-                                    onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, rowIndex)}
+                                    onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, row.position)}
+                                    onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, row.position)}
                                     onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
                                     onDragEnter={(event: React.DragEvent<HTMLDivElement>) => handleDragEnter(event)}
                                     onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}

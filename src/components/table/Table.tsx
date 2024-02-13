@@ -104,7 +104,7 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
 
     const handleUpdateRow = useCallback(
         async (row: any) => {
-            console.log(row);
+            // console.log(row);
             const newRows: any = await updateRow(row);
 
             // This handles adding additional rows if the last row is not empty
@@ -196,70 +196,132 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
 
     const setAsMainrow = useCallback(() => {
         let currentParentId: any = null;
-        let updateChild = false;
+        let updatedRow: any = null;
+        let setToParent = false;
+        let removeParent = false;
+        let currentParent: any = null;
+        let subrowCount = 1;
+
         setRows((prevRows) =>
             prevRows.map((prevRow) => {
-                if (prevRow.checked) {
-                    currentParentId = prevRow._id;
-                    updateChild = true;
-                    updateRow({ ...prevRow, parentRowId: null, checked: false, isParent: false });
-                    return { ...prevRow, parentRowId: null, checked: false, isParent: false };
-                }
+                const isParent = prevRow.isParent && (prevRow.parentRowId === undefined || prevRow.parentRowId === null);
+                const isChild = prevRow.parentRowId !== null && prevRow.parentRowId !== undefined;
 
-                if (prevRow.parentRowId === undefined || prevRow.parentRowId === null) {
-                    currentParentId = null;
-                }
-                if (currentParentId !== null) {
-                    updateRow({ ...prevRow, parentRowId: currentParentId });
-                    return { ...prevRow, parentRowId: currentParentId };
+                console.log({ isParent, isChild, position: prevRow.position });
+                // if current row is checked
+                if (prevRow.checked) {
+                    // if it is not a main row
+                    if (!isParent) {
+                        console.log(`${prevRow.position} is checked and is not a parent`);
+                        // if it is a child
+                        if (isChild) {
+                            // Set the current parent id to the current's row id so if the next row is a subrow
+                            // we can set it's id to this new parent
+                            currentParentId = prevRow._id;
+
+                            if (subrowCount === 1) {
+                                removeParent = true;
+                            }
+
+                            subrowCount = subrowCount + 1;
+                        }
+                        // keep track of updated row
+                        updatedRow = prevRow;
+                        // And set its properties to that of a parent row
+                        updateRow({ ...prevRow, parentRowId: null, checked: false, isParent: false });
+                        return { ...prevRow, parentRowId: null, checked: false, isParent: false };
+                    } else {
+                        return { ...prevRow, checked: false };
+                    }
+                } else {
+                    // if we have an unchecked row that is a parent row
+                    if (isParent) {
+                        // we set parent id to null
+                        currentParentId = null;
+                        if (!removeParent) {
+                            currentParent = prevRow;
+                        }
+
+                        subrowCount = 1;
+                        console.log(`${prevRow.position} is a parent but not checked`);
+                    }
+
+                    // if we have an unchecked child row and a parent id has been previously set from one of the newly rows set to parent
+                    // we will need to set that row as a parent at a later time since during that iteration, that row was unaware that the next rows
+                    // were children rows
+                    // We also update this row to have the parent id of the row that was checked and set as a parent.
+                    if (isChild) {
+                        if (currentParentId !== null) {
+                            console.log(`${prevRow.position} is a child and the parentId is ${currentParentId}`);
+                            setToParent = true;
+                            updateRow({ ...prevRow, parentRowId: currentParentId });
+                            return { ...prevRow, parentRowId: currentParentId };
+                        }
+                        subrowCount = subrowCount + 1;
+                    }
                 }
                 return prevRow;
             })
         );
 
+        console.log(updatedRow);
+        if (setToParent) updateRow({ ...updatedRow, isParent: true, parentRowId: null });
+        if (removeParent && currentParent !== null) updateRow({ ...currentParent, isParent: false, parentRowId: null });
+
         setNumberOfDeleteItems(0);
     }, [rows]);
 
     const setAsSubrow = useCallback(() => {
-        // const rowsCopy = rows;
-        let currentParentId: any;
         let isPreviousRowAParent: any = true;
         let parentRowIds: any = [];
 
+        let currentParentId: any = null;
+        let isChecking: any = false;
+        let updatedRow: any = null;
+
         setRows((prevRows) =>
-            prevRows.map((prevRow) => {
-                if (prevRow.parentRowId === undefined || prevRow.parentRowId === null) {
-                    if (!prevRow.checked) {
-                        currentParentId = prevRow._id;
-                    }
-                } else {
-                    isPreviousRowAParent = false;
-                }
+            prevRows.map((prevRow, index) => {
+                const isParent = prevRow.isParent && (prevRow.parentRowId === undefined || prevRow.parentRowId === null);
+                const isChild = prevRow.parentRowId !== null && prevRow.parentRowId !== undefined;
 
-                console.log(currentParentId);
-
-                let result = prevRow;
+                console.log({ isParent, isChild, currentParentId, isChecking });
 
                 if (prevRow.checked) {
-                    result = { ...prevRow, parentRowId: currentParentId, checked: false };
-                    parentRowIds.push(currentParentId);
-                    updateRow(result);
+                    if (index !== 0) {
+                        isChecking = true;
+                        console.log(currentParentId);
+                        updateRow({ ...prevRow, isParent: false, parentRowId: currentParentId, checked: false });
+                        return { ...prevRow, isParent: false, parentRowId: currentParentId, checked: false };
+                    } else {
+                        return { ...prevRow, checked: false };
+                    }
                 } else {
-                    result = prevRow;
+                    if (isChild) {
+                        if (isChecking) {
+                            console.log(`${prevRow.position} is a child and algo is checking with a parent row id of ${currentParentId}`);
+                            updateRow({ ...prevRow, parentRowId: currentParentId });
+                            return { ...prevRow, parentRowId: currentParentId };
+                        } else {
+                            currentParentId = prevRow.parentRowId;
+                        }
+                    } else {
+                        console.log('I am not a sub row');
+                        currentParentId = prevRow._id;
+                        isChecking = false;
+                    }
                 }
-
-                return result;
+                return prevRow;
             })
         );
 
-        console.log(parentRowIds);
+        // console.log(parentRowIds);
 
-        setRows((prevRows) =>
-            prevRows.map((prevRow) => {
-                if (parentRowIds.includes(prevRow._id)) updateRow({ ...prevRow, isParent: true });
-                return parentRowIds.includes(prevRow._id) ? { ...prevRow, isParent: true } : prevRow;
-            })
-        );
+        // setRows((prevRows) =>
+        //     prevRows.map((prevRow) => {
+        //         if (parentRowIds.includes(prevRow._id)) updateRow({ ...prevRow, isParent: true });
+        //         return parentRowIds.includes(prevRow._id) ? { ...prevRow, isParent: true } : prevRow;
+        //     })
+        // );
 
         // setRows((prevRows) =>
         //     prevRows.map((row) => {

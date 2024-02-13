@@ -2,6 +2,7 @@ import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { ViewportList } from 'react-viewport-list';
 import Row from './Row';
 import { swapItems } from '../../utils/helpers';
+import { useUpdateRowMutation } from '../../app/services/api';
 
 interface IProps {
     rows: any[];
@@ -37,6 +38,8 @@ const TableContent = ({
     const [gridTemplateColumns, setGridTemplateColumns] = useState('');
 
     const [currentRows, setCurrentRows] = useState(rows);
+
+    const [updateRow] = useUpdateRowMutation();
 
     // const [deleteCheckboxStatusList, setDeleteCheckboxStatusList] = useState(
     //     Array(rows.length)
@@ -148,68 +151,122 @@ const TableContent = ({
         setOverId(rowIndex);
     }, []);
 
+    const setPositions = (list: any, draggedIndex: number, overIndex: number, numberOfChildren: number) => {
+        console.log({ list, draggedIndex, overIndex, numberOfChildren });
+
+        const range: any = [];
+
+        if (draggedIndex < overIndex) {
+            for (let i = draggedIndex; i < overIndex + numberOfChildren + 1; i++) {
+                range.push(i + 1);
+            }
+        } else {
+            for (let i = overIndex; i < draggedIndex + numberOfChildren + 1; i++) {
+                range.push(i + 1);
+            }
+        }
+
+        console.log(range);
+
+        const newRows = list.map((row: any, index: number) => {
+            if (range.includes(index + 1)) {
+                const updatedRow = { ...row, position: index + 1 };
+                console.log(updatedRow);
+                console.log({ value: updatedRow.values['task'], position: updatedRow.position });
+                updateRow(updatedRow);
+                return updatedRow;
+            }
+            return row;
+        });
+
+        console.log(newRows);
+        return newRows;
+    };
+
     const handleSwap = useCallback(
         (overId: number, draggedId: number) => {
             console.log({ rowDragged: Number(localStorage.getItem('rowDragged')), rowOver: Number(localStorage.getItem('rowOver')) });
             console.log({ overId, draggedId, currentRows });
 
             const newRows = [...currentRows];
-            const draggedRowData = newRows[Number(localStorage.getItem('rowDragged'))];
-            const overRowData = newRows[Number(localStorage.getItem('rowOver'))];
-            const isParent = draggedRowData.isParent;
+            const draggedRowData = newRows[Number(localStorage.getItem('rowDragged')) - 1];
+            const overRowData = newRows[Number(localStorage.getItem('rowOver')) - 1];
+            const draggedIsParent = draggedRowData.isParent;
             const overIsChild = overRowData.parentRowId !== null;
 
-            console.log(isParent && overIsChild);
-
             const childRows = newRows.filter((row) => {
-                return isParent && row.parentRowId === draggedRowData._id;
+                return draggedIsParent && row.parentRowId === draggedRowData._id;
             });
 
-            const reorderedRows = swapItems(newRows, Number(localStorage.getItem('rowDragged')), Number(localStorage.getItem('rowOver')), childRows.length + 1);
+            console.log(childRows);
 
-            if (isParent) {
-                setCurrentRows(reorderedRows);
-                setRows(reorderedRows);
+            let reorderedRows;
+
+            if (!(draggedIsParent && overIsChild)) {
+                console.log(`${draggedRowData.position} was dropped over not child ${overRowData.position}`);
+                reorderedRows = swapItems(newRows, Number(localStorage.getItem('rowDragged')), Number(localStorage.getItem('rowOver')), childRows.length + 1);
+
+                //     const repositionedRows: any = setPositions(
+                //         reorderedRows,
+                //         Number(localStorage.getItem('rowDragged')),
+                //         Number(localStorage.getItem('rowOver')),
+                //         childRows.length
+                //     );
+
+                //     if (draggedIsParent) {
+                //         setCurrentRows(reorderedRows);
+                //         setRows(reorderedRows);
+                //     } else {
+                //         let currentParentId: any;
+                //         setCurrentRows(
+                //             repositionedRows.map((row: any, index: number) => {
+                //                 // console.log(index, row.position);
+                //                 // if the current row is the drop location then update wether it has a parent
+                //                 if (index === Number(localStorage.getItem('rowOver'))) {
+                //                     let result = { ...row, parentRowId: currentParentId };
+                //                     currentParentId = null;
+                //                     // handleUpdateRow(result);
+                //                     return result;
+                //                 }
+
+                //                 // if the row is a parent then set then set its id for the next iteration
+                //                 if (row.isParent) {
+                //                     currentParentId = row._id;
+                //                 } else {
+                //                     if (row.parentRowId !== null) {
+                //                         currentParentId = row.parentRowId;
+                //                     } else {
+                //                         currentParentId = null;
+                //                     }
+                //                 }
+
+                //                 return row;
+                //             })
+                //         );
+
+                //         // setRows(
+                //         //     reorderedRows.map((row: any, index: number) => {
+                //         //         if (index === Number(localStorage.getItem('rowOver'))) {
+                //         //             let result = { ...row, parentRowId: currentParentId };
+                //         //             currentParentId = null;
+                //         //             // handleUpdateRow(result);
+                //         //             return result;
+                //         //         }
+
+                //         //         if (row.isParent && row.parentRowId === null) {
+                //         //             currentParentId = row._id;
+                //         //         } else {
+                //         //             currentParentId = null;
+                //         //         }
+
+                //         //         return row;
+                //         //     })
+                //         // );
+                //     }
             } else {
-                let currentParentId: any;
-
-                setCurrentRows(
-                    reorderedRows.map((row: any, index: number) => {
-                        console.log(row);
-                        if (index === Number(localStorage.getItem('rowOver'))) {
-                            let result = { ...row, parentRowId: currentParentId };
-                            currentParentId = null;
-                            handleUpdateRow(result);
-                            return result;
-                        }
-
-                        if (row.isParent && row.parentRowId === null) {
-                            currentParentId = row._id;
-                        } else {
-                            currentParentId = null;
-                        }
-                        return row;
-                    })
-                );
-
-                // setRows(
-                //     reorderedRows.map((row: any, index: number) => {
-                //         if (index === Number(localStorage.getItem('rowOver'))) {
-                //             let result = { ...row, parentRowId: currentParentId };
-                //             currentParentId = null;
-                //             // handleUpdateRow(result);
-                //             return result;
-                //         }
-
-                //         if (row.isParent && row.parentRowId === null) {
-                //             currentParentId = row._id;
-                //         } else {
-                //             currentParentId = null;
-                //         }
-
-                //         return row;
-                //     })
-                // );
+                console.log(`${draggedRowData.position} is a parent and was dragged over subrow ${overRowData.position} `);
+                // setCurrentRows(newRows);
+                // setRows(newRows);
             }
 
             // handleReorderRows({
@@ -221,8 +278,11 @@ const TableContent = ({
 
             setOverId(null);
             setDraggedId(null);
+            localStorage.setItem('dragging', '');
+            // localStorage.setItem('rowDragged', '');
+            // localStorage.setItem('rowOver', '');
         },
-        [overId, draggedId, currentRows]
+        [currentRows]
     );
 
     const handleChange = (row: any) => {
