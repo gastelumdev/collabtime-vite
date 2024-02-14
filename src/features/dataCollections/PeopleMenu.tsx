@@ -2,7 +2,7 @@ import { Box, Button, Popover, PopoverArrow, PopoverBody, PopoverContent, Popove
 import { getTextColor } from '../../utils/helpers';
 import { useEffect, useState } from 'react';
 import { TRow, TUser } from '../../types';
-import { useUpdateRowMutation } from '../../app/services/api';
+// import { useUpdateRowMutation } from '../../app/services/api';
 
 interface ILabel {
     value: string;
@@ -23,7 +23,7 @@ interface IProps {
 
 const PeopleMenu = ({ row, columnName, people, value = '', onChange }: IProps) => {
     const { onClose } = useDisclosure();
-    const [updateRow] = useUpdateRowMutation();
+    // const [updateRow] = useUpdateRowMutation();
 
     const [labelValue, setLabelValue] = useState<string>('');
     const [labelLabel, setLabelLabel] = useState<string>('');
@@ -33,26 +33,36 @@ const PeopleMenu = ({ row, columnName, people, value = '', onChange }: IProps) =
     const [active, setActive] = useState<boolean>(false);
 
     useEffect(() => {
+        row;
+        labelValue;
         const cellOptions: ILabel[] | undefined = people?.map((item) => {
             return {
                 value: item._id,
-                label: `${item.firstname} ${item.lastname}`,
+                label: `${item.firstname} ${item.lastname} - ${item.email}`,
                 color: '#ffffff',
             };
         });
 
+        const splitValue = value.split(' - ');
+        splitValue.pop();
+        const label = splitValue.join(' ');
+
         setLabelValue(value);
-        setLabelLabel(value);
+        setLabelLabel(label);
         setLabelColor('#ffffff');
         setOptions(cellOptions);
     }, [value]);
 
     const handleLabelClick = (label: ILabel) => {
-        updateRow({ ...row, values: { ...row.values, [columnName]: label.label } });
+        // updateRow({ ...row, values: { ...row.values, [columnName]: label.label } });
+
+        const splitValue = label.label.split(' - ');
+        splitValue.pop();
+        const labelResult = splitValue.join(' ');
 
         setLabelValue(label.value);
         setLabelColor(label.color);
-        setLabelLabel(label.label);
+        setLabelLabel(labelResult);
 
         onClose();
         setActive(false);
@@ -87,17 +97,24 @@ const PeopleMenu = ({ row, columnName, people, value = '', onChange }: IProps) =
                                 variant={'unstyled'}
                                 _hover={{ bgColor: labelColor }}
                             >
-                                {labelValue}
+                                {labelLabel}
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent>
                             <PopoverArrow />
                             <PopoverBody>
                                 {options?.map((label, index) => {
+                                    const splitPerson = label.label.split(' ');
+                                    const email = splitPerson.pop();
+                                    const name = splitPerson.join(' ');
+                                    console.log({ splitPerson, email, name });
                                     return (
                                         <Box key={index} p={'6px'} cursor={'pointer'} onClick={() => handleLabelClick(label)}>
                                             <Box>
-                                                <Text color={getTextColor(label.color)}>{label.label}</Text>
+                                                <Text color={getTextColor(label.color)}>
+                                                    {name}
+                                                    <span style={{ color: 'gray' }}>{` ${email}`}</span>
+                                                </Text>
                                             </Box>
                                         </Box>
                                     );
