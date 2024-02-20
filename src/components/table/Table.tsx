@@ -196,9 +196,9 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
 
     const setAsMainrow = useCallback(() => {
         let currentParentId: any = null;
-        let updatedRow: any = null;
-        let setToParent = false;
-        let removeParent = false;
+        // let updatedRow: any = null;
+        // let setToParent = false;
+        // let removeParent = false;
         let currentParent: any = null;
         let subrowCount = 1;
 
@@ -206,7 +206,7 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
         const makeAsParents: any = [];
         const removeAsParents: any = [];
 
-        let searchForSubrows = false;
+        // let searchForSubrows = false;
 
         setRows((prevRows) =>
             prevRows.map((prevRow) => {
@@ -226,17 +226,17 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
                             currentParentId = prevRow._id;
 
                             potentialParent = prevRow;
-                            searchForSubrows = true;
+                            // searchForSubrows = true;
 
                             if (subrowCount === 1) {
-                                removeParent = true;
+                                // removeParent = true;
                                 removeAsParents.push(currentParent);
                             }
 
                             subrowCount = subrowCount + 1;
                         }
                         // keep track of updated row
-                        updatedRow = prevRow;
+                        // updatedRow = prevRow;
                         // And set its properties to that of a parent row
                         updateRow({ ...prevRow, parentRowId: null, checked: false, isParent: false });
                         return { ...prevRow, parentRowId: null, checked: false, isParent: false };
@@ -250,7 +250,7 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
                         currentParentId = null;
                         currentParent = prevRow;
 
-                        searchForSubrows = false;
+                        // searchForSubrows = false;
 
                         subrowCount = 1;
                         console.log(`${prevRow.position} is a parent but not checked`);
@@ -263,7 +263,7 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
                     if (isChild) {
                         if (currentParentId !== null) {
                             console.log(`${prevRow.position} is a child and the parentId is ${currentParentId}`);
-                            setToParent = true;
+                            // setToParent = true;
                             makeAsParents.push(potentialParent);
                             updateRow({ ...prevRow, parentRowId: currentParentId });
                             return { ...prevRow, parentRowId: currentParentId };
