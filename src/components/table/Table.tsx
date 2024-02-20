@@ -202,6 +202,12 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
         let currentParent: any = null;
         let subrowCount = 1;
 
+        let potentialParent: any = null;
+        const makeAsParents: any = [];
+        const removeAsParents: any = [];
+
+        let searchForSubrows = false;
+
         setRows((prevRows) =>
             prevRows.map((prevRow) => {
                 const isParent = prevRow.isParent && (prevRow.parentRowId === undefined || prevRow.parentRowId === null);
@@ -219,8 +225,12 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
                             // we can set it's id to this new parent
                             currentParentId = prevRow._id;
 
+                            potentialParent = prevRow;
+                            searchForSubrows = true;
+
                             if (subrowCount === 1) {
                                 removeParent = true;
+                                removeAsParents.push(currentParent);
                             }
 
                             subrowCount = subrowCount + 1;
@@ -238,9 +248,9 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
                     if (isParent) {
                         // we set parent id to null
                         currentParentId = null;
-                        if (!removeParent) {
-                            currentParent = prevRow;
-                        }
+                        currentParent = prevRow;
+
+                        searchForSubrows = false;
 
                         subrowCount = 1;
                         console.log(`${prevRow.position} is a parent but not checked`);
@@ -254,6 +264,7 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
                         if (currentParentId !== null) {
                             console.log(`${prevRow.position} is a child and the parentId is ${currentParentId}`);
                             setToParent = true;
+                            makeAsParents.push(potentialParent);
                             updateRow({ ...prevRow, parentRowId: currentParentId });
                             return { ...prevRow, parentRowId: currentParentId };
                         }
@@ -264,32 +275,61 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
             })
         );
 
-        console.log(updatedRow);
-        if (setToParent) updateRow({ ...updatedRow, isParent: true, parentRowId: null });
-        if (removeParent && currentParent !== null) updateRow({ ...currentParent, isParent: false, parentRowId: null });
+        const removeAsParentsIds = removeAsParents.map((row: any) => {
+            return row._id;
+        });
+
+        const makeAsParentsIds = makeAsParents.map((row: any) => {
+            return row._id;
+        });
+
+        console.log(removeAsParents);
+        setRows((prevRows) =>
+            prevRows.map((prevRow) => {
+                if (removeAsParentsIds.includes(prevRow._id)) updateRow({ ...prevRow, isParent: false, parentRowId: null });
+                return removeAsParentsIds.includes(prevRow._id) ? { ...prevRow, isParent: false, parentRowId: null } : prevRow;
+            })
+        );
+
+        console.log(makeAsParents);
+        setRows((prevRows) =>
+            prevRows.map((prevRow) => {
+                if (makeAsParentsIds.includes(prevRow._id)) updateRow({ ...prevRow, isParent: true, parentRowId: null });
+                return makeAsParentsIds.includes(prevRow._id) ? { ...prevRow, isParent: true, parentRowId: null } : prevRow;
+            })
+        );
+
+        // if (setToParent) updateRow({ ...updatedRow, isParent: true, parentRowId: null });
+        // if (removeParent && currentParent !== null) updateRow({ ...currentParent, isParent: false, parentRowId: null });
 
         setNumberOfDeleteItems(0);
     }, [rows]);
 
     const setAsSubrow = useCallback(() => {
-        let isPreviousRowAParent: any = true;
         let parentRowIds: any = [];
+        let potentialParent: any = null;
+        const newParents: any = [];
 
         let currentParentId: any = null;
         let isChecking: any = false;
-        let updatedRow: any = null;
 
         setRows((prevRows) =>
             prevRows.map((prevRow, index) => {
-                const isParent = prevRow.isParent && (prevRow.parentRowId === undefined || prevRow.parentRowId === null);
+                // const isParent = prevRow.isParent && (prevRow.parentRowId === undefined || prevRow.parentRowId === null);
                 const isChild = prevRow.parentRowId !== null && prevRow.parentRowId !== undefined;
 
-                console.log({ isParent, isChild, currentParentId, isChecking });
+                // console.log({ isParent, isChild, currentParentId, isChecking });
 
                 if (prevRow.checked) {
                     if (index !== 0) {
+                        if (potentialParent !== null) {
+                            if (newParents.length === 0 || newParents[newParents.length - 1].position !== potentialParent.position) {
+                                newParents.push(potentialParent);
+                                parentRowIds.push(potentialParent._id);
+                            }
+                        }
+
                         isChecking = true;
-                        console.log(currentParentId);
                         updateRow({ ...prevRow, isParent: false, parentRowId: currentParentId, checked: false });
                         return { ...prevRow, isParent: false, parentRowId: currentParentId, checked: false };
                     } else {
@@ -298,15 +338,14 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
                 } else {
                     if (isChild) {
                         if (isChecking) {
-                            console.log(`${prevRow.position} is a child and algo is checking with a parent row id of ${currentParentId}`);
                             updateRow({ ...prevRow, parentRowId: currentParentId });
                             return { ...prevRow, parentRowId: currentParentId };
                         } else {
                             currentParentId = prevRow.parentRowId;
                         }
                     } else {
-                        console.log('I am not a sub row');
                         currentParentId = prevRow._id;
+                        potentialParent = prevRow;
                         isChecking = false;
                     }
                 }
@@ -314,20 +353,12 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
             })
         );
 
-        // console.log(parentRowIds);
-
-        // setRows((prevRows) =>
-        //     prevRows.map((prevRow) => {
-        //         if (parentRowIds.includes(prevRow._id)) updateRow({ ...prevRow, isParent: true });
-        //         return parentRowIds.includes(prevRow._id) ? { ...prevRow, isParent: true } : prevRow;
-        //     })
-        // );
-
-        // setRows((prevRows) =>
-        //     prevRows.map((row) => {
-        //         return { ...row, checked: false };
-        //     })
-        // );
+        setRows((prevRows) =>
+            prevRows.map((prevRow) => {
+                if (parentRowIds.includes(prevRow._id)) updateRow({ ...prevRow, isParent: true });
+                return parentRowIds.includes(prevRow._id) ? { ...prevRow, isParent: true } : prevRow;
+            })
+        );
 
         setNumberOfDeleteItems(0);
     }, [rows]);

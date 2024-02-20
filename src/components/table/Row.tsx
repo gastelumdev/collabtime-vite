@@ -102,12 +102,16 @@ const Row = ({
         }
     };
 
-    const handleDragEnd = useCallback((event: any) => {
-        event;
-        setDraggedId(null);
-        setOverId(null);
-        handleSwap();
-    }, []);
+    const handleDragEnd = useCallback(
+        (event: any) => {
+            event;
+            setDraggedId(null);
+            setOverId(null);
+            console.log('From handleDragEnd');
+            handleSwap();
+        },
+        [draggedId, overId, handleSwap]
+    );
 
     const handleDeleteCheckboxChange = () => {
         setDeleteCheckboxIsChecked(!deleteCheckboxIsChecked);
@@ -201,7 +205,7 @@ const Row = ({
                         }}
                         onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, row.position)}
                         onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, row.position)}
-                        onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
+                        // onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
                         onDragEnter={(event: React.DragEvent<HTMLDivElement>) => handleDragEnter(event)}
                         onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
                     >
@@ -243,6 +247,7 @@ const Row = ({
                                 <Box pt={'7px'} ml={'10px'} onClick={handleAcknowledgeClick} cursor={'pointer'}>
                                     <UploadModal rowDocuments={row.docs} getDocs={getDocs} getUpdatedDoc={getUpdatedDoc} removeDoc={removeDoc} />
                                 </Box>
+                                {/* {row.position} */}
                                 {/* <Button
                                 variant={'unstyled'}
                                 h={'20px'}
