@@ -181,11 +181,11 @@ const TableContent = ({
         // let index = range[0];
 
         const newRows = list.map((row: any, index: number) => {
-            console.log({ rowPosition: row.position, value: row.values['item_name'], index });
+            // console.log({ rowPosition: row.position, value: row.values['item_name'], index });
             const updatedRow = { ...row, position: index + 1 };
 
             // console.log(updatedRow);
-            console.log({ index, position: updatedRow.position });
+            // console.log({ index, position: updatedRow.position });
             // handleUpdateRow(updatedRow);
 
             if (row.position !== index + 1) {

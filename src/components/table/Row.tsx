@@ -61,6 +61,7 @@ const Row = ({
 
     const handleDragStart = (event: React.DragEvent<HTMLDivElement>, rowIndex: number) => {
         console.log(`Dragging ${rowIndex}`);
+        console.log(event);
         event.dataTransfer.setData('text', '');
         localStorage.setItem('rowDragged', `${rowIndex}`);
         localStorage.setItem('dragging', 'true');
@@ -208,6 +209,7 @@ const Row = ({
                         // onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
                         onDragEnter={(event: React.DragEvent<HTMLDivElement>) => handleDragEnter(event)}
                         onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
+                        onDrop={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
                     >
                         <span style={{ borderRight: '1px solid #edf2f7' }}>
                             <Flex>
@@ -220,9 +222,10 @@ const Row = ({
                                     draggable
                                     onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, row.position)}
                                     onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, row.position)}
-                                    onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
+                                    // onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
                                     onDragEnter={(event: React.DragEvent<HTMLDivElement>) => handleDragEnter(event)}
                                     onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
+                                    // onDrop={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
                                     style={{ backgroundColor: row.parentRowId ? 'lightblue' : '#2d82eb' }}
                                 ></Box>
                                 <Box mt={'6px'} ml={'14px'}>
