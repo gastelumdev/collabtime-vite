@@ -419,6 +419,23 @@ const TableContent = ({
         setCurrentRows((prev) => prev.map((prevRow) => (prevRow._id === row._id ? row : prevRow)));
     };
 
+    const handleSubrowVisibility = (row: any, status: boolean) => {
+        console.log(row);
+        handleUpdateRow(row);
+        handleUpdateRowNoRender(row);
+        setCurrentRows((prev) => prev.map((prevRow) => (prevRow._id === row._id ? row : prevRow)));
+
+        setRows(
+            currentRows.map((currentRow) => {
+                if (currentRow.parentRowId === row._id) {
+                    updateRow({ ...currentRow, isVisible: status });
+                    return { ...currentRow, isVisible: status };
+                }
+                return currentRow;
+            })
+        );
+    };
+
     const handleDeleteBoxChangeForRow = (status: boolean, index: number) => {
         console.log(currentRows);
         // setCurrentRows((prevRows) => prevRows.map((prevRow, rowIndex) => (index === rowIndex ? { ...prevRow, checked: status } : prevRow)));
@@ -484,6 +501,7 @@ const TableContent = ({
                                 handleChange={handleChange}
                                 deleteBoxIsChecked={row.checked}
                                 handleDeleteBoxChange={handleDeleteBoxChangeForRow}
+                                handleSubrowVisibility={handleSubrowVisibility}
                                 rowCallUpdate={rowCallUpdate}
                             />
                         </div>

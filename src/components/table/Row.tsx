@@ -1,5 +1,5 @@
 // import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import { Box, Checkbox, Flex, Text } from '@chakra-ui/react';
+import { Box, Button, Checkbox, Flex, Text } from '@chakra-ui/react';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import LabelMenu from '../../features/dataCollections/LabelMenu';
 import PeopleMenu from '../../features/dataCollections/PeopleMenu';
@@ -13,6 +13,8 @@ import { FaRegSquareCheck } from 'react-icons/fa6';
 // import UploadMenu from '../../features/dataCollections/UploadMenu';
 import UploadModal from './UploadModal';
 import { TDocument } from '../../types';
+import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import { useUpdateRowMutation } from '../../app/services/api';
 
 const Row = ({
     row,
@@ -25,6 +27,7 @@ const Row = ({
     handleChange,
     deleteBoxIsChecked,
     handleDeleteBoxChange,
+    handleSubrowVisibility,
     rowCallUpdate,
 }: {
     row: any;
@@ -37,6 +40,7 @@ const Row = ({
     handleChange: any;
     deleteBoxIsChecked: boolean;
     handleDeleteBoxChange: any;
+    handleSubrowVisibility: any;
     rowCallUpdate: any;
 }) => {
     const rowsData = useMemo(
@@ -54,6 +58,8 @@ const Row = ({
     const [draggedId, setDraggedId] = useState<number | null>(null);
 
     const [deleteCheckboxIsChecked, setDeleteCheckboxIsChecked] = useState(deleteBoxIsChecked);
+
+    const [updateRow] = useUpdateRowMutation();
 
     useEffect(() => {
         setDeleteCheckboxIsChecked(deleteBoxIsChecked);
@@ -141,10 +147,10 @@ const Row = ({
         handleChange({ ...row, acknowledged: !row.acknowledged });
     };
 
-    const [opened, setOpened] = useState<boolean>(row.subRowsAreOpen);
+    const [opened, setOpened] = useState<boolean>();
 
     useEffect(() => {
-        setOpened(row.subRowsAreOpen);
+        setOpened(row.isVisible);
     }, [row]);
 
     const getDocs = (documents: any[]) => {
@@ -167,146 +173,153 @@ const Row = ({
     };
     return (
         <>
-            <div
-                className="drop-indicator-container"
-                onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, rowIndex)}
-                onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
-            >
-                {/* <>{console.log(Boolean(localStorage.getItem('dragging')))}</> */}
-                <Box
-                    id={`drop-indicator-${rowIndex}`}
-                    className="drop-indicator"
-                    style={{
-                        visibility: Boolean(localStorage.getItem('dragging')) && overId !== null && overId === row.position ? 'visible' : 'hidden',
-                        bottom:
-                            overId === 1 && Number(localStorage.getItem('rowDragged')) >= row.position
-                                ? '-4px'
-                                : overId === row.position && Number(localStorage.getItem('rowDragged')) < row.position
-                                ? '-29px'
-                                : '0px',
-                    }}
-                ></Box>
-            </div>
-            <Box key={rowIndex} pos={'relative'} _hover={{ bgColor: '#f1f7ff' }} backgroundColor={row.checked ? '#e1eeff' : 'unset'}>
-                {/* <>{console.log(`ROW ${rowIndex} RENDERED`)}</> */}
-                <Box
-                    key={rowIndex}
-                    id={`table-row-container-${rowIndex}`}
-                    className="table-row-container"
-                    style={{
-                        // backgroundColor: draggedId === rowIndex ? '#85bcff' : 'white',
-                        borderTop: '1px solid #edf2f7',
-                        // height: draggedId !== null && overId === rowIndex && draggedId >= rowIndex ? '26px' : '29px',
-                    }}
-                >
+            {row.isVisible ? (
+                <>
                     <div
-                        className="table-row content"
-                        style={{
-                            gridTemplateColumns: '220px ' + gridTemplateColumns,
-                        }}
-                        onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, row.position)}
-                        onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, row.position)}
-                        // onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
-                        onDragEnter={(event: React.DragEvent<HTMLDivElement>) => handleDragEnter(event)}
+                        className="drop-indicator-container"
+                        onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, rowIndex)}
                         onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
-                        onDrop={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
                     >
-                        <span style={{ borderRight: '1px solid #edf2f7' }}>
-                            <Flex>
-                                <Box
-                                    id={`reorder-handle-${rowIndex}`}
-                                    w={'15px'}
-                                    h={'30px'}
-                                    bgColor={'#2d82eb'}
-                                    cursor={'move'}
-                                    draggable
-                                    onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, row.position)}
-                                    onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, row.position)}
-                                    // onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
-                                    onDragEnter={(event: React.DragEvent<HTMLDivElement>) => handleDragEnter(event)}
-                                    onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
-                                    // onDrop={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
-                                    style={{ backgroundColor: row.parentRowId ? 'lightblue' : '#2d82eb' }}
-                                ></Box>
-                                <Box mt={'6px'} ml={'14px'}>
-                                    <Checkbox mr={'1px'} isChecked={deleteCheckboxIsChecked} onChange={handleDeleteCheckboxChange} />
-                                </Box>
-                                <Box pt={'6px'}>
-                                    <EditRow row={row} columns={columns} handleChange={editRowOnChange} />
-                                </Box>
-                                <Box pt={'6px'}>
-                                    <NoteModal row={row} updateRow={editRowOnChange} rowCallUpdate={rowCallUpdate} />
-                                </Box>
-                                <Box pt={'7px'} ml={'10px'} onClick={handleRemindersChange} cursor={'pointer'}>
-                                    <Text fontSize={'15px'} color={row.reminder ? '#16b2fc' : '#cccccc'}>
-                                        <FaRegBell />
-                                    </Text>
-                                </Box>
-                                <Box pt={'7px'} ml={'10px'} onClick={handleAcknowledgeClick} cursor={'pointer'}>
-                                    <Text fontSize={'15px'} color={row.acknowledged ? '#16b2fc' : '#cccccc'}>
-                                        <FaRegSquareCheck />
-                                    </Text>
-                                </Box>
-                                <Box pt={'7px'} ml={'10px'} onClick={handleAcknowledgeClick} cursor={'pointer'}>
-                                    <UploadModal rowDocuments={row.docs} getDocs={getDocs} getUpdatedDoc={getUpdatedDoc} removeDoc={removeDoc} />
-                                </Box>
-                                {/* {row.position} */}
-                                {/* <Button
-                                variant={'unstyled'}
-                                h={'20px'}
-                                outline="unset"
-                                onClick={() => {
-                                    console.log('BUTTON CLICKED on INDEX', rowIndex);
-                                    // setSubrowDrawers((prev) => prev.map((state, index) => (index === rowIndex ? !state : state)));
-                                    setOpened(!opened);
-                                    handleChange({ ...row, subRowsAreOpen: !opened });
-                                }}
-                            >
-                                <Text>{opened ? <ChevronDownIcon /> : <ChevronRightIcon />}</Text>
-                            </Button> */}
-                            </Flex>
-                        </span>
-                        {columns.map((column: any, columnIndex: number) => {
-                            return (
-                                <div
-                                    key={columnIndex}
-                                    className={'cell'}
-                                    style={{
-                                        whiteSpace: 'nowrap',
-                                        fontSize: '12px',
-                                        borderBottom: '1px solid #edf2f7',
-                                        paddingLeft: row.parentRowId && columnIndex == 0 ? '20px' : '0px',
-                                    }}
-                                >
-                                    {column.type === 'label' || column.type === 'priority' || column.type === 'status' ? (
-                                        <LabelMenu
-                                            id={rowIndex}
-                                            labels={column.labels}
-                                            columnName={column.name}
-                                            value={row.values[column.name]}
-                                            onChange={onChange}
-                                        />
-                                    ) : column.type === 'people' ? (
-                                        <PeopleMenu
-                                            row={row}
-                                            columnName={column.name}
-                                            people={column.people}
-                                            value={row.values[column.name]}
-                                            onChange={onChange}
-                                        />
-                                    ) : column.type === 'date' ? (
-                                        <DateInput value={row.values[column.name]} columnName={column.name} onChange={onChange} />
-                                    ) : (
-                                        <TextInput id={row._id} columnName={column.name} value={row.values[column.name]} onChange={onChange} />
-                                    )}
-                                    {/* {row.values[column.name]} */}
-                                </div>
-                            );
-                        })}
+                        {/* <>{console.log(Boolean(localStorage.getItem('dragging')))}</> */}
+                        <Box
+                            id={`drop-indicator-${rowIndex}`}
+                            className="drop-indicator"
+                            style={{
+                                visibility: Boolean(localStorage.getItem('dragging')) && overId !== null && overId === row.position ? 'visible' : 'hidden',
+                                bottom:
+                                    overId === 1 && Number(localStorage.getItem('rowDragged')) >= row.position
+                                        ? '-4px'
+                                        : overId === row.position && Number(localStorage.getItem('rowDragged')) < row.position
+                                        ? '-29px'
+                                        : '0px',
+                            }}
+                        ></Box>
                     </div>
-                </Box>
-                <SubRowsContent rows={rowsData} columns={columns} gridTemplateColumns={'170px ' + gridTemplateColumns} opened={opened} />
-            </Box>
+                    <Box key={rowIndex} pos={'relative'} _hover={{ bgColor: '#f1f7ff' }} backgroundColor={row.checked ? '#e1eeff' : 'unset'}>
+                        {/* <>{console.log(`ROW ${rowIndex} RENDERED`)}</> */}
+                        <Box
+                            key={rowIndex}
+                            id={`table-row-container-${rowIndex}`}
+                            className="table-row-container"
+                            style={{
+                                // backgroundColor: draggedId === rowIndex ? '#85bcff' : 'white',
+                                borderTop: '1px solid #edf2f7',
+                                // height: draggedId !== null && overId === rowIndex && draggedId >= rowIndex ? '26px' : '29px',
+                            }}
+                        >
+                            <div
+                                className="table-row content"
+                                style={{
+                                    gridTemplateColumns: '220px ' + gridTemplateColumns,
+                                }}
+                                onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, row.position)}
+                                onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, row.position)}
+                                // onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
+                                onDragEnter={(event: React.DragEvent<HTMLDivElement>) => handleDragEnter(event)}
+                                onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
+                                onDrop={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
+                            >
+                                <span style={{ borderRight: '1px solid #edf2f7' }}>
+                                    <Flex>
+                                        <Box
+                                            id={`reorder-handle-${rowIndex}`}
+                                            w={'15px'}
+                                            h={'30px'}
+                                            bgColor={'#2d82eb'}
+                                            cursor={'move'}
+                                            draggable
+                                            onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, row.position)}
+                                            onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, row.position)}
+                                            // onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
+                                            onDragEnter={(event: React.DragEvent<HTMLDivElement>) => handleDragEnter(event)}
+                                            onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
+                                            // onDrop={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
+                                            style={{ backgroundColor: row.parentRowId ? 'lightblue' : '#2d82eb' }}
+                                        ></Box>
+                                        <Box mt={'6px'} ml={'14px'}>
+                                            <Checkbox mr={'1px'} isChecked={deleteCheckboxIsChecked} onChange={handleDeleteCheckboxChange} />
+                                        </Box>
+                                        <Box pt={'6px'}>
+                                            <EditRow row={row} columns={columns} handleChange={editRowOnChange} />
+                                        </Box>
+                                        <Box pt={'6px'}>
+                                            <NoteModal row={row} updateRow={editRowOnChange} rowCallUpdate={rowCallUpdate} />
+                                        </Box>
+                                        <Box pt={'7px'} ml={'10px'} onClick={handleRemindersChange} cursor={'pointer'}>
+                                            <Text fontSize={'15px'} color={row.reminder ? '#16b2fc' : '#cccccc'}>
+                                                <FaRegBell />
+                                            </Text>
+                                        </Box>
+                                        <Box pt={'7px'} ml={'10px'} onClick={handleAcknowledgeClick} cursor={'pointer'}>
+                                            <Text fontSize={'15px'} color={row.acknowledged ? '#16b2fc' : '#cccccc'}>
+                                                <FaRegSquareCheck />
+                                            </Text>
+                                        </Box>
+                                        <Box pt={'7px'} ml={'10px'} onClick={handleAcknowledgeClick} cursor={'pointer'}>
+                                            <UploadModal rowDocuments={row.docs} getDocs={getDocs} getUpdatedDoc={getUpdatedDoc} removeDoc={removeDoc} />
+                                        </Box>
+                                        {/* {row.position} */}
+                                        {row.isParent ? (
+                                            <Button
+                                                variant={'unstyled'}
+                                                h={'20px'}
+                                                outline="unset"
+                                                onClick={() => {
+                                                    console.log('BUTTON CLICKED on INDEX', rowIndex);
+                                                    // setSubrowDrawers((prev) => prev.map((state, index) => (index === rowIndex ? !state : state)));
+                                                    setOpened(!opened);
+                                                    // updateRow({ ...row, showSubrows: !opened });
+                                                    handleSubrowVisibility({ ...row, showSubrows: !opened }, !opened);
+                                                }}
+                                            >
+                                                <Text>{opened ? <ChevronDownIcon /> : <ChevronRightIcon />}</Text>
+                                            </Button>
+                                        ) : null}
+                                    </Flex>
+                                </span>
+                                {columns.map((column: any, columnIndex: number) => {
+                                    return (
+                                        <div
+                                            key={columnIndex}
+                                            className={'cell'}
+                                            style={{
+                                                whiteSpace: 'nowrap',
+                                                fontSize: '12px',
+                                                borderBottom: '1px solid #edf2f7',
+                                                paddingLeft: row.parentRowId && columnIndex == 0 ? '20px' : '0px',
+                                            }}
+                                        >
+                                            {column.type === 'label' || column.type === 'priority' || column.type === 'status' ? (
+                                                <LabelMenu
+                                                    id={rowIndex}
+                                                    labels={column.labels}
+                                                    columnName={column.name}
+                                                    value={row.values[column.name]}
+                                                    onChange={onChange}
+                                                />
+                                            ) : column.type === 'people' ? (
+                                                <PeopleMenu
+                                                    row={row}
+                                                    columnName={column.name}
+                                                    people={column.people}
+                                                    value={row.values[column.name]}
+                                                    onChange={onChange}
+                                                />
+                                            ) : column.type === 'date' ? (
+                                                <DateInput value={row.values[column.name]} columnName={column.name} onChange={onChange} />
+                                            ) : (
+                                                <TextInput id={row._id} columnName={column.name} value={row.values[column.name]} onChange={onChange} />
+                                            )}
+                                            {/* {row.values[column.name]} */}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </Box>
+                        {/* <SubRowsContent rows={rowsData} columns={columns} gridTemplateColumns={'170px ' + gridTemplateColumns} opened={opened} /> */}
+                    </Box>
+                </>
+            ) : null}
         </>
     );
 };
