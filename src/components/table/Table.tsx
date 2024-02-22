@@ -106,6 +106,7 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
         async (row: any) => {
             // console.log(row);
             const newRows: any = await updateRow(row);
+            console.log(newRows);
 
             // This handles adding additional rows if the last row is not empty
             if (newRows.data.length > 0) {
@@ -145,26 +146,77 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
         [numberOfDeleteItems, rows]
     );
 
-    const deleteItems = useCallback(() => {
+    const deleteItems = () => {
         const rowsCopy = rows;
+        const parentIds: any = [];
 
-        setRows((prevRows) => prevRows.filter((row) => !row.checked));
-        setRows((prevRows) =>
-            prevRows.map((row) => {
-                return { ...row, checked: false };
-            })
-        );
+        rowsCopy.map((row) => {
+            if (row.checked && row.isParent) {
+                parentIds.push(row._id);
+            }
+        });
 
-        for (const currentRow of rowsCopy) {
-            if (currentRow.checked) {
-                console.log({ currentRow });
-                deleteRow(currentRow);
+        let position = 0;
+
+        let checkedParent: any = null;
+
+        const filterRowsChecked = rowsCopy.filter((row) => !row.checked);
+        console.log({ filterRowsChecked });
+        const filterSubrows = filterRowsChecked.filter((row) => !parentIds.includes(row.parentRowId));
+        console.log({ filterSubrows });
+        const newRows = filterSubrows.map((row) => {
+            // if (!parentIds.includes(row.parentRowId)) {
+            //     position = position + 1;
+            //     console.log(`Row ${row.values['item_name']} should have position updated to ${position} because its parent is not checked`);
+            //     return { ...row, position: position };
+            // }
+            if (!row.checked) {
+                position = position + 1;
+                console.log(`Row ${row.values['item_name']} should have position updated to ${position} because row is not checked`);
+                return { ...row, position: position };
+            }
+            return row;
+        });
+        console.log({ newRows });
+        setRows(newRows);
+
+        // setRows((prevRows) => prevRows.filter((row) => !row.checked));
+        // setRows((prevRows) => prevRows.filter((row) => !parentIds.includes(row.parentRowId)));
+        // setRows((prevRows) => {
+        //     console.log(prevRows);
+        //     return prevRows.map((row) => {
+        //         // if (!parentIds.includes(row.parentRowId)) {
+        //         //     position = position + 1;
+        //         //     console.log(`Row ${row.values['item_name']} should have position updated to ${position} because its parent is not checked`);
+        //         //     return { ...row, position: position };
+        //         // }
+        //         if (!row.checked) {
+        //             position = position + 1;
+        //             console.log(`Row ${row.values['item_name']} should have position updated to ${position} because row is not checked`);
+        //             return { ...row, position: position };
+        //         }
+        //         return row;
+        //     });
+        // });
+
+        for (const row of rowsCopy) {
+            console.log(checkedParent);
+            if (parentIds.includes(row.parentRowId)) {
+                console.log(`Row ${row.values['item_name']} should be deleted too`);
+                deleteRow(row);
+            }
+            if (row.checked) {
+                if (row.isParent) checkedParent = row._id;
+                if (row.checked) {
+                    console.log(`Row ${row.values['item_name']} should be deleted too`);
+                    deleteRow(row);
+                }
             }
         }
 
         // setDeleteCheckboxStatusList((prev) => prev.map(() => false));
         setNumberOfDeleteItems(0);
-    }, [rows]);
+    };
 
     const handleReorderRows = useCallback((rowIds: string[]) => {
         console.log(rowIds);
@@ -203,6 +255,7 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
         let subrowCount = 1;
 
         let potentialParent: any = null;
+
         const makeAsParents: any = [];
         const removeAsParents: any = [];
 
@@ -271,6 +324,7 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
                         subrowCount = subrowCount + 1;
                     }
                 }
+
                 return prevRow;
             })
         );
@@ -286,8 +340,8 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
         console.log(removeAsParents);
         setRows((prevRows) =>
             prevRows.map((prevRow) => {
-                if (removeAsParentsIds.includes(prevRow._id)) updateRow({ ...prevRow, isParent: false, parentRowId: null });
-                return removeAsParentsIds.includes(prevRow._id) ? { ...prevRow, isParent: false, parentRowId: null } : prevRow;
+                if (removeAsParentsIds.includes(prevRow._id)) updateRow({ ...prevRow, isParent: false, parentRowId: null, showSubrows: true });
+                return removeAsParentsIds.includes(prevRow._id) ? { ...prevRow, isParent: false, parentRowId: null, showSubrows: true } : prevRow;
             })
         );
 
@@ -312,6 +366,7 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
 
         let currentParentId: any = null;
         let isChecking: any = false;
+        let prevSubrowIsVisible = true;
 
         setRows((prevRows) =>
             prevRows.map((prevRow, index) => {
@@ -330,8 +385,8 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
                         }
 
                         isChecking = true;
-                        updateRow({ ...prevRow, isParent: false, parentRowId: currentParentId, checked: false });
-                        return { ...prevRow, isParent: false, parentRowId: currentParentId, checked: false };
+                        updateRow({ ...prevRow, isParent: false, parentRowId: currentParentId, checked: false, isVisible: prevSubrowIsVisible });
+                        return { ...prevRow, isParent: false, parentRowId: currentParentId, checked: false, isVisible: prevSubrowIsVisible };
                     } else {
                         return { ...prevRow, checked: false };
                     }
@@ -349,6 +404,7 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
                         isChecking = false;
                     }
                 }
+                prevSubrowIsVisible = prevRow.isVisible;
                 return prevRow;
             })
         );

@@ -49,8 +49,17 @@ const TableContent = ({
     // const [numberOfDeleteItems, setNumberOfDeleteItems] = useState(0);
 
     useEffect(() => {
-        console.log(rows);
-        setCurrentRows(rows);
+        let position = 0;
+        const repositionedRows = rows.map((row) => {
+            position = position + 1;
+            if (row.position != position) {
+                updateRow({ ...row, position: position });
+                return { ...row, position: position };
+            }
+            return row;
+        });
+        console.log(repositionedRows);
+        setCurrentRows(repositionedRows);
     }, [rows]);
 
     useEffect(() => {
@@ -199,7 +208,11 @@ const TableContent = ({
     const handleSwap = (overId: number, draggedId: number) => {
         console.log({ rowDragged: Number(localStorage.getItem('rowDragged')), rowOver: Number(localStorage.getItem('rowOver')) });
         console.log({ overId, draggedId, currentRows });
-        const newRows: any = currentRows;
+        let position = 0;
+        const newRows: any = currentRows.map((row) => {
+            position = position + 1;
+            return { ...row, position: position };
+        });
         const draggedRowData = newRows[Number(localStorage.getItem('rowDragged')) - 1];
         const overRowData = newRows[Number(localStorage.getItem('rowOver')) - 1];
 
@@ -251,8 +264,8 @@ const TableContent = ({
 
                 const relAdjustedRow = repositionedRows.map((row: any) => {
                     if (row.position === overRowData.position) {
-                        updateRow({ ...row, isParent: false, parentRowId: overRowData._id });
-                        return { ...row, isParent: false, parentRowId: overRowData._id, checked: false };
+                        updateRow({ ...row, isParent: false, parentRowId: overRowData._id, isVisible: overRowData.showSubrows });
+                        return { ...row, isParent: false, parentRowId: overRowData._id, isVisible: overRowData.showSubrows };
                     }
                     return row;
                 });
@@ -419,21 +432,46 @@ const TableContent = ({
         setCurrentRows((prev) => prev.map((prevRow) => (prevRow._id === row._id ? row : prevRow)));
     };
 
-    const handleSubrowVisibility = (row: any, status: boolean) => {
+    const handleSubrowVisibility = (row: any) => {
         console.log(row);
-        handleUpdateRow(row);
-        handleUpdateRowNoRender(row);
-        setCurrentRows((prev) => prev.map((prevRow) => (prevRow._id === row._id ? row : prevRow)));
+        // handleUpdateRow(row);
+        // handleUpdateRowNoRender(row);
+        // setCurrentRows((prev) => prev.map((prevRow) => (prevRow._id === row._id ? row : prevRow)));
 
-        setRows(
-            currentRows.map((currentRow) => {
-                if (currentRow.parentRowId === row._id) {
-                    updateRow({ ...currentRow, isVisible: status });
-                    return { ...currentRow, isVisible: status };
-                }
-                return currentRow;
-            })
-        );
+        const newRows: any = currentRows.map((currentRow) => {
+            if (currentRow._id === row._id) {
+                updateRow({ ...currentRow, showSubrows: !currentRow.showSubrows });
+                return { ...currentRow, showSubrows: !currentRow.showSubrows };
+            }
+            if (currentRow.parentRowId === row._id) {
+                updateRow({ ...currentRow, isVisible: !currentRow.isVisible });
+                return { ...currentRow, isVisible: !currentRow.isVisible };
+            }
+            return currentRow;
+        });
+
+        setRows(newRows);
+        setCurrentRows(newRows);
+
+        // setRows(
+        //     currentRows.map((currentRow) => {
+        //         if (currentRow.parentRowId === row._id) {
+        //             updateRow({ ...currentRow, isVisible: status });
+        //             return { ...currentRow, isVisible: status };
+        //         }
+        //         return currentRow;
+        //     })
+        // );
+
+        // setCurrentRows(
+        //     currentRows.map((currentRow) => {
+        //         if (currentRow.parentRowId === row._id) {
+        //             updateRow({ ...currentRow, isVisible: status });
+        //             return { ...currentRow, isVisible: status };
+        //         }
+        //         return currentRow;
+        //     })
+        // );
     };
 
     const handleDeleteBoxChangeForRow = (status: boolean, index: number) => {

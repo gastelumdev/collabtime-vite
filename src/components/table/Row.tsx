@@ -1,5 +1,5 @@
 // import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import { Box, Checkbox, Flex, Text } from '@chakra-ui/react';
+import { Box, Button, Checkbox, Flex, Text } from '@chakra-ui/react';
 import React, { memo, useCallback, useEffect, useState } from 'react';
 import LabelMenu from '../../features/dataCollections/LabelMenu';
 import PeopleMenu from '../../features/dataCollections/PeopleMenu';
@@ -13,6 +13,7 @@ import { FaRegSquareCheck } from 'react-icons/fa6';
 // import UploadMenu from '../../features/dataCollections/UploadMenu';
 import UploadModal from './UploadModal';
 import { TDocument } from '../../types';
+import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
 // import { useUpdateRowMutation } from '../../app/services/api';
 
 const Row = ({
@@ -26,7 +27,7 @@ const Row = ({
     handleChange,
     deleteBoxIsChecked,
     handleDeleteBoxChange,
-    // handleSubrowVisibility,
+    handleSubrowVisibility,
     rowCallUpdate,
 }: {
     row: any;
@@ -259,22 +260,23 @@ const Row = ({
                                             <UploadModal rowDocuments={row.docs} getDocs={getDocs} getUpdatedDoc={getUpdatedDoc} removeDoc={removeDoc} />
                                         </Box>
                                         {/* {row.position} */}
-                                        {/* {row.isParent ? (
+                                        {row.isParent ? (
                                             <Button
                                                 variant={'unstyled'}
                                                 h={'20px'}
                                                 outline="unset"
                                                 onClick={() => {
                                                     console.log('BUTTON CLICKED on INDEX', rowIndex);
+                                                    console.log(row);
                                                     // setSubrowDrawers((prev) => prev.map((state, index) => (index === rowIndex ? !state : state)));
-                                                    setOpened(!opened);
+                                                    // setOpened(!opened);
                                                     // updateRow({ ...row, showSubrows: !opened });
-                                                    handleSubrowVisibility({ ...row, showSubrows: !opened }, !opened);
+                                                    handleSubrowVisibility(row);
                                                 }}
                                             >
-                                                <Text>{opened ? <ChevronDownIcon /> : <ChevronRightIcon />}</Text>
+                                                <Text>{row.showSubrows ? <ChevronDownIcon /> : <ChevronRightIcon />}</Text>
                                             </Button>
-                                        ) : null} */}
+                                        ) : null}
                                     </Flex>
                                 </span>
                                 {columns.map((column: any, columnIndex: number) => {
