@@ -1,11 +1,11 @@
 // import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import { Box, Button, Checkbox, Flex, Text } from '@chakra-ui/react';
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { Box, Checkbox, Flex, Text } from '@chakra-ui/react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import LabelMenu from '../../features/dataCollections/LabelMenu';
 import PeopleMenu from '../../features/dataCollections/PeopleMenu';
 import DateInput from '../../features/dataCollections/DateInput';
 import TextInput from '../../features/dataCollections/TextInput';
-import SubRowsContent from './SubRowsContent';
+// import SubRowsContent from './SubRowsContent';
 import EditRow from '../../features/dataCollections/EditRow';
 import NoteModal from '../../features/dataCollections/NoteModal';
 import { FaRegBell } from 'react-icons/fa';
@@ -13,8 +13,7 @@ import { FaRegSquareCheck } from 'react-icons/fa6';
 // import UploadMenu from '../../features/dataCollections/UploadMenu';
 import UploadModal from './UploadModal';
 import { TDocument } from '../../types';
-import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import { useUpdateRowMutation } from '../../app/services/api';
+// import { useUpdateRowMutation } from '../../app/services/api';
 
 const Row = ({
     row,
@@ -27,7 +26,7 @@ const Row = ({
     handleChange,
     deleteBoxIsChecked,
     handleDeleteBoxChange,
-    handleSubrowVisibility,
+    // handleSubrowVisibility,
     rowCallUpdate,
 }: {
     row: any;
@@ -40,17 +39,17 @@ const Row = ({
     handleChange: any;
     deleteBoxIsChecked: boolean;
     handleDeleteBoxChange: any;
-    handleSubrowVisibility: any;
+    handleSubrowVisibility?: any;
     rowCallUpdate: any;
 }) => {
-    const rowsData = useMemo(
-        () => [
-            { _id: '12345', values: { assigned_to: 'Omar', task: 'Task 1', status: 'Done', priority: 'Low', due_date: 'tomorrow' } },
-            { _id: '12346', values: { assigned_to: 'Omar', task: 'Task 2', status: 'Done', priority: 'Low', due_date: 'tomorrow' } },
-            { _id: '12347', values: { assigned_to: 'Omar', task: 'Task 3', status: 'Done', priority: 'Low', due_date: 'tomorrow' } },
-        ],
-        []
-    );
+    // const rowsData = useMemo(
+    //     () => [
+    //         { _id: '12345', values: { assigned_to: 'Omar', task: 'Task 1', status: 'Done', priority: 'Low', due_date: 'tomorrow' } },
+    //         { _id: '12346', values: { assigned_to: 'Omar', task: 'Task 2', status: 'Done', priority: 'Low', due_date: 'tomorrow' } },
+    //         { _id: '12347', values: { assigned_to: 'Omar', task: 'Task 3', status: 'Done', priority: 'Low', due_date: 'tomorrow' } },
+    //     ],
+    //     []
+    // );
 
     // const [isPending, startTransition] = useTransition();
 
@@ -59,7 +58,7 @@ const Row = ({
 
     const [deleteCheckboxIsChecked, setDeleteCheckboxIsChecked] = useState(deleteBoxIsChecked);
 
-    const [updateRow] = useUpdateRowMutation();
+    // const [updateRow] = useUpdateRowMutation();
 
     useEffect(() => {
         setDeleteCheckboxIsChecked(deleteBoxIsChecked);
@@ -150,6 +149,7 @@ const Row = ({
     const [opened, setOpened] = useState<boolean>();
 
     useEffect(() => {
+        opened;
         setOpened(row.isVisible);
     }, [row]);
 
@@ -259,7 +259,7 @@ const Row = ({
                                             <UploadModal rowDocuments={row.docs} getDocs={getDocs} getUpdatedDoc={getUpdatedDoc} removeDoc={removeDoc} />
                                         </Box>
                                         {/* {row.position} */}
-                                        {row.isParent ? (
+                                        {/* {row.isParent ? (
                                             <Button
                                                 variant={'unstyled'}
                                                 h={'20px'}
@@ -274,7 +274,7 @@ const Row = ({
                                             >
                                                 <Text>{opened ? <ChevronDownIcon /> : <ChevronRightIcon />}</Text>
                                             </Button>
-                                        ) : null}
+                                        ) : null} */}
                                     </Flex>
                                 </span>
                                 {columns.map((column: any, columnIndex: number) => {

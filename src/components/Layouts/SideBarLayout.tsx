@@ -64,6 +64,8 @@ interface SidebarContentProps {
     children: ReactNode;
 }
 
+const mvpUserEmails = ['islas@mvpsecuritysystems.com', 'jvargas@mvpsecuritysystems.com', 'acastro@mvpsecuritysystems.com'];
+
 const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) => {
     const { data: userData } = useGetUserQuery(localStorage.getItem('userId') as string);
     const height = window.innerHeight - 48;
@@ -77,6 +79,7 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
 
     useEffect(() => {
         setUser(userData);
+        console.log(userData?.email);
     }, [userData]);
 
     useEffect(() => {
@@ -99,7 +102,7 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
             <Box bg={'black'} h={height} borderRadius={'xl'}>
                 <Box
                     pt={'20px'}
-                    bgImage={user?.email === 'islas@mvpsecuritysystems.com' ? 'black' : 'radial-gradient(circle at center top, rgb(66, 66, 74), black)'}
+                    bgImage={mvpUserEmails.includes(user?.email || '') ? 'black' : 'radial-gradient(circle at center top, rgb(66, 66, 74), black)'}
                     height={'full'}
                     borderRadius={'xl'}
                 >
@@ -112,7 +115,7 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
                                         fontSize: "20px",
                                     }}
                                 /> */}
-                                <img src={user?.logoURL} width={user?.email === 'islas@mvpsecuritysystems.com' ? '55px' : '30px'} />
+                                <img src={user?.logoURL} width={mvpUserEmails.includes(user?.email || '') ? '55px' : '30px'} />
                             </Text>
                         </Center>
                     </Box>
@@ -298,6 +301,11 @@ const SideBarLayout = ({ linkItems, leftContent, sidebar = true, children }: Sid
 
     const { data: userData } = useGetUserQuery(localStorage.getItem('userId') as string);
 
+    useEffect(() => {
+        console.log(userData?.email);
+        console.log(mvpUserEmails.includes(userData?.email || ''));
+    }, [userData]);
+
     return (
         <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')} pl={{ base: 0, lg: 6 }} pr={0} pt={6}>
             {sidebar ? <SidebarContent linkItems={linkItems} onClose={onClose} isOpen={isOpen} display={{ base: 'none', lg: 'block' }} /> : null}
@@ -308,7 +316,7 @@ const SideBarLayout = ({ linkItems, leftContent, sidebar = true, children }: Sid
                             <Box
                                 pt={'20px'}
                                 bgImage={
-                                    userData?.email === 'islas@mvpsecuritysystems.com'
+                                    mvpUserEmails.includes(userData?.email || '')
                                         ? 'radial-gradient(black, black)'
                                         : 'radial-gradient(circle at center top, rgb(66, 66, 74), black)'
                                 }
@@ -324,7 +332,7 @@ const SideBarLayout = ({ linkItems, leftContent, sidebar = true, children }: Sid
                                                     fontSize: "20px",
                                                 }}
                                             /> */}
-                                            <img src={userData?.logoURL} width={userData?.email === 'islas@mvpsecuritysystems.com' ? '120px' : '30px'} />
+                                            <img src={userData?.logoURL} width={mvpUserEmails.includes(userData?.email || '') ? '120px' : '30px'} />
                                         </Text>
                                     </Center>
                                 </Box>
