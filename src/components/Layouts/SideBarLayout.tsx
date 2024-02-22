@@ -302,7 +302,7 @@ const SideBarLayout = ({ linkItems, leftContent, sidebar = true, children }: Sid
     const { data: userData } = useGetUserQuery(localStorage.getItem('userId') as string);
 
     useEffect(() => {
-        console.log(userData?.email);
+        console.log(userData?.email, userData?.logoURL);
         console.log(mvpUserEmails.includes(userData?.email || ''));
     }, [userData]);
 

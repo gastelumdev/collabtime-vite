@@ -28,6 +28,8 @@ import mvpLogo from '../../assets/MVPOriginalLogo.png';
 
 const LinkItems: Array<LinkItemProps> = [{ name: 'Workspaces', icon: BsPersonWorkspace, path: '/workspaces' }];
 
+const mvpUserEmails = ['islas@mvpsecuritysystems.com', 'jvargas@mvpsecuritysystems.com', 'acastro@mvpsecuritysystems.com'];
+
 /**
  * This is the default workspace view that renders all workspaces
  * @prop {null}
@@ -45,7 +47,7 @@ const View = () => {
     const [pageLogo, setPageLogo] = useState('');
 
     useEffect(() => {
-        setPageLogo(user?.email !== 'islas@mvpsecuritysystems.com' ? logo : mvpLogo);
+        setPageLogo(!mvpUserEmails.includes(user?.email || '') ? logo : mvpLogo);
     }, [user]);
 
     const toast = useToast();
@@ -118,7 +120,7 @@ const View = () => {
             linkItems={LinkItems}
             leftContent={
                 <Box pt={'30px'} pb={'4px'}>
-                    <img src={pageLogo} width={user?.email === 'islas@mvpsecuritysystems.com' ? '90px' : '30px'} />
+                    <img src={pageLogo} width={mvpUserEmails.includes(user?.email || '') ? '90px' : '30px'} />
                 </Box>
             }
             sidebar={false}
