@@ -28,7 +28,7 @@ const DataCollection = () => {
     // const [pages, setPages] = useState<number[]>(totalRows || []);
 
     const [permissions, setPermissions] = useState<number>();
-    const [windowWidthOffset, setWindowWidthOffset] = useState(window.innerWidth > 990 ? 116 : 7);
+    const [windowWidthOffset, setWindowWidthOffset] = useState(window.innerWidth > 990 ? 90 : 7);
 
     // useEffect(() => {
     //     console.log(columns);
@@ -44,7 +44,7 @@ const DataCollection = () => {
     }, [user]);
 
     const setOffset = useCallback(() => {
-        setWindowWidthOffset(window.innerWidth > 990 ? 116 : 5);
+        setWindowWidthOffset(window.innerWidth > 990 ? 90 : 5);
     }, [windowWidthOffset]);
 
     useEffect(() => {
