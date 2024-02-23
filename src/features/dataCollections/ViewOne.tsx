@@ -45,7 +45,7 @@ import { cellColorStyles } from './select.styles';
 import { TColumn } from '../../types';
 import LinksMenu from './LinksMenu';
 import { MdContentCopy } from 'react-icons/md';
-import { CloseIcon } from '@chakra-ui/icons';
+import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 
 const ViewOne = () => {
     const { id, dataCollectionId } = useParams();
@@ -195,9 +195,15 @@ const ViewOne = () => {
                                     </Box>
                                     <Spacer />
                                     <Box mr={'5px'}>
-                                        <PrimaryButton onClick={onOpenFormDrawer}>FORM</PrimaryButton>
+                                        <PrimaryButton onClick={onOpenFormDrawer} size="sm">
+                                            <AddIcon style={{ marginRight: '4px' }} /> Form
+                                        </PrimaryButton>
                                     </Box>
-                                    {!isTemplate ? <PrimaryButton onClick={onOpen}>TEMPLATE</PrimaryButton> : null}
+                                    {!isTemplate ? (
+                                        <PrimaryButton onClick={onOpen} size="sm">
+                                            <AddIcon style={{ marginRight: '4px' }} /> Template
+                                        </PrimaryButton>
+                                    ) : null}
                                 </Flex>
                             </CardHeader>
                             <CardBody p={'0'}>

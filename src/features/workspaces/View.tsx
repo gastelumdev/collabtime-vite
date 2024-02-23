@@ -23,7 +23,6 @@ import PrimaryCard from '../../components/PrimaryCard';
 import { BsPersonWorkspace } from 'react-icons/bs';
 import TagsModal from '../tags/TagsModal';
 import Delete from './Delete';
-import logo from '../../assets/logo-no-background.png';
 import mvpLogo from '../../assets/MVPOriginalLogo.png';
 
 const LinkItems: Array<LinkItemProps> = [{ name: 'Workspaces', icon: BsPersonWorkspace, path: '/workspaces' }];
@@ -44,10 +43,10 @@ const View = () => {
     const [callUpdate] = useCallUpdateMutation();
     const [deleteTag] = useDeleteTagMutation();
     const [tagExists] = useTagExistsMutation();
-    const [pageLogo, setPageLogo] = useState('');
+    const [pageLogo, setPageLogo] = useState<string | null>('');
 
     useEffect(() => {
-        setPageLogo(!mvpUserEmails.includes(user?.email || '') ? logo : mvpLogo);
+        setPageLogo(!mvpUserEmails.includes(user?.email || '') ? null : mvpLogo);
     }, [user]);
 
     const toast = useToast();
@@ -120,7 +119,7 @@ const View = () => {
             linkItems={LinkItems}
             leftContent={
                 <Box pt={'30px'} pb={'4px'}>
-                    <img src={pageLogo} width={mvpUserEmails.includes(user?.email || '') ? '90px' : '30px'} />
+                    <img src={pageLogo || ''} width={mvpUserEmails.includes(user?.email || '') ? '90px' : '30px'} />
                 </Box>
             }
             sidebar={false}
@@ -148,13 +147,13 @@ const View = () => {
                         </SimpleGrid>
                         {data?.length || 0 > 0 ? (
                             <SimpleGrid
-                                spacing={6}
+                                spacing={3}
                                 columns={{
                                     base: 1,
                                     sm: 1,
                                     md: 2,
                                     lg: 3,
-                                    xl: 3,
+                                    xl: 4,
                                 }}
                             >
                                 {data?.map((workspace: TWorkspace, index: number) => {
@@ -165,7 +164,7 @@ const View = () => {
                                             data={workspace}
                                             redirectUrl={`/workspaces/${workspace._id}`}
                                             localStorageId="workspaceId"
-                                            divider={workspace?.owner === localStorage.getItem('userId') || isAuthorized}
+                                            // divider={workspace?.owner === localStorage.getItem('userId') || isAuthorized}
                                             editButton={
                                                 workspace?.owner === localStorage.getItem('userId') || isAuthorized ? (
                                                     <Edit workspace={workspace} updateWorkspace={updateWorkspace} />

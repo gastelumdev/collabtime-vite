@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { Button, Input, Text, useDisclosure, Flex, Spacer } from "@chakra-ui/react";
-import { TDataCollection } from "../../types";
-import { AiOutlineEdit } from "react-icons/ai";
-import PrimaryDrawer from "../../components/PrimaryDrawer";
-import PrimaryButton from "../../components/Buttons/PrimaryButton";
+import React, { useEffect, useState } from 'react';
+import { Button, Input, Text, useDisclosure, Flex, Spacer } from '@chakra-ui/react';
+import { TDataCollection } from '../../types';
+import { AiOutlineEdit } from 'react-icons/ai';
+import PrimaryDrawer from '../../components/PrimaryDrawer';
+import PrimaryButton from '../../components/Buttons/PrimaryButton';
 
 interface IProps {
     dataCollection: TDataCollection;
@@ -39,19 +39,12 @@ const Edit = ({ dataCollection, updateDataCollection }: IProps) => {
 
     return (
         <>
-            <Button
-                flex="1"
-                variant="ghost"
-                leftIcon={<AiOutlineEdit />}
-                color={"rgb(123, 128, 154)"}
-                onClick={onOpen}
-                zIndex={10}
-            ></Button>
-            <PrimaryDrawer onClose={onClose} isOpen={isOpen} title={"Create a new workspace"}>
+            <Button flex="1" variant="ghost" leftIcon={<AiOutlineEdit />} color={'#b3b8cf'} onClick={onOpen} zIndex={10}></Button>
+            <PrimaryDrawer onClose={onClose} isOpen={isOpen} title={'Create a new workspace'}>
                 <Flex>
-                    <Text pb={"5px"}>Name</Text>
-                    <Text ml={"8px"} pt={"2px"} fontSize={"14px"} color={"#e53e3e"}>
-                        {inputError ? "* Name exceeds character limit" : ""}
+                    <Text pb={'5px'}>Name</Text>
+                    <Text ml={'8px'} pt={'2px'} fontSize={'14px'} color={'#e53e3e'}>
+                        {inputError ? '* Name exceeds character limit' : ''}
                     </Text>
                 </Flex>
                 <Input
@@ -60,9 +53,9 @@ const Edit = ({ dataCollection, updateDataCollection }: IProps) => {
                     placeholder="Please enter user name"
                     required={true}
                     onChange={handleChange}
-                    style={{ marginBottom: "15px" }}
+                    style={{ marginBottom: '15px' }}
                 />
-                <Flex mt={"10px"} width={"full"}>
+                <Flex mt={'10px'} width={'full'}>
                     <Spacer />
                     <PrimaryButton onClick={editData} isDisabled={inputError}>
                         SAVE

@@ -1,19 +1,20 @@
-import React, { useState } from "react";
-import { Checkbox, Flex, Input, Spacer, Stack, Text, useDisclosure } from "@chakra-ui/react";
-import { TWorkspace } from "../../types";
+import React, { useState } from 'react';
+import { Checkbox, Flex, Input, Spacer, Stack, Text, useDisclosure } from '@chakra-ui/react';
+import { TWorkspace } from '../../types';
 
-import PrimaryButton from "../../components/Buttons/PrimaryButton";
-import Divider from "../../components/Divider/Divider";
-import PrimaryDrawer from "../../components/PrimaryDrawer";
+import PrimaryButton from '../../components/Buttons/PrimaryButton';
+import Divider from '../../components/Divider/Divider';
+import PrimaryDrawer from '../../components/PrimaryDrawer';
+import { HiPlus } from 'react-icons/hi';
 
 /**
  * Workspace default values should be deleted once RTK is implemented
  */
 let defaultValues: TWorkspace = {
     // _id: "1",
-    name: "",
-    description: "",
-    owner: localStorage.getItem("userId") || "",
+    name: '',
+    description: '',
+    owner: localStorage.getItem('userId') || '',
     tools: {
         dataCollections: { access: 2 },
         taskLists: { access: 2 },
@@ -105,13 +106,15 @@ const Create = ({ addNewWorkspace }: IProps) => {
 
     return (
         <>
-            <PrimaryButton onClick={onOpen}>NEW WORKSPACE</PrimaryButton>
-            <PrimaryDrawer isOpen={isOpen} onClose={onClose} size={"md"} title={"Create a new workspace"}>
-                <Text pb={"5px"} color={"rgb(123, 128, 154)"}>
+            <PrimaryButton onClick={onOpen} px="0">
+                <HiPlus size={'18px'} />
+            </PrimaryButton>
+            <PrimaryDrawer isOpen={isOpen} onClose={onClose} size={'md'} title={'Create a new workspace'}>
+                <Text pb={'5px'} color={'rgb(123, 128, 154)'}>
                     Name
                 </Text>
-                <Text ml={"8px"} pt={"2px"} fontSize={"14px"} color={"#e53e3e"}>
-                    {inputError ? "* Name exceeds character limit" : ""}
+                <Text ml={'8px'} pt={'2px'} fontSize={'14px'} color={'#e53e3e'}>
+                    {inputError ? '* Name exceeds character limit' : ''}
                 </Text>
                 <Input
                     name="name"
@@ -119,10 +122,10 @@ const Create = ({ addNewWorkspace }: IProps) => {
                     value={data.name}
                     required={true}
                     onChange={handleChange}
-                    style={{ marginBottom: "15px" }}
-                    _placeholder={{ color: "rgb(123, 128, 154)" }}
+                    style={{ marginBottom: '15px' }}
+                    _placeholder={{ color: 'rgb(123, 128, 154)' }}
                 />
-                <Text pb={"5px"} color={"rgb(123, 128, 154)"}>
+                <Text pb={'5px'} color={'rgb(123, 128, 154)'}>
                     Description
                 </Text>
                 <Input
@@ -130,48 +133,40 @@ const Create = ({ addNewWorkspace }: IProps) => {
                     placeholder="Please enter a description"
                     value={data.description}
                     onChange={handleChange}
-                    style={{ marginBottom: "15px" }}
+                    style={{ marginBottom: '15px' }}
                 />
-                <Text pb={"5px"}>Tools</Text>
+                <Text pb={'5px'}>Tools</Text>
                 <Stack mt={1} spacing={1}>
                     <Checkbox
-                        color={"rgb(123, 128, 154)"}
+                        color={'rgb(123, 128, 154)'}
                         isChecked={checkedItems[0]}
-                        onChange={(e) =>
-                            setCheckedItems([e.target.checked, checkedItems[1], checkedItems[2], checkedItems[3]])
-                        }
+                        onChange={(e) => setCheckedItems([e.target.checked, checkedItems[1], checkedItems[2], checkedItems[3]])}
                     >
-                        <Text fontSize={"14px"}>Data Collections</Text>
+                        <Text fontSize={'14px'}>Data Collections</Text>
                     </Checkbox>
                     <Checkbox
-                        color={"rgb(123, 128, 154)"}
+                        color={'rgb(123, 128, 154)'}
                         isChecked={checkedItems[1]}
-                        onChange={(e) =>
-                            setCheckedItems([checkedItems[0], e.target.checked, checkedItems[2], checkedItems[3]])
-                        }
+                        onChange={(e) => setCheckedItems([checkedItems[0], e.target.checked, checkedItems[2], checkedItems[3]])}
                     >
-                        <Text fontSize={"14px"}>Tasks</Text>
+                        <Text fontSize={'14px'}>Tasks</Text>
                     </Checkbox>
                     <Checkbox
-                        color={"rgb(123, 128, 154)"}
+                        color={'rgb(123, 128, 154)'}
                         isChecked={checkedItems[2]}
-                        onChange={(e) =>
-                            setCheckedItems([checkedItems[0], checkedItems[1], e.target.checked, checkedItems[3]])
-                        }
+                        onChange={(e) => setCheckedItems([checkedItems[0], checkedItems[1], e.target.checked, checkedItems[3]])}
                     >
-                        <Text fontSize={"14px"}>Docs</Text>
+                        <Text fontSize={'14px'}>Docs</Text>
                     </Checkbox>
                     <Checkbox
-                        color={"rgb(123, 128, 154)"}
+                        color={'rgb(123, 128, 154)'}
                         isChecked={checkedItems[3]}
-                        onChange={(e) =>
-                            setCheckedItems([checkedItems[0], checkedItems[1], checkedItems[2], e.target.checked])
-                        }
+                        onChange={(e) => setCheckedItems([checkedItems[0], checkedItems[1], checkedItems[2], e.target.checked])}
                     >
-                        <Text fontSize={"14px"}>Message Board</Text>
+                        <Text fontSize={'14px'}>Message Board</Text>
                     </Checkbox>
                     <Divider gradient="radial-gradient(#eceef1 40%, white 60%)" marginBottom="0" />
-                    <Flex mt={"10px"} width={"full"}>
+                    <Flex mt={'10px'} width={'full'}>
                         <Spacer />
                         <PrimaryButton onClick={createData} isDisabled={inputError}>
                             SAVE

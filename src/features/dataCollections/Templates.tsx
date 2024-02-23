@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 import {
     AlertDialog,
     AlertDialogBody,
@@ -12,12 +12,13 @@ import {
     Flex,
     Spacer,
     Button,
-} from "@chakra-ui/react";
-import PrimaryButton from "../../components/Buttons/PrimaryButton";
-import PrimaryDrawer from "../../components/PrimaryDrawer";
-import { useGetDataCollectionsQuery, useUpdateDataCollectionMutation } from "../../app/services/api";
-import { TDataCollection } from "../../types";
-import { DeleteIcon } from "@chakra-ui/icons";
+} from '@chakra-ui/react';
+import PrimaryButton from '../../components/Buttons/PrimaryButton';
+import PrimaryDrawer from '../../components/PrimaryDrawer';
+import { useGetDataCollectionsQuery, useUpdateDataCollectionMutation } from '../../app/services/api';
+import { TDataCollection } from '../../types';
+import { DeleteIcon } from '@chakra-ui/icons';
+import { BiBookAdd } from 'react-icons/bi';
 
 interface IRemoveTemplateProps {
     dataCollection: TDataCollection;
@@ -30,12 +31,12 @@ const RemoveTemplate = ({ dataCollection, updateDataCollection }: IRemoveTemplat
 
     const removeAsTemplate = () => {
         onClose();
-        updateDataCollection({ ...dataCollection, asTemplate: { name: "", active: false } });
+        updateDataCollection({ ...dataCollection, asTemplate: { name: '', active: false } });
     };
     return (
         <>
-            <Box px={"5px"} cursor={"pointer"} onClick={onOpen}>
-                <Text fontSize={"12px"} pt={"2px"} color={"white"}>
+            <Box px={'5px'} cursor={'pointer'} onClick={onOpen}>
+                <Text fontSize={'12px'} pt={'2px'} color={'white'}>
                     <DeleteIcon />
                 </Text>
             </Box>
@@ -80,26 +81,24 @@ const Templates = () => {
     }, [dataCollections]);
     return (
         <>
-            <PrimaryButton onClick={onOpen}>TEMPLATES</PrimaryButton>
-            <PrimaryDrawer isOpen={isOpen} onClose={onClose} title={"Templates"}>
+            <PrimaryButton onClick={onOpen} size="sm">
+                <BiBookAdd style={{ marginRight: '4px' }} /> Templates
+            </PrimaryButton>
+            <PrimaryDrawer isOpen={isOpen} onClose={onClose} title={'Templates'}>
                 {templates.length > 0 ? (
                     <Box>
-                        <Text color={"gray"} fontSize={"sm"}>
-                            Click on the delete icon to delete templates. Deleting a template will not affect data
-                            collections that were created using the template. Once the template is deleted, visit the
-                            data collection and set it as a template if you wish to recreate the template.
+                        <Text color={'gray'} fontSize={'sm'}>
+                            Click on the delete icon to delete templates. Deleting a template will not affect data collections that were created using the
+                            template. Once the template is deleted, visit the data collection and set it as a template if you wish to recreate the template.
                         </Text>
-                        <Box mt={"20px"}>
+                        <Box mt={'20px'}>
                             {templates.map((dataCollection, index) => {
                                 return (
-                                    <Box key={index} p={"10px"} bgColor={"#287fea"}>
+                                    <Box key={index} p={'10px'} bgColor={'#287fea'}>
                                         <Flex>
-                                            <Text color={"white"}>{dataCollection?.asTemplate?.name}</Text>
+                                            <Text color={'white'}>{dataCollection?.asTemplate?.name}</Text>
                                             <Spacer />
-                                            <RemoveTemplate
-                                                dataCollection={dataCollection}
-                                                updateDataCollection={updateDataCollection}
-                                            />
+                                            <RemoveTemplate dataCollection={dataCollection} updateDataCollection={updateDataCollection} />
                                         </Flex>
                                     </Box>
                                 );
@@ -108,14 +107,14 @@ const Templates = () => {
                     </Box>
                 ) : (
                     <Box>
-                        <Text color={"gray"} fontSize={"sm"}>
+                        <Text color={'gray'} fontSize={'sm'}>
                             Templates allow you to create data collections with the save data types or columns.
                         </Text>
-                        <Text color={"gray"} fontSize={"sm"}>
+                        <Text color={'gray'} fontSize={'sm'}>
                             To create a template, go to a data collection and click the "Template" button.
                         </Text>
-                        <Box mt={"30px"}>
-                            <Text color={"gray"} fontSize={"sm"}>
+                        <Box mt={'30px'}>
+                            <Text color={'gray'} fontSize={'sm'}>
                                 There are no existing templates.
                             </Text>
                         </Box>

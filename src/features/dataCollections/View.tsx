@@ -8,29 +8,27 @@ import {
     useDeleteTagMutation,
     useTagExistsMutation,
     useUpdateWorkspaceMutation,
-} from "../../app/services/api";
+} from '../../app/services/api';
 
-import { Box, Container, Flex, Heading, SimpleGrid, Spacer, Text } from "@chakra-ui/react";
-import SideBarLayout from "../../components/Layouts/SideBarLayout";
+import { Box, Container, Flex, Heading, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
+import SideBarLayout from '../../components/Layouts/SideBarLayout';
 
-import LinkItems from "../../utils/linkItems";
-import Edit from "./Edit";
-import Create from "./Create";
-import { useEffect, useState } from "react";
-import PrimaryCard from "../../components/PrimaryCard";
-import TagsModal from "../tags/TagsModal";
-import { TDataCollection, TTag } from "../../types";
-import { Link } from "react-router-dom";
-import Delete from "./Delete";
-import Templates from "./Templates";
+import LinkItems from '../../utils/linkItems';
+import Edit from './Edit';
+import Create from './Create';
+import { useEffect, useState } from 'react';
+import PrimaryCard from '../../components/PrimaryCard';
+import TagsModal from '../tags/TagsModal';
+import { TDataCollection, TTag } from '../../types';
+import { Link } from 'react-router-dom';
+import Delete from './Delete';
+import Templates from './Templates';
 
 const View = () => {
     // const [data, setData] = useState<TDataCollection[]>(dataCollections);
-    const { data: user } = useGetUserQuery(localStorage.getItem("userId") || "");
+    const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
     const { data } = useGetDataCollectionsQuery(null);
-    const { data: workspace, isFetching: workspaceIsFetching } = useGetOneWorkspaceQuery(
-        localStorage.getItem("workspaceId") || ""
-    );
+    const { data: workspace, isFetching: workspaceIsFetching } = useGetOneWorkspaceQuery(localStorage.getItem('workspaceId') || '');
     const [createDataCollection] = useCreateDataCollecionMutation();
     const [updateDataCollection] = useUpdateDataCollectionMutation();
     const [deleteDataCollection] = useDeleteDataCollectionMutation();
@@ -47,7 +45,7 @@ const View = () => {
 
     const getPermissions = () => {
         for (const workspace of user?.workspaces || []) {
-            if (workspace.id == localStorage.getItem("workspaceId")) {
+            if (workspace.id == localStorage.getItem('workspaceId')) {
                 setPermissions(workspace.permissions);
             }
         }
@@ -90,50 +88,47 @@ const View = () => {
         <SideBarLayout linkItems={LinkItems}>
             <Box>
                 <Flex
-                    minH={"100vh"}
+                    minH={'100vh'}
                     // justify={"center"}
-                    bg={"#eff2f5"}
+                    bg={'#eff2f5'}
                 >
-                    <Container maxW={"full"} mt={{ base: 4, sm: 0 }}>
+                    <Container maxW={'full'} mt={{ base: 4, sm: 0 }}>
                         <SimpleGrid
                             spacing={6}
                             // templateColumns="repeat(auto-fill, minmax(300px, 1fr))"
                             columns={{ base: 1, sm: 2 }}
-                            pb={"50px"}
+                            pb={'50px'}
                         >
                             <Flex>
                                 <Box>
-                                    <Heading size={"sm"} mb={"12px"} color={"rgb(52, 71, 103)"}>
+                                    <Heading size={'sm'} mb={'12px'} color={'rgb(52, 71, 103)'}>
                                         {!workspaceIsFetching ? (
                                             <>
-                                                <Link to={`/workspaces/${localStorage.getItem("workspaceId")}`}>
-                                                    <Text
-                                                        display={"inline"}
-                                                        textDecor={"underline"}
-                                                    >{`${workspace?.name}`}</Text>
-                                                </Link>{" "}
-                                                <Text display={"inline"}>{" / Data Collections"}</Text>
+                                                <Link to={`/workspaces/${localStorage.getItem('workspaceId')}`}>
+                                                    <Text display={'inline'} textDecor={'underline'}>{`${workspace?.name}`}</Text>
+                                                </Link>{' '}
+                                                <Text display={'inline'}>{' / Data Collections'}</Text>
                                             </>
                                         ) : null}
                                     </Heading>
-                                    <Text color={"rgb(123, 128, 154)"} fontSize={"md"} fontWeight={300}>
+                                    <Text color={'rgb(123, 128, 154)'} fontSize={'md'} fontWeight={300}>
                                         Create data collection tables to visualize and manage your data.
                                     </Text>
                                 </Box>
                             </Flex>
                             <Flex>
                                 <Spacer />
-                                <Box pb={"20px"} mr={"10px"}>
+                                <Box pb={'20px'} mr={'10px'}>
                                     <Templates />
                                 </Box>
-                                <Box pb={"20px"}>
+                                <Box pb={'20px'}>
                                     <Create addNewDataCollection={createDataCollection} />
                                 </Box>
                             </Flex>
                         </SimpleGrid>
 
                         <SimpleGrid
-                            spacing={6}
+                            spacing={4}
                             // templateColumns="repeat(3, minmax(300px, 1fr))"
                             columns={{ base: 1, sm: 1, md: 2, lg: 2, xl: 3 }}
                         >
@@ -148,28 +143,22 @@ const View = () => {
                                             divider={(permissions || 0) > 1}
                                             editButton={
                                                 (permissions || 0) > 1 ? (
-                                                    <Edit
-                                                        dataCollection={dataCollection}
-                                                        updateDataCollection={updateDataCollection}
-                                                    />
+                                                    <Edit dataCollection={dataCollection} updateDataCollection={updateDataCollection} />
                                                 ) : null
                                             }
                                             deleteButton={
                                                 (permissions || 0) > 1 ? (
-                                                    <Delete
-                                                        dataCollection={dataCollection}
-                                                        deleteDataCollection={deleteDataCollection}
-                                                    />
+                                                    <Delete dataCollection={dataCollection} deleteDataCollection={deleteDataCollection} />
                                                 ) : null
                                             }
                                             tagButton={
                                                 (permissions || 0) > 1 ? (
                                                     <TagsModal
-                                                        tagType={"dataCollection"}
+                                                        tagType={'dataCollection'}
                                                         data={dataCollection}
                                                         tags={dataCollection.tags}
                                                         update={updateDataCollection}
-                                                        workspaceId={workspace?._id || ""}
+                                                        workspaceId={workspace?._id || ''}
                                                     />
                                                 ) : null
                                             }

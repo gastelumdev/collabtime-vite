@@ -12,18 +12,13 @@ import {
     ModalOverlay,
     Text,
     useDisclosure,
-} from "@chakra-ui/react";
-import { useEffect, useRef, useState } from "react";
-import { GoTag } from "react-icons/go";
-import {
-    useCreateTagMutation,
-    useGetOneWorkspaceQuery,
-    useGetTagsQuery,
-    useUpdateWorkspaceMutation,
-} from "../../app/services/api";
-import { TTag } from "../../types";
-import PrimaryButton from "../../components/Buttons/PrimaryButton";
-import { BsPlusCircle } from "react-icons/bs";
+} from '@chakra-ui/react';
+import { useEffect, useRef, useState } from 'react';
+import { GoTag } from 'react-icons/go';
+import { useCreateTagMutation, useGetOneWorkspaceQuery, useGetTagsQuery, useUpdateWorkspaceMutation } from '../../app/services/api';
+import { TTag } from '../../types';
+import PrimaryButton from '../../components/Buttons/PrimaryButton';
+import { BsPlusCircle } from 'react-icons/bs';
 
 interface IProps {
     data: any;
@@ -37,7 +32,7 @@ const TagsModal = ({ data, tags, update, workspaceId, tagType }: IProps) => {
     const { onOpen, isOpen, onClose } = useDisclosure();
     const initialRef = useRef<any>();
 
-    const { data: workspace } = useGetOneWorkspaceQuery(workspaceId || "");
+    const { data: workspace } = useGetOneWorkspaceQuery(workspaceId || '');
     const [updateWorkspace] = useUpdateWorkspaceMutation();
 
     const { data: workspaceTags } = useGetTagsQuery(workspaceId);
@@ -45,7 +40,7 @@ const TagsModal = ({ data, tags, update, workspaceId, tagType }: IProps) => {
 
     const [availableTags, setAvailableTags] = useState<TTag[]>([]);
 
-    const [tagInput, setTagInput] = useState<string>("");
+    const [tagInput, setTagInput] = useState<string>('');
     const [tagInputError, setTagInputError] = useState<boolean>(false);
 
     useEffect(() => {
@@ -56,11 +51,11 @@ const TagsModal = ({ data, tags, update, workspaceId, tagType }: IProps) => {
         const tagIds: string[] = [];
 
         for (const tag of tags || []) {
-            tagIds.push(tag._id || "");
+            tagIds.push(tag._id || '');
         }
 
         const filteredTags = workspaceTags?.filter((item) => {
-            if (!tagIds.includes(item._id || "")) {
+            if (!tagIds.includes(item._id || '')) {
                 return true;
             } else {
                 return false;
@@ -88,7 +83,7 @@ const TagsModal = ({ data, tags, update, workspaceId, tagType }: IProps) => {
         const workspaceTagsCopy = workspace?.workspaceTags || [];
         const updateWorkspaceCopy: any = updateWorkspace;
 
-        if (tagType === "workspace") {
+        if (tagType === 'workspace') {
             await update({
                 ...workspace,
                 tags: [...tagsCopy, res.data],
@@ -105,7 +100,7 @@ const TagsModal = ({ data, tags, update, workspaceId, tagType }: IProps) => {
             });
         }
         filterTags();
-        setTagInput("");
+        setTagInput('');
     };
 
     const handleAddWorkspaceTag = async (tag: TTag) => {
@@ -117,24 +112,17 @@ const TagsModal = ({ data, tags, update, workspaceId, tagType }: IProps) => {
         });
 
         filterTags();
-        setTagInput("");
+        setTagInput('');
     };
 
     return (
         <>
-            {tagType === "row" || tagType === "document" ? (
-                <Button onClick={onOpen} variant={"unstyled"} h={"18px"} minW={"16px"} mr={"5px"} pt={"2px"}>
-                    <BsPlusCircle color={"rgb(123, 128, 154)"} />
+            {tagType === 'row' || tagType === 'document' ? (
+                <Button onClick={onOpen} variant={'unstyled'} h={'18px'} minW={'16px'} mr={'5px'} pt={'2px'}>
+                    <BsPlusCircle color={'rgb(123, 128, 154)'} />
                 </Button>
             ) : (
-                <Button
-                    flex="1"
-                    variant="ghost"
-                    leftIcon={<GoTag />}
-                    color={"rgb(123, 128, 154)"}
-                    zIndex={10}
-                    onClick={onOpen}
-                ></Button>
+                <Button flex="1" variant="ghost" leftIcon={<GoTag />} color={'#b3b8cf'} zIndex={10} onClick={onOpen}></Button>
             )}
             <Modal isOpen={isOpen} onClose={onClose} initialFocusRef={initialRef}>
                 <ModalOverlay />
@@ -142,35 +130,25 @@ const TagsModal = ({ data, tags, update, workspaceId, tagType }: IProps) => {
                     <ModalHeader>Tags</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        <Box mb={"20px"}>
-                            <Text mb={"5px"}>Create a new tag</Text>
+                        <Box mb={'20px'}>
+                            <Text mb={'5px'}>Create a new tag</Text>
                             <Flex>
-                                <Input ref={initialRef} mr={"5px"} value={tagInput} onChange={handleTagInput} />
+                                <Input ref={initialRef} mr={'5px'} value={tagInput} onChange={handleTagInput} />
                                 <PrimaryButton onClick={handleCreateTagClick} isDisabled={tagInputError}>
                                     ADD
                                 </PrimaryButton>
                             </Flex>
-                            <Box mt={"5px"} h={"10px"}>
-                                {tagInputError ? (
-                                    <Text
-                                        color={"red"}
-                                        fontSize={"14px"}
-                                    >{`"${tagInput}" already exists in this workspace.`}</Text>
-                                ) : null}
+                            <Box mt={'5px'} h={'10px'}>
+                                {tagInputError ? <Text color={'red'} fontSize={'14px'}>{`"${tagInput}" already exists in this workspace.`}</Text> : null}
                             </Box>
                         </Box>
                         <Box>
-                            {availableTags.length > 0 ? <Text mb={"10px"}>Or select an existing tag.</Text> : null}
+                            {availableTags.length > 0 ? <Text mb={'10px'}>Or select an existing tag.</Text> : null}
                             {availableTags?.map((tag, index) => {
                                 return (
                                     <Box key={index}>
-                                        <Button
-                                            w={"100%"}
-                                            colorScheme="blue"
-                                            variant={"ghost"}
-                                            onClick={() => handleAddWorkspaceTag(tag)}
-                                        >
-                                            <Text w={"100%"} textAlign={"left"}>
+                                        <Button w={'100%'} colorScheme="blue" variant={'ghost'} onClick={() => handleAddWorkspaceTag(tag)}>
+                                            <Text w={'100%'} textAlign={'left'}>
                                                 {tag.name}
                                             </Text>
                                         </Button>

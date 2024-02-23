@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { Input, Text, Flex, Spacer } from "@chakra-ui/react";
-import Select from "react-select";
-import { TDataCollection } from "../../types";
-import PrimaryButton from "../../components/Buttons/PrimaryButton";
-import PrimaryDrawer from "../../components/PrimaryDrawer";
-import { useGetDataCollectionsQuery } from "../../app/services/api";
+import React, { useEffect, useState } from 'react';
+import { Input, Text, Flex, Spacer } from '@chakra-ui/react';
+import Select from 'react-select';
+import { TDataCollection } from '../../types';
+import PrimaryButton from '../../components/Buttons/PrimaryButton';
+import PrimaryDrawer from '../../components/PrimaryDrawer';
+import { useGetDataCollectionsQuery } from '../../app/services/api';
+import { HiPlus } from 'react-icons/hi';
 
 let defaultValues: TDataCollection = {
-    name: "",
-    description: "",
-    workspace: "",
-    template: "default",
+    name: '',
+    description: '',
+    workspace: '',
+    template: 'default',
     form: {
         active: false,
-        type: "null",
+        type: 'null',
         emails: [],
     },
     columns: [],
@@ -79,12 +80,14 @@ const Create = ({ addNewDataCollection }: IProps) => {
 
     return (
         <>
-            <PrimaryButton onClick={showDrawer}>NEW COLLECTION</PrimaryButton>
+            <PrimaryButton onClick={showDrawer} px="0" size="sm">
+                <HiPlus size={'18px'} />
+            </PrimaryButton>
             <PrimaryDrawer title="Create a new data collection" onClose={onClose} isOpen={open}>
                 <Flex>
-                    <Text pb={"5px"}>Name</Text>
-                    <Text ml={"8px"} pt={"2px"} fontSize={"14px"} color={"#e53e3e"}>
-                        {inputError ? "* Name exceeds character limit" : ""}
+                    <Text pb={'5px'}>Name</Text>
+                    <Text ml={'8px'} pt={'2px'} fontSize={'14px'} color={'#e53e3e'}>
+                        {inputError ? '* Name exceeds character limit' : ''}
                     </Text>
                 </Flex>
                 <Input
@@ -93,22 +96,22 @@ const Create = ({ addNewDataCollection }: IProps) => {
                     value={data.name}
                     required={true}
                     onChange={handleChange}
-                    style={{ marginBottom: "15px" }}
+                    style={{ marginBottom: '15px' }}
                 />
-                <Text pb={"5px"}>Template</Text>
+                <Text pb={'5px'}>Template</Text>
                 <Select
                     id="columnType"
                     name="columnType"
                     placeholder="Please select column type"
                     onChange={(selectedOption: any) => handleTemplateChange(selectedOption)}
                     options={[
-                        { value: "default", label: "Default" },
-                        { value: "tasks", label: "Task List" },
+                        { value: 'default', label: 'Default' },
+                        { value: 'tasks', label: 'Task List' },
                     ].concat(selectFormattedDataCollections)}
                     styles={
                         {
                             control: (styles: any) => {
-                                return { ...styles, borderColor: "#e2e8f0", marginBottom: "20px" };
+                                return { ...styles, borderColor: '#e2e8f0', marginBottom: '20px' };
                             },
                         } as any
                     }

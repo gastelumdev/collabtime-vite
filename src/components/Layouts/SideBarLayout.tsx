@@ -32,7 +32,7 @@ import Divider from '../Divider/Divider';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaSignOutAlt, FaUserCircle } from 'react-icons/fa';
 import View from '../../features/notifications/View';
-import Search from '../../features/search/View';
+// import Search from '../../features/search/View';
 
 interface LinkItemProps {
     name: string;
@@ -68,11 +68,11 @@ const mvpUserEmails = ['islas@mvpsecuritysystems.com', 'jvargas@mvpsecuritysyste
 
 const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) => {
     const { data: userData } = useGetUserQuery(localStorage.getItem('userId') as string);
-    const height = window.innerHeight - 48;
+    const height = window.innerHeight;
     const [sidebarHeight, setSidebarHeight] = useState(height);
 
     const resizeSidebar = useCallback(() => {
-        setSidebarHeight(window.innerHeight - 48);
+        setSidebarHeight(window.innerHeight);
     }, [sidebarHeight]);
 
     const [user, setUser] = useState(userData);
@@ -96,15 +96,17 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
             borderRightColor={useColorModeValue('gray.200', 'gray.700')}
             w={{ base: 'full', md: '80px' }}
             pos="fixed"
-            h={window.innerHeight}
+            // h={window.innerHeight}
+            h={'100%'}
+            p={'0'}
             {...rest}
         >
-            <Box bg={'black'} h={height} borderRadius={'xl'}>
+            <Box bg={'black'} h={height}>
                 <Box
                     pt={'20px'}
                     bgImage={mvpUserEmails.includes(user?.email || '') ? 'black' : 'radial-gradient(circle at center top, rgb(66, 66, 74), black)'}
                     height={'full'}
-                    borderRadius={'xl'}
+                    // borderRadius={'xl'}
                 >
                     <Box pt={'6px'} pb={'4px'}>
                         <Center>
@@ -127,7 +129,7 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
                                     label={link.name}
                                     openDelay={0}
                                     // isDisabled={isFocused}
-                                    placement={'top'}
+                                    placement={'right'}
                                 >
                                     <Link to={link.path}>
                                         <NavItem key={link.name} icon={link.icon}>
@@ -167,10 +169,10 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
             borderRadius="lg"
             role="group"
             cursor="pointer"
-            _hover={{
-                bgImage: 'linear(195deg, rgb(73, 163, 241), rgb(26, 115, 232))',
-                color: 'white',
-            }}
+            // _hover={{
+            //     bgImage: 'linear(195deg, rgb(73, 163, 241), rgb(26, 115, 232))',
+            //     color: 'white',
+            // }}
             {...rest}
         >
             {icon && (
@@ -178,7 +180,7 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
                     mr="4"
                     fontSize="19"
                     _groupHover={{
-                        color: 'white',
+                        color: '#64b6ff',
                     }}
                     as={icon}
                     color={'lightgray'}
@@ -202,6 +204,7 @@ const TopNav = ({ sidebar = true, onOpen, leftContent, ...rest }: TopNavProps) =
         <Flex
             ml={{ base: 0, lg: sidebar ? '400px' : '0' }}
             pl={{ base: 0, lg: 0 }}
+            pt={'35px'}
             h={{ sm: '22px' }}
             mb={{ sm: '20px' }}
             alignItems="center"
@@ -225,9 +228,9 @@ const TopNav = ({ sidebar = true, onOpen, leftContent, ...rest }: TopNavProps) =
                             </Box>
                             <Spacer />
                             <Stack direction={'row'} spacing={6}>
-                                <Menu>
+                                {/* <Menu>
                                     <Search />
-                                </Menu>
+                                </Menu> */}
                                 <Menu>
                                     <View />
                                 </Menu>
@@ -307,12 +310,12 @@ const SideBarLayout = ({ linkItems, leftContent, sidebar = true, children }: Sid
     }, [userData]);
 
     return (
-        <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')} pl={{ base: 0, lg: 6 }} pr={0} pt={6}>
+        <Box minH="100vh" bg={"useColorModeValue('gray.100', 'gray.900')"} pl={{ base: 0, lg: 0 }} pr={0} pt={0}>
             {sidebar ? <SidebarContent linkItems={linkItems} onClose={onClose} isOpen={isOpen} display={{ base: 'none', lg: 'block' }} /> : null}
-            <Box mx={'6px'} ml={'6px'}>
+            <Box mx={'6px'} ml={'6px'} h={'full'}>
                 <Drawer isOpen={isOpen} placement="left" onClose={onClose} returnFocusOnClose={false} onOverlayClick={onClose} size="xs">
                     <DrawerContent boxShadow={'none'}>
-                        <Box py={6} pl={6} height={'full'} bg={useColorModeValue('gray.100', 'gray.900')}>
+                        <Box py={6} pl={6} minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
                             <Box
                                 pt={'20px'}
                                 bgImage={

@@ -7,10 +7,10 @@ import {
     AlertDialogOverlay,
     Button,
     useDisclosure,
-} from "@chakra-ui/react";
-import React from "react";
-import { AiOutlineDelete } from "react-icons/ai";
-import { TDataCollection } from "../../types";
+} from '@chakra-ui/react';
+import React from 'react';
+import { AiOutlineDelete } from 'react-icons/ai';
+import { TDataCollection } from '../../types';
 
 interface IProps {
     dataCollection: TDataCollection;
@@ -22,14 +22,7 @@ const Delete = ({ dataCollection, deleteDataCollection }: IProps) => {
     const cancelRef = React.useRef<any>(null);
     return (
         <>
-            <Button
-                flex="1"
-                variant="ghost"
-                leftIcon={<AiOutlineDelete />}
-                color={"rgb(123, 128, 154)"}
-                zIndex={10}
-                onClick={onOpen}
-            ></Button>
+            <Button flex="1" variant="ghost" leftIcon={<AiOutlineDelete />} color={'#b3b8cf'} zIndex={10} onClick={onOpen}></Button>
             <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
                 <AlertDialogOverlay>
                     <AlertDialogContent>

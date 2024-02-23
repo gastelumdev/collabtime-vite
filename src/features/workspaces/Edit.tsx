@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { Button, Text, Checkbox, Stack, Flex, Input, Spacer, useDisclosure } from "@chakra-ui/react";
-import { TWorkspace } from "../../types";
-import { AiOutlineEdit } from "react-icons/ai";
-import Divider from "../../components/Divider/Divider";
-import PrimaryButton from "../../components/Buttons/PrimaryButton";
-import PrimaryDrawer from "../../components/PrimaryDrawer";
+import React, { useState } from 'react';
+import { Button, Text, Checkbox, Stack, Flex, Input, Spacer, useDisclosure } from '@chakra-ui/react';
+import { TWorkspace } from '../../types';
+import { AiOutlineEdit } from 'react-icons/ai';
+import Divider from '../../components/Divider/Divider';
+import PrimaryButton from '../../components/Buttons/PrimaryButton';
+import PrimaryDrawer from '../../components/PrimaryDrawer';
 
 interface IProps {
     workspace: TWorkspace;
@@ -76,20 +76,13 @@ const Edit = ({ workspace, updateWorkspace }: IProps) => {
 
     return (
         <>
-            <Button
-                flex="1"
-                variant="ghost"
-                leftIcon={<AiOutlineEdit />}
-                color={"rgb(123, 128, 154)"}
-                onClick={onOpen}
-                zIndex={10}
-            ></Button>
+            <Button flex="1" variant="ghost" leftIcon={<AiOutlineEdit />} color={'#b3b8cf'} onClick={onOpen} zIndex={10}></Button>
             <PrimaryDrawer isOpen={isOpen} onClose={onClose} title="Edit workspace">
-                <Text pb={"5px"} color={"rgb(123, 128, 154)"} fontSize={"14px"}>
+                <Text pb={'5px'} color={'rgb(123, 128, 154)'} fontSize={'14px'}>
                     Name
                 </Text>
-                <Text ml={"8px"} pt={"2px"} fontSize={"14px"} color={"#e53e3e"}>
-                    {inputError ? "* Name exceeds character limit" : ""}
+                <Text ml={'8px'} pt={'2px'} fontSize={'14px'} color={'#e53e3e'}>
+                    {inputError ? '* Name exceeds character limit' : ''}
                 </Text>
                 <Input
                     name="name"
@@ -97,11 +90,11 @@ const Edit = ({ workspace, updateWorkspace }: IProps) => {
                     placeholder="Please enter user name"
                     required={true}
                     onChange={handleChange}
-                    style={{ marginBottom: "15px" }}
-                    color={"rgb(123, 128, 154)"}
-                    size={"sm"}
+                    style={{ marginBottom: '15px' }}
+                    color={'rgb(123, 128, 154)'}
+                    size={'sm'}
                 />
-                <Text pb={"5px"} color={"rgb(123, 128, 154)"} fontSize={"14px"}>
+                <Text pb={'5px'} color={'rgb(123, 128, 154)'} fontSize={'14px'}>
                     Description
                 </Text>
                 <Input
@@ -109,55 +102,47 @@ const Edit = ({ workspace, updateWorkspace }: IProps) => {
                     value={data.description}
                     placeholder="please enter url description"
                     onChange={handleChange}
-                    style={{ marginBottom: "15px" }}
-                    color={"rgb(123, 128, 154)"}
-                    size={"sm"}
+                    style={{ marginBottom: '15px' }}
+                    color={'rgb(123, 128, 154)'}
+                    size={'sm'}
                 />
-                <Text pb={"5px"}>Tools</Text>
+                <Text pb={'5px'}>Tools</Text>
                 <Stack mt={1} spacing={1}>
                     <Checkbox
                         isChecked={checkedItems[0]}
-                        onChange={(e) =>
-                            setCheckedItems([e.target.checked, checkedItems[1], checkedItems[2], checkedItems[3]])
-                        }
-                        color={"rgb(123, 128, 154)"}
-                        fontSize={"14px"}
+                        onChange={(e) => setCheckedItems([e.target.checked, checkedItems[1], checkedItems[2], checkedItems[3]])}
+                        color={'rgb(123, 128, 154)'}
+                        fontSize={'14px'}
                     >
-                        <Text fontSize={"14px"}>Data Collections</Text>
+                        <Text fontSize={'14px'}>Data Collections</Text>
                     </Checkbox>
                     <Checkbox
                         isChecked={checkedItems[1]}
-                        onChange={(e) =>
-                            setCheckedItems([checkedItems[0], e.target.checked, checkedItems[2], checkedItems[3]])
-                        }
-                        color={"rgb(123, 128, 154)"}
-                        fontSize={"14px"}
+                        onChange={(e) => setCheckedItems([checkedItems[0], e.target.checked, checkedItems[2], checkedItems[3]])}
+                        color={'rgb(123, 128, 154)'}
+                        fontSize={'14px'}
                     >
-                        <Text fontSize={"14px"}>Tasks</Text>
+                        <Text fontSize={'14px'}>Tasks</Text>
                     </Checkbox>
                     <Checkbox
                         isChecked={checkedItems[2]}
-                        onChange={(e) =>
-                            setCheckedItems([checkedItems[0], checkedItems[1], e.target.checked, checkedItems[3]])
-                        }
-                        color={"rgb(123, 128, 154)"}
-                        fontSize={"14px"}
+                        onChange={(e) => setCheckedItems([checkedItems[0], checkedItems[1], e.target.checked, checkedItems[3]])}
+                        color={'rgb(123, 128, 154)'}
+                        fontSize={'14px'}
                     >
-                        <Text fontSize={"14px"}>Docs</Text>
+                        <Text fontSize={'14px'}>Docs</Text>
                     </Checkbox>
                     <Checkbox
                         isChecked={checkedItems[3]}
-                        onChange={(e) =>
-                            setCheckedItems([checkedItems[0], checkedItems[1], checkedItems[2], e.target.checked])
-                        }
-                        color={"rgb(123, 128, 154)"}
-                        fontSize={"14px"}
+                        onChange={(e) => setCheckedItems([checkedItems[0], checkedItems[1], checkedItems[2], e.target.checked])}
+                        color={'rgb(123, 128, 154)'}
+                        fontSize={'14px'}
                     >
-                        <Text fontSize={"14px"}>Message Board</Text>
+                        <Text fontSize={'14px'}>Message Board</Text>
                     </Checkbox>
                 </Stack>
                 <Divider gradient="radial-gradient(#eceef1 40%, white 60%)" marginBottom="0" />
-                <Flex mt={"10px"} width={"full"}>
+                <Flex mt={'10px'} width={'full'}>
                     <Spacer />
                     <PrimaryButton onClick={editData} isDisabled={inputError}>
                         SAVE
