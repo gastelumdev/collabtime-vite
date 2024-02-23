@@ -50,7 +50,19 @@ const TableContent = ({
 
     useEffect(() => {
         let position = 0;
+        let currentParent: any = null;
+        const parentsToMakeCommon: any = [];
         const repositionedRows = rows.map((row) => {
+            if (currentParent !== null && row.parentRowId !== currentParent._id) {
+                parentsToMakeCommon.push(currentParent._id);
+            }
+
+            if (row.isParent) {
+                currentParent = row;
+            } else {
+                currentParent = null;
+            }
+
             position = position + 1;
             if (row.position != position) {
                 updateRow({ ...row, position: position });
@@ -59,7 +71,16 @@ const TableContent = ({
             return row;
         });
         console.log(repositionedRows);
-        setCurrentRows(repositionedRows);
+        console.log(parentsToMakeCommon);
+
+        const resetRows = repositionedRows.map((row) => {
+            if (parentsToMakeCommon.includes(row._id)) {
+                updateRow({ ...row, isParent: false, showSubrows: true });
+                return { ...row, isParent: false, showSubrows: true };
+            }
+            return row;
+        });
+        setCurrentRows(resetRows);
     }, [rows]);
 
     useEffect(() => {
@@ -527,6 +548,7 @@ const TableContent = ({
             <ViewportList viewportRef={ref} items={currentRows} overscan={25}>
                 {(row, rowIndex) => (
                     <div key={row._id} className="item">
+                        <>{console.log(row)}</>
                         <div key={row._id}>
                             <Row
                                 row={row}

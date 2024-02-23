@@ -49,7 +49,7 @@ const TextInput = ({ columnName, value, type = 'tableCell', onChange }: ITextInp
                 <Box
                     w={'100%'}
                     p={val ? '0px' : type === 'tableCell' ? '14px' : '0px'}
-                    onDoubleClick={() => setActive(!active)}
+                    onClick={() => setActive(!active)}
                     px={type === 'tableCell' ? '20px' : '0px'}
                     overflow={'hidden'}
                 >
