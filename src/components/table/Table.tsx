@@ -224,8 +224,10 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
     }, []);
 
     const handleAddNewColumnToRows = useCallback(
-        (column: TColumn) => {
+        async (column: TColumn) => {
             console.log(column);
+            createColumn(column);
+
             setColumns([...columns, column]);
             setRows((prev) =>
                 prev.map((row) => {
@@ -233,14 +235,17 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
                 })
             );
             setGridTemplateColumns(gridTemplateColumns + ' 180px');
-            createColumn(column);
         },
         [rows, columns]
     );
 
     const handleDeleteColumn = useCallback(
         (column: any) => {
-            setColumns((prev) => prev.filter((prevColumn) => prevColumn._id !== column._id));
+            const columnsCopy: any = columns;
+            console.log(columnsCopy);
+            const filteredColumns = columnsCopy.filter((col: any) => col.name !== column.name);
+            console.log(filteredColumns);
+            setColumns((prev) => prev.filter((prevColumn) => prevColumn.name !== column.name));
             deleteColumn(column);
         },
         [columns]

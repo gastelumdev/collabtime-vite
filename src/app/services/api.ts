@@ -207,8 +207,9 @@ export const api = createApi({
         }),
         deleteColumn: builder.mutation<TColumn, TColumn>({
             query: (column) => ({
-                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${column.dataCollection}/columns/delete/${column._id}`,
+                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${column.dataCollection}/columns/delete`,
                 method: "POST",
+                body: column,
             }),
             // invalidatesTags: ["Column", "Rows"],
         }),

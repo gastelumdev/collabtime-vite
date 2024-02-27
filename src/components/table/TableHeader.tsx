@@ -270,14 +270,19 @@ const TableHeader = ({
     const handleAddColumn = useCallback(
         (column: TColumn) => {
             console.log(column);
+            setCurrentColumns([...currentColumns, column]);
             handleAddNewColumnToRows(column);
         },
-        [handleAddNewColumnToRows]
+        [handleAddNewColumnToRows, currentColumns]
     );
 
-    const handleDeleteColumn = useCallback((column: any) => {
-        deleteColumn(column);
-    }, []);
+    const handleDeleteColumn = useCallback(
+        (column: any) => {
+            setCurrentColumns((prevColumns) => prevColumns.filter((prevColumn) => prevColumn._id !== column._id));
+            deleteColumn(column);
+        },
+        [deleteColumn, currentColumns]
+    );
 
     return (
         <div className="table-header">

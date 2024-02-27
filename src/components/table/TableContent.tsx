@@ -548,7 +548,7 @@ const TableContent = ({
             <ViewportList viewportRef={ref} items={currentRows} overscan={25}>
                 {(row, rowIndex) => (
                     <div key={row._id} className="item">
-                        <>{console.log(row)}</>
+                        {/* <>{console.log(row)}</> */}
                         <div key={row._id}>
                             <Row
                                 row={row}
