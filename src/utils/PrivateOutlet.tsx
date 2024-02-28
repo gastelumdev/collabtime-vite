@@ -16,7 +16,7 @@ export function PrivateOutlet({ redirectPath = '/login' }: PrivateOutletProps) {
     useEffect(() => {
         const socket = io(import.meta.env.VITE_API_URL);
         socket.connect();
-        socket.on('update', (item) => {
+        socket.on('update', (item: any) => {
             console.log('UPDATE IO');
             if (item && item.userId !== localStorage.getItem('userId')) {
                 toast({
@@ -51,6 +51,16 @@ export function PrivateOutlet({ redirectPath = '/login' }: PrivateOutletProps) {
                     description: item.message,
                     status: item.priority === 'Low' ? 'success' : item.priority === 'Critical' ? 'error' : 'warning',
                     duration: 9000,
+                });
+            }
+        });
+
+        socket.on('passwordReset', (item: any) => {
+            if (item && item.userId === localStorage.getItem('userId')) {
+                toast({
+                    title: 'Notification',
+                    description: item.message,
+                    status: 'info',
                 });
             }
         });
