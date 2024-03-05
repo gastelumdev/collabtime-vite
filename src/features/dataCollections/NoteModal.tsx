@@ -26,7 +26,7 @@ import { io } from 'socket.io-client';
 
 interface IProps {
     row: TRow;
-    updateRow: any;
+    updateRow?: any;
     rowCallUpdate?: any;
 }
 
@@ -34,6 +34,7 @@ const NoteModal = ({ row, updateRow }: IProps) => {
     const { isOpen: notesIsOpen, onOpen: notesOnOpen, onClose: notesOnClose } = useDisclosure();
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
     const { data: workspace } = useGetOneWorkspaceQuery(localStorage.getItem('workspaceId') || '');
+
     const [uploadDocs] = useUploadDocsMutation();
     const [uploadPersistedDocs] = useUploadPersistedDocsMutation();
 
@@ -95,6 +96,7 @@ const NoteModal = ({ row, updateRow }: IProps) => {
             const result = { ...rowCopy, notesList: newNote };
 
             updateRow(result);
+
             setHasUnreadItems(false);
         }
     };
@@ -198,6 +200,7 @@ const NoteModal = ({ row, updateRow }: IProps) => {
                     <ModalHeader>Notes</ModalHeader>
                     <ModalCloseButton onClick={onClose} />
                     <ModalBody>
+                        <>{console.log(row)}</>
                         {row.notesList.map((note, index) => {
                             return (
                                 <Box key={index} mb={'20px'} px={'6px'}>

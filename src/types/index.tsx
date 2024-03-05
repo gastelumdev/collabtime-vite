@@ -87,6 +87,7 @@ export type TColumn = {
     permanent: boolean;
     people?: TUser[];
     labels?: TLabel[];
+    dataCollectionRef: any;
     includeInForm: boolean;
     includeInExport: boolean;
     position: number;

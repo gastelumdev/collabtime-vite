@@ -14,7 +14,7 @@ interface IProps {
     cells?: TCell[];
     columns: any;
     row: any;
-    handleChange: any;
+    handleChange?: any;
 }
 
 const EditRow = ({ columns, row, handleChange }: IProps) => {

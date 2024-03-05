@@ -11,7 +11,7 @@ interface ILabel {
 }
 
 interface IProps {
-    row: TRow;
+    row?: TRow;
     columnName: string;
     people: TUser[];
     value: string;

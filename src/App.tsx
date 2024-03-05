@@ -13,7 +13,9 @@ import ResetPasswordRequest from './features/auth/ResetPasswordRequest';
 import ResetPassword from './features/auth/ResetPassword';
 import ResetPasswordEmailSent from './features/auth/ResetPasswordEmailSent';
 import Join from './features/workspaces/Join';
-import Form from './features/dataCollections/Form';
+import Form from './components/table/Form';
+import UpdateForm from './components/table/UpdateForm';
+import FormSuccess from './components/table/FormSuccess';
 // import DataCollectionWorkbench from './features/dataCollections/DataCollectionWorkbench';
 
 function App() {
@@ -31,6 +33,7 @@ function App() {
                     <Route path="workspaces/:id/documents" element={<Documents />} />
                     <Route path="workspaces/:id/taskLists" element={<Tasks />} />
                     <Route path="workspaces/:id/messageBoard/:status" element={<MessageBoard />} />
+                    <Route path="workspaces/:id/dataCollections/:dataCollectionId/form/:rowId" element={<UpdateForm />} />
                     {/* </Route> */}
                 </Route>
             </Routes>
@@ -42,6 +45,7 @@ function App() {
                 <Route path="resetPasswordEmailSent" element={<ResetPasswordEmailSent />} />
                 <Route path="joinWorkspace" element={<Join />} />
                 <Route path="workspaces/:id/dataCollections/:dataCollectionId/form" element={<Form />} />
+                <Route path="formSuccess" element={<FormSuccess />} />
             </Routes>
         </>
     );

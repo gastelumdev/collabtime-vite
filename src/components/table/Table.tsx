@@ -104,7 +104,7 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
 
     const handleUpdateRow = useCallback(
         async (row: any) => {
-            // console.log(row);
+            console.log(row);
             const newRows: any = await updateRow(row);
             console.log(newRows);
 
@@ -238,6 +238,23 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
         },
         [rows, columns]
     );
+
+    const handleRemoveColumnFromRows = (column: any) => {
+        setRows((prev) =>
+            prev.map((row) => {
+                console.log(row);
+
+                let refs = row.refs;
+                if (refs !== undefined) {
+                    delete refs[column.name];
+                }
+
+                console.log(refs);
+
+                return { ...row, refs: refs };
+            })
+        );
+    };
 
     const handleDeleteColumn = useCallback(
         (column: any) => {
@@ -498,6 +515,7 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
                 updateBackendColumnWidth={updateBackendColumnWidth}
                 handleGridTemplateColumns={handleSetGridTemplateColumns}
                 handleAddNewColumnToRows={handleAddNewColumnToRows}
+                handleRemoveColumnFormRows={handleRemoveColumnFromRows}
                 deleteColumn={handleDeleteColumn}
             />
             <TableContent

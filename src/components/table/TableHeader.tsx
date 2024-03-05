@@ -16,6 +16,7 @@ interface IProps {
     updateBackendColumnWidth: any;
     handleGridTemplateColumns: any;
     handleAddNewColumnToRows: any;
+    handleRemoveColumnFormRows: any;
     deleteColumn: any;
 }
 
@@ -30,6 +31,7 @@ const TableHeader = ({
     updateBackendColumnWidth,
     handleGridTemplateColumns,
     handleAddNewColumnToRows,
+    handleRemoveColumnFormRows,
     deleteColumn,
 }: IProps) => {
     const [currentColumns, setCurrentColumns] = useState(columns);
@@ -280,6 +282,7 @@ const TableHeader = ({
         (column: any) => {
             setCurrentColumns((prevColumns) => prevColumns.filter((prevColumn) => prevColumn._id !== column._id));
             deleteColumn(column);
+            handleRemoveColumnFormRows(column);
         },
         [deleteColumn, currentColumns]
     );
@@ -312,7 +315,7 @@ const TableHeader = ({
                             style={{
                                 height: '39px',
                                 padding: '0px 20px',
-                                cursor: 'grab',
+                                cursor: columnIndex !== 0 ? 'grab' : 'default',
                                 zIndex: `${100 - columnIndex}`,
                                 backgroundColor: draggedColumnIndex === columnIndex ? '#edf2f7' : 'unset',
                                 borderLeft:
@@ -328,27 +331,51 @@ const TableHeader = ({
                             }}
                         >
                             {/* Reorder column box */}
-                            <div
-                                style={{
-                                    height: headerHeight,
-                                    paddingTop: '8px',
-                                    textAlign: 'center',
-                                    fontWeight: '500',
-                                    fontSize: '13px',
-                                    overflow: 'hidden',
-                                    whiteSpace: 'nowrap',
-                                    textOverflow: 'ellipsis',
-                                }}
-                                draggable
-                                onDragStart={() => handleDragStart(columnIndex)}
-                                onDragOver={(event) => handleDragOver(event, columnIndex)}
-                                onDragEnd={() => handleDragEnd()}
-                                onDrop={(event) => handleDrop(event, columnIndex)}
-                                onDragLeave={() => handleDragLeave(columnIndex)}
-                                onClick={() => console.log('HEADER CLICKED')}
-                            >
-                                <ColumnMenu column={column} handleDeleteColumn={handleDeleteColumn} />
-                            </div>
+                            {columnIndex !== 0 ? (
+                                <div
+                                    style={{
+                                        height: headerHeight,
+                                        paddingTop: '8px',
+                                        textAlign: 'center',
+                                        fontWeight: '500',
+                                        fontSize: '13px',
+                                        overflow: 'hidden',
+                                        whiteSpace: 'nowrap',
+                                        textOverflow: 'ellipsis',
+                                    }}
+                                    draggable={columnIndex !== 0}
+                                    onDragStart={() => handleDragStart(columnIndex)}
+                                    onDragOver={(event) => handleDragOver(event, columnIndex)}
+                                    onDragEnd={() => handleDragEnd()}
+                                    onDrop={(event) => handleDrop(event, columnIndex)}
+                                    onDragLeave={() => handleDragLeave(columnIndex)}
+                                    onClick={() => console.log('HEADER CLICKED')}
+                                >
+                                    <ColumnMenu column={column} handleDeleteColumn={handleDeleteColumn} index={columnIndex} />
+                                </div>
+                            ) : (
+                                <div
+                                    style={{
+                                        height: headerHeight,
+                                        paddingTop: '8px',
+                                        textAlign: 'center',
+                                        fontWeight: '500',
+                                        fontSize: '13px',
+                                        overflow: 'hidden',
+                                        whiteSpace: 'nowrap',
+                                        textOverflow: 'ellipsis',
+                                    }}
+                                    // draggable={columnIndex !== 0}
+                                    // onDragStart={() => handleDragStart(columnIndex)}
+                                    // onDragOver={(event) => handleDragOver(event, columnIndex)}
+                                    // onDragEnd={() => handleDragEnd()}
+                                    // onDrop={(event) => handleDrop(event, columnIndex)}
+                                    // onDragLeave={() => handleDragLeave(columnIndex)}
+                                    // onClick={() => console.log('HEADER CLICKED')}
+                                >
+                                    <ColumnMenu column={column} handleDeleteColumn={handleDeleteColumn} index={columnIndex} />
+                                </div>
+                            )}
                             {/* Resize column box */}
                             <Box
                                 width={'5px'}

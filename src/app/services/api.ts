@@ -220,11 +220,16 @@ export const api = createApi({
                 body: columns,
             }),
         }),
-        getRows: builder.query<any[], { dataCollectionId: string, limit: number, skip: number, sort: number, sortBy: string }>({
+        getRows: builder.query<any[], any>({
             query: (options) => ({
                 url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${options.dataCollectionId}/rows?limit=${options.limit}&skip=${options.skip}&sort=${options.sort}&sortBy=${options.sortBy}`
             }),
             providesTags: ["Rows"]
+        }),
+        getRow: builder.query<any, any>({
+            query: (params) => ({
+                url: `workspaces/${params.workspaceId}/dataCollections/${params.dataCollectionId}/row/${params.rowId}`,
+            })
         }),
         createRow: builder.mutation<TTableData, TTableData>({
             query: (row) => ({
@@ -283,6 +288,18 @@ export const api = createApi({
                 url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${options.dataCollectionId}/getTotalRows?limit=${options.limit}`,
             }),
             providesTags: ["Rows"]
+        }),
+        getFormData: builder.query<any, any>({
+            query: (dataCollectionId) => ({
+                url: `dataCollections/${dataCollectionId}/form`,
+            })
+        }),
+        updateFormData: builder.mutation<any, any>({
+            query: (row) => ({
+                url: `dataCollections/${row.dataCollection}/form`,
+                method: "POST",
+                body: row
+            })
         }),
         updateCell: builder.mutation<TCell, TCell>({
             query: (cell) => ({
@@ -454,6 +471,7 @@ export const {
     useDeleteColumnMutation,
     useReorderColumnsMutation,
     useGetRowsQuery,
+    useGetRowQuery,
     useCreateRowMutation,
     useUpdateRowMutation,
     useDeleteRowMutation,
@@ -462,6 +480,8 @@ export const {
     useAcknowledgeRowMutation,
     useReorderRowsMutation,
     useGetTotalRowsQuery,
+    useGetFormDataQuery,
+    useUpdateFormDataMutation,
     useUpdateCellMutation,
     useUploadMutation,
     useUploadDocsMutation,

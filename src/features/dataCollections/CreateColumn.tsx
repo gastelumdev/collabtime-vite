@@ -13,6 +13,7 @@ import { getTextColor } from '../../utils/helpers';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
 import { BsPlusCircle } from 'react-icons/bs';
 import { useParams } from 'react-router-dom';
+import { useGetDataCollectionsQuery } from '../../app/services/api';
 
 interface TProps {
     columns: TColumn[];
@@ -23,13 +24,17 @@ const CreateColumn = ({ columns, createColumn }: TProps) => {
     const { dataCollectionId } = useParams();
     const { isOpen, onOpen, onClose } = useDisclosure();
 
+    const { data: dataCollections } = useGetDataCollectionsQuery(null);
+
     // const { data: columns } = useGetColumnsQuery(null);
     // const [createColumn] = useCreateColumnMutation();
 
     const [columnName, setColumnName] = useState<string>('');
     const [columnType, setColumnType] = useState<string>('text');
+    const [columnRef, setColumnRef] = useState<any>(null);
     const [columnNameError, setColumnNameError] = useState<boolean>(false);
     const [showLabelForm, setShowLabelForm] = useState(false);
+    const [showReferenceForm, setShowReferenceForm] = useState(false);
     const [labelOptions, setLabelOptions] = useState<TLabel>({
         title: '',
         color: '#015796',
@@ -62,6 +67,7 @@ const CreateColumn = ({ columns, createColumn }: TProps) => {
                 type: columnType,
                 permanent: false,
                 labels: labels,
+                dataCollectionRef: columnRef,
                 people: [],
                 includeInForm: true,
                 includeInExport: true,
@@ -71,7 +77,11 @@ const CreateColumn = ({ columns, createColumn }: TProps) => {
             // Set column name to a database friendly underscore naming
             newColumn.name = newColumn.name.toLowerCase().split(' ').join('_');
 
+            console.log(newColumn);
+
             createColumn(newColumn);
+            setShowLabelForm(false);
+            setShowReferenceForm(false);
             onClose();
         }
     };
@@ -122,6 +132,17 @@ const CreateColumn = ({ columns, createColumn }: TProps) => {
                 { title: 'Done', color: '#28B542' },
             ]);
         }
+
+        if (selectedOption.value === 'reference') {
+            setShowReferenceForm(true);
+        } else {
+            setShowReferenceForm(false);
+        }
+    };
+
+    const handleSelectDataCollection = (selectedOption: any) => {
+        console.log(selectedOption);
+        setColumnRef(selectedOption.value);
     };
 
     const handleLabelOptionsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -169,6 +190,8 @@ const CreateColumn = ({ columns, createColumn }: TProps) => {
             title: '',
             color: '#015796',
         });
+        setShowLabelForm(false);
+        setShowReferenceForm(false);
     };
     return (
         <>
@@ -208,6 +231,7 @@ const CreateColumn = ({ columns, createColumn }: TProps) => {
                                 { value: 'people', label: 'Assign To' },
                                 { value: 'priority', label: 'Priority' },
                                 { value: 'status', label: 'Status' },
+                                { value: 'reference', label: 'Reference' },
                                 // { value: 'upload', label: 'Uploads' },
                                 // { value: 'link', label: 'Link' },
                             ]}
@@ -280,6 +304,29 @@ const CreateColumn = ({ columns, createColumn }: TProps) => {
                                 })}
                             </Box>
                         </>
+                    ) : null}
+                    {showReferenceForm ? (
+                        <Select
+                            id="dataCollections"
+                            name="dataCollections"
+                            placeholder="Please select the data collection that will be referenced"
+                            onChange={(selectedOption: any) => handleSelectDataCollection(selectedOption)}
+                            options={dataCollections
+                                ?.map((dataCollection) => {
+                                    return { value: dataCollection._id, label: dataCollection.name };
+                                })
+                                .filter((dataCollection: any) => {
+                                    console.log(dataCollection.value, dataCollectionId);
+                                    return dataCollection.value !== dataCollectionId;
+                                })}
+                            styles={
+                                {
+                                    control: (styles: any) => {
+                                        return { ...styles, borderColor: '#e2e8f0' };
+                                    },
+                                } as any
+                            }
+                        />
                     ) : null}
                 </Stack>
                 <Flex mt={'20px'}>

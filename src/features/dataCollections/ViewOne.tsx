@@ -59,11 +59,13 @@ const ViewOne = () => {
     const { data: dataCollection } = useGetDataCollectionQuery(dataCollectionId || '');
     const { data: workspace, isFetching: workspaceIsFetching } = useGetOneWorkspaceQuery(localStorage.getItem('workspaceId') || '');
     const { data: dataCollections } = useGetDataCollectionsQuery(null);
-    const { data: columns } = useGetColumnsQuery(localStorage.getItem('dataCollectionId') || '');
+    const { data: columnsData } = useGetColumnsQuery(localStorage.getItem('dataCollectionId') || '');
     const [updateColumn] = useUpdateColumnMutation();
 
     const [updateDataCollection] = useUpdateDataCollectionMutation();
     const [sendForm] = useSendFormMutation();
+
+    const [columns, setColumns] = useState(columnsData);
 
     const [acknowledgeRow] = useAcknowledgeRowMutation();
 
@@ -74,6 +76,35 @@ const ViewOne = () => {
     const [templateExists, setTemplateExists] = useState<boolean>(false);
 
     const [recipientValue, setRecipientValue] = useState<string>('');
+
+    const [checkBoxes, setCheckBoxes] = useState<any>(
+        Array(columns?.length)
+            .fill(null)
+            .map((_: any, index: number) => {
+                console.log(index);
+                return true;
+            })
+    );
+
+    useEffect(() => {
+        setColumns(columnsData);
+    }, [columnsData]);
+
+    useEffect(() => {
+        console.log(columns?.length);
+        console.log(checkBoxes);
+        console.log(columns);
+        setCheckBoxes(
+            Array(columns?.length)
+                .fill(null)
+                .map((_: any, index: number) => {
+                    const columnsCopy: any = columns;
+                    console.log(columnsCopy);
+                    const column: any = columnsCopy !== undefined ? columnsCopy[index] : {};
+                    return column.includeInForm;
+                })
+        );
+    }, [columns]);
 
     useEffect(() => {
         localStorage.setItem('workspaceId', id || '');
@@ -359,8 +390,14 @@ const ViewOne = () => {
                                                 <Spacer />
                                                 <Checkbox
                                                     mb={'6px'}
-                                                    isChecked={column.includeInForm}
+                                                    isChecked={checkBoxes[index]}
                                                     onChange={() => {
+                                                        setCheckBoxes((prev: any) =>
+                                                            prev.map((checkBox: boolean, checkboxIndex: number) => {
+                                                                if (index === checkboxIndex) return !checkBox;
+                                                                return checkBox;
+                                                            })
+                                                        );
                                                         updateColumn({
                                                             ...column,
                                                             includeInForm: !column.includeInForm,

@@ -45,7 +45,8 @@ const UpdateDocumentModal = ({ document, updateDoc }: IProps) => {
                     updateDocOnOpen();
                 }}
                 cursor={'pointer'}
-                color={'rgb(123, 128, 154)'}
+                // color={'rgb(123, 128, 154)'}
+                fontSize={'14px'}
                 overflow={'hidden'}
                 textOverflow={'ellipsis'}
             >

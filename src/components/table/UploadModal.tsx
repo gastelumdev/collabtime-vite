@@ -50,6 +50,7 @@ const UploadModal = ({ rowDocuments, getDocs, getUpdatedDoc, removeDoc }: IProps
     const [existingFiles, setExistingFiles] = useState(documents);
 
     useEffect(() => {
+        console.log(rowDocuments);
         setCurrentFiles(rowDocuments);
     }, [rowDocuments]);
 
@@ -206,7 +207,7 @@ const UploadModal = ({ rowDocuments, getDocs, getUpdatedDoc, removeDoc }: IProps
                     setDuplicateFiles([]);
                 }}
             >
-                <Text color={'#cccccc'}>
+                <Text color={currentFiles.length < 1 ? '#cccccc' : '#16b2fc'}>
                     <RiAttachmentLine />
                 </Text>
             </Box>
@@ -216,33 +217,35 @@ const UploadModal = ({ rowDocuments, getDocs, getUpdatedDoc, removeDoc }: IProps
                     <ModalCloseButton onClick={handleUploadOnClose} />
                     <ModalHeader fontSize={'16px'}>Files</ModalHeader>
                     <ModalBody>
-                        {currentFiles.length > 0 ? (
-                            currentFiles.map((rowDoc, index) => {
-                                return (
-                                    <Flex key={index}>
-                                        <Box mb={'6px'} cursor={'pointer'}>
-                                            {rowDoc.type === 'upload' ? (
-                                                <Text fontSize={'14px'} textOverflow={'ellipsis'} overflow={'hidden'}>
-                                                    <a href={rowDoc.url} target="_blank">
-                                                        {rowDoc.filename}
-                                                    </a>
+                        {currentFiles !== undefined ? (
+                            currentFiles !== undefined && currentFiles.length > 0 ? (
+                                currentFiles.map((rowDoc, index) => {
+                                    return (
+                                        <Flex key={index}>
+                                            <Box mb={'6px'} cursor={'pointer'}>
+                                                {rowDoc.type === 'upload' ? (
+                                                    <Text fontSize={'14px'} textOverflow={'ellipsis'} overflow={'hidden'}>
+                                                        <a href={rowDoc.url} target="_blank">
+                                                            {rowDoc.filename}
+                                                        </a>
+                                                    </Text>
+                                                ) : (
+                                                    <UpdateDocumentModal document={rowDoc} updateDoc={updateDoc} />
+                                                )}
+                                            </Box>
+                                            <Spacer />
+                                            <Box pt={'4px'} cursor={'pointer'} onClick={() => handleRemoveDoc(rowDoc)}>
+                                                <Text fontSize={'10px'}>
+                                                    <CloseIcon />
                                                 </Text>
-                                            ) : (
-                                                <UpdateDocumentModal document={rowDoc} updateDoc={updateDoc} />
-                                            )}
-                                        </Box>
-                                        <Spacer />
-                                        <Box pt={'4px'} cursor={'pointer'} onClick={() => handleRemoveDoc(rowDoc)}>
-                                            <Text fontSize={'10px'}>
-                                                <CloseIcon />
-                                            </Text>
-                                        </Box>
-                                    </Flex>
-                                );
-                            })
-                        ) : (
-                            <Text>This row has no files.</Text>
-                        )}
+                                            </Box>
+                                        </Flex>
+                                    );
+                                })
+                            ) : (
+                                <Text>This row has no files.</Text>
+                            )
+                        ) : null}
                     </ModalBody>
                     {/* <ModalHeader fontSize={'16px'}>Upload Files</ModalHeader> */}
                     <Divider mt={'20px'} mb={'20px'} />

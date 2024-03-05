@@ -14,6 +14,7 @@ import { FaRegSquareCheck } from 'react-icons/fa6';
 import UploadModal from './UploadModal';
 import { TDocument } from '../../types';
 import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import Reference from './Reference';
 // import { useUpdateRowMutation } from '../../app/services/api';
 
 const Row = ({
@@ -130,6 +131,39 @@ const Row = ({
     const onChange = (columnName: string, value: string) => {
         console.log(value);
         handleChange({ ...row, values: { ...row.values, [columnName]: value } });
+    };
+
+    const onRefChange = (columnName: string, ref: any) => {
+        console.log(ref);
+        const refs: any = [];
+        if (row.refs === undefined) {
+            console.log(row.refs);
+            refs.push(ref);
+            console.log({ ...row, refs: { [columnName]: refs } });
+            handleChange({ ...row, refs: { [columnName]: refs } });
+        } else {
+            if (row.refs[columnName] === undefined) {
+                console.log({ ...row, refs: { ...row.refs, [columnName]: [ref] } });
+                handleChange({ ...row, refs: { ...row.refs, [columnName]: [ref] } });
+            } else {
+                console.log({ ...row, refs: { ...row.refs, [columnName]: [...row.refs[columnName], ref] } });
+                handleChange({ ...row, refs: { ...row.refs, [columnName]: [...row.refs[columnName], ref] } });
+            }
+        }
+
+        // handleChange({ ...row, refs: {...row.refs, [columnName]: [...row.refs[columnName], row]} });
+    };
+
+    const onRemoveRef = (columnName: string, ref: any) => {
+        const rowCopy: any = row;
+        const refs: any = rowCopy.refs;
+        const refTarget: any = refs[columnName];
+
+        const filteredRefs = refTarget.filter((r: any) => {
+            return r._id !== ref._id;
+        });
+
+        handleChange({ ...row, refs: { ...row.refs, [columnName]: filteredRefs } });
     };
 
     const editRowOnChange = (row: any) => {
@@ -280,6 +314,7 @@ const Row = ({
                                     </Flex>
                                 </span>
                                 {columns.map((column: any, columnIndex: number) => {
+                                    if (row.refs !== undefined) console.log(row.refs[column.name]);
                                     return (
                                         <div
                                             key={columnIndex}
@@ -309,6 +344,13 @@ const Row = ({
                                                 />
                                             ) : column.type === 'date' ? (
                                                 <DateInput value={row.values[column.name]} columnName={column.name} onChange={onChange} />
+                                            ) : column.type === 'reference' ? (
+                                                <Reference
+                                                    column={column !== undefined ? column : {}}
+                                                    refs={row.refs && row.refs[column.name] !== undefined ? row.refs[column.name] : []}
+                                                    onRefChange={onRefChange}
+                                                    onRemoveRef={onRemoveRef}
+                                                />
                                             ) : (
                                                 <TextInput id={row._id} columnName={column.name} value={row.values[column.name]} onChange={onChange} />
                                             )}
