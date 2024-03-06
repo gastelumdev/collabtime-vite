@@ -167,7 +167,13 @@ const DisplayList = () => {
 
             <Stack mt={'30px'}>
                 {isLoading ? (
-                    <Spinner />
+                    <Stack mt={'30px'}>
+                        <Box w={'100%'} mt={'100px'}>
+                            <Center>
+                                <Spinner />
+                            </Center>
+                        </Box>
+                    </Stack>
                 ) : (
                     data?.map((item: any, index: number) => {
                         return (
@@ -193,10 +199,6 @@ const DisplayList = () => {
                                         </Text>
                                     </Flex>
                                 </Box>
-                                {/* <Divider
-                                gradient="radial-gradient(#eceef1 40%, white 60%)"
-                                marginBottom="0"
-                            /> */}
                             </Box>
                         );
                     })
