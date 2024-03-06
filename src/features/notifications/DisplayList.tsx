@@ -45,7 +45,12 @@ const DisplayList = () => {
     const setNotificationsFilter = (priority: string, index: number) => {
         setActiveTab(index);
         localStorage.setItem('notificationsFilter', priority);
-        setData(notifications?.filter((notification) => notification.priority === priority));
+        if (priority !== 'All') {
+            setData(notifications?.filter((notification) => notification.priority === priority));
+        } else {
+            setData(notifications);
+        }
+
         // callNotificationsUpdate(priority);
     };
 
