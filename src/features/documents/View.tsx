@@ -185,7 +185,7 @@ const View = () => {
                                                         </Td>
                                                         <Td>
                                                             <Flex>
-                                                                <UpdateFileModal document={document} />
+                                                                <UpdateFileModal document={document} documents={documents} />
                                                                 <DeleteFileAlert document={document} />
                                                             </Flex>
                                                         </Td>
