@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Checkbox, Flex, Input, Spacer, Stack, Text, useDisclosure } from '@chakra-ui/react';
+import { Flex, Input, Spacer, Stack, Text, useDisclosure } from '@chakra-ui/react';
 import { TWorkspace } from '../../types';
 
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
-import Divider from '../../components/Divider/Divider';
 import PrimaryDrawer from '../../components/PrimaryDrawer';
 import { HiPlus } from 'react-icons/hi';
 
@@ -44,7 +43,7 @@ const Create = ({ addNewWorkspace }: IProps) => {
     /**
      * State management for the tools checkboxes
      */
-    const [checkedItems, setCheckedItems] = React.useState([true, true, true, true]);
+    // const [checkedItems, setCheckedItems] = React.useState([true, true, true, true]);
     /**
      * Workspace data set for creating a new workspace
      */
@@ -58,11 +57,17 @@ const Create = ({ addNewWorkspace }: IProps) => {
         let newWorkspace: TWorkspace;
         newWorkspace = {
             ...data,
+            // tools: {
+            //     dataCollections: { access: checkedItems[0] ? 2 : 0 },
+            //     taskLists: { access: checkedItems[1] ? 2 : 0 },
+            //     docs: { access: checkedItems[2] ? 2 : 0 },
+            //     messageBoard: { access: checkedItems[3] ? 2 : 0 },
+            // },
             tools: {
-                dataCollections: { access: checkedItems[0] ? 2 : 0 },
-                taskLists: { access: checkedItems[1] ? 2 : 0 },
-                docs: { access: checkedItems[2] ? 2 : 0 },
-                messageBoard: { access: checkedItems[3] ? 2 : 0 },
+                dataCollections: { access: 2 },
+                taskLists: { access: 2 },
+                docs: { access: 2 },
+                messageBoard: { access: 2 },
             },
         };
         addNewWorkspace(newWorkspace);
@@ -135,9 +140,9 @@ const Create = ({ addNewWorkspace }: IProps) => {
                     onChange={handleChange}
                     style={{ marginBottom: '15px' }}
                 />
-                <Text pb={'5px'}>Tools</Text>
+                {/* <Text pb={'5px'}>Tools</Text> */}
                 <Stack mt={1} spacing={1}>
-                    <Checkbox
+                    {/* <Checkbox
                         color={'rgb(123, 128, 154)'}
                         isChecked={checkedItems[0]}
                         onChange={(e) => setCheckedItems([e.target.checked, checkedItems[1], checkedItems[2], checkedItems[3]])}
@@ -164,8 +169,8 @@ const Create = ({ addNewWorkspace }: IProps) => {
                         onChange={(e) => setCheckedItems([checkedItems[0], checkedItems[1], checkedItems[2], e.target.checked])}
                     >
                         <Text fontSize={'14px'}>Message Board</Text>
-                    </Checkbox>
-                    <Divider gradient="radial-gradient(#eceef1 40%, white 60%)" marginBottom="0" />
+                    </Checkbox> */}
+                    {/* <Divider gradient="radial-gradient(#eceef1 40%, white 60%)" marginBottom="0" /> */}
                     <Flex mt={'10px'} width={'full'}>
                         <Spacer />
                         <PrimaryButton onClick={createData} isDisabled={inputError}>
