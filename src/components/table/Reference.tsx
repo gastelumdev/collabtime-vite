@@ -98,10 +98,10 @@ const Reference = ({ column, refs, onRefChange, onRemoveRef }: { column: any; re
         });
     };
     return (
-        <Center>
+        <Center px={'10px'}>
             <Popover>
                 <PopoverTrigger>
-                    <Button size={'xs'} variant={'ghost'} color={rows.length < 1 ? 'lightgray' : 'gray'}>
+                    <Button size={'xs'} variant={'ghost'} color={rows.length < 1 ? 'lightgray' : 'gray'} overflow={'hidden'}>
                         {rows.length < 1 ? `Choose ${dataCollection?.name}` : `${rows.map((row: any) => `${row.values[rowKey]}, `)}`}
                     </Button>
                 </PopoverTrigger>
