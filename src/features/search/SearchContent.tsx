@@ -35,15 +35,15 @@ const SearchContent = ({ onClose, firstField }: IProps) => {
         // const tagsRes: any = await searchTags({ tag: event.target.value });
 
         const filteredWorkspaces = content.workspaces.filter((workspace: any) => {
-            return workspace.name.startsWith(event.target.value);
+            return workspace.name.toLowerCase().startsWith(event.target.value.toLowerCase());
         });
 
         const filteredDataCollections = content.dataCollections.filter((dataCollection: any) => {
-            return dataCollection.name.startsWith(event.target.value);
+            return dataCollection.name.toLowerCase().startsWith(event.target.value.toLowerCase());
         });
 
         const filteredDocs = content.docs.filter((doc: any) => {
-            return doc.filename.startsWith(event.target.value);
+            return doc.filename.toLowerCase().startsWith(event.target.value.toLowerCase());
         });
 
         const filteredWorkspaceTags = content.workspaces.filter((workspace: any) => {
@@ -55,7 +55,7 @@ const SearchContent = ({ onClose, firstField }: IProps) => {
                 let match = false;
 
                 for (const tag of workspace.tags) {
-                    if (tag.name.startsWith(event.target.value)) {
+                    if (tag.name.toLowerCase().startsWith(event.target.value.toLowerCase())) {
                         match = true;
                     }
                 }
@@ -74,7 +74,7 @@ const SearchContent = ({ onClose, firstField }: IProps) => {
                 let match = false;
 
                 for (const tag of dataCollection.tags) {
-                    if (tag.name.startsWith(event.target.value)) {
+                    if (tag.name.toLowerCase().startsWith(event.target.value.toLowerCase())) {
                         match = true;
                     }
                 }
@@ -93,7 +93,7 @@ const SearchContent = ({ onClose, firstField }: IProps) => {
                 let match = false;
 
                 for (const tag of doc.tags) {
-                    if (tag.name.startsWith(event.target.value)) {
+                    if (tag.name.toLowerCase().startsWith(event.target.value.toLowerCase())) {
                         match = true;
                     }
                 }
