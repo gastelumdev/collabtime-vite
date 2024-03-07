@@ -360,6 +360,11 @@ export const api = createApi({
             }),
             invalidatesTags: ["Documents"]
         }),
+        getSearchContent: builder.query<any, any>({
+            query: () => ({
+                url: `/getSearchContent`,
+            })
+        }),
         searchAll: builder.mutation<{ workspaces: TWorkspace[], dataCollections: TDataCollection[], docs: TDocument[] }, { key: string }>({
             query: (key) => ({
                 url: `/workspaces/${localStorage.getItem("workspaceId")}/searchAll`,
@@ -490,6 +495,7 @@ export const {
     useCreateDocumentMutation,
     useUpdateDocumentMutation,
     useDeleteDocumentMutation,
+    useGetSearchContentQuery,
     useSearchAllMutation,
     useSearchTagsMutation,
     useGetTagsQuery,

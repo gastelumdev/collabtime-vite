@@ -32,7 +32,7 @@ import Divider from '../Divider/Divider';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaSignOutAlt, FaUserCircle } from 'react-icons/fa';
 import View from '../../features/notifications/View';
-// import Search from '../../features/search/View';
+import Search from '../../features/search/View';
 
 interface LinkItemProps {
     name: string;
@@ -228,9 +228,9 @@ const TopNav = ({ sidebar = true, onOpen, leftContent, ...rest }: TopNavProps) =
                             </Box>
                             <Spacer />
                             <Stack direction={'row'} spacing={6}>
-                                {/* <Menu>
+                                <Menu>
                                     <Search />
-                                </Menu> */}
+                                </Menu>
                                 <Menu>
                                     <View />
                                 </Menu>

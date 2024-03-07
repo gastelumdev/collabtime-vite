@@ -203,23 +203,21 @@ const View = () => {
                                                                     {document.tags !== undefined
                                                                         ? document.tags.map((tag: TTag, index: number) => {
                                                                               return (
-                                                                                  <>
-                                                                                      <WrapItem key={index}>
-                                                                                          <Tag
-                                                                                              size={'sm'}
-                                                                                              variant="subtle"
-                                                                                              colorScheme="blue"
-                                                                                              mr={'5px'}
+                                                                                  <WrapItem key={index}>
+                                                                                      <Tag
+                                                                                          size={'sm'}
+                                                                                          variant="subtle"
+                                                                                          colorScheme="blue"
+                                                                                          mr={'5px'}
+                                                                                          zIndex={1000}
+                                                                                      >
+                                                                                          <TagLabel pb={'2px'}>{tag.name}</TagLabel>
+                                                                                          <TagCloseButton
+                                                                                              onClick={() => handleCloseTagButtonClick(document, tag)}
                                                                                               zIndex={1000}
-                                                                                          >
-                                                                                              <TagLabel pb={'2px'}>{tag.name}</TagLabel>
-                                                                                              <TagCloseButton
-                                                                                                  onClick={() => handleCloseTagButtonClick(document, tag)}
-                                                                                                  zIndex={1000}
-                                                                                              />
-                                                                                          </Tag>
-                                                                                      </WrapItem>
-                                                                                  </>
+                                                                                          />
+                                                                                      </Tag>
+                                                                                  </WrapItem>
                                                                               );
                                                                           })
                                                                         : null}

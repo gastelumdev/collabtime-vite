@@ -1,10 +1,10 @@
-import { useSearchAllMutation, useSearchTagsMutation } from '../../app/services/api';
+import { useGetSearchContentQuery } from '../../app/services/api';
 import { useNavigate } from 'react-router-dom';
 import { Box, Button, Flex, HStack, Input, InputGroup, InputLeftElement, Text } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IconContext } from 'react-icons';
 import { FaSearch } from 'react-icons/fa';
-import { TDataCollection, TDocument, TWorkspace } from '../../types';
+// import { TDataCollection, TDocument, TWorkspace } from '../../types';
 // import DataCollection from "../dataCollections/DataCollection";
 import UpdateModal from '../documents/UpdateModal';
 
@@ -15,35 +15,106 @@ interface IProps {
 
 const SearchContent = ({ onClose, firstField }: IProps) => {
     const navigate = useNavigate();
-    const [searchAll] = useSearchAllMutation();
-    const [searchTags] = useSearchTagsMutation();
+    const { data: content } = useGetSearchContentQuery(null);
+    // const [searchAll] = useSearchAllMutation();
+    // const [searchTags] = useSearchTagsMutation();
     const [searchInputText, setSearchInputText] = useState<string>('');
-    const [data, setData] = useState<{
-        workspaces: TWorkspace[];
-        dataCollections: TDataCollection[];
-        docs: TDocument[];
-    }>({ workspaces: [], dataCollections: [], docs: [] });
-    const [tagsData, setTagsData] = useState<{
-        workspaces: TWorkspace[];
-        dataCollections: TDataCollection[];
-        docs: TDocument[];
-        data: any[];
-    }>({ workspaces: [], dataCollections: [], docs: [], data: [] });
+    const [data, setData] = useState<any>({ workspaces: [], dataCollections: [], docs: [] });
+    const [tagsData, setTagsData] = useState<any>({ workspaces: [], dataCollections: [], docs: [], data: [] });
     const [tabSelectedName, setTabSelectedName] = useState<string>('all');
     // const [tagInputActive, setTagInputActive] = useState<boolean>(false);
 
-    const handleSearchInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchInputText(event.target.value);
-        const res: any = await searchAll({ key: event.target.value });
-        const tagsRes: any = await searchTags({ tag: event.target.value });
+    useEffect(() => {
+        console.log(content);
+        setData(content);
+    }, [content]);
 
-        setData({ workspaces: res.data.workspaces, dataCollections: res.data.dataCollections, docs: res.data.docs });
-        setTagsData({
-            workspaces: tagsRes.data.workspaces,
-            dataCollections: tagsRes.data.dataCollections,
-            docs: tagsRes.data.docs,
-            data: tagsRes.data.data,
+    const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchInputText(event.target.value);
+        // const res: any = await searchAll({ key: event.target.value });
+        // const tagsRes: any = await searchTags({ tag: event.target.value });
+
+        const filteredWorkspaces = content.workspaces.filter((workspace: any) => {
+            return workspace.name.startsWith(event.target.value);
         });
+
+        const filteredDataCollections = content.dataCollections.filter((dataCollection: any) => {
+            return dataCollection.name.startsWith(event.target.value);
+        });
+
+        const filteredDocs = content.docs.filter((doc: any) => {
+            return doc.filename.startsWith(event.target.value);
+        });
+
+        const filteredWorkspaceTags = content.workspaces.filter((workspace: any) => {
+            console.log(workspace.tags);
+
+            if (workspace.tags !== undefined) {
+                if (workspace.tags.length === 0) return false;
+
+                let match = false;
+
+                for (const tag of workspace.tags) {
+                    if (tag.name.startsWith(event.target.value)) {
+                        match = true;
+                    }
+                }
+
+                return match;
+            }
+            return false;
+        });
+
+        const filteredDataCollectionTags = content.dataCollections.filter((dataCollection: any) => {
+            console.log(dataCollection.tags);
+
+            if (dataCollection.tags !== undefined) {
+                if (dataCollection.tags.length === 0) return false;
+
+                let match = false;
+
+                for (const tag of dataCollection.tags) {
+                    if (tag.name.startsWith(event.target.value)) {
+                        match = true;
+                    }
+                }
+
+                return match;
+            }
+            return false;
+        });
+
+        const filteredDocTags = content.docs.filter((doc: any) => {
+            console.log(doc.tags);
+
+            if (doc.tags !== undefined) {
+                if (doc.tags.length === 0) return false;
+
+                let match = false;
+
+                for (const tag of doc.tags) {
+                    if (tag.name.startsWith(event.target.value)) {
+                        match = true;
+                    }
+                }
+
+                return match;
+            }
+            return false;
+        });
+
+        console.log({ filteredWorkspaceTags, filteredDataCollectionTags, filteredDocTags });
+
+        setData({ workspaces: filteredWorkspaces, dataCollections: filteredDataCollections, docs: filteredDocs });
+        setTagsData({ workspaces: filteredWorkspaceTags, dataCollections: filteredDataCollectionTags, docs: filteredDocTags, data: [] });
+
+        // setData({ workspaces: res.data.workspaces, dataCollections: res.data.dataCollections, docs: res.data.docs });
+        // setTagsData({
+        //     workspaces: tagsRes.data.workspaces,
+        //     dataCollections: tagsRes.data.dataCollections,
+        //     docs: tagsRes.data.docs,
+        //     data: tagsRes.data.data,
+        // });
     };
 
     const handleLinkClick = (to: string) => {
@@ -121,7 +192,7 @@ const SearchContent = ({ onClose, firstField }: IProps) => {
                             </Box>
                         ) : null}
                         {tabSelectedName === 'all' || tabSelectedName === 'workspaces'
-                            ? data.workspaces.map((workspace, index) => {
+                            ? data.workspaces.map((workspace: any, index: any) => {
                                   return (
                                       <Box key={index}>
                                           <Text color={'rgb(123, 128, 154)'} cursor={'pointer'} onClick={() => handleLinkClick(`/workspaces/${workspace._id}`)}>
@@ -141,7 +212,7 @@ const SearchContent = ({ onClose, firstField }: IProps) => {
                             </Box>
                         ) : null}
                         {tabSelectedName === 'all' || tabSelectedName === 'dataCollections'
-                            ? data.dataCollections.map((dataCollection, index) => {
+                            ? data.dataCollections.map((dataCollection: any, index: any) => {
                                   return (
                                       <Box key={index}>
                                           <Text
@@ -165,7 +236,7 @@ const SearchContent = ({ onClose, firstField }: IProps) => {
                             </Box>
                         ) : null}
                         {tabSelectedName === 'all' || tabSelectedName === 'docs'
-                            ? data.docs.map((doc, index) => {
+                            ? data.docs.map((doc: any, index: any) => {
                                   return (
                                       <Box key={index}>
                                           {doc.type === 'upload' ? (
@@ -193,7 +264,7 @@ const SearchContent = ({ onClose, firstField }: IProps) => {
                                     </Text>
                                 </Box>
                                 <Box>
-                                    {tagsData.workspaces.map((workspace, index) => {
+                                    {tagsData.workspaces.map((workspace: any, index: any) => {
                                         return (
                                             <Box key={index}>
                                                 <Text
@@ -219,7 +290,7 @@ const SearchContent = ({ onClose, firstField }: IProps) => {
                                     </Text>
                                 </Box>
                                 <Box>
-                                    {tagsData.dataCollections.map((dataCollection, index) => {
+                                    {tagsData.dataCollections.map((dataCollection: any, index: any) => {
                                         return (
                                             <Box key={index}>
                                                 <Text
@@ -247,7 +318,7 @@ const SearchContent = ({ onClose, firstField }: IProps) => {
                                     </Text>
                                 </Box>
                                 <Box>
-                                    {tagsData.docs.map((doc, index) => {
+                                    {tagsData.docs.map((doc: any, index: any) => {
                                         return (
                                             <Box key={index}>
                                                 {doc.type === 'upload' ? (
@@ -275,7 +346,7 @@ const SearchContent = ({ onClose, firstField }: IProps) => {
                                     </Text>
                                 </Box>
                                 <Box>
-                                    {tagsData.data.map((data, index) => {
+                                    {tagsData.data.map((data: any, index: any) => {
                                         return (
                                             <Box mb={'30px'}>
                                                 <Text mb={'2px'}>{data.dataCollection.name}</Text>
