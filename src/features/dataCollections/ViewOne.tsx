@@ -217,7 +217,7 @@ const ViewOne = () => {
                             <CardHeader>
                                 <Flex>
                                     <Box>
-                                        <Heading size={'sm'} mt={'5px'} mb={'4px'}>
+                                        <Heading size={'sm'} mt={'5px'} mb={'4px'} color={'#666666'} fontWeight={'semibold'}>
                                             {!workspaceIsFetching ? `${workspace?.name} - ${dataCollection?.name}` : null}
                                         </Heading>
                                         <Text fontSize={'md'} color={'rgb(123, 128, 154)'}>

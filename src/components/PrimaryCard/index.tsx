@@ -66,7 +66,7 @@ const PrimaryCard = ({ index, data, divider = false, editButton, deleteButton, t
 
                 <Box>
                     <Center>
-                        <Text fontWeight={'semibold'} fontSize={'15px'} fontFamily={'sans-serif'} color={'#6b6b6b'}>
+                        <Text fontWeight={'normal'} fontSize={'15px'} fontFamily={'sans-serif'} color={'#666666'}>
                             {data.name}
                         </Text>
                     </Center>

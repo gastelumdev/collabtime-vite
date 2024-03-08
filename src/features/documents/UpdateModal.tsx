@@ -1,12 +1,12 @@
-import { Box, Flex, Input, Spacer, Text, useDisclosure } from "@chakra-ui/react";
-import { TDocument } from "../../types";
-import PrimaryDrawer from "../../components/PrimaryDrawer";
-import { Editor } from "@tinymce/tinymce-react";
-import PrimaryButton from "../../components/Buttons/PrimaryButton";
-import { useEffect, useRef, useState } from "react";
-import { useUpdateDocumentMutation } from "../../app/services/api";
+import { Box, Flex, Input, Spacer, Text, useDisclosure } from '@chakra-ui/react';
+import { TDocument } from '../../types';
+import PrimaryDrawer from '../../components/PrimaryDrawer';
+import { Editor } from '@tinymce/tinymce-react';
+import PrimaryButton from '../../components/Buttons/PrimaryButton';
+import { useEffect, useRef, useState } from 'react';
+import { useUpdateDocumentMutation } from '../../app/services/api';
 
-import "./styles.css";
+import './styles.css';
 
 interface IProps {
     document: TDocument;
@@ -19,11 +19,11 @@ const UpdateModal = ({ document }: IProps) => {
     const [updateDocument] = useUpdateDocumentMutation();
 
     const [createdDocName, setCreatedDocName] = useState<string>(document.filename);
-    const [editorValue, setEditorValue] = useState<string>(document.value || "");
+    const [editorValue, setEditorValue] = useState<string>(document.value || '');
 
     useEffect(() => {
         setCreatedDocName(document.filename);
-        setEditorValue(document.value || "");
+        setEditorValue(document.value || '');
     }, [document]);
 
     const handleDocumentClick = () => {
@@ -41,24 +41,22 @@ const UpdateModal = ({ document }: IProps) => {
                 onClick={() => {
                     updateDocOnOpen();
                 }}
-                cursor={"pointer"}
-                color={"rgb(123, 128, 154)"}
-                overflow={"hidden"}
-                textOverflow={"ellipsis"}
+                cursor={'pointer'}
+                color={'#666666'}
+                fontSize={'13px'}
+                overflow={'hidden'}
+                textOverflow={'ellipsis'}
             >
                 {document.filename}
             </Text>
-            <PrimaryDrawer isOpen={updateDocIsOpen} onClose={updateDocOnClose} title={"Update doc"} size="full">
-                <Box pb={"20px"}>
-                    <Text mb={"5px"} color={"rgb(123, 128, 154)"}>
+            <PrimaryDrawer isOpen={updateDocIsOpen} onClose={updateDocOnClose} title={'Update doc'} size="full">
+                <Box pb={'20px'}>
+                    <Text mb={'5px'} color={'rgb(123, 128, 154)'}>
                         Document name
                     </Text>
-                    <Input
-                        value={createdDocName}
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => setCreatedDocName(event.target.value)}
-                    />
+                    <Input value={createdDocName} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setCreatedDocName(event.target.value)} />
                 </Box>
-                <Text mb={"5px"} color={"rgb(123, 128, 154)"}>
+                <Text mb={'5px'} color={'rgb(123, 128, 154)'}>
                     Content
                 </Text>
 
@@ -78,38 +76,38 @@ const UpdateModal = ({ document }: IProps) => {
                         menubar: true,
                         plugins: [
                             // "a11ychecker",
-                            "advlist",
+                            'advlist',
                             // "advcode",
                             // "advtable",
-                            "autolink",
+                            'autolink',
                             // "checklist",
                             // "export",
-                            "lists",
-                            "link",
-                            "image",
-                            "charmap",
-                            "preview",
-                            "anchor",
-                            "searchreplace",
-                            "visualblocks",
+                            'lists',
+                            'link',
+                            'image',
+                            'charmap',
+                            'preview',
+                            'anchor',
+                            'searchreplace',
+                            'visualblocks',
                             // "powerpaste",
-                            "fullscreen",
+                            'fullscreen',
                             // "formatpainter",
-                            "insertdatetime",
-                            "media",
-                            "table",
-                            "help",
-                            "wordcount",
+                            'insertdatetime',
+                            'media',
+                            'table',
+                            'help',
+                            'wordcount',
                         ],
                         // toolbar:
                         //     "undo redo | casechange blocks | bold italic backcolor | " +
                         //     "alignleft aligncenter alignright alignjustify | " +
                         //     "bullist numlist checklist outdent indent | removeformat | a11ycheck code table help",
-                        content_style: " .tox-menu {z-index: 10000000000 !important} ",
+                        content_style: ' .tox-menu {z-index: 10000000000 !important} ',
                     }}
                 />
 
-                <Flex mt={"10px"}>
+                <Flex mt={'10px'}>
                     <Spacer />
                     <PrimaryButton onClick={handleDocumentClick}>SAVE</PrimaryButton>
                 </Flex>

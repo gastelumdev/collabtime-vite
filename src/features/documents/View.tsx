@@ -109,10 +109,17 @@ const View = () => {
                                 {!isFetching ? (
                                     <>
                                         <Link to={`/workspaces/${localStorage.getItem('workspaceId')}`}>
-                                            <Text display={'inline'} textDecor={'underline'}>{`${workspace?.name}`}</Text>
+                                            <Text
+                                                display={'inline'}
+                                                textDecor={'underline'}
+                                                color={'#666666'}
+                                                fontWeight={'semibold'}
+                                            >{`${workspace?.name}`}</Text>
                                         </Link>
 
-                                        <Text display={'inline'}>{' / Documents'}</Text>
+                                        <Text display={'inline'} color={'#666666'} fontWeight={'semibold'}>
+                                            {' / Documents'}
+                                        </Text>
                                     </>
                                 ) : null}
                             </>
@@ -124,17 +131,22 @@ const View = () => {
 
                     <Flex>
                         <Spacer />
-                        <Card w={'150px'}>
-                            <Menu>
-                                <MenuButton as={Button} bgColor={'white'} color={'rgb(123, 128, 154)'} rightIcon={<ChevronDownIcon />}>
-                                    Actions
-                                </MenuButton>
-                                <MenuList>
-                                    <UploadModal documents={documents || []} />
-                                    <DocDrawer />
-                                </MenuList>
-                            </Menu>
-                        </Card>
+                        <Menu>
+                            <MenuButton
+                                as={Button}
+                                bgColor={'#24a2f0'}
+                                color={'white'}
+                                rightIcon={<ChevronDownIcon />}
+                                size={'sm'}
+                                _hover={{ backgroundColor: '#24a2f0' }}
+                            >
+                                Actions
+                            </MenuButton>
+                            <MenuList zIndex={2000}>
+                                <UploadModal documents={documents || []} />
+                                <DocDrawer />
+                            </MenuList>
+                        </Menu>
                     </Flex>
                     <Card mt={'10px'}>
                         <CardBody>
@@ -143,11 +155,21 @@ const View = () => {
                                     <Table size={'sm'} style={{ tableLayout: 'fixed' }} gridTemplateColumns={'300px 180px 180px 100px 100px'}>
                                         <Thead>
                                             <Tr>
-                                                <Th width={'300px'}>Filename</Th>
-                                                <Th width={'180px'}>Uploaded by</Th>
-                                                <Th width={'180px'}>Size</Th>
-                                                <Th width={'100px'}>Actions</Th>
-                                                <Th>Tags</Th>
+                                                <Th width={'300px'} color={'#666666'} fontWeight={'semibold'}>
+                                                    Filename
+                                                </Th>
+                                                <Th width={'180px'} color={'#666666'} fontWeight={'semibold'}>
+                                                    Uploaded by
+                                                </Th>
+                                                <Th width={'180px'} color={'#666666'} fontWeight={'semibold'}>
+                                                    Size
+                                                </Th>
+                                                <Th width={'100px'} color={'#666666'} fontWeight={'semibold'}>
+                                                    Actions
+                                                </Th>
+                                                <Th color={'#666666'} fontWeight={'semibold'}>
+                                                    Tags
+                                                </Th>
                                             </Tr>
                                         </Thead>
                                         <Tbody>
@@ -162,7 +184,7 @@ const View = () => {
                                                                     </IconContext.Provider>
                                                                 </Box>
                                                                 {document.type === 'upload' ? (
-                                                                    <Text color={'rgb(123, 128, 154)'} textOverflow={'ellipsis'} overflow={'hidden'}>
+                                                                    <Text color={'#666666'} textOverflow={'ellipsis'} overflow={'hidden'} fontSize={'13px'}>
                                                                         <a href={document.url} target="_blank">
                                                                             {document.filename}
                                                                         </a>
@@ -174,12 +196,12 @@ const View = () => {
                                                         </Td>
                                                         <Td>
                                                             <Text
-                                                                color={'rgb(123, 128, 154)'}
-                                                                fontSize={'14px'}
+                                                                color={'#666666'}
+                                                                fontSize={'13px'}
                                                             >{`${document.createdBy.firstname} ${document.createdBy.lastname}`}</Text>
                                                         </Td>
                                                         <Td>
-                                                            <Text color={'rgb(123, 128, 154)'} fontSize={'14px'}>
+                                                            <Text color={'#666666'} fontSize={'13px'}>
                                                                 {document.file ? document.file.size : ''}
                                                             </Text>
                                                         </Td>
@@ -193,13 +215,15 @@ const View = () => {
                                                         <Td>
                                                             <Box overflow={'revert'}>
                                                                 <Flex>
-                                                                    <TagsModal
-                                                                        tagType={'document'}
-                                                                        data={document}
-                                                                        tags={document.tags}
-                                                                        update={updateDocument}
-                                                                        workspaceId={document?.workspace || ''}
-                                                                    />
+                                                                    <Box mr={'10px'}>
+                                                                        <TagsModal
+                                                                            tagType={'document'}
+                                                                            data={document}
+                                                                            tags={document.tags}
+                                                                            update={updateDocument}
+                                                                            workspaceId={document?.workspace || ''}
+                                                                        />
+                                                                    </Box>
                                                                     {document.tags !== undefined
                                                                         ? document.tags.map((tag: TTag, index: number) => {
                                                                               return (
@@ -207,7 +231,9 @@ const View = () => {
                                                                                       <Tag
                                                                                           size={'sm'}
                                                                                           variant="subtle"
-                                                                                          colorScheme="blue"
+                                                                                          //   colorScheme="blue"
+                                                                                          bgColor={'#24a2f0'}
+                                                                                          color={'white'}
                                                                                           mr={'5px'}
                                                                                           zIndex={1000}
                                                                                       >

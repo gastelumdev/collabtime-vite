@@ -40,12 +40,49 @@ interface InviteProps {
     getInvitees?: any;
 }
 
+const RemoveMemberWarning = ({ item, confirmRemoveMember }: { item: any; confirmRemoveMember: any }) => {
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+    // const [removeMember] = useRemoveMemberMutation();
+
+    // const confirmRemoveMember = (userId: string) => {
+    //     onClose();
+    //     removeMember({ userId });
+    // };
+    return (
+        <Popover isOpen={isOpen} onOpen={onOpen}>
+            <PopoverTrigger>
+                <IconButton size={'xs'} variant={'unstyled'} aria-label="" icon={<AiOutlineClose size={'12px'} />}></IconButton>
+            </PopoverTrigger>
+            <PopoverContent>
+                <PopoverArrow />
+                <PopoverCloseButton />
+                <PopoverHeader>Are you sure you want to delete {`${item.firstname} ${item.lastname}`}?</PopoverHeader>
+                <PopoverBody>
+                    <Flex>
+                        <Spacer />
+                        <PrimaryButton
+                            onClick={() => {
+                                onClose();
+                                confirmRemoveMember(item._id);
+                            }}
+                        >
+                            Delete
+                        </PrimaryButton>
+                    </Flex>
+                </PopoverBody>
+            </PopoverContent>
+        </Popover>
+    );
+};
+
 const Invite = ({}: InviteProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
+    // const { isOpen: removeMemberIsOpen, onOpen: removeMemberOnOpen, onClose: removeMemberOnClose } = useDisclosure();
     const { id } = useParams();
     const [permissions, setPermissions] = useState<number>(1);
     const [invitees, setInvitees] = useState<TInvitee[]>([]);
-    const { data: workspaceUsers } = useGetWorkspaceUsersQuery(id as string);
+    const { data: workspaceUsersRes } = useGetWorkspaceUsersQuery(id as string);
     const { data: workspace } = useGetOneWorkspaceQuery(id as string);
     const [inviteTeamMember] = useInviteTeamMemberMutation();
     const [removeMember] = useRemoveMemberMutation();
@@ -53,6 +90,13 @@ const Invite = ({}: InviteProps) => {
     const [callUpdate] = useCallUpdateMutation();
     const [newWorkspace, setNewWorkspace] = useState<TWorkspace>();
     const [selectedOptions, setSelectedOptions] = useState<MultiValue<{ value: string; label: string }>>([]);
+
+    const [workspaceUsers, setWorkspaceUsers] = useState<any>(workspaceUsersRes);
+
+    useEffect(() => {
+        console.log(workspaceUsersRes);
+        setWorkspaceUsers(workspaceUsersRes);
+    }, [workspaceUsersRes]);
 
     useEffect(() => {
         const socket = io(import.meta.env.VITE_API_URL);
@@ -83,6 +127,7 @@ const Invite = ({}: InviteProps) => {
     };
 
     const handleSelectChange = async (newValue: MultiValue<{ value: string; label: string }>, actionMeta: ActionMeta<any>) => {
+        console.log(workspace);
         setSelectedOptions(newValue);
         let inviteesCopy = invitees;
 
@@ -116,12 +161,21 @@ const Invite = ({}: InviteProps) => {
     };
 
     const handleSubmit = () => {
+        console.log(newWorkspace);
         inviteTeamMember(newWorkspace as TWorkspace);
         setSelectedOptions([]);
         // onClose();
     };
 
     const confirmRemoveMember = (userId: string) => {
+        const workspaceUsersCopy = workspaceUsers;
+        const members = workspaceUsersCopy.members;
+
+        const filteredMembers = members.filter((member: any) => {
+            return member._id !== userId;
+        });
+
+        setWorkspaceUsers({ ...workspaceUsersCopy, members: filteredMembers });
         removeMember({ userId });
     };
 
@@ -191,27 +245,7 @@ const Invite = ({}: InviteProps) => {
                                                 <LockIcon fontSize={'11px'} mb={'7px'} ml={'1px'} color={'rgb(123, 128, 154)'} />
                                             </Box>
                                         ) : (
-                                            <Popover>
-                                                <PopoverTrigger>
-                                                    <IconButton
-                                                        size={'xs'}
-                                                        variant={'unstyled'}
-                                                        aria-label=""
-                                                        icon={<AiOutlineClose size={'12px'} />}
-                                                    ></IconButton>
-                                                </PopoverTrigger>
-                                                <PopoverContent>
-                                                    <PopoverArrow />
-                                                    <PopoverCloseButton />
-                                                    <PopoverHeader>Are you sure you want to delete {`${item.firstname} ${item.lastname}`}?</PopoverHeader>
-                                                    <PopoverBody>
-                                                        <Flex>
-                                                            <Spacer />
-                                                            <PrimaryButton onClick={() => confirmRemoveMember(item._id)}>Delete</PrimaryButton>
-                                                        </Flex>
-                                                    </PopoverBody>
-                                                </PopoverContent>
-                                            </Popover>
+                                            <RemoveMemberWarning item={item} confirmRemoveMember={confirmRemoveMember} />
                                         )}
                                         <Text color={'rgb(123, 128, 154)'} fontSize={'14px'}>
                                             {`${item.firstname} ${item.lastname}`}

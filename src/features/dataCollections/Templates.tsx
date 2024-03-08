@@ -94,7 +94,7 @@ const Templates = () => {
                         <Box mt={'20px'}>
                             {templates.map((dataCollection, index) => {
                                 return (
-                                    <Box key={index} p={'10px'} bgColor={'#287fea'}>
+                                    <Box key={index} p={'10px'} bgColor={'#24a2f0'} mb={'3px'}>
                                         <Flex>
                                             <Text color={'white'}>{dataCollection?.asTemplate?.name}</Text>
                                             <Spacer />

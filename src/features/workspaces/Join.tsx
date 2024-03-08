@@ -1,7 +1,4 @@
-import {
-    useJoinWorkspaceMutation,
-    useGetWorkspaceUsersQuery,
-} from '../../app/services/api';
+import { useJoinWorkspaceMutation, useGetWorkspaceUsersQuery } from '../../app/services/api';
 import { Box, Text, useToast } from '@chakra-ui/react';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -10,17 +7,14 @@ import { useEffect } from 'react';
 export default function Join() {
     const navigate = useNavigate();
     const [queryParameters] = useSearchParams();
-    const [joinWorkspace] = useJoinWorkspaceMutation();
-    const { data: workspaceUsers } = useGetWorkspaceUsersQuery(
-        queryParameters.get('workspaceId') || ''
-    );
+    const [joinWorkspace, { isLoading }] = useJoinWorkspaceMutation();
+    const { data: workspaceUsers } = useGetWorkspaceUsersQuery(queryParameters.get('workspaceId') || '');
 
     const toast = useToast();
 
     useEffect(() => {
         for (const member of workspaceUsers?.members || []) {
-            if (member._id === queryParameters.get('id'))
-                navigate(`/workspaces/${queryParameters.get('workspaceId')}`);
+            if (member._id === queryParameters.get('id')) navigate(`/workspaces/${queryParameters.get('workspaceId')}`);
         }
     }, [workspaceUsers]);
 
@@ -33,8 +27,7 @@ export default function Join() {
         if (res.error) {
             toast({
                 title: 'Invitation Error',
-                description:
-                    'Either you are already a member or your invitation was removed. Please contact the workspace admin for more information.',
+                description: 'Either you are already a member or your invitation was removed. Please contact the workspace admin for more information.',
                 status: 'info',
                 position: 'top',
                 duration: 9000,
@@ -53,7 +46,9 @@ export default function Join() {
                 Click below to join Workspace
             </Text>
 
-            <PrimaryButton onClick={handleJoinWorkspace}>Join</PrimaryButton>
+            <PrimaryButton onClick={handleJoinWorkspace} isLoading={isLoading}>
+                Join
+            </PrimaryButton>
         </Box>
     );
 }

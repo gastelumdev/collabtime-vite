@@ -260,7 +260,7 @@ const Row = ({
                                             id={`reorder-handle-${rowIndex}`}
                                             w={'15px'}
                                             h={'30px'}
-                                            bgColor={'#2d82eb'}
+                                            bgColor={'#24a2f0'}
                                             cursor={'move'}
                                             draggable
                                             onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, row.position)}
@@ -269,7 +269,7 @@ const Row = ({
                                             onDragEnter={(event: React.DragEvent<HTMLDivElement>) => handleDragEnter(event)}
                                             onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
                                             // onDrop={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
-                                            style={{ backgroundColor: row.parentRowId ? 'lightblue' : '#2d82eb' }}
+                                            style={{ backgroundColor: row.parentRowId ? '#9fdaff' : '#24a2f0' }}
                                         ></Box>
                                         <Box mt={'6px'} ml={'14px'}>
                                             <Checkbox mr={'1px'} isChecked={deleteCheckboxIsChecked} onChange={handleDeleteCheckboxChange} />
@@ -314,6 +314,7 @@ const Row = ({
                                     </Flex>
                                 </span>
                                 {columns.map((column: any, columnIndex: number) => {
+                                    console.log(column);
                                     if (row.refs !== undefined) console.log(row.refs[column.name]);
                                     return (
                                         <div

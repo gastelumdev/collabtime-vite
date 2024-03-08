@@ -22,7 +22,7 @@ const Delete = ({ dataCollection, deleteDataCollection }: IProps) => {
     const cancelRef = React.useRef<any>(null);
     return (
         <>
-            <Button flex="1" variant="ghost" leftIcon={<AiOutlineDelete />} color={'#b3b8cf'} zIndex={10} onClick={onOpen}></Button>
+            <Button flex="1" variant="unstyled" h={'10px'} w={'5px'} leftIcon={<AiOutlineDelete />} color={'#b3b8cf'} zIndex={10} onClick={onOpen}></Button>
             <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
                 <AlertDialogOverlay>
                     <AlertDialogContent>

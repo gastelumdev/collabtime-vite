@@ -4,7 +4,7 @@ import {
     useGetOneWorkspaceQuery,
     useGetWorkspaceUsersQuery,
     useGetUserQuery,
-    useGetUnreadMessagesQuery,
+    // useGetUnreadMessagesQuery,
     useCallUpdateMessagesMutation,
 } from '../../app/services/api';
 
@@ -14,10 +14,10 @@ import LinkItems from '../../utils/linkItems';
 import { TUser } from '../../types';
 
 import SideBarLayout from '../../components/Layouts/SideBarLayout';
-import SecondaryCard from '../../components/SecondaryCard';
 import Invite from './Invite';
 import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
+import ViewList from '../dataCollections/ViewList';
 
 /**
  * This funcion renders a workspace when selected from the workspaces page
@@ -31,7 +31,7 @@ const ViewOne = () => {
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
     const { data: workspace, isError, error } = useGetOneWorkspaceQuery(id as string);
     const { data: workspaceUser } = useGetWorkspaceUsersQuery(id as string);
-    const { data: unreadMessages } = useGetUnreadMessagesQuery(null);
+    // const { data: unreadMessages } = useGetUnreadMessagesQuery(null);
 
     const [callUpdateMessages] = useCallUpdateMessagesMutation();
 
@@ -74,15 +74,15 @@ const ViewOne = () => {
             <Box>
                 <Flex minH={'100vh'} bg={'#eff2f5'}>
                     <Container maxW={'full'} mt={{ base: 4, sm: 0 }}>
-                        <SimpleGrid spacing={6} columns={{ base: 1, sm: 2 }} pb={'50px'}>
+                        <SimpleGrid spacing={6} columns={{ base: 1, sm: 2 }} pb={'20px'}>
                             <Flex>
-                                <Box>
-                                    <Heading size={'sm'} mb={'12px'} color={'rgb(52, 71, 103)'}>
+                                <Box pt={'30px'}>
+                                    <Heading size={'sm'} color={'#666666'} fontWeight={'semibold'}>
                                         {workspace?.name}
                                     </Heading>
-                                    <Text color={'rgb(123, 128, 154)'} fontSize={'md'} fontWeight={300}>
+                                    {/* <Text color={'rgb(123, 128, 154)'} fontSize={'md'} fontWeight={300}>
                                         The tools below will help manage your projects and teams.
-                                    </Text>
+                                    </Text> */}
                                 </Box>
                             </Flex>
                             <Flex>
@@ -116,7 +116,7 @@ const ViewOne = () => {
                                 ) : null}
                             </Flex>
                         </SimpleGrid>
-                        <SimpleGrid spacing={6} spacingY={12} columns={{ base: 1, sm: 1, md: 3, lg: 3 }}>
+                        {/* <SimpleGrid spacing={6} spacingY={12} columns={{ base: 1, sm: 1, md: 3, lg: 3 }}>
                             {(workspace?.tools.dataCollections.access || 0) > 0 ? (
                                 <a href={`/workspaces/${workspace?._id}/dataCollections`}>
                                     <SecondaryCard
@@ -156,7 +156,10 @@ const ViewOne = () => {
                                     />
                                 </a>
                             ) : null}
-                        </SimpleGrid>
+                        </SimpleGrid> */}
+                        <Box>
+                            <ViewList />
+                        </Box>
                     </Container>
                 </Flex>
             </Box>

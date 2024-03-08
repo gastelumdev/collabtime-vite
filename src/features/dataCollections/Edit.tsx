@@ -39,7 +39,7 @@ const Edit = ({ dataCollection, updateDataCollection }: IProps) => {
 
     return (
         <>
-            <Button flex="1" variant="ghost" leftIcon={<AiOutlineEdit />} color={'#b3b8cf'} onClick={onOpen} zIndex={10}></Button>
+            <Button flex="1" variant="unstyled" h={'10px'} w={'5px'} leftIcon={<AiOutlineEdit />} color={'#b3b8cf'} onClick={onOpen} zIndex={10}></Button>
             <PrimaryDrawer onClose={onClose} isOpen={isOpen} title={'Create a new workspace'}>
                 <Flex>
                     <Text pb={'5px'}>Name</Text>

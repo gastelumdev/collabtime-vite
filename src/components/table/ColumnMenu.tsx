@@ -8,7 +8,7 @@ const ColumnMenu = ({ column, handleDeleteColumn, index }: { column: any; handle
     return (
         <Popover>
             <PopoverTrigger>
-                <Button variant={'unstyled'} fontSize={'14px'} fontWeight={'normal'} h={'20px'} w={'100px'}>
+                <Button variant={'unstyled'} fontSize={'14px'} fontWeight={'medium'} h={'20px'} w={'100px'} color={'#666666'}>
                     {`${column.name[0].toUpperCase()}${column.name.slice(1, column.name.length).split('_').join(' ')}`}
                 </Button>
             </PopoverTrigger>

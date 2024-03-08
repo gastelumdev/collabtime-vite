@@ -60,6 +60,7 @@ const Create = ({ addNewDataCollection }: IProps) => {
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value, name } = event.target;
+        console.log(data);
         if (value.length > 30) {
             setInputError(true);
         } else {
@@ -72,6 +73,7 @@ const Create = ({ addNewDataCollection }: IProps) => {
     };
 
     const handleTemplateChange = (selectedOption: any) => {
+        console.log(data);
         setData({
             ...data,
             template: selectedOption.value,
@@ -92,7 +94,7 @@ const Create = ({ addNewDataCollection }: IProps) => {
                 </Flex>
                 <Input
                     name="name"
-                    placeholder="Please enter user name"
+                    placeholder="Please enter data collection name"
                     value={data.name}
                     required={true}
                     onChange={handleChange}
@@ -102,7 +104,7 @@ const Create = ({ addNewDataCollection }: IProps) => {
                 <Select
                     id="columnType"
                     name="columnType"
-                    placeholder="Please select column type"
+                    placeholder="Please select template"
                     onChange={(selectedOption: any) => handleTemplateChange(selectedOption)}
                     options={[
                         { value: 'default', label: 'Default' },
