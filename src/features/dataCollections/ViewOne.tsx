@@ -28,6 +28,7 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
+    SimpleGrid,
     Spacer,
     Text,
     useDisclosure,
@@ -257,36 +258,45 @@ const ViewOne = () => {
                             </SimpleGrid> */}
                         <Card w={'100%'}>
                             <CardHeader>
-                                <Flex>
-                                    <Box>
-                                        <Heading size={'sm'} mt={'5px'} mb={'4px'} color={'#666666'} fontWeight={'semibold'}>
-                                            {!workspaceIsFetching ? `${workspace?.name} - ${dataCollection?.name}` : null}
-                                        </Heading>
-                                        <Text fontSize={'md'} color={'rgb(123, 128, 154)'}>
-                                            {dataCollection?.description}
-                                        </Text>
-                                    </Box>
-                                    <Spacer />
-                                    <Box mr={'5px'}>
-                                        <PrimaryButton onClick={onOpenFormDrawer} size="sm">
-                                            <AddIcon style={{ marginRight: '4px' }} /> Form
-                                        </PrimaryButton>
-                                    </Box>
-                                    {!isTemplate ? (
+                                <SimpleGrid
+                                    spacing={6}
+                                    // templateColumns="repeat(auto-fill, minmax(300px, 1fr))"
+                                    columns={{ base: 1, sm: 2 }}
+                                    pb={'14px'}
+                                >
+                                    <Flex>
+                                        <Box>
+                                            <Heading size={'sm'} mt={'5px'} mb={'4px'} color={'#666666'} fontWeight={'semibold'}>
+                                                {!workspaceIsFetching ? `${workspace?.name} - ${dataCollection?.name}` : null}
+                                            </Heading>
+                                            <Text fontSize={'md'} color={'rgb(123, 128, 154)'}>
+                                                {dataCollection?.description}
+                                            </Text>
+                                        </Box>
+                                    </Flex>
+                                    <Flex>
+                                        <Spacer />
                                         <Box mr={'5px'}>
-                                            <PrimaryButton onClick={onOpen} size="sm">
-                                                <AddIcon style={{ marginRight: '4px' }} /> Template
+                                            <PrimaryButton onClick={onOpenFormDrawer} size="sm">
+                                                <AddIcon style={{ marginRight: '4px' }} /> Form
                                             </PrimaryButton>
                                         </Box>
-                                    ) : null}
-                                    <Box>
-                                        {valuesForExport !== undefined ? (
-                                            <PrimaryButton size="sm">
-                                                <CSVLink data={valuesForExport}>Export</CSVLink>
-                                            </PrimaryButton>
+                                        {!isTemplate ? (
+                                            <Box mr={'5px'}>
+                                                <PrimaryButton onClick={onOpen} size="sm">
+                                                    <AddIcon style={{ marginRight: '4px' }} /> Template
+                                                </PrimaryButton>
+                                            </Box>
                                         ) : null}
-                                    </Box>
-                                </Flex>
+                                        <Box>
+                                            {valuesForExport !== undefined ? (
+                                                <PrimaryButton size="sm">
+                                                    <CSVLink data={valuesForExport}>Export</CSVLink>
+                                                </PrimaryButton>
+                                            ) : null}
+                                        </Box>
+                                    </Flex>
+                                </SimpleGrid>
                             </CardHeader>
                             <CardBody p={'0'}>
                                 <DataCollection />
