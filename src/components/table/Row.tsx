@@ -314,7 +314,6 @@ const Row = ({
                                     </Flex>
                                 </span>
                                 {columns.map((column: any, columnIndex: number) => {
-                                    console.log(column);
                                     if (row.refs !== undefined) console.log(row.refs[column.name]);
                                     return (
                                         <div

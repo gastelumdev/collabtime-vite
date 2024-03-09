@@ -49,7 +49,6 @@ const Reference = ({ column, refs, onRefChange, onRemoveRef }: { column: any; re
     }, [rowsData, columns]);
 
     useEffect(() => {
-        console.log(refs);
         setRows(refs || []);
     }, [refs]);
 
@@ -57,8 +56,6 @@ const Reference = ({ column, refs, onRefChange, onRemoveRef }: { column: any; re
         const rowIds: any = refs.map((row: any) => {
             return row._id;
         });
-
-        console.log(rowsData);
 
         if (rowsData === undefined) {
             setRowsList([]);
@@ -113,7 +110,6 @@ const Reference = ({ column, refs, onRefChange, onRemoveRef }: { column: any; re
                         <Box height={'150px'} overflowY={'scroll'}>
                             {rows.map((row: any, index: number) => {
                                 // return <Box>{row.values[rowKey]}</Box>;
-                                console.log(row);
                                 return (
                                     <Flex key={index}>
                                         <ViewRef columns={columns !== undefined ? columns : []} rowData={row} value={row.values[rowKey]} />

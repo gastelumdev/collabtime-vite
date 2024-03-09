@@ -32,8 +32,6 @@ const ViewRef = ({ columns, rowData, value }: IProps) => {
     const [row, setRow] = useState(rowFetched);
 
     useEffect(() => {
-        console.log(rowData);
-        console.log(rowFetched);
         setRow(rowFetched);
     }, [rowFetched, rowData]);
 
@@ -104,7 +102,6 @@ const ViewRef = ({ columns, rowData, value }: IProps) => {
                         <NoteModal row={row} updateRow={handleUpdateRow} />
                     </Box>
                     <Box>
-                        <>{console.log(row)}</>
                         <UploadModal rowDocuments={row !== undefined ? row.docs : []} getDocs={getDocs} getUpdatedDoc={getUpdatedDoc} removeDoc={removeDoc} />
                     </Box>
                     <Spacer />

@@ -200,7 +200,6 @@ const NoteModal = ({ row, updateRow }: IProps) => {
                     <ModalHeader>Notes</ModalHeader>
                     <ModalCloseButton onClick={onClose} />
                     <ModalBody>
-                        <>{console.log(row)}</>
                         {row.notesList.map((note, index) => {
                             return (
                                 <Box key={index} mb={'20px'} px={'6px'}>

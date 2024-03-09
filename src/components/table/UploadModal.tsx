@@ -50,7 +50,6 @@ const UploadModal = ({ rowDocuments, getDocs, getUpdatedDoc, removeDoc }: IProps
     const [existingFiles, setExistingFiles] = useState(documents);
 
     useEffect(() => {
-        console.log(rowDocuments);
         setCurrentFiles(rowDocuments);
     }, [rowDocuments]);
 

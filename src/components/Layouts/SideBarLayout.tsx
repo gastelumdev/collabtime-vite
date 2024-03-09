@@ -180,7 +180,7 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
                     mr="4"
                     fontSize="19"
                     _groupHover={{
-                        color: '#64b6ff',
+                        color: '#24a2f0',
                     }}
                     as={icon}
                     color={'lightgray'}

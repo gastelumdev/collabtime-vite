@@ -34,10 +34,6 @@ const DataCollection = () => {
     //     console.log(columns);
     // }, [columns]);
 
-    // useEffect(() => {
-    //     setPages(totalRows);
-    // }, [totalRows]);
-
     useEffect(() => {
         permissions;
         getPermissions();

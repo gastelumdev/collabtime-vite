@@ -5,6 +5,7 @@ import {
     useGetDataCollectionQuery,
     useGetDataCollectionsQuery,
     useGetOneWorkspaceQuery,
+    useGetRowsQuery,
     useSendFormMutation,
     useUpdateColumnMutation,
     useUpdateDataCollectionMutation,
@@ -46,6 +47,7 @@ import { TColumn } from '../../types';
 import LinksMenu from './LinksMenu';
 import { MdContentCopy } from 'react-icons/md';
 import { AddIcon, CloseIcon } from '@chakra-ui/icons';
+import { CSVLink } from 'react-csv';
 
 const ViewOne = () => {
     const { id, dataCollectionId } = useParams();
@@ -58,6 +60,7 @@ const ViewOne = () => {
 
     const { data: dataCollection } = useGetDataCollectionQuery(dataCollectionId || '');
     const { data: workspace, isFetching: workspaceIsFetching } = useGetOneWorkspaceQuery(localStorage.getItem('workspaceId') || '');
+    const { data: rows } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
     const { data: dataCollections } = useGetDataCollectionsQuery(null);
     const { data: columnsData } = useGetColumnsQuery(localStorage.getItem('dataCollectionId') || '');
     const [updateColumn] = useUpdateColumnMutation();
@@ -76,6 +79,8 @@ const ViewOne = () => {
     const [templateExists, setTemplateExists] = useState<boolean>(false);
 
     const [recipientValue, setRecipientValue] = useState<string>('');
+
+    const [valuesForExport, setValuesForExport] = useState<any>('');
 
     const [checkBoxes, setCheckBoxes] = useState<any>(
         Array(columns?.length)
@@ -133,6 +138,43 @@ const ViewOne = () => {
             acknowledgeRow(acknowledgedRowId || '');
         }
     }, [queryParameters]);
+
+    useEffect(() => {
+        console.log(rows);
+        const valsForExport: any = [];
+        const rowsCopy: any = rows;
+        const columnsCopy: any = columnsData;
+        console.log(columnsCopy);
+
+        if (columnsCopy !== undefined) {
+            const key: any = columnsCopy[0].name;
+            for (const row of rowsCopy || []) {
+                let values: any = {};
+
+                for (const column of columnsCopy || []) {
+                    if (column.type === 'reference') {
+                        if (row.refs !== undefined && row.refs[column.name] !== undefined) {
+                            const refs: any = row.refs[column.name];
+                            let refsString = '';
+                            for (const ref of refs) {
+                                console.log(ref.values[key]);
+                                refsString += `${ref.values[key]}, `;
+                            }
+                            values[column.name] = refsString;
+                        } else {
+                            values[column.name] = '';
+                        }
+                    } else {
+                        values[column.name] = row.values[column.name];
+                    }
+                }
+
+                valsForExport.push(values);
+            }
+            console.log(valsForExport);
+            setValuesForExport(valsForExport);
+        }
+    }, [rows, columnsData]);
 
     const handleAddAsTemplateClick = () => {
         if (templateNameValue === '') return;
@@ -231,10 +273,19 @@ const ViewOne = () => {
                                         </PrimaryButton>
                                     </Box>
                                     {!isTemplate ? (
-                                        <PrimaryButton onClick={onOpen} size="sm">
-                                            <AddIcon style={{ marginRight: '4px' }} /> Template
-                                        </PrimaryButton>
+                                        <Box mr={'5px'}>
+                                            <PrimaryButton onClick={onOpen} size="sm">
+                                                <AddIcon style={{ marginRight: '4px' }} /> Template
+                                            </PrimaryButton>
+                                        </Box>
                                     ) : null}
+                                    <Box>
+                                        {valuesForExport !== undefined ? (
+                                            <PrimaryButton size="sm">
+                                                <CSVLink data={valuesForExport}>Export</CSVLink>
+                                            </PrimaryButton>
+                                        ) : null}
+                                    </Box>
                                 </Flex>
                             </CardHeader>
                             <CardBody p={'0'}>
