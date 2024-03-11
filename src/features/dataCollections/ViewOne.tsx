@@ -381,7 +381,7 @@ const ViewOne = () => {
                         </Box>
                         <Box mt={'20px'}>
                             {(dataCollection?.formRecipients?.length || 0) > 0 ? (
-                                dataCollection?.formRecipients?.map((formRecipient, index) => {
+                                dataCollection?.formRecipients?.map((formRecipient: any, index: number) => {
                                     return (
                                         <Box key={index}>
                                             <Flex>

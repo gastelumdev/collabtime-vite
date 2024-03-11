@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useGetColumnsQuery, useGetRowsQuery, useGetUserQuery, useReorderColumnsMutation, useUpdateColumnMutation } from '../../app/services/api';
 import { useParams } from 'react-router-dom';
 import { Box } from '@chakra-ui/react';
@@ -21,7 +21,7 @@ const DataCollection = () => {
 
     // const [sort, setSort] = useState<number>(1);
 
-    const { data: rows } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
+    const { data: rowsData, refetch } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
     // const [dataCollectionRows, setDataCollectionRows] = useState(rows);
     // const { data: totalRows } = useGetTotalRowsQuery({ dataCollectionId: dataCollectionId || "", limit: limit });
 
@@ -30,9 +30,13 @@ const DataCollection = () => {
     const [permissions, setPermissions] = useState<number>();
     const [windowWidthOffset, setWindowWidthOffset] = useState(window.innerWidth > 990 ? 90 : 7);
 
-    // useEffect(() => {
-    //     console.log(columns);
-    // }, [columns]);
+    const [rows, setRows] = useState(rowsData);
+
+    useEffect(() => {
+        console.log(rowsData);
+        refetch();
+        setRows(rowsData);
+    }, [rowsData, refetch]);
 
     useEffect(() => {
         permissions;
@@ -96,4 +100,5 @@ const DataCollection = () => {
     );
 };
 
-export default memo(DataCollection);
+// export default memo(DataCollection);
+export default DataCollection;

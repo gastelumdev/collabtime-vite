@@ -49,6 +49,7 @@ const Reference = ({ column, refs, onRefChange, onRemoveRef }: { column: any; re
     }, [rowsData, columns]);
 
     useEffect(() => {
+        console.log(refs);
         setRows(refs || []);
     }, [refs]);
 
@@ -99,13 +100,15 @@ const Reference = ({ column, refs, onRefChange, onRemoveRef }: { column: any; re
             {dataCollection?.name !== undefined ? (
                 <Popover>
                     <PopoverTrigger>
-                        <Button size={'xs'} variant={'ghost'} color={rows.length < 1 ? 'lightgray' : 'gray'} overflow={'hidden'}>
-                            {rows.length < 1
-                                ? `Choose ${dataCollection?.name}`
-                                : `${rows.map((row: any) => {
-                                      return row.values[rowKey] !== undefined ? `${row.values[rowKey]}, ` : '';
-                                  })}`}
-                        </Button>
+                        <Box textAlign={'left'} overflow={'hidden'}>
+                            <Button size={'xs'} variant={'ghost'} color={rows.length < 1 ? 'lightgray' : 'gray'} overflow={'hidden'}>
+                                {rows.length < 1
+                                    ? `Choose ${dataCollection?.name}`
+                                    : `${rows.map((row: any) => {
+                                          return row.values[rowKey] !== undefined ? `${row.values[rowKey]}, ` : '';
+                                      })}`}
+                            </Button>
+                        </Box>
                     </PopoverTrigger>
                     <PopoverContent>
                         <PopoverArrow />
