@@ -156,7 +156,7 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
 
         let position = 0;
 
-        let checkedParent: any = null;
+        // let checkedParent: any = null;
 
         const filterRowsChecked = rowsCopy.filter((row) => !row.checked);
         const filterSubrows = filterRowsChecked.filter((row) => !parentIds.includes(row.parentRowId));
@@ -198,7 +198,7 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
                 deleteRow(row);
             }
             if (row.checked) {
-                if (row.isParent) checkedParent = row._id;
+                // if (row.isParent) checkedParent = row._id;
                 if (row.checked) {
                     deleteRow(row);
                 }
