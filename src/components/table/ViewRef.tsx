@@ -102,7 +102,12 @@ const ViewRef = ({ columns, rowData, value }: IProps) => {
                         <NoteModal row={row} updateRow={handleUpdateRow} />
                     </Box>
                     <Box>
-                        <UploadModal rowDocuments={row !== undefined ? row.docs : []} getDocs={getDocs} getUpdatedDoc={getUpdatedDoc} removeDoc={removeDoc} />
+                        <UploadModal
+                            rowDocuments={row !== undefined && row !== null ? row.docs : []}
+                            getDocs={getDocs}
+                            getUpdatedDoc={getUpdatedDoc}
+                            removeDoc={removeDoc}
+                        />
                     </Box>
                     <Spacer />
                     <Box>

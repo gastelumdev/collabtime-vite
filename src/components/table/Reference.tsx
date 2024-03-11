@@ -96,63 +96,71 @@ const Reference = ({ column, refs, onRefChange, onRemoveRef }: { column: any; re
     };
     return (
         <Center px={'10px'}>
-            <Popover>
-                <PopoverTrigger>
-                    <Button size={'xs'} variant={'ghost'} color={rows.length < 1 ? 'lightgray' : 'gray'} overflow={'hidden'}>
-                        {rows.length < 1 ? `Choose ${dataCollection?.name}` : `${rows.map((row: any) => `${row.values[rowKey]}, `)}`}
-                    </Button>
-                </PopoverTrigger>
-                <PopoverContent>
-                    <PopoverArrow />
-                    <PopoverCloseButton />
-                    <PopoverHeader>{dataCollection?.name}</PopoverHeader>
-                    <PopoverBody>
-                        <Box height={'150px'} overflowY={'scroll'}>
-                            {rows.map((row: any, index: number) => {
-                                // return <Box>{row.values[rowKey]}</Box>;
-                                return (
-                                    <Flex key={index}>
-                                        <ViewRef columns={columns !== undefined ? columns : []} rowData={row} value={row.values[rowKey]} />
-                                        <Spacer />
-                                        <Box ml={'10px'} pt={'2px'} pr={'10px'} onClick={() => handleRemoveRef(column.name, row)}>
-                                            <Text fontSize={'9px'} cursor={'pointer'} color={'gray'}>
-                                                <CloseIcon />
-                                            </Text>
-                                        </Box>
-                                    </Flex>
-                                );
-                            })}
-                        </Box>
-                    </PopoverBody>
-                    {rows.length > 0 ? <Divider /> : null}
-                    <PopoverHeader>{`Choose ${dataCollection?.name}`}</PopoverHeader>
-                    <PopoverBody>
-                        <Box height={'150px'} overflowY={'scroll'}>
-                            {rowsList.map((row: any, index: number) => {
-                                if (row.values[rowKey] !== '') {
+            {dataCollection?.name !== undefined ? (
+                <Popover>
+                    <PopoverTrigger>
+                        <Button size={'xs'} variant={'ghost'} color={rows.length < 1 ? 'lightgray' : 'gray'} overflow={'hidden'}>
+                            {rows.length < 1
+                                ? `Choose ${dataCollection?.name}`
+                                : `${rows.map((row: any) => {
+                                      return row.values[rowKey] !== undefined ? `${row.values[rowKey]}, ` : '';
+                                  })}`}
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                        <PopoverArrow />
+                        <PopoverCloseButton />
+                        <PopoverHeader>{dataCollection?.name}</PopoverHeader>
+                        <PopoverBody>
+                            <Box height={'150px'} overflowY={'scroll'}>
+                                {rows.map((row: any, index: number) => {
+                                    // return <Box>{row.values[rowKey]}</Box>;
                                     return (
-                                        <Box
-                                            key={index}
-                                            pl={'12px'}
-                                            pt={'2px'}
-                                            pb={'2px'}
-                                            cursor={'pointer'}
-                                            onClick={() => handleAddRow(column.name, row)}
-                                            overflow={'hidden'}
-                                            _hover={{ backgroundColor: 'lightgray' }}
-                                        >
-                                            <Text overflow={'hidden'} textOverflow={'ellipsis'}>
-                                                {row.values[rowKey]}
-                                            </Text>
-                                        </Box>
+                                        <Flex key={index}>
+                                            <ViewRef columns={columns !== undefined ? columns : []} rowData={row} value={row.values[rowKey]} />
+                                            <Spacer />
+                                            <Box ml={'10px'} pt={'2px'} pr={'10px'} onClick={() => handleRemoveRef(column.name, row)}>
+                                                <Text fontSize={'9px'} cursor={'pointer'} color={'gray'}>
+                                                    <CloseIcon />
+                                                </Text>
+                                            </Box>
+                                        </Flex>
                                     );
-                                }
-                                return null;
-                            })}
-                        </Box>
-                    </PopoverBody>
-                </PopoverContent>
-            </Popover>
+                                })}
+                            </Box>
+                        </PopoverBody>
+                        {rows.length > 0 ? <Divider /> : null}
+                        <PopoverHeader>{`Choose ${dataCollection?.name}`}</PopoverHeader>
+                        <PopoverBody>
+                            <Box height={'150px'} overflowY={'scroll'}>
+                                {rowsList.map((row: any, index: number) => {
+                                    if (row.values[rowKey] !== '') {
+                                        return (
+                                            <Box
+                                                key={index}
+                                                pl={'12px'}
+                                                pt={'2px'}
+                                                pb={'2px'}
+                                                cursor={'pointer'}
+                                                onClick={() => handleAddRow(column.name, row)}
+                                                overflow={'hidden'}
+                                                _hover={{ backgroundColor: 'lightgray' }}
+                                            >
+                                                <Text overflow={'hidden'} textOverflow={'ellipsis'}>
+                                                    {row.values[rowKey]}
+                                                </Text>
+                                            </Box>
+                                        );
+                                    }
+                                    return null;
+                                })}
+                            </Box>
+                        </PopoverBody>
+                    </PopoverContent>
+                </Popover>
+            ) : (
+                <Text>Does not exist.</Text>
+            )}
         </Center>
     );
 };
