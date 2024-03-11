@@ -86,26 +86,22 @@ const ViewOne = () => {
     const [checkBoxes, setCheckBoxes] = useState<any>(
         Array(columns?.length)
             .fill(null)
-            .map((_: any, index: number) => {
-                console.log(index);
+            .map((_: any) => {
                 return true;
             })
     );
 
     useEffect(() => {
+        console.log(columns);
         setColumns(columnsData);
     }, [columnsData]);
 
     useEffect(() => {
-        console.log(columns?.length);
-        console.log(checkBoxes);
-        console.log(columns);
         setCheckBoxes(
             Array(columns?.length)
                 .fill(null)
                 .map((_: any, index: number) => {
                     const columnsCopy: any = columns;
-                    console.log(columnsCopy);
                     const column: any = columnsCopy !== undefined ? columnsCopy[index] : {};
                     return column.includeInForm;
                 })
@@ -141,7 +137,6 @@ const ViewOne = () => {
     }, [queryParameters]);
 
     useEffect(() => {
-        console.log(rows);
         const valsForExport: any = [];
         const rowsCopy: any = rows;
         const columnsCopy: any = columnsData;
@@ -158,7 +153,6 @@ const ViewOne = () => {
                             const refs: any = row.refs[column.name];
                             let refsString = '';
                             for (const ref of refs) {
-                                console.log(ref.values[key]);
                                 refsString += `${ref.values[key]}, `;
                             }
                             values[column.name] = refsString;
@@ -172,7 +166,6 @@ const ViewOne = () => {
 
                 valsForExport.push(values);
             }
-            console.log(valsForExport);
             setValuesForExport(valsForExport);
         }
     }, [rows, columnsData]);

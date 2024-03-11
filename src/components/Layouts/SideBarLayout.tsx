@@ -79,7 +79,6 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
 
     useEffect(() => {
         setUser(userData);
-        console.log(userData?.email);
     }, [userData]);
 
     useEffect(() => {

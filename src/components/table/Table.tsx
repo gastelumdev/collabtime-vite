@@ -55,6 +55,7 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
                 })
                 .join(' ')
         );
+        console.log(columnsData);
     }, [rowsData, columnsData]);
 
     const handleSetRows = useCallback((newRows: any[]) => {
@@ -96,7 +97,6 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
 
     const handleUpdateRowNoRender = useCallback(
         (row: any) => {
-            console.log(row);
             setRows((prev) => prev.map((prevRow) => (prevRow._id === row._id ? row : prevRow)));
         },
         [rows]
@@ -104,9 +104,7 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
 
     const handleUpdateRow = useCallback(
         async (row: any) => {
-            console.log(row);
             const newRows: any = await updateRow(row);
-            console.log(newRows);
 
             // This handles adding additional rows if the last row is not empty
             if (newRows.data.length > 0) {
@@ -161,9 +159,7 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
         let checkedParent: any = null;
 
         const filterRowsChecked = rowsCopy.filter((row) => !row.checked);
-        console.log({ filterRowsChecked });
         const filterSubrows = filterRowsChecked.filter((row) => !parentIds.includes(row.parentRowId));
-        console.log({ filterSubrows });
         const newRows = filterSubrows.map((row) => {
             // if (!parentIds.includes(row.parentRowId)) {
             //     position = position + 1;
@@ -172,12 +168,10 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
             // }
             if (!row.checked) {
                 position = position + 1;
-                console.log(`Row ${row.values['item_name']} should have position updated to ${position} because row is not checked`);
                 return { ...row, position: position };
             }
             return row;
         });
-        console.log({ newRows });
         setRows(newRows);
 
         // setRows((prevRows) => prevRows.filter((row) => !row.checked));
@@ -200,15 +194,12 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
         // });
 
         for (const row of rowsCopy) {
-            console.log(checkedParent);
             if (parentIds.includes(row.parentRowId)) {
-                console.log(`Row ${row.values['item_name']} should be deleted too`);
                 deleteRow(row);
             }
             if (row.checked) {
                 if (row.isParent) checkedParent = row._id;
                 if (row.checked) {
-                    console.log(`Row ${row.values['item_name']} should be deleted too`);
                     deleteRow(row);
                 }
             }
@@ -216,16 +207,16 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
 
         // setDeleteCheckboxStatusList((prev) => prev.map(() => false));
         setNumberOfDeleteItems(0);
+
+        console.log('Items Deleted');
     };
 
     const handleReorderRows = useCallback((rowIds: string[]) => {
-        console.log(rowIds);
         reorderRows(rowIds);
     }, []);
 
     const handleAddNewColumnToRows = useCallback(
         async (column: TColumn) => {
-            console.log(column);
             createColumn(column);
 
             setColumns([...columns, column]);
@@ -242,14 +233,10 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
     const handleRemoveColumnFromRows = (column: any) => {
         setRows((prev) =>
             prev.map((row) => {
-                console.log(row);
-
                 let refs = row.refs;
                 if (refs !== undefined) {
                     delete refs[column.name];
                 }
-
-                console.log(refs);
 
                 return { ...row, refs: refs };
             })
@@ -258,10 +245,8 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
 
     const handleDeleteColumn = useCallback(
         (column: any) => {
-            const columnsCopy: any = columns;
-            console.log(columnsCopy);
-            const filteredColumns = columnsCopy.filter((col: any) => col.name !== column.name);
-            console.log(filteredColumns);
+            // const columnsCopy: any = columns;
+            // const filteredColumns = columnsCopy.filter((col: any) => col.name !== column.name);
             setColumns((prev) => prev.filter((prevColumn) => prevColumn.name !== column.name));
             deleteColumn(column);
         },
@@ -287,13 +272,10 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
             prevRows.map((prevRow) => {
                 const isParent = prevRow.isParent && (prevRow.parentRowId === undefined || prevRow.parentRowId === null);
                 const isChild = prevRow.parentRowId !== null && prevRow.parentRowId !== undefined;
-
-                console.log({ isParent, isChild, position: prevRow.position });
                 // if current row is checked
                 if (prevRow.checked) {
                     // if it is not a main row
                     if (!isParent) {
-                        console.log(`${prevRow.position} is checked and is not a parent`);
                         // if it is a child
                         if (isChild) {
                             // Set the current parent id to the current's row id so if the next row is a subrow
@@ -328,7 +310,6 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
                         // searchForSubrows = false;
 
                         subrowCount = 1;
-                        console.log(`${prevRow.position} is a parent but not checked`);
                     }
 
                     // if we have an unchecked child row and a parent id has been previously set from one of the newly rows set to parent
@@ -337,7 +318,6 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
                     // We also update this row to have the parent id of the row that was checked and set as a parent.
                     if (isChild) {
                         if (currentParentId !== null) {
-                            console.log(`${prevRow.position} is a child and the parentId is ${currentParentId}`);
                             // setToParent = true;
                             makeAsParents.push(potentialParent);
                             updateRow({ ...prevRow, parentRowId: currentParentId });
@@ -359,7 +339,6 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
             return row._id;
         });
 
-        console.log(removeAsParents);
         setRows((prevRows) =>
             prevRows.map((prevRow) => {
                 if (removeAsParentsIds.includes(prevRow._id)) updateRow({ ...prevRow, isParent: false, parentRowId: null, showSubrows: true });
@@ -367,7 +346,6 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
             })
         );
 
-        console.log(makeAsParents);
         setRows((prevRows) =>
             prevRows.map((prevRow) => {
                 if (makeAsParentsIds.includes(prevRow._id)) updateRow({ ...prevRow, isParent: true, parentRowId: null });

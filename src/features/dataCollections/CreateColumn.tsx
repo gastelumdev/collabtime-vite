@@ -77,8 +77,6 @@ const CreateColumn = ({ columns, createColumn }: TProps) => {
             // Set column name to a database friendly underscore naming
             newColumn.name = newColumn.name.toLowerCase().split(' ').join('_');
 
-            console.log(newColumn);
-
             createColumn(newColumn);
             setShowLabelForm(false);
             setShowReferenceForm(false);
@@ -312,7 +310,7 @@ const CreateColumn = ({ columns, createColumn }: TProps) => {
                             placeholder="Please select the data collection that will be referenced"
                             onChange={(selectedOption: any) => handleSelectDataCollection(selectedOption)}
                             options={dataCollections
-                                ?.map((dataCollection) => {
+                                ?.map((dataCollection: any) => {
                                     return { value: dataCollection._id, label: dataCollection.name };
                                 })
                                 .filter((dataCollection: any) => {

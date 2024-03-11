@@ -70,8 +70,6 @@ const TableContent = ({
             }
             return row;
         });
-        console.log(repositionedRows);
-        console.log(parentsToMakeCommon);
 
         const resetRows = repositionedRows.map((row) => {
             if (parentsToMakeCommon.includes(row._id)) {
@@ -87,7 +85,7 @@ const TableContent = ({
         setGridTemplateColumns(gridTemplateColumnsIn);
     }, [gridTemplateColumnsIn]);
 
-    const [overId, setOverId] = useState<number | null>(null);
+    const [_, setOverId] = useState<number | null>(null);
     const [draggedId, setDraggedId] = useState<number | null>(null);
 
     // const handleDragStart = useCallback(
@@ -102,7 +100,6 @@ const TableContent = ({
 
     const handleDragEnter = useCallback(
         (event: React.DragEvent<HTMLDivElement>) => {
-            console.log(draggedId, overId);
             event.preventDefault();
             event.stopPropagation();
             if (draggedId !== null) {
@@ -172,12 +169,10 @@ const TableContent = ({
 
     //****************************************************** */
     const handleSetDraggedId = useCallback((rowIndex: number) => {
-        console.log(rowIndex);
         setDraggedId(rowIndex);
     }, []);
 
     const handleSetOverId = useCallback((rowIndex: number | null) => {
-        console.log({ rowIndex });
         setOverId(rowIndex);
     }, []);
 
@@ -206,10 +201,6 @@ const TableContent = ({
             }
         }
 
-        console.log({ list, range });
-
-        // let index = range[0];
-
         const newRows = list.map((row: any, index: number) => {
             // console.log({ rowPosition: row.position, value: row.values['item_name'], index });
             const updatedRow = { ...row, position: index + 1 };
@@ -226,9 +217,7 @@ const TableContent = ({
         return newRows;
     };
 
-    const handleSwap = (overId: number, draggedId: number) => {
-        console.log({ rowDragged: Number(localStorage.getItem('rowDragged')), rowOver: Number(localStorage.getItem('rowOver')) });
-        console.log({ overId, draggedId, currentRows });
+    const handleSwap = () => {
         let position = 0;
         const newRows: any = currentRows.map((row) => {
             position = position + 1;
@@ -249,19 +238,14 @@ const TableContent = ({
             return draggedIsParent && row.parentRowId === draggedRowData._id;
         });
 
-        console.log(childRows);
-
         let reorderedRows;
 
         if ((draggedIsParent && overIsChild) || (draggedIsParent && overIsParent)) {
-            console.log('This drag and drop is not allowed!');
             setCurrentRows([...newRows]);
         } else {
-            console.log('This drag and drop is allowed!');
             reorderedRows = swapItems(newRows, Number(localStorage.getItem('rowDragged')), Number(localStorage.getItem('rowOver')), childRows.length + 1);
             setRows(reorderedRows);
             setCurrentRows(reorderedRows);
-            console.log(reorderedRows);
 
             const repositionedRows: any = setPositions(
                 reorderedRows,
@@ -274,13 +258,11 @@ const TableContent = ({
             // setCurrentRows(repositionedRows);
 
             if ((draggedIsParent && overIsCommon) || (draggedIsCommon && overIsCommon)) {
-                console.log(`${draggedRowData.position} is dragged over common row ${overRowData.position}`);
                 setRows(repositionedRows);
                 setCurrentRows(repositionedRows);
             }
 
             if (draggedIsCommon && overIsParent && draggedRowData.position < overRowData.position) {
-                console.log(`${draggedRowData.position} will become a child of the parent row ${overRowData.position}`);
                 // The dragged row needs to update to be set as parent false and parentRowId of over row
 
                 const relAdjustedRow = repositionedRows.map((row: any) => {
@@ -297,7 +279,6 @@ const TableContent = ({
             }
 
             if (draggedIsCommon && overIsChild) {
-                console.log(`${draggedRowData.position} will become a sibling of the child row ${overRowData.position}`);
                 // The dragged row needs to update to be set as parent false and share the parentRowId of the over row
 
                 const relAdjustedRows = repositionedRows.map((row: any) => {
@@ -314,7 +295,6 @@ const TableContent = ({
             }
 
             if (draggedIsChild && overIsCommon) {
-                console.log(`${draggedRowData.position} will become common row over ${overRowData.position}`);
                 // The dragged row needs to update to be set as parent false and parentRowId as null
 
                 const relAdjustedRows = repositionedRows.map((row: any) => {
@@ -332,7 +312,6 @@ const TableContent = ({
 
             if (draggedIsChild && overIsParent) {
                 if (draggedRowData.position < overRowData.position) {
-                    console.log(`${draggedRowData.position} will become a child of the parent row ${overRowData.position}`);
                     // The dragged row needs to update to be set as parent false and parentRowId of over row
 
                     const relAdjustedRows = repositionedRows.map((row: any) => {
@@ -347,7 +326,6 @@ const TableContent = ({
 
                     setCurrentRows(relAdjustedRows);
                 } else {
-                    console.log(`${draggedRowData.position} will become common row over ${overRowData.position}`);
                     // The dragged row needs to update to be set as parent false and parentRowId as null
 
                     const relAdjustedRows = repositionedRows.map((row: any) => {
@@ -447,14 +425,12 @@ const TableContent = ({
     };
 
     const handleChange = (row: any) => {
-        console.log(row);
         handleUpdateRow(row);
         handleUpdateRowNoRender(row);
         setCurrentRows((prev) => prev.map((prevRow) => (prevRow._id === row._id ? row : prevRow)));
     };
 
     const handleSubrowVisibility = (row: any) => {
-        console.log(row);
         // handleUpdateRow(row);
         // handleUpdateRowNoRender(row);
         // setCurrentRows((prev) => prev.map((prevRow) => (prevRow._id === row._id ? row : prevRow)));
@@ -496,7 +472,6 @@ const TableContent = ({
     };
 
     const handleDeleteBoxChangeForRow = (status: boolean, index: number) => {
-        console.log(currentRows);
         // setCurrentRows((prevRows) => prevRows.map((prevRow, rowIndex) => (index === rowIndex ? { ...prevRow, checked: status } : prevRow)));
         // if (status) {
         //     setNumberOfDeleteItems(numberOfDeleteItems + 1);

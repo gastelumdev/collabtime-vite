@@ -187,7 +187,7 @@ export const api = createApi({
             query: (dataCollectionId) => ({
                 url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${dataCollectionId}/columns`
             }),
-            // providesTags: ["Column"]
+            providesTags: ["Column"]
         }),
         createColumn: builder.mutation<TColumn, TColumn>({
             query: (column) => ({
@@ -195,7 +195,7 @@ export const api = createApi({
                 method: "POST",
                 body: column
             }),
-            // invalidatesTags: ["Column", "Rows"]
+            invalidatesTags: ["Column", "Rows"]
         }),
         updateColumn: builder.mutation<TColumn, TColumn>({
             query: (column) => ({
@@ -203,7 +203,7 @@ export const api = createApi({
                 method: "POST",
                 body: column
             }),
-            // invalidatesTags: ["Column", "Rows"],
+            invalidatesTags: ["Column", "Rows"],
         }),
         deleteColumn: builder.mutation<TColumn, TColumn>({
             query: (column) => ({
@@ -211,7 +211,7 @@ export const api = createApi({
                 method: "POST",
                 body: column,
             }),
-            // invalidatesTags: ["Column", "Rows"],
+            invalidatesTags: ["Column", "Rows"],
         }),
         reorderColumns: builder.mutation<TColumn[], any>({
             query: (columns) => ({
