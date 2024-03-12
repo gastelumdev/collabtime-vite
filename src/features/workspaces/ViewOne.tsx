@@ -72,7 +72,7 @@ const ViewOne = () => {
     return (
         <SideBarLayout linkItems={LinkItems}>
             <Box>
-                <Flex minH={'100vh'} bg={'#eff2f5'}>
+                <Flex minH={'100vh'} bg={'#f6f8fa'}>
                     <Container maxW={'full'} mt={{ base: 4, sm: 0 }}>
                         <SimpleGrid spacing={6} columns={{ base: 1, sm: 2 }} pb={'20px'}>
                             <Flex>

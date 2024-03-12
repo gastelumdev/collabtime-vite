@@ -67,8 +67,6 @@ const Row = ({
     }, [deleteBoxIsChecked]);
 
     const handleDragStart = (event: React.DragEvent<HTMLDivElement>, rowIndex: number) => {
-        console.log(`Dragging ${rowIndex}`);
-        console.log(event);
         event.dataTransfer.setData('text', '');
         localStorage.setItem('rowDragged', `${rowIndex}`);
         localStorage.setItem('dragging', 'true');
@@ -89,7 +87,6 @@ const Row = ({
     };
 
     const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
-        console.log('Left row ' + rowIndex);
         setOverId(null);
         localStorage.removeItem('rowOver');
         event.preventDefault();
@@ -99,7 +96,6 @@ const Row = ({
     };
 
     const handleDragOver = (event: React.DragEvent<HTMLDivElement>, rowIndex: number) => {
-        console.log(`Dragged over ${rowIndex}`);
         if (localStorage.getItem('rowDragged') !== null) {
             event.preventDefault();
             event.stopPropagation();
@@ -129,7 +125,6 @@ const Row = ({
     };
 
     const onChange = (columnName: string, value: string) => {
-        console.log(value);
         handleChange({ ...row, values: { ...row.values, [columnName]: value } });
     };
 
@@ -314,7 +309,6 @@ const Row = ({
                                     </Flex>
                                 </span>
                                 {columns.map((column: any, columnIndex: number) => {
-                                    if (row.refs !== undefined) console.log(row.refs[column.name]);
                                     return (
                                         <div
                                             key={columnIndex}

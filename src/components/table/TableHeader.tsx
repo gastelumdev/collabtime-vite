@@ -60,7 +60,6 @@ const TableHeader = ({
             // turn it blue else set it back to white
             if (draggedColumnIndex !== null && draggedColumnIndex !== columnIndex) {
                 event.preventDefault();
-                console.log(event);
                 setDropColumnIndex(columnIndex);
 
                 for (let i = 0; i < currentColumns.length; i++) {
@@ -112,15 +111,12 @@ const TableHeader = ({
 
                 const row = document.getElementsByClassName('table-row')[0];
                 const gridTemplateColumns = getComputedStyle(row).getPropertyValue('grid-template-columns');
-                console.log(gridTemplateColumns);
                 // Reorder the column widths and set the gridTemplateColumns
                 const columnWidths: any = gridTemplateColumns.split(' ');
                 columnWidths.shift();
                 const [columnWidth] = columnWidths.splice(draggedColumnIndex as number, 1);
                 // newColumns[draggedColumnIndex as number].width = columnWidth;
                 columnWidths.splice(columnIndex, 0, columnWidth);
-
-                console.log(columnWidths);
 
                 handleGridTemplateColumns(columnWidths.join(' '));
                 // API call needed persist column order

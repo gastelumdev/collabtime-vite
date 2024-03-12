@@ -219,6 +219,7 @@ export const api = createApi({
                 method: "POST",
                 body: columns,
             }),
+            invalidatesTags: ["Column", "Rows"],
         }),
         getRows: builder.query<any[], any>({
             query: (options) => ({

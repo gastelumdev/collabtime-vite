@@ -6,7 +6,7 @@ import { Box } from '@chakra-ui/react';
 import Table from '../../components/table/Table';
 import { TColumn } from '../../types';
 
-const DataCollection = () => {
+const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) => {
     const { dataCollectionId } = useParams();
 
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
@@ -33,8 +33,6 @@ const DataCollection = () => {
     const [rows, setRows] = useState(rowsData);
 
     useEffect(() => {
-        console.log(rowsData);
-        // refetch();
         setRows(rowsData);
     }, [rowsData]);
 
@@ -95,6 +93,7 @@ const DataCollection = () => {
                 columnResizingOffset={windowWidthOffset}
                 updateColumn={handleColumnUpdate}
                 reorderColumns={handleReorderColumns}
+                showDoneRows={showDoneRows}
             />
         </Box>
     );

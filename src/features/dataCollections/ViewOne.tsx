@@ -91,8 +91,14 @@ const ViewOne = () => {
             })
     );
 
+    const [showDoneRows, setShowDoneRows] = useState<boolean>(false);
+
     useEffect(() => {
-        console.log(columns);
+        for (const column of columns || []) {
+            if (column.type === 'status') {
+                setShowDoneRows(false);
+            }
+        }
         setColumns(columnsData);
     }, [columnsData]);
 
@@ -140,7 +146,6 @@ const ViewOne = () => {
         const valsForExport: any = [];
         const rowsCopy: any = rows;
         const columnsCopy: any = columnsData;
-        console.log(columnsCopy);
 
         if (columnsCopy !== undefined) {
             const key: any = columnsCopy[0].name;
@@ -270,8 +275,19 @@ const ViewOne = () => {
                                     <Flex>
                                         <Spacer />
                                         <Box mr={'5px'}>
+                                            <PrimaryButton
+                                                onClick={() => {
+                                                    console.log(showDoneRows);
+                                                    setShowDoneRows(!showDoneRows);
+                                                }}
+                                                size="sm"
+                                            >
+                                                {`${showDoneRows ? 'Hide' : 'Show'} Done`}
+                                            </PrimaryButton>
+                                        </Box>
+                                        <Box mr={'5px'}>
                                             <PrimaryButton onClick={onOpenFormDrawer} size="sm">
-                                                <AddIcon style={{ marginRight: '4px' }} /> Form
+                                                Form
                                             </PrimaryButton>
                                         </Box>
                                         {!isTemplate ? (
@@ -292,7 +308,7 @@ const ViewOne = () => {
                                 </SimpleGrid>
                             </CardHeader>
                             <CardBody p={'0'}>
-                                <DataCollection />
+                                <DataCollection showDoneRows={showDoneRows} />
                             </CardBody>
                         </Card>
 

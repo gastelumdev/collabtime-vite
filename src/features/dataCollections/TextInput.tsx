@@ -34,7 +34,6 @@ const TextInput = ({ columnName, value, type = 'tableCell', onChange }: ITextInp
     };
 
     const handleBlur = (value: string) => {
-        console.log(value);
         onChange(columnName, value);
     };
 

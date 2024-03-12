@@ -40,7 +40,6 @@ const Reference = ({ column, refs, onRefChange, onRemoveRef }: { column: any; re
 
         columns?.map((column: any) => {
             if (column.position === 1) {
-                console.log(column.name);
                 rowKey = column.name;
             }
         });
@@ -49,7 +48,6 @@ const Reference = ({ column, refs, onRefChange, onRemoveRef }: { column: any; re
     }, [rowsData, columns]);
 
     useEffect(() => {
-        console.log(refs);
         setRows(refs || []);
     }, [refs]);
 

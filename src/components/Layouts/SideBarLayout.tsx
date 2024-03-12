@@ -207,21 +207,21 @@ const TopNav = ({ sidebar = true, onOpen, leftContent, ...rest }: TopNavProps) =
             h={{ sm: '22px' }}
             mb={{ sm: '20px' }}
             alignItems="center"
-            bg={useColorModeValue('gray.100', 'gray.900')}
+            // bg={useColorModeValue('gray.100', 'gray.900')}
             borderBottomColor={useColorModeValue('gray.200', 'gray.700')}
             justifyContent={{ base: 'space-between', md: 'flex-end' }}
             {...rest}
         >
             <Container maxW={'full'} mt={{ base: 0 }} px={'18px'}>
-                <Box pb={3} bg={'#eff2f5'}>
-                    <Box bg={'#eff2f5'}>
+                <Box pb={3} bg={'#f6f8fa'}>
+                    <Box bg={'#f6f8fa'}>
                         {/* <SimpleGrid columns={[1, 2, 2]} spacingY={{ sm: 3 }}> */}
                         <Flex alignItems={'center'} justifyContent={'space-between'}>
                             <IconButton display={{ base: 'flex', lg: 'none' }} onClick={onOpen} variant="outline" aria-label="open menu" icon={<FiMenu />} />
                             <Box
                                 ml={{ base: 3, lg: 0 }}
                                 // pt={"18px"}
-                                bg={'#eff2f5'}
+                                bg={'#f6f8fa'}
                             >
                                 {leftContent}
                             </Box>
@@ -236,7 +236,7 @@ const TopNav = ({ sidebar = true, onOpen, leftContent, ...rest }: TopNavProps) =
                                 <Menu autoSelect={false}>
                                     <MenuButton
                                         style={{
-                                            backgroundColor: '#eff2f5',
+                                            backgroundColor: '#f6f8fa',
                                         }}
                                     >
                                         <Text size={'20px'} pt={1}>
@@ -303,10 +303,10 @@ const SideBarLayout = ({ linkItems, leftContent, sidebar = true, children }: Sid
 
     const { data: userData } = useGetUserQuery(localStorage.getItem('userId') as string);
 
-    useEffect(() => {
-        console.log(userData?.email, userData?.logoURL);
-        console.log(mvpUserEmails.includes(userData?.email || ''));
-    }, [userData]);
+    // useEffect(() => {
+    //     console.log(userData?.email, userData?.logoURL);
+    //     console.log(mvpUserEmails.includes(userData?.email || ''));
+    // }, [userData]);
 
     return (
         <Box minH="100vh" bg={"useColorModeValue('gray.100', 'gray.900')"} pl={{ base: 0, lg: 0 }} pr={0} pt={0}>

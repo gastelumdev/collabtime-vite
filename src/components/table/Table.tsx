@@ -22,9 +22,10 @@ interface ITableProps {
     columnResizingOffset: number;
     updateColumn: any;
     reorderColumns: any;
+    showDoneRows?: boolean;
 }
 
-const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, updateColumn, reorderColumns }: ITableProps) => {
+const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, updateColumn, reorderColumns, showDoneRows = false }: ITableProps) => {
     // const [overId, setOverId] = useState<number | null>(null);
     // const [draggedId, setDraggedId] = useState<number | null>(null);
 
@@ -55,7 +56,6 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
                 })
                 .join(' ')
         );
-        console.log(columnsData);
     }, [rowsData, columnsData]);
 
     const handleSetRows = useCallback((newRows: any[]) => {
@@ -510,6 +510,7 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
                 handleDeleteBoxChange={handleDeleteBoxChange}
                 handleReorderRows={handleReorderRows}
                 rowCallUpdate={rowCallUpdate}
+                showDoneRows={showDoneRows}
             />
             {/* <Box w={'100%'} h={'30px'}>
                 <Text ml={'10px'}>Add row</Text>

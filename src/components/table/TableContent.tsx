@@ -18,6 +18,7 @@ interface IProps {
     handleDeleteBoxChange: any;
     handleReorderRows: any;
     rowCallUpdate: any;
+    showDoneRows?: boolean;
 }
 
 const TableContent = ({
@@ -33,6 +34,7 @@ const TableContent = ({
     handleUpdateRow,
     handleDeleteBoxChange,
     rowCallUpdate,
+    showDoneRows = false,
 }: IProps) => {
     const ref = useRef<HTMLDivElement | null>(null);
     const [gridTemplateColumns, setGridTemplateColumns] = useState('');
@@ -78,8 +80,21 @@ const TableContent = ({
             }
             return row;
         });
-        setCurrentRows(resetRows);
-    }, [rows]);
+
+        if (showDoneRows) {
+            setCurrentRows(resetRows);
+        } else {
+            const filteredRows = resetRows.filter((row) => {
+                if (row.values['status'] !== undefined) {
+                    return row.values['status'] !== 'Done';
+                } else {
+                    return true;
+                }
+            });
+
+            setCurrentRows(filteredRows);
+        }
+    }, [rows, showDoneRows]);
 
     useEffect(() => {
         setGridTemplateColumns(gridTemplateColumnsIn);

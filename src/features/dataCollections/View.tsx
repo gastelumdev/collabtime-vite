@@ -90,7 +90,7 @@ const View = () => {
                 <Flex
                     minH={'100vh'}
                     // justify={"center"}
-                    bg={'#eff2f5'}
+                    bg={'#f6f8fa'}
                 >
                     <Container maxW={'full'} mt={{ base: 4, sm: 0 }}>
                         <SimpleGrid
