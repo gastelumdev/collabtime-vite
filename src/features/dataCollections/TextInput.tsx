@@ -17,9 +17,10 @@ interface ITextInputProps {
     value: string;
     type?: string;
     onChange: any;
+    allowed?: boolean;
 }
 
-const TextInput = ({ columnName, value, type = 'tableCell', onChange }: ITextInputProps) => {
+const TextInput = ({ columnName, value, type = 'tableCell', onChange, allowed = false }: ITextInputProps) => {
     const [active, setActive] = useState<boolean>(false);
     const [val, setVal] = useState<string>(value);
 
@@ -44,7 +45,7 @@ const TextInput = ({ columnName, value, type = 'tableCell', onChange }: ITextInp
     // }, []);
     return (
         <>
-            {!active ? (
+            {!active || !allowed ? (
                 <Box
                     w={'100%'}
                     p={val ? '0px' : type === 'tableCell' ? '14px' : '0px'}

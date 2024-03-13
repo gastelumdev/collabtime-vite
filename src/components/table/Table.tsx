@@ -23,9 +23,19 @@ interface ITableProps {
     updateColumn: any;
     reorderColumns: any;
     showDoneRows?: boolean;
+    allowed?: boolean;
 }
 
-const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, updateColumn, reorderColumns, showDoneRows = false }: ITableProps) => {
+const Table = ({
+    rowsData,
+    columnsData,
+    minCellWidth,
+    columnResizingOffset,
+    updateColumn,
+    reorderColumns,
+    showDoneRows = false,
+    allowed = false,
+}: ITableProps) => {
     // const [overId, setOverId] = useState<number | null>(null);
     // const [draggedId, setDraggedId] = useState<number | null>(null);
 
@@ -495,6 +505,7 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
                 handleAddNewColumnToRows={handleAddNewColumnToRows}
                 handleRemoveColumnFormRows={handleRemoveColumnFromRows}
                 deleteColumn={handleDeleteColumn}
+                allowed={allowed}
             />
             <TableContent
                 rows={rows}
@@ -511,6 +522,7 @@ const Table = ({ rowsData, columnsData, minCellWidth, columnResizingOffset, upda
                 handleReorderRows={handleReorderRows}
                 rowCallUpdate={rowCallUpdate}
                 showDoneRows={showDoneRows}
+                allowed={allowed}
             />
             {/* <Box w={'100%'} h={'30px'}>
                 <Text ml={'10px'}>Add row</Text>

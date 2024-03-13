@@ -32,9 +32,10 @@ interface IProps {
     getDocs: any;
     getUpdatedDoc: any;
     removeDoc: any;
+    allowed?: boolean;
 }
 
-const UploadModal = ({ rowDocuments, getDocs, getUpdatedDoc, removeDoc }: IProps) => {
+const UploadModal = ({ rowDocuments, getDocs, getUpdatedDoc, removeDoc, allowed = false }: IProps) => {
     const { data: documents } = useGetDocumentsQuery(null);
     const { isOpen: uploadIsOpen, onOpen: uploadOnOpen, onClose: uploadOnClose } = useDisclosure();
 
@@ -233,11 +234,13 @@ const UploadModal = ({ rowDocuments, getDocs, getUpdatedDoc, removeDoc }: IProps
                                                 )}
                                             </Box>
                                             <Spacer />
-                                            <Box pt={'4px'} cursor={'pointer'} onClick={() => handleRemoveDoc(rowDoc)}>
-                                                <Text fontSize={'10px'}>
-                                                    <CloseIcon />
-                                                </Text>
-                                            </Box>
+                                            {allowed ? (
+                                                <Box pt={'4px'} cursor={'pointer'} onClick={() => handleRemoveDoc(rowDoc)}>
+                                                    <Text fontSize={'10px'}>
+                                                        <CloseIcon />
+                                                    </Text>
+                                                </Box>
+                                            ) : null}
                                         </Flex>
                                     );
                                 })
@@ -247,85 +250,89 @@ const UploadModal = ({ rowDocuments, getDocs, getUpdatedDoc, removeDoc }: IProps
                         ) : null}
                     </ModalBody>
                     {/* <ModalHeader fontSize={'16px'}>Upload Files</ModalHeader> */}
-                    <Divider mt={'20px'} mb={'20px'} />
-                    <ModalBody>
-                        <Grid templateColumns={'50% 48%'} gap={3}>
-                            <GridItem h={'160px'} border={'1px solid #edf1f6'} borderRadius={'5px'} p={'10px'}>
-                                <Box>
-                                    {createIsLoading ? <Progress size="xs" isIndeterminate /> : null}
-                                    <Center>
-                                        <Box>
-                                            <Input
-                                                type="file"
-                                                // accept="image/png, image/jpeg, image/jpg"
-                                                size={'sm'}
-                                                p={'1px'}
-                                                mt={'6px'}
-                                                mb={'10px'}
-                                                // border={'none'}
-                                                onChange={handleFileChange}
-                                                multiple={true}
-                                                onClick={() => {
-                                                    setDuplicateFiles([]);
-                                                }}
-                                            />
-                                        </Box>
+                    {allowed ? <Divider mt={'20px'} mb={'20px'} /> : null}
+                    {allowed ? (
+                        <ModalBody>
+                            <Grid templateColumns={'50% 48%'} gap={3}>
+                                <GridItem h={'160px'} border={'1px solid #edf1f6'} borderRadius={'5px'} p={'10px'}>
+                                    <Box>
+                                        {createIsLoading ? <Progress size="xs" isIndeterminate /> : null}
+                                        <Center>
+                                            <Box>
+                                                <Input
+                                                    type="file"
+                                                    // accept="image/png, image/jpeg, image/jpg"
+                                                    size={'sm'}
+                                                    p={'1px'}
+                                                    mt={'6px'}
+                                                    mb={'10px'}
+                                                    // border={'none'}
+                                                    onChange={handleFileChange}
+                                                    multiple={true}
+                                                    onClick={() => {
+                                                        setDuplicateFiles([]);
+                                                    }}
+                                                />
+                                            </Box>
+                                        </Center>
+                                        <Center>
+                                            <Box pt={'5px'} mb={'20px'}>
+                                                {duplicateFiles.length > 0 ? (
+                                                    <Text color={'rgb(123, 128, 154)'} mb={'10px'}>
+                                                        The following files have already been uploaded:
+                                                    </Text>
+                                                ) : (
+                                                    <Text color={'rgb(123, 128, 154)'} fontSize={'14px'}>
+                                                        Limit: 50 per upload
+                                                    </Text>
+                                                )}
+                                                {documents?.map((document: TDocument, index) => {
+                                                    return (
+                                                        <Box key={index}>
+                                                            {duplicateFiles.includes(document.filename) ? (
+                                                                <Flex>
+                                                                    <Box pt={'6px'} mr={'5px'} fontSize={'14px'}>
+                                                                        <Text color={'rgb(123, 128, 154)'}>{getIcon(document.type)}</Text>
+                                                                    </Box>
+                                                                    <Text color={'rgb(123, 128, 154)'}>{document.filename}</Text>
+                                                                </Flex>
+                                                            ) : null}
+                                                        </Box>
+                                                    );
+                                                })}
+                                            </Box>
+                                        </Center>
+                                        <Center>
+                                            <PrimaryButton onClick={() => handleUploadClick()} isDisabled={duplicateFiles.length > 0}>
+                                                UPLOAD
+                                            </PrimaryButton>
+                                        </Center>
+                                    </Box>
+                                </GridItem>
+                                <GridItem h={'160px'} border={'1px solid #edf1f6'} borderRadius={'5px'} p={'10px'} pt={'30px'}>
+                                    <Center mb={'20px'}>
+                                        <Text>Create Document</Text>
                                     </Center>
                                     <Center>
-                                        <Box pt={'5px'} mb={'20px'}>
-                                            {duplicateFiles.length > 0 ? (
-                                                <Text color={'rgb(123, 128, 154)'} mb={'10px'}>
-                                                    The following files have already been uploaded:
-                                                </Text>
-                                            ) : (
-                                                <Text color={'rgb(123, 128, 154)'} fontSize={'14px'}>
-                                                    Limit: 50 per upload
-                                                </Text>
-                                            )}
-                                            {documents?.map((document: TDocument, index) => {
-                                                return (
-                                                    <Box key={index}>
-                                                        {duplicateFiles.includes(document.filename) ? (
-                                                            <Flex>
-                                                                <Box pt={'6px'} mr={'5px'} fontSize={'14px'}>
-                                                                    <Text color={'rgb(123, 128, 154)'}>{getIcon(document.type)}</Text>
-                                                                </Box>
-                                                                <Text color={'rgb(123, 128, 154)'}>{document.filename}</Text>
-                                                            </Flex>
-                                                        ) : null}
-                                                    </Box>
-                                                );
-                                            })}
-                                        </Box>
+                                        <DocDrawer getDocs={getDocs} />
                                     </Center>
-                                    <Center>
-                                        <PrimaryButton onClick={() => handleUploadClick()} isDisabled={duplicateFiles.length > 0}>
-                                            UPLOAD
-                                        </PrimaryButton>
-                                    </Center>
-                                </Box>
-                            </GridItem>
-                            <GridItem h={'160px'} border={'1px solid #edf1f6'} borderRadius={'5px'} p={'10px'} pt={'30px'}>
-                                <Center mb={'20px'}>
-                                    <Text>Create Document</Text>
-                                </Center>
-                                <Center>
-                                    <DocDrawer getDocs={getDocs} />
-                                </Center>
-                            </GridItem>
-                        </Grid>
-                        <Divider mt={'20px'} />
-                    </ModalBody>
-                    <ModalHeader fontSize={'16px'}>Add existing files</ModalHeader>
-                    <ModalBody mb={'10px'}>
-                        {existingFiles?.map((document, index) => {
-                            return (
-                                <Box key={index} mb={'6px'} onClick={() => addExistingFile(document)} cursor={'pointer'}>
-                                    <Text fontSize={'14px'}>{document.filename}</Text>
-                                </Box>
-                            );
-                        })}
-                    </ModalBody>
+                                </GridItem>
+                            </Grid>
+                            <Divider mt={'20px'} />
+                        </ModalBody>
+                    ) : null}
+                    {allowed ? <ModalHeader fontSize={'16px'}>Add existing files</ModalHeader> : null}
+                    {allowed ? (
+                        <ModalBody mb={'10px'}>
+                            {existingFiles?.map((document, index) => {
+                                return (
+                                    <Box key={index} mb={'6px'} onClick={() => addExistingFile(document)} cursor={'pointer'}>
+                                        <Text fontSize={'14px'}>{document.filename}</Text>
+                                    </Box>
+                                );
+                            })}
+                        </ModalBody>
+                    ) : null}
                 </ModalContent>
             </Modal>
         </>

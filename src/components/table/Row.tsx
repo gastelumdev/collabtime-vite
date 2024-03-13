@@ -30,6 +30,7 @@ const Row = ({
     handleDeleteBoxChange,
     handleSubrowVisibility,
     rowCallUpdate,
+    allowed = false,
 }: {
     row: any;
     rowIndex: number;
@@ -43,6 +44,7 @@ const Row = ({
     handleDeleteBoxChange: any;
     handleSubrowVisibility?: any;
     rowCallUpdate: any;
+    allowed?: boolean;
 }) => {
     // const rowsData = useMemo(
     //     () => [
@@ -256,8 +258,8 @@ const Row = ({
                                             w={'15px'}
                                             h={'30px'}
                                             bgColor={'#24a2f0'}
-                                            cursor={'move'}
-                                            draggable
+                                            cursor={allowed ? 'move' : 'default'}
+                                            draggable={allowed}
                                             onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, row.position)}
                                             onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, row.position)}
                                             // onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
@@ -267,26 +269,47 @@ const Row = ({
                                             style={{ backgroundColor: row.parentRowId ? '#9fdaff' : '#24a2f0' }}
                                         ></Box>
                                         <Box mt={'6px'} ml={'14px'}>
-                                            <Checkbox mr={'1px'} isChecked={deleteCheckboxIsChecked} onChange={handleDeleteCheckboxChange} />
+                                            <Checkbox
+                                                mr={'1px'}
+                                                isChecked={deleteCheckboxIsChecked}
+                                                onChange={handleDeleteCheckboxChange}
+                                                disabled={!allowed}
+                                            />
                                         </Box>
                                         <Box pt={'6px'}>
-                                            <EditRow row={row} columns={columns} handleChange={editRowOnChange} />
+                                            <EditRow row={row} columns={columns} handleChange={editRowOnChange} allowed={allowed} />
                                         </Box>
                                         <Box pt={'6px'}>
-                                            <NoteModal row={row} updateRow={editRowOnChange} rowCallUpdate={rowCallUpdate} />
+                                            <NoteModal row={row} updateRow={editRowOnChange} rowCallUpdate={rowCallUpdate} allowed={allowed} />
                                         </Box>
-                                        <Box pt={'7px'} ml={'10px'} onClick={handleRemindersChange} cursor={'pointer'}>
-                                            <Text fontSize={'15px'} color={row.reminder ? '#16b2fc' : '#cccccc'}>
+                                        <Box
+                                            pt={'7px'}
+                                            ml={'10px'}
+                                            onClick={allowed ? handleRemindersChange : () => {}}
+                                            cursor={allowed ? 'pointer' : 'default'}
+                                        >
+                                            <Text fontSize={'15px'} color={row.reminder && allowed ? '#16b2fc' : '#cccccc'}>
                                                 <FaRegBell />
                                             </Text>
                                         </Box>
-                                        <Box pt={'7px'} ml={'10px'} onClick={handleAcknowledgeClick} cursor={'pointer'}>
-                                            <Text fontSize={'15px'} color={row.acknowledged ? '#16b2fc' : '#cccccc'}>
+                                        <Box
+                                            pt={'7px'}
+                                            ml={'10px'}
+                                            onClick={allowed ? handleAcknowledgeClick : () => {}}
+                                            cursor={allowed ? 'pointer' : 'default'}
+                                        >
+                                            <Text fontSize={'15px'} color={row.acknowledged && allowed ? '#16b2fc' : '#cccccc'}>
                                                 <FaRegSquareCheck />
                                             </Text>
                                         </Box>
                                         <Box pt={'7px'} ml={'10px'} onClick={handleAcknowledgeClick} cursor={'pointer'}>
-                                            <UploadModal rowDocuments={row.docs} getDocs={getDocs} getUpdatedDoc={getUpdatedDoc} removeDoc={removeDoc} />
+                                            <UploadModal
+                                                rowDocuments={row.docs}
+                                                getDocs={getDocs}
+                                                getUpdatedDoc={getUpdatedDoc}
+                                                removeDoc={removeDoc}
+                                                allowed={allowed}
+                                            />
                                         </Box>
                                         {/* {row.position} */}
                                         {row.isParent ? (
@@ -327,6 +350,7 @@ const Row = ({
                                                     columnName={column.name}
                                                     value={row.values[column.name]}
                                                     onChange={onChange}
+                                                    allowed={allowed}
                                                 />
                                             ) : column.type === 'people' ? (
                                                 <PeopleMenu
@@ -335,18 +359,26 @@ const Row = ({
                                                     people={column.people}
                                                     value={row.values[column.name]}
                                                     onChange={onChange}
+                                                    allowed={allowed}
                                                 />
                                             ) : column.type === 'date' ? (
-                                                <DateInput value={row.values[column.name]} columnName={column.name} onChange={onChange} />
+                                                <DateInput value={row.values[column.name]} columnName={column.name} onChange={onChange} allowed={allowed} />
                                             ) : column.type === 'reference' ? (
                                                 <Reference
                                                     column={column !== undefined ? column : {}}
                                                     refs={row.refs && row.refs[column.name] !== undefined ? row.refs[column.name] : []}
                                                     onRefChange={onRefChange}
                                                     onRemoveRef={onRemoveRef}
+                                                    allowed={allowed}
                                                 />
                                             ) : (
-                                                <TextInput id={row._id} columnName={column.name} value={row.values[column.name]} onChange={onChange} />
+                                                <TextInput
+                                                    id={row._id}
+                                                    columnName={column.name}
+                                                    value={row.values[column.name]}
+                                                    onChange={onChange}
+                                                    allowed={allowed}
+                                                />
                                             )}
                                             {/* {row.values[column.name]} */}
                                         </div>

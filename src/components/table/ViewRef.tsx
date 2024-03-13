@@ -16,10 +16,11 @@ interface IProps {
     columns: any;
     rowData: any;
     value: any;
+    allowed?: boolean;
     // handleChange?: any;
 }
 
-const ViewRef = ({ columns, rowData, value }: IProps) => {
+const ViewRef = ({ columns, rowData, value, allowed = false }: IProps) => {
     const { id, dataCollectionId } = useParams();
     const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -141,6 +142,7 @@ const ViewRef = ({ columns, rowData, value }: IProps) => {
                                         columnName={column.name}
                                         value={row ? row.values[column.name] : ''}
                                         onChange={onChange}
+                                        allowed={allowed}
                                     />
                                 ) : column.type === 'people' ? (
                                     <PeopleMenu
@@ -149,6 +151,7 @@ const ViewRef = ({ columns, rowData, value }: IProps) => {
                                         people={column.people}
                                         value={row ? row.values[column.name] : ''}
                                         onChange={onChange}
+                                        allowed={allowed}
                                     />
                                 ) : column.type === 'date' ? (
                                     <DateInput value={row ? row.values[column.name] : ''} columnName={column.name} onChange={onChange} />
@@ -159,6 +162,7 @@ const ViewRef = ({ columns, rowData, value }: IProps) => {
                                         value={row ? row.values[column.name] : ''}
                                         type="form"
                                         onChange={onChange}
+                                        allowed={allowed}
                                     />
                                 )}
                                 {/* {row.values[column.name]} */}

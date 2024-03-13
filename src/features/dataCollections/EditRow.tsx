@@ -15,9 +15,10 @@ interface IProps {
     columns: any;
     row: any;
     handleChange?: any;
+    allowed?: boolean;
 }
 
-const EditRow = ({ columns, row, handleChange }: IProps) => {
+const EditRow = ({ columns, row, handleChange, allowed = false }: IProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
@@ -106,13 +107,34 @@ const EditRow = ({ columns, row, handleChange }: IProps) => {
                                     .split('_')
                                     .join(' ')}`}</Text>
                                 {column.type === 'label' || column.type === 'priority' || column.type === 'status' ? (
-                                    <LabelMenu id={0} labels={column.labels} columnName={column.name} value={row.values[column.name]} onChange={onChange} />
+                                    <LabelMenu
+                                        id={0}
+                                        labels={column.labels}
+                                        columnName={column.name}
+                                        value={row.values[column.name]}
+                                        onChange={onChange}
+                                        allowed={allowed}
+                                    />
                                 ) : column.type === 'people' ? (
-                                    <PeopleMenu row={row} columnName={column.name} people={column.people} value={row.values[column.name]} onChange={onChange} />
+                                    <PeopleMenu
+                                        row={row}
+                                        columnName={column.name}
+                                        people={column.people}
+                                        value={row.values[column.name]}
+                                        onChange={onChange}
+                                        allowed={allowed}
+                                    />
                                 ) : column.type === 'date' ? (
-                                    <DateInput value={row.values[column.name]} columnName={column.name} onChange={onChange} />
+                                    <DateInput value={row.values[column.name]} columnName={column.name} onChange={onChange} allowed={allowed} />
                                 ) : (
-                                    <TextInput id={row._id} columnName={column.name} value={row.values[column.name]} type="form" onChange={onChange} />
+                                    <TextInput
+                                        id={row._id}
+                                        columnName={column.name}
+                                        value={row.values[column.name]}
+                                        type="form"
+                                        onChange={onChange}
+                                        allowed={allowed}
+                                    />
                                 )}
                                 {/* {row.values[column.name]} */}
                             </Box>

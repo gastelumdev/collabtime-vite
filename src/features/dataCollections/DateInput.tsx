@@ -4,11 +4,11 @@ import { useEffect, useState } from 'react';
 interface IProps {
     value: string;
     columnName: string;
-    permissions?: any;
     onChange: any;
+    allowed?: boolean;
 }
 
-const DateInput = ({ value, columnName, permissions = 4, onChange }: IProps) => {
+const DateInput = ({ value, columnName, onChange, allowed = false }: IProps) => {
     // const [updateCell] = useUpdateCellMutation();
     const [inputValue, setInputValue] = useState<string>(value);
 
@@ -39,8 +39,8 @@ const DateInput = ({ value, columnName, permissions = 4, onChange }: IProps) => 
                 variant={'unstyled'}
                 onChange={handleInputChange}
                 // onBlur={handleUpdateRowOnBlur}
-                isReadOnly={!((permissions || 0) > 1)}
-                cursor={(permissions || 0) > 1 ? 'text' : 'default'}
+                isReadOnly={!allowed}
+                cursor={allowed ? 'text' : 'default'}
                 textOverflow={'ellipsis'}
                 fontSize={'12px'}
             />

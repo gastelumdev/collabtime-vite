@@ -37,7 +37,7 @@ const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) =>
     }, [rowsData]);
 
     useEffect(() => {
-        permissions;
+        // permissions;
         getPermissions();
     }, [user]);
 
@@ -94,6 +94,7 @@ const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) =>
                 updateColumn={handleColumnUpdate}
                 reorderColumns={handleReorderColumns}
                 showDoneRows={showDoneRows}
+                allowed={(permissions || 0) > 1}
             />
         </Box>
     );

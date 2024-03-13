@@ -14,12 +14,13 @@ interface IProps {
     columnName: string;
     value: string;
     onChange: any;
+    allowed?: boolean;
     // label?: string;
     // bgColor?: string;
     // options: { value: string; label: string; color: string }[] | undefined;
 }
 
-const LabelMenu = ({ columnName, labels, value = '', onChange }: IProps) => {
+const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false }: IProps) => {
     const { onClose } = useDisclosure();
     // const [updateRow] = useUpdateRowMutation();
 
@@ -75,7 +76,7 @@ const LabelMenu = ({ columnName, labels, value = '', onChange }: IProps) => {
 
     return (
         <>
-            {active ? (
+            {active && allowed ? (
                 <div
                 // onBlur={(event: React.FocusEvent<HTMLDivElement, Element>) => {
                 //     setActive(false);

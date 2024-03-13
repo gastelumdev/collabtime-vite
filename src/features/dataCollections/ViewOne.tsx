@@ -6,6 +6,7 @@ import {
     useGetDataCollectionsQuery,
     useGetOneWorkspaceQuery,
     useGetRowsQuery,
+    useGetUserQuery,
     useSendFormMutation,
     useUpdateColumnMutation,
     useUpdateDataCollectionMutation,
@@ -59,6 +60,7 @@ const ViewOne = () => {
     const toast = useToast();
     const finalRef = useRef<any>(null);
 
+    const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
     const { data: dataCollection } = useGetDataCollectionQuery(dataCollectionId || '');
     const { data: workspace, isFetching: workspaceIsFetching } = useGetOneWorkspaceQuery(localStorage.getItem('workspaceId') || '');
     const { data: rows } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
@@ -92,6 +94,20 @@ const ViewOne = () => {
     );
 
     const [showDoneRows, setShowDoneRows] = useState<boolean>(false);
+
+    const [permissions, setPermissions] = useState<number>();
+
+    useEffect(() => {
+        getPermissions();
+    }, [user]);
+
+    const getPermissions = () => {
+        for (const workspace of user?.workspaces || []) {
+            if (workspace.id == localStorage.getItem('workspaceId')) {
+                setPermissions(workspace.permissions);
+            }
+        }
+    };
 
     useEffect(() => {
         for (const column of columns || []) {
@@ -272,39 +288,41 @@ const ViewOne = () => {
                                             </Text>
                                         </Box>
                                     </Flex>
-                                    <Flex>
-                                        <Spacer />
-                                        <Box mr={'5px'}>
-                                            <PrimaryButton
-                                                onClick={() => {
-                                                    console.log(showDoneRows);
-                                                    setShowDoneRows(!showDoneRows);
-                                                }}
-                                                size="sm"
-                                            >
-                                                {`${showDoneRows ? 'Hide' : 'Show'} Done`}
-                                            </PrimaryButton>
-                                        </Box>
-                                        <Box mr={'5px'}>
-                                            <PrimaryButton onClick={onOpenFormDrawer} size="sm">
-                                                Form
-                                            </PrimaryButton>
-                                        </Box>
-                                        {!isTemplate ? (
+                                    {(permissions || 0) > 1 ? (
+                                        <Flex>
+                                            <Spacer />
                                             <Box mr={'5px'}>
-                                                <PrimaryButton onClick={onOpen} size="sm">
-                                                    <AddIcon style={{ marginRight: '4px' }} /> Template
+                                                <PrimaryButton
+                                                    onClick={() => {
+                                                        console.log(showDoneRows);
+                                                        setShowDoneRows(!showDoneRows);
+                                                    }}
+                                                    size="sm"
+                                                >
+                                                    {`${showDoneRows ? 'Hide' : 'Show'} Done`}
                                                 </PrimaryButton>
                                             </Box>
-                                        ) : null}
-                                        <Box>
-                                            {valuesForExport !== undefined ? (
-                                                <PrimaryButton size="sm">
-                                                    <CSVLink data={valuesForExport}>Export</CSVLink>
+                                            <Box mr={'5px'}>
+                                                <PrimaryButton onClick={onOpenFormDrawer} size="sm">
+                                                    Form
                                                 </PrimaryButton>
+                                            </Box>
+                                            {!isTemplate ? (
+                                                <Box mr={'5px'}>
+                                                    <PrimaryButton onClick={onOpen} size="sm">
+                                                        <AddIcon style={{ marginRight: '4px' }} /> Template
+                                                    </PrimaryButton>
+                                                </Box>
                                             ) : null}
-                                        </Box>
-                                    </Flex>
+                                            <Box>
+                                                {valuesForExport !== undefined ? (
+                                                    <PrimaryButton size="sm">
+                                                        <CSVLink data={valuesForExport}>Export</CSVLink>
+                                                    </PrimaryButton>
+                                                ) : null}
+                                            </Box>
+                                        </Flex>
+                                    ) : null}
                                 </SimpleGrid>
                             </CardHeader>
                             <CardBody p={'0'}>

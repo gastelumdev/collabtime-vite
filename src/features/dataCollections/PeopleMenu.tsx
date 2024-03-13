@@ -16,12 +16,13 @@ interface IProps {
     people: TUser[];
     value: string;
     onChange: any;
+    allowed?: boolean;
     // label?: string;
     // bgColor?: string;
     // options: { value: string; label: string; color: string }[] | undefined;
 }
 
-const PeopleMenu = ({ row, columnName, people, value = '', onChange }: IProps) => {
+const PeopleMenu = ({ row, columnName, people, value = '', onChange, allowed = false }: IProps) => {
     const { onClose } = useDisclosure();
     // const [updateRow] = useUpdateRowMutation();
 
@@ -77,7 +78,7 @@ const PeopleMenu = ({ row, columnName, people, value = '', onChange }: IProps) =
 
     return (
         <>
-            {active ? (
+            {active && allowed ? (
                 <div
                 // onBlur={(event: React.FocusEvent<HTMLDivElement, Element>) => {
                 //     setActive(false);

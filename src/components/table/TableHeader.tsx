@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import { memo, useCallback, useEffect, useState, useTransition } from 'react';
 import CreateColumn from '../../features/dataCollections/CreateColumn';
 import { TColumn } from '../../types';
@@ -18,6 +18,7 @@ interface IProps {
     handleAddNewColumnToRows: any;
     handleRemoveColumnFormRows: any;
     deleteColumn: any;
+    allowed?: boolean;
 }
 
 const TableHeader = ({
@@ -33,6 +34,7 @@ const TableHeader = ({
     handleAddNewColumnToRows,
     handleRemoveColumnFormRows,
     deleteColumn,
+    allowed = false,
 }: IProps) => {
     const [currentColumns, setCurrentColumns] = useState(columns);
     // ******************* COLUMN REORDERING ******************************
@@ -311,7 +313,7 @@ const TableHeader = ({
                             style={{
                                 height: '39px',
                                 padding: '0px 20px',
-                                cursor: columnIndex !== 0 ? 'grab' : 'default',
+                                cursor: columnIndex !== 0 && allowed ? 'grab' : 'default',
                                 zIndex: `${100 - columnIndex}`,
                                 backgroundColor: draggedColumnIndex === columnIndex ? '#edf2f7' : 'unset',
                                 borderLeft:
@@ -338,8 +340,9 @@ const TableHeader = ({
                                         overflow: 'hidden',
                                         whiteSpace: 'nowrap',
                                         textOverflow: 'ellipsis',
+                                        cursor: !allowed ? 'default' : 'grab',
                                     }}
-                                    draggable={columnIndex !== 0}
+                                    draggable={columnIndex !== 0 && allowed}
                                     onDragStart={() => handleDragStart(columnIndex)}
                                     onDragOver={(event) => handleDragOver(event, columnIndex)}
                                     onDragEnd={() => handleDragEnd()}
@@ -347,7 +350,14 @@ const TableHeader = ({
                                     onDragLeave={() => handleDragLeave(columnIndex)}
                                     onClick={() => console.log('HEADER CLICKED')}
                                 >
-                                    <ColumnMenu column={column} handleDeleteColumn={handleDeleteColumn} index={columnIndex} />
+                                    {allowed ? (
+                                        <ColumnMenu column={column} handleDeleteColumn={handleDeleteColumn} index={columnIndex} />
+                                    ) : (
+                                        <Text fontSize={'14px'} fontWeight={'medium'} color={'#666666'}>{`${column.name[0].toUpperCase()}${column.name
+                                            .slice(1, column.name.length)
+                                            .split('_')
+                                            .join(' ')}`}</Text>
+                                    )}
                                 </div>
                             ) : (
                                 <div
@@ -369,7 +379,14 @@ const TableHeader = ({
                                     // onDragLeave={() => handleDragLeave(columnIndex)}
                                     // onClick={() => console.log('HEADER CLICKED')}
                                 >
-                                    <ColumnMenu column={column} handleDeleteColumn={handleDeleteColumn} index={columnIndex} />
+                                    {allowed ? (
+                                        <ColumnMenu column={column} handleDeleteColumn={handleDeleteColumn} index={columnIndex} />
+                                    ) : (
+                                        <Text fontSize={'14px'} fontWeight={'medium'} color={'#666666'}>{`${column.name[0].toUpperCase()}${column.name
+                                            .slice(1, column.name.length)
+                                            .split('_')
+                                            .join(' ')}`}</Text>
+                                    )}
                                 </div>
                             )}
                             {/* Resize column box */}
@@ -393,7 +410,7 @@ const TableHeader = ({
                         padding: '0px 20px',
                     }}
                 >
-                    <CreateColumn columns={columns} createColumn={handleAddColumn} />
+                    {allowed ? <CreateColumn columns={columns} createColumn={handleAddColumn} /> : null}
                 </span>
             </div>
         </div>

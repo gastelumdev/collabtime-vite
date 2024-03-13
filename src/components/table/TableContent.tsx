@@ -19,6 +19,7 @@ interface IProps {
     handleReorderRows: any;
     rowCallUpdate: any;
     showDoneRows?: boolean;
+    allowed?: boolean;
 }
 
 const TableContent = ({
@@ -35,6 +36,7 @@ const TableContent = ({
     handleDeleteBoxChange,
     rowCallUpdate,
     showDoneRows = false,
+    allowed = false,
 }: IProps) => {
     const ref = useRef<HTMLDivElement | null>(null);
     const [gridTemplateColumns, setGridTemplateColumns] = useState('');
@@ -554,6 +556,7 @@ const TableContent = ({
                                     handleDeleteBoxChange={handleDeleteBoxChangeForRow}
                                     handleSubrowVisibility={handleSubrowVisibility}
                                     rowCallUpdate={rowCallUpdate}
+                                    allowed={allowed}
                                 />
                             </div>
                             <div></div>
