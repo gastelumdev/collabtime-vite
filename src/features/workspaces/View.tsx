@@ -187,6 +187,7 @@ const View = () => {
                                                 ) : null
                                             }
                                             handleCloseTagButtonClick={handleCloseTagButtonClick}
+                                            allowed={workspace?.owner === localStorage.getItem('userId') || isAuthorized}
                                         />
                                     );
                                 })}

@@ -15,9 +15,21 @@ interface IProps {
     handleCloseTagButtonClick?: any;
     redirectUrl: string;
     localStorageId: string;
+    allowed?: boolean;
 }
 
-const PrimaryCard = ({ index, data, divider = false, editButton, deleteButton, tagButton, handleCloseTagButtonClick, redirectUrl, localStorageId }: IProps) => {
+const PrimaryCard = ({
+    index,
+    data,
+    divider = false,
+    editButton,
+    deleteButton,
+    tagButton,
+    handleCloseTagButtonClick,
+    redirectUrl,
+    localStorageId,
+    allowed = false,
+}: IProps) => {
     const [showToolbar, setShowToolbar] = useState(false);
     return (
         <Card
@@ -89,7 +101,7 @@ const PrimaryCard = ({ index, data, divider = false, editButton, deleteButton, t
                             <WrapItem key={index}>
                                 <Tag size={'sm'} variant="subtle" colorScheme="blue" mr={'5px'} zIndex={1000}>
                                     <TagLabel pb={'2px'}>{tag.name}</TagLabel>
-                                    <TagCloseButton onClick={() => handleCloseTagButtonClick(data, tag)} zIndex={1000} />
+                                    {allowed ? <TagCloseButton onClick={() => handleCloseTagButtonClick(data, tag)} zIndex={1000} /> : null}
                                 </Tag>
                             </WrapItem>
                         );
