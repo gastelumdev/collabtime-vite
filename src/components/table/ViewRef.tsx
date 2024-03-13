@@ -100,7 +100,7 @@ const ViewRef = ({ columns, rowData, value, allowed = false }: IProps) => {
             <PrimaryDrawer onClose={onClose} isOpen={isOpen} title={'Edit row'}>
                 <Flex>
                     <Box mr={'10px'}>
-                        <NoteModal row={row} updateRow={handleUpdateRow} />
+                        <NoteModal row={row} updateRow={handleUpdateRow} allowed={allowed} />
                     </Box>
                     <Box>
                         <UploadModal
@@ -108,6 +108,7 @@ const ViewRef = ({ columns, rowData, value, allowed = false }: IProps) => {
                             getDocs={getDocs}
                             getUpdatedDoc={getUpdatedDoc}
                             removeDoc={removeDoc}
+                            allowed={allowed}
                         />
                     </Box>
                     <Spacer />
