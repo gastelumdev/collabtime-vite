@@ -40,7 +40,7 @@ import { Link } from 'react-router-dom';
 import Delete from './Delete';
 import Templates from './Templates';
 
-const ViewList = () => {
+const ViewList = ({ allowed = false }: { allowed?: boolean }) => {
     // const [data, setData] = useState<TDataCollection[]>(dataCollections);
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
     const { data } = useGetDataCollectionsQuery(null);
@@ -136,21 +136,23 @@ const ViewList = () => {
                                         </Text>
                                     </Box>
                                 </Flex>
-                                <Flex>
-                                    <Spacer />
-                                    <Box pb={'20px'} mr={'10px'}>
-                                        <Templates />
-                                    </Box>
-                                    <Box pb={'20px'}>
-                                        <Create addNewDataCollection={createDataCollection} />
-                                    </Box>
-                                </Flex>
+                                {allowed ? (
+                                    <Flex>
+                                        <Spacer />
+                                        <Box pb={'20px'} mr={'10px'}>
+                                            <Templates />
+                                        </Box>
+                                        <Box pb={'20px'}>
+                                            <Create addNewDataCollection={createDataCollection} />
+                                        </Box>
+                                    </Flex>
+                                ) : null}
                             </SimpleGrid>
                             <TableContainer>
                                 <Table size="sm">
                                     <Thead>
                                         <Tr>
-                                            <Th></Th>
+                                            {allowed ? <Th></Th> : null}
                                             <Th color={'#666666'} fontWeight={'semibold'}>
                                                 Name
                                             </Th>
@@ -165,17 +167,19 @@ const ViewList = () => {
                                         {data?.map((dataCollection: any, index: number) => {
                                             return (
                                                 <Tr key={index}>
-                                                    <Td w={'120px'}>
-                                                        <Edit dataCollection={dataCollection} updateDataCollection={updateDataCollection} />
-                                                        <Delete dataCollection={dataCollection} deleteDataCollection={deleteDataCollection} />
-                                                        <TagsModal
-                                                            tagType={'dataCollection'}
-                                                            data={dataCollection}
-                                                            tags={dataCollection.tags}
-                                                            update={updateDataCollection}
-                                                            workspaceId={workspace?._id || ''}
-                                                        />
-                                                    </Td>
+                                                    {allowed ? (
+                                                        <Td w={'120px'}>
+                                                            <Edit dataCollection={dataCollection} updateDataCollection={updateDataCollection} />
+                                                            <Delete dataCollection={dataCollection} deleteDataCollection={deleteDataCollection} />
+                                                            <TagsModal
+                                                                tagType={'dataCollection'}
+                                                                data={dataCollection}
+                                                                tags={dataCollection.tags}
+                                                                update={updateDataCollection}
+                                                                workspaceId={workspace?._id || ''}
+                                                            />
+                                                        </Td>
+                                                    ) : null}
                                                     <Td>
                                                         <Link to={`/workspaces/${workspace?._id}/dataCollections/${dataCollection._id}`}>
                                                             <Text fontSize={'13px'} color={'#666666'}>
@@ -192,10 +196,12 @@ const ViewList = () => {
                                                             return (
                                                                 <Tag key={index} size={'sm'} variant="subtle" colorScheme="blue" mr={'5px'} zIndex={1000}>
                                                                     <TagLabel pb={'2px'}>{tag.name}</TagLabel>
-                                                                    <TagCloseButton
-                                                                        onClick={() => handleCloseTagButtonClick(dataCollection, tag)}
-                                                                        zIndex={1000}
-                                                                    />
+                                                                    {allowed ? (
+                                                                        <TagCloseButton
+                                                                            onClick={() => handleCloseTagButtonClick(dataCollection, tag)}
+                                                                            zIndex={1000}
+                                                                        />
+                                                                    ) : null}
                                                                 </Tag>
                                                             );
                                                         })}

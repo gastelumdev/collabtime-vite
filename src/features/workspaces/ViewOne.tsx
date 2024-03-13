@@ -158,7 +158,7 @@ const ViewOne = () => {
                             ) : null}
                         </SimpleGrid> */}
                         <Box>
-                            <ViewList />
+                            <ViewList allowed={(permissions || 0) > 1} />
                         </Box>
                     </Container>
                 </Flex>
