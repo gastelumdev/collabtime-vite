@@ -99,6 +99,10 @@ const TableContent = ({
     }, [rows, showDoneRows]);
 
     useEffect(() => {
+        console.log(rows);
+    }, [rows]);
+
+    useEffect(() => {
         setGridTemplateColumns(gridTemplateColumnsIn);
     }, [gridTemplateColumnsIn]);
 
