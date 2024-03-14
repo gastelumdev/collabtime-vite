@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { useGetColumnsQuery, useGetRowsQuery, useGetUserQuery, useReorderColumnsMutation, useUpdateColumnMutation } from '../../app/services/api';
 import { useParams } from 'react-router-dom';
 import { Box } from '@chakra-ui/react';
@@ -100,5 +100,5 @@ const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) =>
     );
 };
 
-// export default memo(DataCollection);
-export default DataCollection;
+export default memo(DataCollection);
+// export default DataCollection;
