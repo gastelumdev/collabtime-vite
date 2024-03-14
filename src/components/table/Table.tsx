@@ -13,7 +13,7 @@ import {
     useUpdateRowMutation,
 } from '../../app/services/api';
 import { Box, Center, Flex, Spacer, Text } from '@chakra-ui/react';
-import { ArrowDownIcon, ArrowUpIcon, DeleteIcon } from '@chakra-ui/icons';
+import { DeleteIcon } from '@chakra-ui/icons';
 
 interface ITableProps {
     rowsData: any[];
@@ -263,171 +263,171 @@ const Table = ({
         [columns]
     );
 
-    const setAsMainrow = useCallback(() => {
-        let currentParentId: any = null;
-        // let updatedRow: any = null;
-        // let setToParent = false;
-        // let removeParent = false;
-        let currentParent: any = null;
-        let subrowCount = 1;
+    // const setAsMainrow = useCallback(() => {
+    //     let currentParentId: any = null;
+    //     // let updatedRow: any = null;
+    //     // let setToParent = false;
+    //     // let removeParent = false;
+    //     let currentParent: any = null;
+    //     let subrowCount = 1;
 
-        let potentialParent: any = null;
+    //     let potentialParent: any = null;
 
-        const makeAsParents: any = [];
-        const removeAsParents: any = [];
+    //     const makeAsParents: any = [];
+    //     const removeAsParents: any = [];
 
-        // let searchForSubrows = false;
+    //     // let searchForSubrows = false;
 
-        setRows((prevRows) =>
-            prevRows.map((prevRow) => {
-                const isParent = prevRow.isParent && (prevRow.parentRowId === undefined || prevRow.parentRowId === null);
-                const isChild = prevRow.parentRowId !== null && prevRow.parentRowId !== undefined;
-                // if current row is checked
-                if (prevRow.checked) {
-                    // if it is not a main row
-                    if (!isParent) {
-                        // if it is a child
-                        if (isChild) {
-                            // Set the current parent id to the current's row id so if the next row is a subrow
-                            // we can set it's id to this new parent
-                            currentParentId = prevRow._id;
+    //     setRows((prevRows) =>
+    //         prevRows.map((prevRow) => {
+    //             const isParent = prevRow.isParent && (prevRow.parentRowId === undefined || prevRow.parentRowId === null);
+    //             const isChild = prevRow.parentRowId !== null && prevRow.parentRowId !== undefined;
+    //             // if current row is checked
+    //             if (prevRow.checked) {
+    //                 // if it is not a main row
+    //                 if (!isParent) {
+    //                     // if it is a child
+    //                     if (isChild) {
+    //                         // Set the current parent id to the current's row id so if the next row is a subrow
+    //                         // we can set it's id to this new parent
+    //                         currentParentId = prevRow._id;
 
-                            potentialParent = prevRow;
-                            // searchForSubrows = true;
+    //                         potentialParent = prevRow;
+    //                         // searchForSubrows = true;
 
-                            if (subrowCount === 1) {
-                                // removeParent = true;
-                                removeAsParents.push(currentParent);
-                            }
+    //                         if (subrowCount === 1) {
+    //                             // removeParent = true;
+    //                             removeAsParents.push(currentParent);
+    //                         }
 
-                            subrowCount = subrowCount + 1;
-                        }
-                        // keep track of updated row
-                        // updatedRow = prevRow;
-                        // And set its properties to that of a parent row
-                        updateRow({ ...prevRow, parentRowId: null, checked: false, isParent: false });
-                        return { ...prevRow, parentRowId: null, checked: false, isParent: false };
-                    } else {
-                        return { ...prevRow, checked: false };
-                    }
-                } else {
-                    // if we have an unchecked row that is a parent row
-                    if (isParent) {
-                        // we set parent id to null
-                        currentParentId = null;
-                        currentParent = prevRow;
+    //                         subrowCount = subrowCount + 1;
+    //                     }
+    //                     // keep track of updated row
+    //                     // updatedRow = prevRow;
+    //                     // And set its properties to that of a parent row
+    //                     updateRow({ ...prevRow, parentRowId: null, checked: false, isParent: false });
+    //                     return { ...prevRow, parentRowId: null, checked: false, isParent: false };
+    //                 } else {
+    //                     return { ...prevRow, checked: false };
+    //                 }
+    //             } else {
+    //                 // if we have an unchecked row that is a parent row
+    //                 if (isParent) {
+    //                     // we set parent id to null
+    //                     currentParentId = null;
+    //                     currentParent = prevRow;
 
-                        // searchForSubrows = false;
+    //                     // searchForSubrows = false;
 
-                        subrowCount = 1;
-                    }
+    //                     subrowCount = 1;
+    //                 }
 
-                    // if we have an unchecked child row and a parent id has been previously set from one of the newly rows set to parent
-                    // we will need to set that row as a parent at a later time since during that iteration, that row was unaware that the next rows
-                    // were children rows
-                    // We also update this row to have the parent id of the row that was checked and set as a parent.
-                    if (isChild) {
-                        if (currentParentId !== null) {
-                            // setToParent = true;
-                            makeAsParents.push(potentialParent);
-                            updateRow({ ...prevRow, parentRowId: currentParentId });
-                            return { ...prevRow, parentRowId: currentParentId };
-                        }
-                        subrowCount = subrowCount + 1;
-                    }
-                }
+    //                 // if we have an unchecked child row and a parent id has been previously set from one of the newly rows set to parent
+    //                 // we will need to set that row as a parent at a later time since during that iteration, that row was unaware that the next rows
+    //                 // were children rows
+    //                 // We also update this row to have the parent id of the row that was checked and set as a parent.
+    //                 if (isChild) {
+    //                     if (currentParentId !== null) {
+    //                         // setToParent = true;
+    //                         makeAsParents.push(potentialParent);
+    //                         updateRow({ ...prevRow, parentRowId: currentParentId });
+    //                         return { ...prevRow, parentRowId: currentParentId };
+    //                     }
+    //                     subrowCount = subrowCount + 1;
+    //                 }
+    //             }
 
-                return prevRow;
-            })
-        );
+    //             return prevRow;
+    //         })
+    //     );
 
-        const removeAsParentsIds = removeAsParents.map((row: any) => {
-            return row._id;
-        });
+    //     const removeAsParentsIds = removeAsParents.map((row: any) => {
+    //         return row._id;
+    //     });
 
-        const makeAsParentsIds = makeAsParents.map((row: any) => {
-            return row._id;
-        });
+    //     const makeAsParentsIds = makeAsParents.map((row: any) => {
+    //         return row._id;
+    //     });
 
-        setRows((prevRows) =>
-            prevRows.map((prevRow) => {
-                if (removeAsParentsIds.includes(prevRow._id)) updateRow({ ...prevRow, isParent: false, parentRowId: null, showSubrows: true });
-                return removeAsParentsIds.includes(prevRow._id) ? { ...prevRow, isParent: false, parentRowId: null, showSubrows: true } : prevRow;
-            })
-        );
+    //     setRows((prevRows) =>
+    //         prevRows.map((prevRow) => {
+    //             if (removeAsParentsIds.includes(prevRow._id)) updateRow({ ...prevRow, isParent: false, parentRowId: null, showSubrows: true });
+    //             return removeAsParentsIds.includes(prevRow._id) ? { ...prevRow, isParent: false, parentRowId: null, showSubrows: true } : prevRow;
+    //         })
+    //     );
 
-        setRows((prevRows) =>
-            prevRows.map((prevRow) => {
-                if (makeAsParentsIds.includes(prevRow._id)) updateRow({ ...prevRow, isParent: true, parentRowId: null });
-                return makeAsParentsIds.includes(prevRow._id) ? { ...prevRow, isParent: true, parentRowId: null } : prevRow;
-            })
-        );
+    //     setRows((prevRows) =>
+    //         prevRows.map((prevRow) => {
+    //             if (makeAsParentsIds.includes(prevRow._id)) updateRow({ ...prevRow, isParent: true, parentRowId: null });
+    //             return makeAsParentsIds.includes(prevRow._id) ? { ...prevRow, isParent: true, parentRowId: null } : prevRow;
+    //         })
+    //     );
 
-        // if (setToParent) updateRow({ ...updatedRow, isParent: true, parentRowId: null });
-        // if (removeParent && currentParent !== null) updateRow({ ...currentParent, isParent: false, parentRowId: null });
+    //     // if (setToParent) updateRow({ ...updatedRow, isParent: true, parentRowId: null });
+    //     // if (removeParent && currentParent !== null) updateRow({ ...currentParent, isParent: false, parentRowId: null });
 
-        setNumberOfDeleteItems(0);
-    }, [rows]);
+    //     setNumberOfDeleteItems(0);
+    // }, [rows]);
 
-    const setAsSubrow = useCallback(() => {
-        let parentRowIds: any = [];
-        let potentialParent: any = null;
-        const newParents: any = [];
+    // const setAsSubrow = useCallback(() => {
+    //     let parentRowIds: any = [];
+    //     let potentialParent: any = null;
+    //     const newParents: any = [];
 
-        let currentParentId: any = null;
-        let isChecking: any = false;
-        let prevSubrowIsVisible = true;
+    //     let currentParentId: any = null;
+    //     let isChecking: any = false;
+    //     let prevSubrowIsVisible = true;
 
-        setRows((prevRows) =>
-            prevRows.map((prevRow, index) => {
-                // const isParent = prevRow.isParent && (prevRow.parentRowId === undefined || prevRow.parentRowId === null);
-                const isChild = prevRow.parentRowId !== null && prevRow.parentRowId !== undefined;
+    //     setRows((prevRows) =>
+    //         prevRows.map((prevRow, index) => {
+    //             // const isParent = prevRow.isParent && (prevRow.parentRowId === undefined || prevRow.parentRowId === null);
+    //             const isChild = prevRow.parentRowId !== null && prevRow.parentRowId !== undefined;
 
-                // console.log({ isParent, isChild, currentParentId, isChecking });
+    //             // console.log({ isParent, isChild, currentParentId, isChecking });
 
-                if (prevRow.checked) {
-                    if (index !== 0) {
-                        if (potentialParent !== null) {
-                            if (newParents.length === 0 || newParents[newParents.length - 1].position !== potentialParent.position) {
-                                newParents.push(potentialParent);
-                                parentRowIds.push(potentialParent._id);
-                            }
-                        }
+    //             if (prevRow.checked) {
+    //                 if (index !== 0) {
+    //                     if (potentialParent !== null) {
+    //                         if (newParents.length === 0 || newParents[newParents.length - 1].position !== potentialParent.position) {
+    //                             newParents.push(potentialParent);
+    //                             parentRowIds.push(potentialParent._id);
+    //                         }
+    //                     }
 
-                        isChecking = true;
-                        updateRow({ ...prevRow, isParent: false, parentRowId: currentParentId, checked: false, isVisible: prevSubrowIsVisible });
-                        return { ...prevRow, isParent: false, parentRowId: currentParentId, checked: false, isVisible: prevSubrowIsVisible };
-                    } else {
-                        return { ...prevRow, checked: false };
-                    }
-                } else {
-                    if (isChild) {
-                        if (isChecking) {
-                            updateRow({ ...prevRow, parentRowId: currentParentId });
-                            return { ...prevRow, parentRowId: currentParentId };
-                        } else {
-                            currentParentId = prevRow.parentRowId;
-                        }
-                    } else {
-                        currentParentId = prevRow._id;
-                        potentialParent = prevRow;
-                        isChecking = false;
-                    }
-                }
-                prevSubrowIsVisible = prevRow.isVisible;
-                return prevRow;
-            })
-        );
+    //                     isChecking = true;
+    //                     updateRow({ ...prevRow, isParent: false, parentRowId: currentParentId, checked: false, isVisible: prevSubrowIsVisible });
+    //                     return { ...prevRow, isParent: false, parentRowId: currentParentId, checked: false, isVisible: prevSubrowIsVisible };
+    //                 } else {
+    //                     return { ...prevRow, checked: false };
+    //                 }
+    //             } else {
+    //                 if (isChild) {
+    //                     if (isChecking) {
+    //                         updateRow({ ...prevRow, parentRowId: currentParentId });
+    //                         return { ...prevRow, parentRowId: currentParentId };
+    //                     } else {
+    //                         currentParentId = prevRow.parentRowId;
+    //                     }
+    //                 } else {
+    //                     currentParentId = prevRow._id;
+    //                     potentialParent = prevRow;
+    //                     isChecking = false;
+    //                 }
+    //             }
+    //             prevSubrowIsVisible = prevRow.isVisible;
+    //             return prevRow;
+    //         })
+    //     );
 
-        setRows((prevRows) =>
-            prevRows.map((prevRow) => {
-                if (parentRowIds.includes(prevRow._id)) updateRow({ ...prevRow, isParent: true });
-                return parentRowIds.includes(prevRow._id) ? { ...prevRow, isParent: true } : prevRow;
-            })
-        );
+    //     setRows((prevRows) =>
+    //         prevRows.map((prevRow) => {
+    //             if (parentRowIds.includes(prevRow._id)) updateRow({ ...prevRow, isParent: true });
+    //             return parentRowIds.includes(prevRow._id) ? { ...prevRow, isParent: true } : prevRow;
+    //         })
+    //     );
 
-        setNumberOfDeleteItems(0);
-    }, [rows]);
+    //     setNumberOfDeleteItems(0);
+    // }, [rows]);
 
     return (
         <div id={'data-collection-table'} className={'table'} style={{ position: 'relative' }}>
@@ -448,10 +448,7 @@ const Table = ({
                             <Text>{`${numberOfDeleteItems} Selected`}</Text>
                         </Box>
                         <Spacer />
-                        <Box pt={'30px'} pr={'30px'} onClick={setAsMainrow} cursor={'pointer'}>
-                            {/* <Button colorScheme="blue" mb={'10px'}>
-                                Sub Item
-                            </Button> */}
+                        {/* <Box pt={'30px'} pr={'30px'} onClick={setAsMainrow} cursor={'pointer'}>
                             <Center mb={'10px'}>
                                 <Text>
                                     <ArrowUpIcon />
@@ -463,9 +460,6 @@ const Table = ({
                         </Box>
 
                         <Box pt={'30px'} pr={'30px'} onClick={setAsSubrow} cursor={'pointer'}>
-                            {/* <Button colorScheme="blue" mb={'10px'}>
-                                Sub Item
-                            </Button> */}
                             <Center mb={'10px'}>
                                 <Text>
                                     <ArrowDownIcon />
@@ -474,7 +468,7 @@ const Table = ({
                             <Center>
                                 <Text>Sub Item</Text>
                             </Center>
-                        </Box>
+                        </Box> */}
                         {/* <Spacer /> */}
                         <Box pt={'30px'} pr={'30px'} onClick={deleteItems}>
                             {/* <Button colorScheme="red" mb={'10px'}>
