@@ -33,6 +33,7 @@ import {
     useDeleteTagMutation,
     useGetDocumentsQuery,
     useGetOneWorkspaceQuery,
+    useGetUserQuery,
     useTagExistsMutation,
     useUpdateDocumentMutation,
     useUpdateWorkspaceMutation,
@@ -47,8 +48,10 @@ import UploadModal from './UploadModal';
 import DocDrawer from './DocDrawer';
 import DeleteFileAlert from './DeleteFileAlert';
 import UpdateFileModal from './UpdateFileModal';
+import { useEffect, useState } from 'react';
 
 const View = () => {
+    const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
     const { data: documents } = useGetDocumentsQuery(null);
     const { data: workspace, isFetching } = useGetOneWorkspaceQuery(localStorage.getItem('workspaceId') || '');
 
@@ -58,6 +61,20 @@ const View = () => {
 
     const [deleteTag] = useDeleteTagMutation();
     const [tagExists] = useTagExistsMutation();
+
+    const [permissions, setPermissions] = useState<number>();
+
+    useEffect(() => {
+        getPermissions();
+    }, [user]);
+
+    const getPermissions = () => {
+        for (const workspace of user?.workspaces || []) {
+            if (workspace.id == localStorage.getItem('workspaceId')) {
+                setPermissions(workspace.permissions);
+            }
+        }
+    };
 
     const getIcon = (type: string) => {
         if (type === 'jpg' || type === 'png' || type === 'jpeg') return <FaRegImage color={'rgb(123, 128, 154)'} />;
@@ -129,25 +146,27 @@ const View = () => {
                         </Text>
                     </Box>
 
-                    <Flex>
-                        <Spacer />
-                        <Menu>
-                            <MenuButton
-                                as={Button}
-                                bgColor={'#24a2f0'}
-                                color={'white'}
-                                rightIcon={<ChevronDownIcon />}
-                                size={'sm'}
-                                _hover={{ backgroundColor: '#24a2f0' }}
-                            >
-                                Actions
-                            </MenuButton>
-                            <MenuList zIndex={2000}>
-                                <UploadModal documents={documents || []} />
-                                <DocDrawer />
-                            </MenuList>
-                        </Menu>
-                    </Flex>
+                    {(permissions || 0) > 1 ? (
+                        <Flex>
+                            <Spacer />
+                            <Menu>
+                                <MenuButton
+                                    as={Button}
+                                    bgColor={'#24a2f0'}
+                                    color={'white'}
+                                    rightIcon={<ChevronDownIcon />}
+                                    size={'sm'}
+                                    _hover={{ backgroundColor: '#24a2f0' }}
+                                >
+                                    Actions
+                                </MenuButton>
+                                <MenuList zIndex={2000}>
+                                    <UploadModal documents={documents || []} />
+                                    <DocDrawer />
+                                </MenuList>
+                            </Menu>
+                        </Flex>
+                    ) : null}
                     <Card mt={'10px'}>
                         <CardBody>
                             {documents?.length || 0 > 0 ? (
@@ -164,9 +183,11 @@ const View = () => {
                                                 <Th width={'180px'} color={'#666666'} fontWeight={'semibold'}>
                                                     Size
                                                 </Th>
-                                                <Th width={'100px'} color={'#666666'} fontWeight={'semibold'}>
-                                                    Actions
-                                                </Th>
+                                                {(permissions || 0) > 1 ? (
+                                                    <Th width={'100px'} color={'#666666'} fontWeight={'semibold'}>
+                                                        Actions
+                                                    </Th>
+                                                ) : null}
                                                 <Th color={'#666666'} fontWeight={'semibold'}>
                                                     Tags
                                                 </Th>
@@ -205,25 +226,29 @@ const View = () => {
                                                                 {document.file ? document.file.size : ''}
                                                             </Text>
                                                         </Td>
-                                                        <Td>
-                                                            <Flex>
-                                                                <UpdateFileModal document={document} documents={documents} />
-                                                                <DeleteFileAlert document={document} />
-                                                            </Flex>
-                                                        </Td>
+                                                        {(permissions || 0) > 1 ? (
+                                                            <Td>
+                                                                <Flex>
+                                                                    <UpdateFileModal document={document} documents={documents} />
+                                                                    <DeleteFileAlert document={document} />
+                                                                </Flex>
+                                                            </Td>
+                                                        ) : null}
 
                                                         <Td>
                                                             <Box overflow={'revert'}>
                                                                 <Flex>
-                                                                    <Box mr={'10px'}>
-                                                                        <TagsModal
-                                                                            tagType={'document'}
-                                                                            data={document}
-                                                                            tags={document.tags}
-                                                                            update={updateDocument}
-                                                                            workspaceId={document?.workspace || ''}
-                                                                        />
-                                                                    </Box>
+                                                                    {(permissions || 0) > 1 ? (
+                                                                        <Box mr={'10px'}>
+                                                                            <TagsModal
+                                                                                tagType={'document'}
+                                                                                data={document}
+                                                                                tags={document.tags}
+                                                                                update={updateDocument}
+                                                                                workspaceId={document?.workspace || ''}
+                                                                            />
+                                                                        </Box>
+                                                                    ) : null}
                                                                     {document.tags !== undefined
                                                                         ? document.tags.map((tag: TTag, index: number) => {
                                                                               return (
