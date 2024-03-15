@@ -217,8 +217,6 @@ const Table = ({
 
         // setDeleteCheckboxStatusList((prev) => prev.map(() => false));
         setNumberOfDeleteItems(0);
-
-        console.log('Items Deleted');
     };
 
     const handleReorderRows = useCallback((rowIds: string[]) => {

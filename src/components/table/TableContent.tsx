@@ -47,7 +47,6 @@ const TableContent = ({
     const [updateRowNoTag] = useUpdateRowNoTagMutation();
 
     useEffect(() => {
-        console.log({ rows });
         let position = 0;
         let currentParent: any = null;
         const parentsToMakeCommon: any = [];
@@ -86,19 +85,20 @@ const TableContent = ({
         //     if (row.parentRowId !== null) currentParent = row._id;
         // })
 
-        if (showDoneRows) {
-            setCurrentRows(resetRows);
-        } else {
-            const filteredRows = resetRows.filter((row) => {
-                if (row.values['status'] !== undefined) {
-                    return row.values['status'] !== 'Done';
-                } else {
-                    return true;
-                }
-            });
+        // if (showDoneRows) {
+        //     setCurrentRows(resetRows);
+        // } else {
+        //     const filteredRows = resetRows.filter((row) => {
+        //         if (row.values['status'] !== undefined) {
+        //             return row.values['status'] !== 'Done';
+        //         } else {
+        //             return true;
+        //         }
+        //     });
 
-            setCurrentRows(filteredRows);
-        }
+        //     setCurrentRows(filteredRows);
+        // }
+        setCurrentRows(resetRows);
     }, [rows, showDoneRows]);
 
     useEffect(() => {
@@ -183,7 +183,6 @@ const TableContent = ({
         const draggedRowData = newRows[Number(localStorage.getItem('rowDragged')) - 1];
         const overRowData = newRows[Number(localStorage.getItem('rowOver')) - 1];
 
-        console.log({ draggedRowData, newRows, index: Number(localStorage.getItem('rowDragged')) - 1 });
         const draggedIsCommon = !draggedRowData.isParent && draggedRowData.parentRowId === null;
         const draggedIsParent = draggedRowData.isParent && draggedRowData.parentRowId === null;
         const draggedIsChild = !draggedRowData.isParent && draggedRowData.parentRowId !== null;
@@ -422,6 +421,7 @@ const TableContent = ({
                                     handleSubrowVisibility={handleSubrowVisibility}
                                     rowCallUpdate={rowCallUpdate}
                                     allowed={allowed}
+                                    showDoneRows={showDoneRows}
                                 />
                             </div>
                             <div></div>

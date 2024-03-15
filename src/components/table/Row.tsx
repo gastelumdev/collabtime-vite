@@ -31,6 +31,7 @@ const Row = ({
     // handleSubrowVisibility,
     rowCallUpdate,
     allowed = false,
+    showDoneRows = false,
 }: {
     row: any;
     rowIndex: number;
@@ -45,6 +46,7 @@ const Row = ({
     handleSubrowVisibility?: any;
     rowCallUpdate: any;
     allowed?: boolean;
+    showDoneRows?: boolean;
 }) => {
     // const rowsData = useMemo(
     //     () => [
@@ -62,6 +64,17 @@ const Row = ({
 
     const [deleteCheckboxIsChecked, setDeleteCheckboxIsChecked] = useState(deleteBoxIsChecked);
 
+    const [show, setShow] = useState(true);
+
+    useEffect(() => {
+        const rowIsDone = row.values['status'] !== undefined && row.values['status'] === 'Done';
+        if (!showDoneRows && rowIsDone) {
+            setShow(false);
+        } else {
+            setShow(true);
+        }
+    }, [rowIndex, showDoneRows]);
+
     // const [updateRow] = useUpdateRowMutation();
 
     useEffect(() => {
@@ -72,7 +85,6 @@ const Row = ({
         event.dataTransfer.setData('text', '');
         localStorage.setItem('rowDragged', `${rowIndex}`);
         localStorage.setItem('dragging', 'true');
-        console.log(rowIndex);
         // handleSetDraggedId(rowIndex);
         draggedId;
         setDraggedId(rowIndex);
@@ -114,7 +126,6 @@ const Row = ({
             event;
             setDraggedId(null);
             setOverId(null);
-            console.log('From handleDragEnd');
             handleSwap();
         },
         [draggedId, overId, handleSwap]
@@ -132,19 +143,14 @@ const Row = ({
     };
 
     const onRefChange = (columnName: string, ref: any) => {
-        console.log(ref);
         const refs: any = [];
         if (row.refs === undefined) {
-            console.log(row.refs);
             refs.push(ref);
-            console.log({ ...row, refs: { [columnName]: refs } });
             handleChange({ ...row, refs: { [columnName]: refs } });
         } else {
             if (row.refs[columnName] === undefined) {
-                console.log({ ...row, refs: { ...row.refs, [columnName]: [ref] } });
                 handleChange({ ...row, refs: { ...row.refs, [columnName]: [ref] } });
             } else {
-                console.log({ ...row, refs: { ...row.refs, [columnName]: [...row.refs[columnName], ref] } });
                 handleChange({ ...row, refs: { ...row.refs, [columnName]: [...row.refs[columnName], ref] } });
             }
         }
@@ -165,17 +171,14 @@ const Row = ({
     };
 
     const editRowOnChange = (row: any) => {
-        console.log(row);
         handleChange(row);
     };
 
     const handleRemindersChange = () => {
-        console.log(!row.reminder);
         handleChange({ ...row, reminder: !row.reminder });
     };
 
     const handleAcknowledgeClick = () => {
-        console.log(!row.reminder);
         handleChange({ ...row, acknowledged: !row.acknowledged });
     };
 
@@ -206,7 +209,7 @@ const Row = ({
     };
     return (
         <>
-            {row.isVisible ? (
+            {show && row.isVisible ? (
                 <>
                     <div
                         className="drop-indicator-container"
