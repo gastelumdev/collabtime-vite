@@ -183,6 +183,7 @@ const TableContent = ({
         const draggedRowData = newRows[Number(localStorage.getItem('rowDragged')) - 1];
         const overRowData = newRows[Number(localStorage.getItem('rowOver')) - 1];
 
+        console.log({ draggedRowData, newRows, index: Number(localStorage.getItem('rowDragged')) - 1 });
         const draggedIsCommon = !draggedRowData.isParent && draggedRowData.parentRowId === null;
         const draggedIsParent = draggedRowData.isParent && draggedRowData.parentRowId === null;
         const draggedIsChild = !draggedRowData.isParent && draggedRowData.parentRowId !== null;

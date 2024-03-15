@@ -93,7 +93,7 @@ const ViewOne = () => {
             })
     );
 
-    const [showDoneRows, setShowDoneRows] = useState<boolean>(false);
+    const [showDoneRows, setShowDoneRows] = useState<boolean>(true);
 
     const [permissions, setPermissions] = useState<number>();
 
@@ -112,7 +112,7 @@ const ViewOne = () => {
     useEffect(() => {
         for (const column of columns || []) {
             if (column.type === 'status') {
-                setShowDoneRows(false);
+                setShowDoneRows(true);
             }
         }
         setColumns(columnsData);
@@ -291,7 +291,7 @@ const ViewOne = () => {
                                     {(permissions || 0) > 1 ? (
                                         <Flex>
                                             <Spacer />
-                                            <Box mr={'5px'}>
+                                            {/* <Box mr={'5px'}>
                                                 <PrimaryButton
                                                     onClick={() => {
                                                         console.log(showDoneRows);
@@ -301,7 +301,7 @@ const ViewOne = () => {
                                                 >
                                                     {`${showDoneRows ? 'Hide' : 'Show'} Done`}
                                                 </PrimaryButton>
-                                            </Box>
+                                            </Box> */}
                                             <Box mr={'5px'}>
                                                 <PrimaryButton onClick={onOpenFormDrawer} size="sm">
                                                     Form

@@ -72,6 +72,7 @@ const Row = ({
         event.dataTransfer.setData('text', '');
         localStorage.setItem('rowDragged', `${rowIndex}`);
         localStorage.setItem('dragging', 'true');
+        console.log(rowIndex);
         // handleSetDraggedId(rowIndex);
         draggedId;
         setDraggedId(rowIndex);
