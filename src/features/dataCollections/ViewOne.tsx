@@ -63,7 +63,7 @@ const ViewOne = () => {
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
     const { data: dataCollection } = useGetDataCollectionQuery(dataCollectionId || '');
     const { data: workspace, isFetching: workspaceIsFetching } = useGetOneWorkspaceQuery(localStorage.getItem('workspaceId') || '');
-    const { data: rows } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
+    const { data: rowsData } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
     const { data: dataCollections } = useGetDataCollectionsQuery(null);
     const { data: columnsData } = useGetColumnsQuery(localStorage.getItem('dataCollectionId') || '');
     const [updateColumn] = useUpdateColumnMutation();
@@ -71,6 +71,7 @@ const ViewOne = () => {
     const [updateDataCollection] = useUpdateDataCollectionMutation();
     const [sendForm] = useSendFormMutation();
 
+    const [rows, setRows] = useState(rowsData);
     const [columns, setColumns] = useState(columnsData);
 
     const [acknowledgeRow] = useAcknowledgeRowMutation();
@@ -84,6 +85,10 @@ const ViewOne = () => {
     const [recipientValue, setRecipientValue] = useState<string>('');
 
     const [valuesForExport, setValuesForExport] = useState<any>('');
+
+    useEffect(() => {
+        setRows(rowsData);
+    }, [rowsData]);
 
     const [checkBoxes, setCheckBoxes] = useState<any>(
         Array(columns?.length)
@@ -291,16 +296,22 @@ const ViewOne = () => {
                                     {(permissions || 0) > 1 ? (
                                         <Flex>
                                             <Spacer />
-                                            <Box mr={'5px'}>
+                                            {/* <Box mr={'5px'}>
                                                 <PrimaryButton
                                                     onClick={() => {
                                                         setShowDoneRows(!showDoneRows);
+                                                        const filteredRows = rows?.filter((row) => {});
+                                                        // setRows(
+                                                        //     rows?.filter((row) => {
+                                                        //         return row.values['status'] !== 'Done' && !showDoneRows;
+                                                        //     })
+                                                        // );
                                                     }}
                                                     size="sm"
                                                 >
                                                     {`${showDoneRows ? 'Hide' : 'Show'} Done`}
                                                 </PrimaryButton>
-                                            </Box>
+                                            </Box> */}
                                             <Box mr={'5px'}>
                                                 <PrimaryButton onClick={onOpenFormDrawer} size="sm">
                                                     Form
@@ -325,7 +336,7 @@ const ViewOne = () => {
                                 </SimpleGrid>
                             </CardHeader>
                             <CardBody p={'0'}>
-                                <DataCollection showDoneRows={showDoneRows} />
+                                <DataCollection rowsData={rows} showDoneRows={showDoneRows} />
                             </CardBody>
                         </Card>
 

@@ -64,16 +64,17 @@ const Row = ({
 
     const [deleteCheckboxIsChecked, setDeleteCheckboxIsChecked] = useState(deleteBoxIsChecked);
 
-    const [show, setShow] = useState(true);
+    const [show, setShow] = useState(row.values['status'] !== undefined && row.values['status'] === 'Done' && !showDoneRows);
 
     useEffect(() => {
-        const rowIsDone = row.values['status'] !== undefined && row.values['status'] === 'Done';
-        if (!showDoneRows && rowIsDone) {
+        const rowIsDone = row.values['status'] !== undefined && row.values['status'] === 'Done' && !showDoneRows;
+        console.log(show);
+        if (rowIsDone) {
             setShow(false);
         } else {
             setShow(true);
         }
-    }, [rowIndex, showDoneRows]);
+    }, [row, rowIndex, showDoneRows]);
 
     // const [updateRow] = useUpdateRowMutation();
 
@@ -209,8 +210,9 @@ const Row = ({
     };
     return (
         <>
-            {show && row.isVisible ? (
+            {row.isVisible ? (
                 <>
+                    {console.log(row.values['status'])}
                     <div
                         className="drop-indicator-container"
                         onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, rowIndex)}

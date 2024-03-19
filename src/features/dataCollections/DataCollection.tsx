@@ -1,12 +1,12 @@
 import { memo, useCallback, useEffect, useState } from 'react';
-import { useGetColumnsQuery, useGetRowsQuery, useGetUserQuery, useReorderColumnsMutation, useUpdateColumnMutation } from '../../app/services/api';
+import { useGetColumnsQuery, useGetUserQuery, useReorderColumnsMutation, useUpdateColumnMutation } from '../../app/services/api';
 import { useParams } from 'react-router-dom';
 import { Box } from '@chakra-ui/react';
 // import Table from './Table';
 import Table from '../../components/table/Table';
 import { TColumn } from '../../types';
 
-const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) => {
+const DataCollection = ({ rowsData, showDoneRows = false }: { rowsData: any; showDoneRows?: boolean }) => {
     const { dataCollectionId } = useParams();
 
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
@@ -21,7 +21,7 @@ const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) =>
 
     // const [sort, setSort] = useState<number>(1);
 
-    const { data: rowsData } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
+    // const { data: rowsData } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
     // const [dataCollectionRows, setDataCollectionRows] = useState(rows);
     // const { data: totalRows } = useGetTotalRowsQuery({ dataCollectionId: dataCollectionId || "", limit: limit });
 
