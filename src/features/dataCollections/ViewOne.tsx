@@ -336,7 +336,9 @@ const ViewOne = () => {
                                 </SimpleGrid>
                             </CardHeader>
                             <CardBody p={'0'}>
-                                <DataCollection rowsData={rows} showDoneRows={showDoneRows} />
+                                {/* <Skeleton isLoaded={!isFetching && !isLoading}> */}
+                                <DataCollection showDoneRows={showDoneRows} />
+                                {/* </Skeleton> */}
                             </CardBody>
                         </Card>
 
