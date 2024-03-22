@@ -60,8 +60,6 @@ const relocateSectionOfList = (arr: any, draggedId: number, overId: number) => {
   // Insert the item in the location provided
   arr.splice(overId, 0, draggedItem);
 
-  console.log({ draggedId, overId, draggedItem })
-
   return arr;
 }
 
@@ -69,11 +67,9 @@ const relocateSectionOfList = (arr: any, draggedId: number, overId: number) => {
 
 
 export const swapItems = (arr: any, draggedId: number, overId: number, numberOfItems: number) => {
-  console.log({ draggedId, overId, numberOfItems, arr })
   let result;
 
   if (draggedId <= overId) {
-    console.log(`Dragged id is less than over id`)
     for (let i = 0; i < numberOfItems; i++) {
       result = relocateSectionOfList(arr, draggedId - 1, overId - 1);
     }

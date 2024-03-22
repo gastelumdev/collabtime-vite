@@ -237,9 +237,10 @@ const TableContent = ({
 
             if (draggedIsCommon && overIsChild) {
                 // The dragged row needs to update to be set as parent false and share the parentRowId of the over row
-
+                console.log('Common into child');
                 const relAdjustedRows = repositionedRows.map((row: any) => {
                     if (row.position === overRowData.position) {
+                        console.log(row);
                         updateRowNoTag({ ...row, isParent: false, parentRowId: overRowData.parentRowId });
                         return { ...row, isParent: false, parentRowId: overRowData.parentRowId };
                     }
@@ -253,9 +254,10 @@ const TableContent = ({
 
             if (draggedIsChild && overIsCommon) {
                 // The dragged row needs to update to be set as parent false and parentRowId as null
-
+                // console.log('Child into common');
                 const relAdjustedRows = repositionedRows.map((row: any) => {
                     if (row.position === overRowData.position) {
+                        console.log(row);
                         updateRowNoTag({ ...row, isParent: false, parentRowId: null });
                         return { ...row, isParent: false, parentRowId: null };
                     }

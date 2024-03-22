@@ -254,7 +254,7 @@ export const api = createApi({
                 method: "POST",
                 body: row,
             }),
-            invalidatesTags: ["Rows"],
+            // invalidatesTags: ["Rows"],
         }),
         deleteRow: builder.mutation<TRow, TRow>({
             query: (row) => ({
