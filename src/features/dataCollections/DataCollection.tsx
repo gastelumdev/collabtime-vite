@@ -21,7 +21,7 @@ const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) =>
 
     // const [sort, setSort] = useState<number>(1);
 
-    const { data: rowsData, refetch } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
+    const { data: rowsData } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
     // const [dataCollectionRows, setDataCollectionRows] = useState(rows);
     // const { data: totalRows } = useGetTotalRowsQuery({ dataCollectionId: dataCollectionId || "", limit: limit });
 
@@ -32,9 +32,9 @@ const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) =>
 
     const [rows, setRows] = useState(rowsData);
 
-    useEffect(() => {
-        refetch();
-    }, []);
+    // useEffect(() => {
+    //     refetch();
+    // }, []);
 
     useEffect(() => {
         setRows(rowsData);

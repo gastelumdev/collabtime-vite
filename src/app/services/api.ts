@@ -254,7 +254,7 @@ export const api = createApi({
                 method: "POST",
                 body: row,
             }),
-            // invalidatesTags: ["Rows"],
+            invalidatesTags: ["Rows"],
         }),
         deleteRow: builder.mutation<TRow, TRow>({
             query: (row) => ({
@@ -290,7 +290,8 @@ export const api = createApi({
                 url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${localStorage.getItem("dataCollectionId")}/rows/reorder`,
                 method: "POST",
                 body: positions
-            })
+            }),
+            invalidatesTags: ["Rows"],
         }),
         getTotalRows: builder.query<any, { dataCollectionId: string, limit: number }>({
             query: (options) => ({
