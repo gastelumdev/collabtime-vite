@@ -24,6 +24,7 @@ interface ITableProps {
     reorderColumns: any;
     showDoneRows?: boolean;
     allowed?: boolean;
+    isFetching?: boolean;
 }
 
 const Table = ({
@@ -35,6 +36,7 @@ const Table = ({
     reorderColumns,
     showDoneRows = false,
     allowed = false,
+    isFetching = true,
 }: ITableProps) => {
     // const [overId, setOverId] = useState<number | null>(null);
     // const [draggedId, setDraggedId] = useState<number | null>(null);
@@ -498,6 +500,7 @@ const Table = ({
                 handleRemoveColumnFormRows={handleRemoveColumnFromRows}
                 deleteColumn={handleDeleteColumn}
                 allowed={allowed}
+                isFetching={isFetching}
             />
             <TableContent
                 rows={rows}

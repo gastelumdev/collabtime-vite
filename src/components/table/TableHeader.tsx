@@ -19,6 +19,7 @@ interface IProps {
     handleRemoveColumnFormRows: any;
     deleteColumn: any;
     allowed?: boolean;
+    isFetching?: boolean;
 }
 
 const TableHeader = ({
@@ -303,7 +304,9 @@ const TableHeader = ({
                         padding: '0px 20px',
                         borderRight: '1px solid #edf2f7',
                     }}
-                ></span>
+                >
+                    {/* {isFetching ? <Spinner thickness="2px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="md" mt={'10px'} /> : null} */}
+                </span>
                 {currentColumns.map((column: any, columnIndex) => {
                     return (
                         <span
