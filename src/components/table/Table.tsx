@@ -11,6 +11,7 @@ import {
     useReorderRowsMutation,
     useRowCallUpdateMutation,
     useUpdateRowMutation,
+    useUpdateRowNoTagMutation,
 } from '../../app/services/api';
 import { Box, Center, Flex, Spacer, Text } from '@chakra-ui/react';
 import { ArrowDownIcon, ArrowUpIcon, DeleteIcon } from '@chakra-ui/icons';
@@ -47,6 +48,7 @@ const Table = ({
     const [gridTemplateColumns, setGridTemplateColumns] = useState<string>(columnsData.map((_) => '180px').join(' '));
 
     const [updateRow] = useUpdateRowMutation();
+    const [updateRowNoTag] = useUpdateRowNoTagMutation();
     const [deleteRow] = useDeleteRowMutation();
     const [reorderRows] = useReorderRowsMutation();
     const [createColumn] = useCreateColumnMutation();
@@ -108,8 +110,14 @@ const Table = ({
     );
 
     const handleUpdateRowNoRender = useCallback(
-        (row: any) => {
+        async (row: any) => {
+            const newRows: any = await updateRowNoTag(row);
             setRows((prev) => prev.map((prevRow) => (prevRow._id === row._id ? row : prevRow)));
+            if (newRows.data.length > 0) {
+                setRows((prev) => {
+                    return [...prev, ...newRows.data];
+                });
+            }
         },
         [rows]
     );

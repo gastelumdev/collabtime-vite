@@ -63,6 +63,8 @@ const Row = ({
 
     const [deleteCheckboxIsChecked, setDeleteCheckboxIsChecked] = useState(deleteBoxIsChecked);
 
+    console.log('ROW');
+
     // const [show, setShow] = useState(row.values['status'] !== undefined && row.values['status'] === 'Done' && !showDoneRows);
 
     // useEffect(() => {

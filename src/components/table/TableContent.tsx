@@ -3,6 +3,7 @@ import { ViewportList } from 'react-viewport-list';
 import Row from './Row';
 import { swapItems } from '../../utils/helpers';
 import { useUpdateRowMutation, useUpdateRowNoTagMutation } from '../../app/services/api';
+import { Box } from '@chakra-ui/react';
 
 interface IProps {
     rows: any[];
@@ -14,7 +15,7 @@ interface IProps {
     updateColumn?: any;
     reorderColumns?: any;
     handleUpdateRowNoRender: any;
-    handleUpdateRow: any;
+    handleUpdateRow?: any;
     handleDeleteBoxChange: any;
     handleReorderRows: any;
     rowCallUpdate: any;
@@ -32,7 +33,7 @@ const TableContent = ({
     // updateColumn,
     // reorderColumns,
     handleUpdateRowNoRender,
-    handleUpdateRow,
+    // handleUpdateRow,
     handleDeleteBoxChange,
     rowCallUpdate,
     showDoneRows = false,
@@ -42,6 +43,10 @@ const TableContent = ({
     const [gridTemplateColumns, setGridTemplateColumns] = useState('');
 
     const [currentRows, setCurrentRows] = useState(rows);
+
+    useEffect(() => {
+        setCurrentRows(rows);
+    }, [rows]);
 
     const [updateRow] = useUpdateRowMutation();
     const [updateRowNoTag] = useUpdateRowNoTagMutation();
@@ -77,27 +82,6 @@ const TableContent = ({
             }
             return row;
         });
-
-        // const newRows = resetRows.map((row) => {
-        //     let currentParent: any = null;
-
-        //     if (row.isParent) currentParent = row._id;
-        //     if (row.parentRowId !== null) currentParent = row._id;
-        // })
-
-        // if (showDoneRows) {
-        //     setCurrentRows(resetRows);
-        // } else {
-        //     const filteredRows = resetRows.filter((row) => {
-        //         if (row.values['status'] !== undefined) {
-        //             return row.values['status'] !== 'Done';
-        //         } else {
-        //             return true;
-        //         }
-        //     });
-
-        //     setCurrentRows(filteredRows);
-        // }
         setCurrentRows(resetRows);
     }, [rows, showDoneRows]);
 
@@ -159,11 +143,7 @@ const TableContent = ({
         }
 
         const newRows = list.map((row: any, index: number) => {
-            // console.log({ rowPosition: row.position, value: row.values['item_name'], index });
             const updatedRow = { ...row, position: index + 1 };
-
-            // console.log(updatedRow);
-            // console.log({ index, position: updatedRow.position });
             // handleUpdateRow(updatedRow);
 
             if (row.position !== index + 1) {
@@ -308,16 +288,13 @@ const TableContent = ({
     };
 
     const handleChange = (row: any) => {
-        handleUpdateRow(row);
+        // handleUpdateRow(row);
+
+        // setCurrentRows((prev) => prev.map((prevRow) => (prevRow._id === row._id ? row : prevRow)));
         handleUpdateRowNoRender(row);
-        setCurrentRows((prev) => prev.map((prevRow) => (prevRow._id === row._id ? row : prevRow)));
     };
 
     const handleSubrowVisibility = (row: any) => {
-        // handleUpdateRow(row);
-        // handleUpdateRowNoRender(row);
-        // setCurrentRows((prev) => prev.map((prevRow) => (prevRow._id === row._id ? row : prevRow)));
-
         const newRows: any = currentRows.map((currentRow) => {
             if (currentRow._id === row._id) {
                 updateRow({ ...currentRow, showSubrows: !currentRow.showSubrows });
@@ -332,36 +309,9 @@ const TableContent = ({
 
         setRows(newRows);
         setCurrentRows(newRows);
-
-        // setRows(
-        //     currentRows.map((currentRow) => {
-        //         if (currentRow.parentRowId === row._id) {
-        //             updateRow({ ...currentRow, isVisible: status });
-        //             return { ...currentRow, isVisible: status };
-        //         }
-        //         return currentRow;
-        //     })
-        // );
-
-        // setCurrentRows(
-        //     currentRows.map((currentRow) => {
-        //         if (currentRow.parentRowId === row._id) {
-        //             updateRow({ ...currentRow, isVisible: status });
-        //             return { ...currentRow, isVisible: status };
-        //         }
-        //         return currentRow;
-        //     })
-        // );
     };
 
     const handleDeleteBoxChangeForRow = (status: boolean, index: number) => {
-        // setCurrentRows((prevRows) => prevRows.map((prevRow, rowIndex) => (index === rowIndex ? { ...prevRow, checked: status } : prevRow)));
-        // if (status) {
-        //     setNumberOfDeleteItems(numberOfDeleteItems + 1);
-        // } else {
-        //     setNumberOfDeleteItems(numberOfDeleteItems - 1);
-        // }
-
         // Allows Table component to set
         handleDeleteBoxChange(status, index);
         setRows(currentRows.map((prevRow, rowIndex) => (index === rowIndex ? { ...prevRow, checked: status } : prevRow)));
@@ -383,34 +333,12 @@ const TableContent = ({
                 setShow(true);
             }}
         >
-            {/* {currentRows.map((row, rowIndex) => (
-                <div key={row._id} className="item">
-                    <div key={row._id}>
-                        <Row
-                            row={row}
-                            rowIndex={rowIndex}
-                            columns={columns}
-                            gridTemplateColumns={gridTemplateColumns}
-                            handleSetDraggedId={handleSetDraggedId}
-                            handleSetOverId={handleSetOverId}
-                            handleSwap={handleSwap}
-                            handleChange={handleChange}
-                            deleteBoxIsChecked={row.checked}
-                            handleDeleteBoxChange={handleDeleteBoxChangeForRow}
-                            rowCallUpdate={rowCallUpdate}
-                        />
-                    </div>
-                    <div></div>
-                </div>
-            ))} */}
-            <>{console.log({ showDoneRows })}</>
-            {currentRows !== undefined ? (
-                <ViewportList viewportRef={ref} items={currentRows} overscan={25}>
-                    {(row, rowIndex) => (
-                        <>
+            <ViewportList viewportRef={ref} items={currentRows} overscan={25}>
+                {(row, rowIndex) => {
+                    return (
+                        <Box key={row._id}>
                             {!row.complete || showDoneRows ? (
                                 <div key={row._id} className="item">
-                                    <>{console.log(row)}</>
                                     <div key={row._id}>
                                         <Row
                                             row={row}
@@ -432,12 +360,13 @@ const TableContent = ({
                                     <div></div>
                                 </div>
                             ) : null}
-                        </>
-                    )}
-                </ViewportList>
-            ) : (
+                        </Box>
+                    );
+                }}
+            </ViewportList>
+            {/* ) : (
                 'Loading'
-            )}
+            )} */}
         </div>
     );
 };
