@@ -296,11 +296,11 @@ const ViewOne = () => {
                                     {(permissions || 0) > 1 ? (
                                         <Flex>
                                             <Spacer />
-                                            {/* <Box mr={'5px'}>
+                                            <Box mr={'5px'}>
                                                 <PrimaryButton
                                                     onClick={() => {
                                                         setShowDoneRows(!showDoneRows);
-                                                        const filteredRows = rows?.filter((row) => {});
+                                                        // const filteredRows = rows?.filter((row) => {});
                                                         // setRows(
                                                         //     rows?.filter((row) => {
                                                         //         return row.values['status'] !== 'Done' && !showDoneRows;
@@ -311,7 +311,7 @@ const ViewOne = () => {
                                                 >
                                                     {`${showDoneRows ? 'Hide' : 'Show'} Done`}
                                                 </PrimaryButton>
-                                            </Box> */}
+                                            </Box>
                                             <Box mr={'5px'}>
                                                 <PrimaryButton onClick={onOpenFormDrawer} size="sm">
                                                     Form

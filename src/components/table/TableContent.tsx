@@ -403,31 +403,36 @@ const TableContent = ({
                     <div></div>
                 </div>
             ))} */}
+            <>{console.log({ showDoneRows })}</>
             {currentRows !== undefined ? (
                 <ViewportList viewportRef={ref} items={currentRows} overscan={25}>
                     {(row, rowIndex) => (
-                        <div key={row._id} className="item">
-                            {/* <>{console.log(row)}</> */}
-                            <div key={row._id}>
-                                <Row
-                                    row={row}
-                                    rowIndex={rowIndex}
-                                    columns={columns}
-                                    gridTemplateColumns={gridTemplateColumns}
-                                    handleSetDraggedId={handleSetDraggedId}
-                                    handleSetOverId={handleSetOverId}
-                                    handleSwap={handleSwap}
-                                    handleChange={handleChange}
-                                    deleteBoxIsChecked={row.checked}
-                                    handleDeleteBoxChange={handleDeleteBoxChangeForRow}
-                                    handleSubrowVisibility={handleSubrowVisibility}
-                                    rowCallUpdate={rowCallUpdate}
-                                    allowed={allowed}
-                                    showDoneRows={showDoneRows}
-                                />
-                            </div>
-                            <div></div>
-                        </div>
+                        <>
+                            {!row.complete || showDoneRows ? (
+                                <div key={row._id} className="item">
+                                    <>{console.log(row)}</>
+                                    <div key={row._id}>
+                                        <Row
+                                            row={row}
+                                            rowIndex={rowIndex}
+                                            columns={columns}
+                                            gridTemplateColumns={gridTemplateColumns}
+                                            handleSetDraggedId={handleSetDraggedId}
+                                            handleSetOverId={handleSetOverId}
+                                            handleSwap={handleSwap}
+                                            handleChange={handleChange}
+                                            deleteBoxIsChecked={row.checked}
+                                            handleDeleteBoxChange={handleDeleteBoxChangeForRow}
+                                            handleSubrowVisibility={handleSubrowVisibility}
+                                            rowCallUpdate={rowCallUpdate}
+                                            allowed={allowed}
+                                            showDoneRows={showDoneRows}
+                                        />
+                                    </div>
+                                    <div></div>
+                                </div>
+                            ) : null}
+                        </>
                     )}
                 </ViewportList>
             ) : (
