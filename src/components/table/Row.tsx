@@ -63,7 +63,7 @@ const Row = ({
 
     const [deleteCheckboxIsChecked, setDeleteCheckboxIsChecked] = useState(deleteBoxIsChecked);
 
-    console.log('ROW');
+    const [showRow, setShowRow] = useState(true);
 
     // const [show, setShow] = useState(row.values['status'] !== undefined && row.values['status'] === 'Done' && !showDoneRows);
 
@@ -140,6 +140,11 @@ const Row = ({
     };
 
     const onChange = (columnName: string, value: string) => {
+        if (columnName === 'status' && value === 'Done') {
+            setShowRow(false);
+        } else {
+            setShowRow(true);
+        }
         handleChange({ ...row, values: { ...row.values, [columnName]: value } });
     };
 
@@ -210,7 +215,7 @@ const Row = ({
     };
     return (
         <>
-            {row.isVisible ? (
+            {row.isVisible && showRow ? (
                 <>
                     <div
                         className="drop-indicator-container"
@@ -307,7 +312,7 @@ const Row = ({
                                                 <FaRegSquareCheck />
                                             </Text>
                                         </Box>
-                                        <Box pt={'7px'} ml={'10px'} onClick={handleAcknowledgeClick} cursor={'pointer'}>
+                                        <Box pt={'7px'} ml={'10px'} cursor={'pointer'}>
                                             <UploadModal
                                                 rowDocuments={row.docs}
                                                 getDocs={getDocs}

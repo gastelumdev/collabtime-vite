@@ -246,6 +246,25 @@ export const api = createApi({
                 method: "POST",
                 body: row,
             }),
+            onQueryStarted(row, { dispatch, queryFulfilled }) {
+                console.log(row)
+                const update = dispatch(api.util.updateQueryData("getRows", row, (rows) => {
+                    console.log(row)
+                    return rows.map((currentRow) => {
+                        if (currentRow._id === row._id) {
+                            return row;
+                        } else {
+                            return currentRow;
+                        }
+                    })
+                }));
+                queryFulfilled.then(() => {
+                    console.log("UPDATE ROW FULFILLED")
+                })
+                queryFulfilled.catch(() => {
+                    update.undo()
+                })
+            },
             invalidatesTags: ["Rows"],
         }),
         updateRowNoTag: builder.mutation<TRow[], TRow>({
@@ -254,7 +273,26 @@ export const api = createApi({
                 method: "POST",
                 body: row,
             }),
-            // invalidatesTags: ["Rows"],
+            onQueryStarted(row, { dispatch, queryFulfilled }) {
+                console.log(row)
+                const update = dispatch(api.util.updateQueryData("getRows", row, (rows) => {
+                    console.log("UPDATE")
+                    return rows.map((currentRow) => {
+                        if (currentRow._id === row._id) {
+                            return row;
+                        } else {
+                            return currentRow;
+                        }
+                    })
+                }));
+                queryFulfilled.then(() => {
+                    console.log("UPDATE ROW NO TAG FULFILLED")
+                })
+                queryFulfilled.catch(() => {
+                    update.undo()
+                })
+            },
+            invalidatesTags: ["Rows"],
         }),
         deleteRow: builder.mutation<TRow, TRow>({
             query: (row) => ({

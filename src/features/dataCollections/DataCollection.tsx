@@ -1,5 +1,12 @@
 import { memo, useCallback, useEffect, useState } from 'react';
-import { useGetColumnsQuery, useGetRowsQuery, useGetUserQuery, useReorderColumnsMutation, useUpdateColumnMutation } from '../../app/services/api';
+import {
+    useGetColumnsQuery,
+    useGetRowsQuery,
+    useGetUserQuery,
+    useReorderColumnsMutation,
+    useUpdateColumnMutation,
+    useUpdateRowMutation,
+} from '../../app/services/api';
 import { useParams } from 'react-router-dom';
 import { Box, Progress } from '@chakra-ui/react';
 // import Table from './Table';
@@ -27,6 +34,7 @@ const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) =>
         isFetching,
         isLoading,
     } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
+    const [updateRow] = useUpdateRowMutation();
     // const [dataCollectionRows, setDataCollectionRows] = useState(rows);
     // const { data: totalRows } = useGetTotalRowsQuery({ dataCollectionId: dataCollectionId || "", limit: limit });
 
@@ -38,12 +46,48 @@ const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) =>
     const [rows, setRows] = useState(rowsData);
 
     useEffect(() => {
-        refetch();
-    }, []);
+        let position = 0;
+        let currentParent: any = null;
+        const parentsToMakeCommon: any = [];
+
+        const repositionedRows = rowsData?.map((row) => {
+            if (currentParent !== null && row.parentRowId !== currentParent._id) {
+                parentsToMakeCommon.push(currentParent._id);
+            }
+
+            if (row.isParent) {
+                currentParent = row;
+            } else {
+                currentParent = null;
+            }
+
+            position = position + 1;
+            if (row.position != position) {
+                console.log(position);
+                updateRow({ ...row, position: position });
+                return { ...row, position: position };
+            }
+            return row;
+        });
+
+        const resetRows = repositionedRows?.map((row) => {
+            if (parentsToMakeCommon.includes(row._id)) {
+                updateRow({ ...row, isParent: false, showSubrows: true });
+                return { ...row, isParent: false, showSubrows: true };
+            }
+            return row;
+        });
+        setRows(resetRows);
+        // setRows(rowsData);
+    }, [rowsData, showDoneRows]);
 
     useEffect(() => {
-        setRows(rowsData);
-    }, [rowsData]);
+        refetch();
+    }, [showDoneRows]);
+
+    // useEffect(() => {
+    //     setRows(rowsData);
+    // }, [rowsData]);
 
     useEffect(() => {
         // permissions;
@@ -86,16 +130,6 @@ const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) =>
 
     return (
         <Box>
-            {/* <DataCollectionWorkbench
-                // columns={columns || []}
-                // rows={dataCollectionRows || []}
-                // rowsLoading={rowsLoading}
-                // rowsFetching={rowsFetching}
-                dataCollectionId={dataCollectionId || ''}
-                permissions={permissions || 0}
-            /> */}
-            {/* <Table headers={columns} rows={rows} minCellWidth={120} columnResizingOffset={windowWidthOffset} /> */}
-            {/* <Skeleton isLoaded={!isLoading}> */}
             <Box h={'4px'}>{isFetching || isLoading ? <Progress size="xs" isIndeterminate /> : null}</Box>
             <Table
                 rowsData={rows || []}

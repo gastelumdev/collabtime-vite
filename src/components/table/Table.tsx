@@ -43,6 +43,7 @@ const Table = ({
     // const [draggedId, setDraggedId] = useState<number | null>(null);
 
     const [rows, setRows] = useState<any[]>(rowsData);
+
     const [columns, setColumns] = useState<any[]>(columnsData);
 
     const [gridTemplateColumns, setGridTemplateColumns] = useState<string>(columnsData.map((_) => '180px').join(' '));

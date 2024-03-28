@@ -32,8 +32,8 @@ const TableContent = ({
     // columnResizingOffset,
     // updateColumn,
     // reorderColumns,
-    handleUpdateRowNoRender,
-    // handleUpdateRow,
+    // handleUpdateRowNoRender,
+    handleUpdateRow,
     handleDeleteBoxChange,
     rowCallUpdate,
     showDoneRows = false,
@@ -43,47 +43,60 @@ const TableContent = ({
     const [gridTemplateColumns, setGridTemplateColumns] = useState('');
 
     const [currentRows, setCurrentRows] = useState(rows);
+    // const [activeRows, setActiveRows] = useState<any>(
+    //     rows.filter((row) => {
+    //         return !row.complete;
+    //     })
+    // );
 
     useEffect(() => {
-        setCurrentRows(rows);
-    }, [rows]);
+        if (showDoneRows) {
+            setCurrentRows(rows);
+        } else {
+            setCurrentRows(
+                rows.filter((row) => {
+                    return !row.complete;
+                })
+            );
+        }
+    }, [showDoneRows, rows]);
 
     const [updateRow] = useUpdateRowMutation();
     const [updateRowNoTag] = useUpdateRowNoTagMutation();
 
-    useEffect(() => {
-        let position = 0;
-        let currentParent: any = null;
-        const parentsToMakeCommon: any = [];
+    // useEffect(() => {
+    //     let position = 0;
+    //     let currentParent: any = null;
+    //     const parentsToMakeCommon: any = [];
 
-        const repositionedRows = rows.map((row) => {
-            if (currentParent !== null && row.parentRowId !== currentParent._id) {
-                parentsToMakeCommon.push(currentParent._id);
-            }
+    //     const repositionedRows = rows.map((row) => {
+    //         if (currentParent !== null && row.parentRowId !== currentParent._id) {
+    //             parentsToMakeCommon.push(currentParent._id);
+    //         }
 
-            if (row.isParent) {
-                currentParent = row;
-            } else {
-                currentParent = null;
-            }
+    //         if (row.isParent) {
+    //             currentParent = row;
+    //         } else {
+    //             currentParent = null;
+    //         }
 
-            position = position + 1;
-            if (row.position != position) {
-                updateRow({ ...row, position: position });
-                return { ...row, position: position };
-            }
-            return row;
-        });
+    //         position = position + 1;
+    //         if (row.position != position) {
+    //             updateRow({ ...row, position: position });
+    //             return { ...row, position: position };
+    //         }
+    //         return row;
+    //     });
 
-        const resetRows = repositionedRows.map((row) => {
-            if (parentsToMakeCommon.includes(row._id)) {
-                updateRow({ ...row, isParent: false, showSubrows: true });
-                return { ...row, isParent: false, showSubrows: true };
-            }
-            return row;
-        });
-        setCurrentRows(resetRows);
-    }, [rows, showDoneRows]);
+    //     const resetRows = repositionedRows.map((row) => {
+    //         if (parentsToMakeCommon.includes(row._id)) {
+    //             updateRow({ ...row, isParent: false, showSubrows: true });
+    //             return { ...row, isParent: false, showSubrows: true };
+    //         }
+    //         return row;
+    //     });
+    //     setCurrentRows(resetRows);
+    // }, [rows, showDoneRows]);
 
     useEffect(() => {
         setGridTemplateColumns(gridTemplateColumnsIn);
@@ -147,7 +160,7 @@ const TableContent = ({
             // handleUpdateRow(updatedRow);
 
             if (row.position !== index + 1) {
-                updateRowNoTag(updatedRow);
+                updateRow(updatedRow);
             }
             return updatedRow;
         });
@@ -156,7 +169,7 @@ const TableContent = ({
 
     const handleSwap = () => {
         let position = 0;
-        const newRows: any = currentRows.map((row) => {
+        const newRows: any = rows.map((row) => {
             position = position + 1;
             return { ...row, position: position };
         });
@@ -291,7 +304,7 @@ const TableContent = ({
         // handleUpdateRow(row);
 
         // setCurrentRows((prev) => prev.map((prevRow) => (prevRow._id === row._id ? row : prevRow)));
-        handleUpdateRowNoRender(row);
+        handleUpdateRow(row);
     };
 
     const handleSubrowVisibility = (row: any) => {
