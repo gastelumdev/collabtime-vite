@@ -12,7 +12,6 @@ import {
     Box,
     // Progress
 } from '@chakra-ui/react';
-// import Table from './Table';
 import Table from '../../components/table/Table';
 import { TColumn } from '../../types';
 
@@ -25,12 +24,6 @@ const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) =>
     const [updateColumn] = useUpdateColumnMutation();
     const [reorderColumns] = useReorderColumnsMutation();
 
-    // const [limit, setLimit] = useState<number>(20);
-    // const [skip, setSkip] = useState<number>(0);
-    // const [pageNumber, setPageNumber] = useState<number>((skip + limit) / limit);
-
-    // const [sort, setSort] = useState<number>(1);
-
     const {
         data: rowsData,
         refetch,
@@ -38,11 +31,6 @@ const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) =>
         // isLoading,
     } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
     const [updateRow] = useUpdateRowMutation();
-    // const [dataCollectionRows, setDataCollectionRows] = useState(rows);
-    // const { data: totalRows } = useGetTotalRowsQuery({ dataCollectionId: dataCollectionId || "", limit: limit });
-
-    // const [pages, setPages] = useState<number[]>(totalRows || []);
-
     const [permissions, setPermissions] = useState<number>();
     const [windowWidthOffset, setWindowWidthOffset] = useState(window.innerWidth > 990 ? 90 : 7);
 
@@ -81,19 +69,13 @@ const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) =>
             return row;
         });
         setRows(resetRows);
-        // setRows(rowsData);
     }, [rowsData, showDoneRows]);
 
     useEffect(() => {
         refetch();
     }, [showDoneRows]);
 
-    // useEffect(() => {
-    //     setRows(rowsData);
-    // }, [rowsData]);
-
     useEffect(() => {
-        // permissions;
         getPermissions();
     }, [user]);
 
@@ -117,8 +99,6 @@ const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) =>
         }
     };
 
-    // const tableHeaders = [{ name: 'name' }, { name: 'level' }, { name: 'status' }];
-
     const handleColumnUpdate = useCallback((column: any) => {
         updateColumn(column);
     }, []);
@@ -126,10 +106,6 @@ const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) =>
     const handleReorderColumns = useCallback((columns: TColumn[]) => {
         reorderColumns(columns);
     }, []);
-
-    // const handleLimitValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    //     setLimit(Number(event.target.value));
-    // };
 
     return (
         <Box>

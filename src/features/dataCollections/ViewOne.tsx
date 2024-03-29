@@ -50,15 +50,18 @@ import LinksMenu from './LinksMenu';
 import { MdContentCopy } from 'react-icons/md';
 import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 import { CSVLink } from 'react-csv';
+import { useTypedSelector, useAppDispatch } from '../../hooks/store';
+import { setShowDoneRows } from '../../components/table/tableSlice';
 
 const ViewOne = () => {
     const { id, dataCollectionId } = useParams();
     const { pathname } = useLocation();
     const [queryParameters] = useSearchParams();
+    const finalRef = useRef<any>(null);
+
     const { onClose, onOpen, isOpen } = useDisclosure();
     const { onClose: onCloseFormDrawer, onOpen: onOpenFormDrawer, isOpen: isOpenFormDrawer } = useDisclosure();
     const toast = useToast();
-    const finalRef = useRef<any>(null);
 
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
     const { data: dataCollection } = useGetDataCollectionQuery(dataCollectionId || '');
@@ -98,7 +101,12 @@ const ViewOne = () => {
             })
     );
 
-    const [showDoneRows, setShowDoneRows] = useState<boolean>(false);
+    // const [showDoneRows, setShowDoneRows] = useState<boolean>(false);
+    const showDoneRows = useTypedSelector((state: any) => {
+        console.log(state.table.showDoneRows);
+        return state.table.showDoneRows;
+    });
+    const dispatch = useAppDispatch();
 
     const [permissions, setPermissions] = useState<number>();
 
@@ -115,11 +123,11 @@ const ViewOne = () => {
     };
 
     useEffect(() => {
-        for (const column of columns || []) {
-            if (column.type === 'status') {
-                setShowDoneRows(false);
-            }
-        }
+        // for (const column of columns || []) {
+        //     if (column.type === 'status') {
+        //         setShowDoneRows(false);
+        //     }
+        // }
         setColumns(columnsData);
     }, [columnsData]);
 
@@ -299,7 +307,8 @@ const ViewOne = () => {
                                             <Box mr={'5px'}>
                                                 <PrimaryButton
                                                     onClick={() => {
-                                                        setShowDoneRows(!showDoneRows);
+                                                        console.log(showDoneRows);
+                                                        dispatch(setShowDoneRows());
                                                         // const filteredRows = rows?.filter((row) => {});
                                                         // setRows(
                                                         //     rows?.filter((row) => {
