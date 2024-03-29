@@ -8,7 +8,10 @@ import {
     useUpdateRowMutation,
 } from '../../app/services/api';
 import { useParams } from 'react-router-dom';
-import { Box, Progress } from '@chakra-ui/react';
+import {
+    Box,
+    // Progress
+} from '@chakra-ui/react';
 // import Table from './Table';
 import Table from '../../components/table/Table';
 import { TColumn } from '../../types';
@@ -32,7 +35,7 @@ const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) =>
         data: rowsData,
         refetch,
         isFetching,
-        isLoading,
+        // isLoading,
     } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
     const [updateRow] = useUpdateRowMutation();
     // const [dataCollectionRows, setDataCollectionRows] = useState(rows);
@@ -130,7 +133,7 @@ const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) =>
 
     return (
         <Box>
-            <Box h={'4px'}>{isFetching || isLoading ? <Progress size="xs" isIndeterminate /> : null}</Box>
+            {/* <Box h={'4px'}>{isFetching || isLoading ? <Progress size="xs" isIndeterminate /> : null}</Box> */}
             <Table
                 rowsData={rows || []}
                 columnsData={columns || []}
