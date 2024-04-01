@@ -5,7 +5,7 @@ import {
     useGetUserQuery,
     useReorderColumnsMutation,
     useUpdateColumnMutation,
-    useUpdateRowMutation,
+    // useUpdateRowMutation,
 } from '../../app/services/api';
 import { useParams } from 'react-router-dom';
 import {
@@ -30,7 +30,7 @@ const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) =>
         isFetching,
         // isLoading,
     } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
-    const [updateRow] = useUpdateRowMutation();
+    // const [updateRow] = useUpdateRowMutation();
     const [permissions, setPermissions] = useState<number>();
     const [windowWidthOffset, setWindowWidthOffset] = useState(window.innerWidth > 990 ? 90 : 7);
 
