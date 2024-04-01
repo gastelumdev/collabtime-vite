@@ -12,13 +12,11 @@ const tableSlice = createSlice({
     name: "table",
     initialState,
     reducers: {
-        setShowDoneRows: (state) => {
-            console.log("STATE CHANGE")
-            console.log(state.showDoneRows)
+        toggleShowDoneRows: (state) => {
             state.showDoneRows = !state.showDoneRows;
         }
     }
 });
 
-export const { setShowDoneRows } = tableSlice.actions;
+export const { toggleShowDoneRows } = tableSlice.actions;
 export default tableSlice.reducer;

@@ -8,6 +8,7 @@ import {
     useCreateColumnMutation,
     useDeleteColumnMutation,
     useDeleteRowMutation,
+    useGetRowsQuery,
     useReorderRowsMutation,
     useRowCallUpdateMutation,
     useUpdateRowMutation,
@@ -15,9 +16,10 @@ import {
 } from '../../app/services/api';
 import { Box, Center, Flex, Spacer, Text } from '@chakra-ui/react';
 import { ArrowDownIcon, ArrowUpIcon, DeleteIcon } from '@chakra-ui/icons';
+import { useParams } from 'react-router';
 
 interface ITableProps {
-    rowsData: any[];
+    rowsData?: any[];
     columnsData: any[];
     minCellWidth: number;
     columnResizingOffset: number;
@@ -29,7 +31,7 @@ interface ITableProps {
 }
 
 const Table = ({
-    rowsData,
+    // rowsData,
     columnsData,
     minCellWidth,
     columnResizingOffset,
@@ -37,16 +39,25 @@ const Table = ({
     reorderColumns,
     showDoneRows = false,
     allowed = false,
-    isFetching = true,
-}: ITableProps) => {
+}: // isFetching = true,
+ITableProps) => {
     // const [overId, setOverId] = useState<number | null>(null);
     // const [draggedId, setDraggedId] = useState<number | null>(null);
 
-    const [rows, setRows] = useState<any[]>(rowsData);
+    const { dataCollectionId } = useParams();
 
     const [columns, setColumns] = useState<any[]>(columnsData);
 
     const [gridTemplateColumns, setGridTemplateColumns] = useState<string>(columnsData.map((_) => '180px').join(' '));
+
+    const {
+        data: rowsData,
+        // refetch,
+        isFetching,
+        // isLoading,
+    } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
+
+    const [rows, setRows] = useState<any>(rowsData);
 
     const [updateRow] = useUpdateRowMutation();
     const [updateRowNoTag] = useUpdateRowNoTagMutation();
@@ -58,7 +69,7 @@ const Table = ({
 
     useEffect(() => {
         setRows(
-            rowsData.map((row) => {
+            rowsData?.map((row) => {
                 return { ...row, checked: false, subRowsAreOpen: false };
             })
         );
@@ -112,10 +123,12 @@ const Table = ({
 
     const handleUpdateRowNoRender = useCallback(
         async (row: any) => {
+            // We wait for the call to return new rows if it is the last row
             const newRows: any = await updateRowNoTag(row);
-            setRows((prev) => prev.map((prevRow) => (prevRow._id === row._id ? row : prevRow)));
+            // If it's the last row, add the new blank rows to the current rows
+            setRows((prev: any) => prev.map((prevRow: any) => (prevRow._id === row._id ? row : prevRow)));
             if (newRows.data.length > 0) {
-                setRows((prev) => {
+                setRows((prev: any) => {
                     return [...prev, ...newRows.data];
                 });
             }
@@ -129,7 +142,7 @@ const Table = ({
 
             // This handles adding additional rows if the last row is not empty
             if (newRows.data.length > 0) {
-                setRows((prev) => {
+                setRows((prev: any) => {
                     return [...prev, ...newRows.data];
                 });
             }
@@ -154,7 +167,7 @@ const Table = ({
 
     const handleDeleteBoxChange = useCallback(
         (status: boolean, index: number) => {
-            setRows((prevRows) => prevRows.map((prevRow, rowIndex) => (index === rowIndex ? { ...prevRow, checked: true } : prevRow)));
+            setRows((prevRows: any) => prevRows.map((prevRow: any, rowIndex: any) => (index === rowIndex ? { ...prevRow, checked: true } : prevRow)));
 
             if (status) {
                 setNumberOfDeleteItems(numberOfDeleteItems + 1);
@@ -169,7 +182,7 @@ const Table = ({
         const rowsCopy = rows;
         const parentIds: any = [];
 
-        rowsCopy.map((row) => {
+        rowsCopy.map((row: any) => {
             if (row.checked && row.isParent) {
                 parentIds.push(row._id);
             }
@@ -179,9 +192,9 @@ const Table = ({
 
         // let checkedParent: any = null;
 
-        const filterRowsChecked = rowsCopy.filter((row) => !row.checked);
-        const filterSubrows = filterRowsChecked.filter((row) => !parentIds.includes(row.parentRowId));
-        const newRows = filterSubrows.map((row) => {
+        const filterRowsChecked = rowsCopy.filter((row: any) => !row.checked);
+        const filterSubrows = filterRowsChecked.filter((row: any) => !parentIds.includes(row.parentRowId));
+        const newRows = filterSubrows.map((row: any) => {
             // if (!parentIds.includes(row.parentRowId)) {
             //     position = position + 1;
             //     console.log(`Row ${row.values['item_name']} should have position updated to ${position} because its parent is not checked`);
@@ -239,8 +252,8 @@ const Table = ({
             createColumn(column);
 
             setColumns([...columns, column]);
-            setRows((prev) =>
-                prev.map((row) => {
+            setRows((prev: any) =>
+                prev.map((row: any) => {
                     return { ...row, values: { ...row.values, [column.name]: '' } };
                 })
             );
@@ -250,8 +263,8 @@ const Table = ({
     );
 
     const handleRemoveColumnFromRows = (column: any) => {
-        setRows((prev) =>
-            prev.map((row) => {
+        setRows((prev: any) =>
+            prev.map((row: any) => {
                 let refs = row.refs;
                 if (refs !== undefined) {
                     delete refs[column.name];
@@ -287,8 +300,8 @@ const Table = ({
 
         // let searchForSubrows = false;
 
-        setRows((prevRows) =>
-            prevRows.map((prevRow) => {
+        setRows((prevRows: any) =>
+            prevRows.map((prevRow: any) => {
                 const isParent = prevRow.isParent && (prevRow.parentRowId === undefined || prevRow.parentRowId === null);
                 const isChild = prevRow.parentRowId !== null && prevRow.parentRowId !== undefined;
                 // if current row is checked
@@ -358,15 +371,15 @@ const Table = ({
             return row._id;
         });
 
-        setRows((prevRows) =>
-            prevRows.map((prevRow) => {
+        setRows((prevRows: any) =>
+            prevRows.map((prevRow: any) => {
                 if (removeAsParentsIds.includes(prevRow._id)) updateRow({ ...prevRow, isParent: false, parentRowId: null, showSubrows: true });
                 return removeAsParentsIds.includes(prevRow._id) ? { ...prevRow, isParent: false, parentRowId: null, showSubrows: true } : prevRow;
             })
         );
 
-        setRows((prevRows) =>
-            prevRows.map((prevRow) => {
+        setRows((prevRows: any) =>
+            prevRows.map((prevRow: any) => {
                 if (makeAsParentsIds.includes(prevRow._id)) updateRow({ ...prevRow, isParent: true, parentRowId: null });
                 return makeAsParentsIds.includes(prevRow._id) ? { ...prevRow, isParent: true, parentRowId: null } : prevRow;
             })
@@ -387,8 +400,8 @@ const Table = ({
         let isChecking: any = false;
         let prevSubrowIsVisible = true;
 
-        setRows((prevRows) =>
-            prevRows.map((prevRow, index) => {
+        setRows((prevRows: any) =>
+            prevRows.map((prevRow: any, index: any) => {
                 // const isParent = prevRow.isParent && (prevRow.parentRowId === undefined || prevRow.parentRowId === null);
                 const isChild = prevRow.parentRowId !== null && prevRow.parentRowId !== undefined;
 
@@ -428,8 +441,8 @@ const Table = ({
             })
         );
 
-        setRows((prevRows) =>
-            prevRows.map((prevRow) => {
+        setRows((prevRows: any) =>
+            prevRows.map((prevRow: any) => {
                 if (parentRowIds.includes(prevRow._id)) updateRow({ ...prevRow, isParent: true });
                 return parentRowIds.includes(prevRow._id) ? { ...prevRow, isParent: true } : prevRow;
             })

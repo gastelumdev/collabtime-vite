@@ -225,7 +225,11 @@ export const api = createApi({
             query: (options) => ({
                 url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${options.dataCollectionId}/rows?limit=${options.limit}&skip=${options.skip}&sort=${options.sort}&sortBy=${options.sortBy}`
             }),
-            providesTags: ["Rows"]
+            providesTags: ["Rows"],
+            transformResponse: (rows: any) => {
+                console.log(rows)
+                return rows;
+            }
         }),
         getRow: builder.query<any, any>({
             query: (params) => ({
@@ -249,7 +253,6 @@ export const api = createApi({
             onQueryStarted(row, { dispatch, queryFulfilled }) {
                 console.log(row)
                 const update = dispatch(api.util.updateQueryData("getRows", row, (rows) => {
-                    console.log(row)
                     return rows.map((currentRow) => {
                         if (currentRow._id === row._id) {
                             return row;

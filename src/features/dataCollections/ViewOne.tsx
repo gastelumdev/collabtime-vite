@@ -51,7 +51,7 @@ import { MdContentCopy } from 'react-icons/md';
 import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 import { CSVLink } from 'react-csv';
 import { useTypedSelector, useAppDispatch } from '../../hooks/store';
-import { setShowDoneRows } from '../../components/table/tableSlice';
+import { toggleShowDoneRows } from '../../components/table/tableSlice';
 
 const ViewOne = () => {
     const { id, dataCollectionId } = useParams();
@@ -89,9 +89,9 @@ const ViewOne = () => {
 
     const [valuesForExport, setValuesForExport] = useState<any>('');
 
-    useEffect(() => {
-        setRows(rowsData);
-    }, [rowsData]);
+    // useEffect(() => {
+    //     setRows(rowsData);
+    // }, [rowsData]);
 
     const [checkBoxes, setCheckBoxes] = useState<any>(
         Array(columns?.length)
@@ -103,7 +103,6 @@ const ViewOne = () => {
 
     // const [showDoneRows, setShowDoneRows] = useState<boolean>(false);
     const showDoneRows = useTypedSelector((state: any) => {
-        console.log(state.table.showDoneRows);
         return state.table.showDoneRows;
     });
     const dispatch = useAppDispatch();
@@ -173,7 +172,7 @@ const ViewOne = () => {
 
     useEffect(() => {
         const valsForExport: any = [];
-        const rowsCopy: any = rows;
+        const rowsCopy: any = rowsData;
         const columnsCopy: any = columnsData;
 
         if (columnsCopy !== undefined) {
@@ -202,7 +201,7 @@ const ViewOne = () => {
             }
             setValuesForExport(valsForExport);
         }
-    }, [rows, columnsData]);
+    }, [rowsData, columnsData]);
 
     const handleAddAsTemplateClick = () => {
         if (templateNameValue === '') return;
@@ -308,7 +307,7 @@ const ViewOne = () => {
                                                 <PrimaryButton
                                                     onClick={() => {
                                                         console.log(showDoneRows);
-                                                        dispatch(setShowDoneRows());
+                                                        dispatch(toggleShowDoneRows());
                                                         // const filteredRows = rows?.filter((row) => {});
                                                         // setRows(
                                                         //     rows?.filter((row) => {

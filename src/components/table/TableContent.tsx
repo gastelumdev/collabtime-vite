@@ -43,18 +43,14 @@ const TableContent = ({
     const [gridTemplateColumns, setGridTemplateColumns] = useState('');
 
     const [currentRows, setCurrentRows] = useState(rows);
-    // const [activeRows, setActiveRows] = useState<any>(
-    //     rows.filter((row) => {
-    //         return !row.complete;
-    //     })
-    // );
 
     useEffect(() => {
+        console.log(rows);
         if (showDoneRows) {
             setCurrentRows(rows);
         } else {
             setCurrentRows(
-                rows.filter((row) => {
+                rows?.filter((row) => {
                     return !row.complete;
                 })
             );
@@ -63,40 +59,6 @@ const TableContent = ({
 
     const [updateRow] = useUpdateRowMutation();
     const [updateRowNoTag] = useUpdateRowNoTagMutation();
-
-    // useEffect(() => {
-    //     let position = 0;
-    //     let currentParent: any = null;
-    //     const parentsToMakeCommon: any = [];
-
-    //     const repositionedRows = rows.map((row) => {
-    //         if (currentParent !== null && row.parentRowId !== currentParent._id) {
-    //             parentsToMakeCommon.push(currentParent._id);
-    //         }
-
-    //         if (row.isParent) {
-    //             currentParent = row;
-    //         } else {
-    //             currentParent = null;
-    //         }
-
-    //         position = position + 1;
-    //         if (row.position != position) {
-    //             updateRow({ ...row, position: position });
-    //             return { ...row, position: position };
-    //         }
-    //         return row;
-    //     });
-
-    //     const resetRows = repositionedRows.map((row) => {
-    //         if (parentsToMakeCommon.includes(row._id)) {
-    //             updateRow({ ...row, isParent: false, showSubrows: true });
-    //             return { ...row, isParent: false, showSubrows: true };
-    //         }
-    //         return row;
-    //     });
-    //     setCurrentRows(resetRows);
-    // }, [rows, showDoneRows]);
 
     useEffect(() => {
         setGridTemplateColumns(gridTemplateColumnsIn);
@@ -130,30 +92,35 @@ const TableContent = ({
         setOverId(rowIndex);
     }, []);
 
-    const setPositions = (list: any, draggedIndex: number, overIndex: number, numberOfChildren: number) => {
-        const range: any = [];
+    const setPositions = (
+        list: any
+        //  draggedIndex: number,
+        //  overIndex: number,
+        //  numberOfChildren: number
+    ) => {
+        // const range: any = [];
 
-        if (draggedIndex < overIndex) {
-            if (draggedIndex !== 0) {
-                draggedIndex = draggedIndex - 1;
-            }
-            if (overIndex !== list.length) {
-                overIndex = overIndex + 1;
-            }
-            for (let i = draggedIndex; i < overIndex + numberOfChildren; i++) {
-                range.push(i);
-            }
-        } else {
-            if (overIndex !== 0) {
-                overIndex = overIndex - 1;
-            }
-            if (draggedIndex !== list.length) {
-                draggedIndex = draggedIndex + 1;
-            }
-            for (let i = overIndex; i < draggedIndex + numberOfChildren; i++) {
-                range.push(i);
-            }
-        }
+        // if (draggedIndex < overIndex) {
+        //     if (draggedIndex !== 0) {
+        //         draggedIndex = draggedIndex - 1;
+        //     }
+        //     if (overIndex !== list.length) {
+        //         overIndex = overIndex + 1;
+        //     }
+        //     for (let i = draggedIndex; i < overIndex + numberOfChildren; i++) {
+        //         range.push(i);
+        //     }
+        // } else {
+        //     if (overIndex !== 0) {
+        //         overIndex = overIndex - 1;
+        //     }
+        //     if (draggedIndex !== list.length) {
+        //         draggedIndex = draggedIndex + 1;
+        //     }
+        //     for (let i = overIndex; i < draggedIndex + numberOfChildren; i++) {
+        //         range.push(i);
+        //     }
+        // }
 
         const newRows = list.map((row: any, index: number) => {
             const updatedRow = { ...row, position: index + 1 };
@@ -198,11 +165,11 @@ const TableContent = ({
             setCurrentRows(reorderedRows);
 
             const repositionedRows: any = setPositions(
-                reorderedRows,
+                reorderedRows
                 // currentRows,
-                Number(localStorage.getItem('rowDragged')),
-                Number(localStorage.getItem('rowOver')),
-                childRows.length
+                // Number(localStorage.getItem('rowDragged')),
+                // Number(localStorage.getItem('rowOver')),
+                // childRows.length
             );
 
             // setCurrentRows(repositionedRows);

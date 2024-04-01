@@ -26,7 +26,7 @@ const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) =>
 
     const {
         data: rowsData,
-        refetch,
+        // refetch,
         isFetching,
         // isLoading,
     } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
@@ -34,46 +34,48 @@ const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) =>
     const [permissions, setPermissions] = useState<number>();
     const [windowWidthOffset, setWindowWidthOffset] = useState(window.innerWidth > 990 ? 90 : 7);
 
-    const [rows, setRows] = useState(rowsData);
+    // const [rows, setRows] = useState(rowsData);
 
-    useEffect(() => {
-        let position = 0;
-        let currentParent: any = null;
-        const parentsToMakeCommon: any = [];
+    // useEffect(() => {
+    //     let position = 0;
+    //     let currentParent: any = null;
+    //     const parentsToMakeCommon: any = [];
 
-        const repositionedRows = rowsData?.map((row) => {
-            if (currentParent !== null && row.parentRowId !== currentParent._id) {
-                parentsToMakeCommon.push(currentParent._id);
-            }
+    //     const repositionedRows = rowsData?.map((row) => {
+    //         if (currentParent !== null && row.parentRowId !== currentParent._id) {
+    //             parentsToMakeCommon.push(currentParent._id);
+    //         }
 
-            if (row.isParent) {
-                currentParent = row;
-            } else {
-                currentParent = null;
-            }
+    //         if (row.isParent) {
+    //             currentParent = row;
+    //         } else {
+    //             currentParent = null;
+    //         }
 
-            position = position + 1;
-            if (row.position != position) {
-                console.log(position);
-                updateRow({ ...row, position: position });
-                return { ...row, position: position };
-            }
-            return row;
-        });
+    //         position = position + 1;
+    //         if (row.position != position) {
+    //             console.log('UPDATING POSITION OF ROW');
+    //             updateRow({ ...row, position: position });
+    //             return { ...row, position: position };
+    //         }
+    //         return row;
+    //     });
 
-        const resetRows = repositionedRows?.map((row) => {
-            if (parentsToMakeCommon.includes(row._id)) {
-                updateRow({ ...row, isParent: false, showSubrows: true });
-                return { ...row, isParent: false, showSubrows: true };
-            }
-            return row;
-        });
-        setRows(resetRows);
-    }, [rowsData, showDoneRows]);
+    //     const resetRows = repositionedRows?.map((row) => {
+    //         if (parentsToMakeCommon.includes(row._id)) {
+    //             console.log('UPDATING PARENTS TO COMMON');
+    //             updateRow({ ...row, isParent: false, showSubrows: true });
+    //             return { ...row, isParent: false, showSubrows: true };
+    //         }
+    //         return row;
+    //     });
+    //     setRows(resetRows);
+    //     setRows(rowsData);
+    // }, [rowsData, showDoneRows]);
 
-    useEffect(() => {
-        refetch();
-    }, [showDoneRows]);
+    // useEffect(() => {
+    //     refetch();
+    // }, [showDoneRows]);
 
     useEffect(() => {
         getPermissions();
@@ -111,7 +113,7 @@ const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) =>
         <Box>
             {/* <Box h={'4px'}>{isFetching || isLoading ? <Progress size="xs" isIndeterminate /> : null}</Box> */}
             <Table
-                rowsData={rows || []}
+                rowsData={rowsData || []}
                 columnsData={columns || []}
                 minCellWidth={120}
                 columnResizingOffset={windowWidthOffset}
@@ -121,10 +123,8 @@ const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) =>
                 allowed={(permissions || 0) > 1}
                 isFetching={isFetching}
             />
-            {/* </Skeleton> */}
         </Box>
     );
 };
 
 export default memo(DataCollection);
-// export default DataCollection;

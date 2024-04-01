@@ -52,9 +52,6 @@ export const formatTime = (date: Date) => {
 };
 
 const relocateSectionOfList = (arr: any, draggedId: number, overId: number) => {
-
-
-
   // Remove the item from the provided index and remember it
   const [draggedItem] = arr.splice(draggedId, 1);
   // Insert the item in the location provided
