@@ -16,6 +16,8 @@ import { TDocument } from '../../types';
 // import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import Reference from './Reference';
 // import { useUpdateRowMutation } from '../../app/services/api';
+import { useTypedSelector, useAppDispatch } from '../../hooks/store';
+import { addCheckedRowId, removeCheckedRowId } from '../../components/table/tableSlice';
 
 const Row = ({
     row,
@@ -57,6 +59,12 @@ const Row = ({
     // );
 
     // const [isPending, startTransition] = useTransition();
+
+    const dispatch = useAppDispatch();
+
+    const checkedRowIds = useTypedSelector((state: any) => {
+        return state.table.checkedRowIds;
+    });
 
     const [overId, setOverId] = useState<number | null>(null);
     const [draggedId, setDraggedId] = useState<number | null>(null);
@@ -133,6 +141,12 @@ const Row = ({
     );
 
     const handleDeleteCheckboxChange = () => {
+        console.log(checkedRowIds);
+        if (checkedRowIds.includes(row._id)) {
+            dispatch(removeCheckedRowId(row._id));
+        } else {
+            dispatch(addCheckedRowId(row._id));
+        }
         setDeleteCheckboxIsChecked(!deleteCheckboxIsChecked);
         // startTransition(() => {
         handleDeleteBoxChange(!deleteCheckboxIsChecked, rowIndex);
@@ -281,7 +295,7 @@ const Row = ({
                                         <Box mt={'6px'} ml={'14px'}>
                                             <Checkbox
                                                 mr={'1px'}
-                                                isChecked={deleteCheckboxIsChecked}
+                                                isChecked={checkedRowIds.includes(row._id)}
                                                 onChange={handleDeleteCheckboxChange}
                                                 disabled={!allowed}
                                             />

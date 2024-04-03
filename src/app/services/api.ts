@@ -227,8 +227,13 @@ export const api = createApi({
             }),
             providesTags: ["Rows"],
             transformResponse: (rows: any) => {
-                console.log(rows)
-                return rows;
+
+                return rows.map((row: any) => {
+                    return { ...row, checked: false, subRowsAreOpen: false }
+                })
+            },
+            onQueryStarted: (rows) => {
+                console.log(`${rows.length} rows were fetched`)
             }
         }),
         getRow: builder.query<any, any>({
@@ -251,7 +256,6 @@ export const api = createApi({
                 body: row,
             }),
             onQueryStarted(row, { dispatch, queryFulfilled }) {
-                console.log(row)
                 const update = dispatch(api.util.updateQueryData("getRows", row, (rows) => {
                     return rows.map((currentRow) => {
                         if (currentRow._id === row._id) {
@@ -276,26 +280,26 @@ export const api = createApi({
                 method: "POST",
                 body: row,
             }),
-            onQueryStarted(row, { dispatch, queryFulfilled }) {
-                console.log(row)
-                const update = dispatch(api.util.updateQueryData("getRows", row, (rows) => {
-                    console.log("UPDATE")
-                    return rows.map((currentRow) => {
-                        if (currentRow._id === row._id) {
-                            return row;
-                        } else {
-                            return currentRow;
-                        }
-                    })
-                }));
-                queryFulfilled.then(() => {
-                    console.log("UPDATE ROW NO TAG FULFILLED")
-                })
-                queryFulfilled.catch(() => {
-                    update.undo()
-                })
-            },
-            invalidatesTags: ["Rows"],
+            // onQueryStarted(row, { dispatch, queryFulfilled }) {
+            //     console.log(row)
+            //     const update = dispatch(api.util.updateQueryData("getRows", row, (rows) => {
+            //         console.log("UPDATE")
+            //         return rows.map((currentRow) => {
+            //             if (currentRow._id === row._id) {
+            //                 return row;
+            //             } else {
+            //                 return currentRow;
+            //             }
+            //         })
+            //     }));
+            //     queryFulfilled.then(() => {
+            //         console.log("UPDATE ROW NO TAG FULFILLED")
+            //     })
+            //     queryFulfilled.catch(() => {
+            //         update.undo()
+            //     })
+            // },
+            // invalidatesTags: ["Rows"],
         }),
         deleteRow: builder.mutation<TRow, TRow>({
             query: (row) => ({

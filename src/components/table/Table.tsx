@@ -17,6 +17,8 @@ import {
 import { Box, Center, Flex, Spacer, Text } from '@chakra-ui/react';
 import { ArrowDownIcon, ArrowUpIcon, DeleteIcon } from '@chakra-ui/icons';
 import { useParams } from 'react-router';
+import { useTypedSelector, useAppDispatch } from '../../hooks/store';
+import { clearCheckedRowIds } from '../../components/table/tableSlice';
 
 interface ITableProps {
     rowsData?: any[];
@@ -41,10 +43,12 @@ const Table = ({
     allowed = false,
 }: // isFetching = true,
 ITableProps) => {
-    // const [overId, setOverId] = useState<number | null>(null);
-    // const [draggedId, setDraggedId] = useState<number | null>(null);
-
     const { dataCollectionId } = useParams();
+    const dispatch = useAppDispatch();
+
+    const checkedRowIds = useTypedSelector((state: any) => {
+        return state.table.checkedRowIds;
+    });
 
     const [columns, setColumns] = useState<any[]>(columnsData);
 
@@ -68,11 +72,13 @@ ITableProps) => {
     const [rowCallUpdate] = useRowCallUpdateMutation();
 
     useEffect(() => {
-        setRows(
-            rowsData?.map((row) => {
-                return { ...row, checked: false, subRowsAreOpen: false };
-            })
-        );
+        // console.log(rowsData);
+        // setRows(
+        //     rowsData?.map((row) => {
+        //         return { ...row, checked: false, subRowsAreOpen: false };
+        //     })
+        // );
+        setRows(rowsData);
         setColumns(columnsData);
 
         setGridTemplateColumns(
@@ -149,21 +155,7 @@ ITableProps) => {
         },
         [rows]
     );
-
-    // const [deleteCheckboxStatusList, setDeleteCheckboxStatusList] = useState(
-    //     Array(rows.length)
-    //         .fill(null)
-    //         .map(() => false)
-    // );
     const [numberOfDeleteItems, setNumberOfDeleteItems] = useState(0);
-
-    // useEffect(() => {
-    //     setDeleteCheckboxStatusList(
-    //         Array(rowsData.length)
-    //             .fill(null)
-    //             .map(() => false)
-    //     );
-    // }, [rowsData]);
 
     const handleDeleteBoxChange = useCallback(
         (status: boolean, index: number) => {
@@ -183,7 +175,7 @@ ITableProps) => {
         const parentIds: any = [];
 
         rowsCopy.map((row: any) => {
-            if (row.checked && row.isParent) {
+            if (checkedRowIds.includes(row._id) && row.isParent) {
                 parentIds.push(row._id);
             }
         });
@@ -192,15 +184,10 @@ ITableProps) => {
 
         // let checkedParent: any = null;
 
-        const filterRowsChecked = rowsCopy.filter((row: any) => !row.checked);
+        const filterRowsChecked = rowsCopy.filter((row: any) => !checkedRowIds.includes(row._id));
         const filterSubrows = filterRowsChecked.filter((row: any) => !parentIds.includes(row.parentRowId));
         const newRows = filterSubrows.map((row: any) => {
-            // if (!parentIds.includes(row.parentRowId)) {
-            //     position = position + 1;
-            //     console.log(`Row ${row.values['item_name']} should have position updated to ${position} because its parent is not checked`);
-            //     return { ...row, position: position };
-            // }
-            if (!row.checked) {
+            if (!checkedRowIds.includes(row._id)) {
                 position = position + 1;
                 return { ...row, position: position };
             }
@@ -208,38 +195,14 @@ ITableProps) => {
         });
         setRows(newRows);
 
-        // setRows((prevRows) => prevRows.filter((row) => !row.checked));
-        // setRows((prevRows) => prevRows.filter((row) => !parentIds.includes(row.parentRowId)));
-        // setRows((prevRows) => {
-        //     console.log(prevRows);
-        //     return prevRows.map((row) => {
-        //         // if (!parentIds.includes(row.parentRowId)) {
-        //         //     position = position + 1;
-        //         //     console.log(`Row ${row.values['item_name']} should have position updated to ${position} because its parent is not checked`);
-        //         //     return { ...row, position: position };
-        //         // }
-        //         if (!row.checked) {
-        //             position = position + 1;
-        //             console.log(`Row ${row.values['item_name']} should have position updated to ${position} because row is not checked`);
-        //             return { ...row, position: position };
-        //         }
-        //         return row;
-        //     });
-        // });
-
         for (const row of rowsCopy) {
             if (parentIds.includes(row.parentRowId)) {
                 deleteRow(row);
             }
-            if (row.checked) {
-                // if (row.isParent) checkedParent = row._id;
-                if (row.checked) {
-                    deleteRow(row);
-                }
+            if (checkedRowIds.includes(row._id)) {
+                deleteRow(row);
             }
         }
-
-        // setDeleteCheckboxStatusList((prev) => prev.map(() => false));
         setNumberOfDeleteItems(0);
     };
 
@@ -277,8 +240,6 @@ ITableProps) => {
 
     const handleDeleteColumn = useCallback(
         (column: any) => {
-            // const columnsCopy: any = columns;
-            // const filteredColumns = columnsCopy.filter((col: any) => col.name !== column.name);
             setColumns((prev) => prev.filter((prevColumn) => prevColumn.name !== column.name));
             deleteColumn(column);
         },
@@ -287,9 +248,6 @@ ITableProps) => {
 
     const setAsMainrow = useCallback(() => {
         let currentParentId: any = null;
-        // let updatedRow: any = null;
-        // let setToParent = false;
-        // let removeParent = false;
         let currentParent: any = null;
         let subrowCount = 1;
 
@@ -305,7 +263,7 @@ ITableProps) => {
                 const isParent = prevRow.isParent && (prevRow.parentRowId === undefined || prevRow.parentRowId === null);
                 const isChild = prevRow.parentRowId !== null && prevRow.parentRowId !== undefined;
                 // if current row is checked
-                if (prevRow.checked) {
+                if (checkedRowIds.includes(prevRow._id)) {
                     // if it is not a main row
                     if (!isParent) {
                         // if it is a child
@@ -385,6 +343,8 @@ ITableProps) => {
             })
         );
 
+        dispatch(clearCheckedRowIds());
+
         // if (setToParent) updateRow({ ...updatedRow, isParent: true, parentRowId: null });
         // if (removeParent && currentParent !== null) updateRow({ ...currentParent, isParent: false, parentRowId: null });
 
@@ -407,7 +367,7 @@ ITableProps) => {
 
                 // console.log({ isParent, isChild, currentParentId, isChecking });
 
-                if (prevRow.checked) {
+                if (checkedRowIds.includes(prevRow._id)) {
                     if (index !== 0) {
                         if (potentialParent !== null) {
                             if (newParents.length === 0 || newParents[newParents.length - 1].position !== potentialParent.position) {
@@ -448,12 +408,14 @@ ITableProps) => {
             })
         );
 
+        dispatch(clearCheckedRowIds());
+
         setNumberOfDeleteItems(0);
     }, [rows]);
 
     return (
         <div id={'data-collection-table'} className={'table'} style={{ position: 'relative' }}>
-            {numberOfDeleteItems > 0 ? (
+            {checkedRowIds.length > 0 ? (
                 <Box
                     position={'absolute'}
                     bottom={'30px'}
@@ -525,7 +487,7 @@ ITableProps) => {
                 isFetching={isFetching}
             />
             <TableContent
-                rows={rows}
+                rows={rowsData || []}
                 columns={columns}
                 setRows={handleSetRows}
                 gridTemplateColumnsIn={gridTemplateColumns}
