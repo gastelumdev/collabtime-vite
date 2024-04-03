@@ -74,7 +74,7 @@ const ViewOne = () => {
     const [updateDataCollection] = useUpdateDataCollectionMutation();
     const [sendForm] = useSendFormMutation();
 
-    const [rows, setRows] = useState(rowsData);
+    // const [rows, setRows] = useState(rowsData);
     const [columns, setColumns] = useState(columnsData);
 
     const [acknowledgeRow] = useAcknowledgeRowMutation();

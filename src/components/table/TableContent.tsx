@@ -2,7 +2,7 @@ import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { ViewportList } from 'react-viewport-list';
 import Row from './Row';
 import { swapItems } from '../../utils/helpers';
-import { useUpdateRowMutation, useUpdateRowNoTagMutation } from '../../app/services/api';
+import { useUpdateRowMutation } from '../../app/services/api';
 import { Box } from '@chakra-ui/react';
 
 interface IProps {
@@ -58,7 +58,6 @@ const TableContent = ({
     }, [showDoneRows, rows]);
 
     const [updateRow] = useUpdateRowMutation();
-    const [updateRowNoTag] = useUpdateRowNoTagMutation();
 
     useEffect(() => {
         setGridTemplateColumns(gridTemplateColumnsIn);
@@ -92,68 +91,34 @@ const TableContent = ({
         setOverId(rowIndex);
     }, []);
 
-    const setPositions = (
-        list: any
-        //  draggedIndex: number,
-        //  overIndex: number,
-        //  numberOfChildren: number
-    ) => {
-        // const range: any = [];
-
-        // if (draggedIndex < overIndex) {
-        //     if (draggedIndex !== 0) {
-        //         draggedIndex = draggedIndex - 1;
-        //     }
-        //     if (overIndex !== list.length) {
-        //         overIndex = overIndex + 1;
-        //     }
-        //     for (let i = draggedIndex; i < overIndex + numberOfChildren; i++) {
-        //         range.push(i);
-        //     }
-        // } else {
-        //     if (overIndex !== 0) {
-        //         overIndex = overIndex - 1;
-        //     }
-        //     if (draggedIndex !== list.length) {
-        //         draggedIndex = draggedIndex + 1;
-        //     }
-        //     for (let i = overIndex; i < draggedIndex + numberOfChildren; i++) {
-        //         range.push(i);
-        //     }
-        // }
-
-        const newRows = list.map((row: any, index: number) => {
-            const updatedRow = { ...row, position: index + 1 };
-            // handleUpdateRow(updatedRow);
-
-            if (row.position !== index + 1) {
-                updateRow(updatedRow);
-            }
-            return updatedRow;
-        });
-        return newRows;
-    };
-
     const handleSwap = () => {
-        let position = 0;
-        const newRows: any = rows.map((row) => {
-            position = position + 1;
-            return { ...row, position: position };
-        });
+        // let position = 0;
+        const newRows = [...rows];
+        // const newRows: any = rows.map((row) => {
+        //     position = position + 1;
+        //     return { ...row, position: position };
+        // });
+
+        // Get the dragged row and the row that it was dropped on
         const draggedRowData = newRows[Number(localStorage.getItem('rowDragged')) - 1];
         const overRowData = newRows[Number(localStorage.getItem('rowOver')) - 1];
 
+        // Set the type of row that was dragged
         const draggedIsCommon = !draggedRowData.isParent && draggedRowData.parentRowId === null;
         const draggedIsParent = draggedRowData.isParent && draggedRowData.parentRowId === null;
         const draggedIsChild = !draggedRowData.isParent && draggedRowData.parentRowId !== null;
-
+        // Set the type of row that it was dropped on
         const overIsCommon = !overRowData.isParent && overRowData.parentRowId === null;
         const overIsParent = overRowData.isParent && overRowData.parentRowId === null;
         const overIsChild = !overRowData.isParent && overRowData.parentRowId !== null;
 
-        const childRows = newRows.filter((row: any) => {
-            return draggedIsParent && row.parentRowId === draggedRowData._id;
-        });
+        // Get the rows if the dragged row is a parent
+        let childRows = [];
+        if (draggedIsParent) {
+            childRows = newRows.filter((row: any) => {
+                return draggedIsParent && row.parentRowId === draggedRowData._id;
+            });
+        }
 
         let reorderedRows;
 
@@ -164,102 +129,167 @@ const TableContent = ({
             setRows(reorderedRows);
             setCurrentRows(reorderedRows);
 
-            const repositionedRows: any = setPositions(
-                reorderedRows
-                // currentRows,
-                // Number(localStorage.getItem('rowDragged')),
-                // Number(localStorage.getItem('rowOver')),
-                // childRows.length
-            );
+            // const repositionedRows: any = setPositions(reorderedRows);
 
-            // setCurrentRows(repositionedRows);
+            const rowsToUpdate: any = {};
 
-            if ((draggedIsParent && overIsCommon) || (draggedIsCommon && overIsCommon)) {
-                setRows(repositionedRows);
-                setCurrentRows(repositionedRows);
-            }
+            // if ((draggedIsParent && overIsCommon) || (draggedIsCommon && overIsCommon)) {
+            //     setRows(repositionedRows);
+            //     setCurrentRows(repositionedRows);
+            // }
 
-            if (draggedIsCommon && overIsParent && draggedRowData.position < overRowData.position) {
-                // The dragged row needs to update to be set as parent false and parentRowId of over row
+            const relAdjustedRow = reorderedRows.map((row: any, index: number) => {
+                let rowToUpdate: any = row;
 
-                const relAdjustedRow = repositionedRows.map((row: any) => {
-                    if (row.position === overRowData.position) {
-                        updateRowNoTag({ ...row, isParent: false, parentRowId: overRowData._id, isVisible: overRowData.showSubrows });
-                        return { ...row, isParent: false, parentRowId: overRowData._id, isVisible: overRowData.showSubrows };
-                    }
-                    return row;
-                });
+                if (rowToUpdate.position !== index + 1) {
+                    console.log('Row out of order');
+                    rowToUpdate = { ...rowToUpdate, position: index + 1 };
 
-                setRows(relAdjustedRow);
-
-                setCurrentRows(relAdjustedRow);
-            }
-
-            if (draggedIsCommon && overIsChild) {
-                // The dragged row needs to update to be set as parent false and share the parentRowId of the over row
-                console.log('Common into child');
-                const relAdjustedRows = repositionedRows.map((row: any) => {
-                    if (row.position === overRowData.position) {
-                        console.log(row);
-                        updateRowNoTag({ ...row, isParent: false, parentRowId: overRowData.parentRowId });
-                        return { ...row, isParent: false, parentRowId: overRowData.parentRowId };
-                    }
-                    return row;
-                });
-
-                setRows(relAdjustedRows);
-
-                setCurrentRows(relAdjustedRows);
-            }
-
-            if (draggedIsChild && overIsCommon) {
-                // The dragged row needs to update to be set as parent false and parentRowId as null
-                // console.log('Child into common');
-                const relAdjustedRows = repositionedRows.map((row: any) => {
-                    if (row.position === overRowData.position) {
-                        console.log(row);
-                        updateRowNoTag({ ...row, isParent: false, parentRowId: null });
-                        return { ...row, isParent: false, parentRowId: null };
-                    }
-                    return row;
-                });
-
-                setRows(relAdjustedRows);
-
-                setCurrentRows(relAdjustedRows);
-            }
-
-            if (draggedIsChild && overIsParent) {
-                if (draggedRowData.position < overRowData.position) {
-                    // The dragged row needs to update to be set as parent false and parentRowId of over row
-
-                    const relAdjustedRows = repositionedRows.map((row: any) => {
-                        if (row.position === overRowData.position) {
-                            updateRowNoTag({ ...row, isParent: false, parentRowId: overRowData._id });
-                            return { ...row, isParent: false, parentRowId: overRowData._id };
-                        }
-                        return row;
-                    });
-
-                    setRows(relAdjustedRows);
-
-                    setCurrentRows(relAdjustedRows);
-                } else {
-                    // The dragged row needs to update to be set as parent false and parentRowId as null
-
-                    const relAdjustedRows = repositionedRows.map((row: any) => {
-                        if (row.position === overRowData.position) {
-                            updateRowNoTag({ ...row, isParent: false, parentRowId: null });
-                            return { ...row, isParent: false, parentRowId: null };
-                        }
-                        return row;
-                    });
-
-                    setRows(relAdjustedRows);
-
-                    setCurrentRows(relAdjustedRows);
+                    rowsToUpdate[rowToUpdate._id] = { ...rowToUpdate, position: index + 1 };
                 }
+
+                if (rowToUpdate.position === overRowData.position) {
+                    console.log(rowToUpdate);
+                    if (draggedIsCommon && overIsParent && draggedRowData.position < overRowData.position) {
+                        // The dragged row needs to update to be set as parent false and parentRowId of over row
+
+                        rowToUpdate = { ...rowToUpdate, isParent: false, parentRowId: overRowData._id, isVisible: overRowData.showSubrows };
+                        rowsToUpdate[rowToUpdate._id] = { ...rowToUpdate, isParent: false, parentRowId: overRowData._id, isVisible: overRowData.showSubrows };
+                        // updateRow({ ...rowToUpdate, isParent: false, parentRowId: overRowData._id, isVisible: overRowData.showSubrows });
+                        return { ...rowToUpdate, isParent: false, parentRowId: overRowData._id, isVisible: overRowData.showSubrows };
+                    }
+
+                    if (draggedIsCommon && overIsChild) {
+                        // The dragged row needs to update to be set as parent false and share the parentRowId of the over row
+
+                        console.log(rowToUpdate);
+                        rowToUpdate = { ...rowToUpdate, isParent: false, parentRowId: overRowData.parentRowId };
+                        rowsToUpdate[rowToUpdate._id] = { ...rowToUpdate, isParent: false, parentRowId: overRowData.parentRowId };
+                        // updateRow({ ...rowToUpdate, isParent: false, parentRowId: overRowData.parentRowId });
+                        return { ...rowToUpdate, isParent: false, parentRowId: overRowData.parentRowId };
+                    }
+
+                    if (draggedIsChild && overIsCommon) {
+                        // The dragged row needs to update to be set as parent false and parentRowId as null
+                        // console.log('Child into common');
+                        console.log(rowToUpdate);
+                        rowToUpdate = { ...rowToUpdate, isParent: false, parentRowId: null };
+                        rowsToUpdate[rowToUpdate._id] = { ...rowToUpdate, isParent: false, parentRowId: null };
+                        // updateRow({ ...rowToUpdate, isParent: false, parentRowId: null });
+                        return { ...rowToUpdate, isParent: false, parentRowId: null };
+                    }
+
+                    if (draggedIsChild && overIsParent) {
+                        if (draggedRowData.position < overRowData.position) {
+                            // The dragged row needs to update to be set as parent false and parentRowId of over row
+
+                            rowToUpdate = { ...rowToUpdate, isParent: false, parentRowId: overRowData._id };
+                            rowsToUpdate[rowToUpdate._id] = { ...rowToUpdate, isParent: false, parentRowId: overRowData._id };
+                            // updateRow({ ...rowToUpdate, isParent: false, parentRowId: overRowData._id });
+                            return { ...rowToUpdate, isParent: false, parentRowId: overRowData._id };
+                        } else {
+                            // The dragged row needs to update to be set as parent false and parentRowId as null
+
+                            rowToUpdate = { ...rowToUpdate, isParent: false, parentRowId: null };
+                            rowsToUpdate[rowToUpdate._id] = { ...rowToUpdate, isParent: false, parentRowId: null };
+                            // updateRow({ ...rowToUpdate, isParent: false, parentRowId: null });
+                            return { ...rowToUpdate, isParent: false, parentRowId: null };
+                        }
+                    }
+                }
+
+                return rowToUpdate;
+            });
+
+            for (const rowToUpdateId in rowsToUpdate) {
+                updateRow(rowsToUpdate[rowToUpdateId]);
             }
+
+            setRows(relAdjustedRow);
+
+            setCurrentRows(relAdjustedRow);
+
+            // if (draggedIsCommon && overIsParent && draggedRowData.position < overRowData.position) {
+            //     // The dragged row needs to update to be set as parent false and parentRowId of over row
+
+            //     const relAdjustedRow = repositionedRows.map((row: any) => {
+            //         if (row.position === overRowData.position) {
+            //             updateRow({ ...row, isParent: false, parentRowId: overRowData._id, isVisible: overRowData.showSubrows });
+            //             return { ...row, isParent: false, parentRowId: overRowData._id, isVisible: overRowData.showSubrows };
+            //         }
+            //         return row;
+            //     });
+
+            //     setRows(relAdjustedRow);
+
+            //     setCurrentRows(relAdjustedRow);
+            // }
+
+            // if (draggedIsCommon && overIsChild) {
+            //     // The dragged row needs to update to be set as parent false and share the parentRowId of the over row
+            //     console.log('Common into child');
+            //     const relAdjustedRows = repositionedRows.map((row: any) => {
+            //         if (row.position === overRowData.position) {
+            //             console.log(row);
+            //             updateRow({ ...row, isParent: false, parentRowId: overRowData.parentRowId });
+            //             return { ...row, isParent: false, parentRowId: overRowData.parentRowId };
+            //         }
+            //         return row;
+            //     });
+
+            //     setRows(relAdjustedRows);
+
+            //     setCurrentRows(relAdjustedRows);
+            // }
+
+            // if (draggedIsChild && overIsCommon) {
+            //     // The dragged row needs to update to be set as parent false and parentRowId as null
+            //     // console.log('Child into common');
+            //     const relAdjustedRows = repositionedRows.map((row: any) => {
+            //         if (row.position === overRowData.position) {
+            //             console.log(row);
+            //             updateRow({ ...row, isParent: false, parentRowId: null });
+            //             return { ...row, isParent: false, parentRowId: null };
+            //         }
+            //         return row;
+            //     });
+
+            //     setRows(relAdjustedRows);
+
+            //     setCurrentRows(relAdjustedRows);
+            // }
+
+            // if (draggedIsChild && overIsParent) {
+            //     if (draggedRowData.position < overRowData.position) {
+            //         // The dragged row needs to update to be set as parent false and parentRowId of over row
+
+            //         const relAdjustedRows = repositionedRows.map((row: any) => {
+            //             if (row.position === overRowData.position) {
+            //                 updateRow({ ...row, isParent: false, parentRowId: overRowData._id });
+            //                 return { ...row, isParent: false, parentRowId: overRowData._id };
+            //             }
+            //             return row;
+            //         });
+
+            //         setRows(relAdjustedRows);
+
+            //         setCurrentRows(relAdjustedRows);
+            //     } else {
+            //         // The dragged row needs to update to be set as parent false and parentRowId as null
+
+            //         const relAdjustedRows = repositionedRows.map((row: any) => {
+            //             if (row.position === overRowData.position) {
+            //                 updateRow({ ...row, isParent: false, parentRowId: null });
+            //                 return { ...row, isParent: false, parentRowId: null };
+            //             }
+            //             return row;
+            //         });
+
+            //         setRows(relAdjustedRows);
+
+            //         setCurrentRows(relAdjustedRows);
+            //     }
+            // }
         }
 
         setOverId(null);
