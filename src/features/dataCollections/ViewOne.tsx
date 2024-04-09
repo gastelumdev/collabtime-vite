@@ -13,6 +13,7 @@ import {
 } from '../../app/services/api';
 import {
     Box,
+    Button,
     Card,
     CardBody,
     CardHeader,
@@ -22,6 +23,10 @@ import {
     Flex,
     Heading,
     Input,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -29,7 +34,6 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
-    SimpleGrid,
     Spacer,
     Text,
     useDisclosure,
@@ -48,10 +52,11 @@ import { cellColorStyles } from './select.styles';
 import { TColumn } from '../../types';
 import LinksMenu from './LinksMenu';
 import { MdContentCopy } from 'react-icons/md';
-import { AddIcon, CloseIcon } from '@chakra-ui/icons';
+import { ChevronDownIcon, CloseIcon } from '@chakra-ui/icons';
 import { CSVLink } from 'react-csv';
 import { useTypedSelector, useAppDispatch } from '../../hooks/store';
 import { toggleShowDoneRows } from '../../components/table/tableSlice';
+import ImportDrawer from '../../components/table/ImportDrawer';
 
 const ViewOne = () => {
     const { id, dataCollectionId } = useParams();
@@ -79,7 +84,7 @@ const ViewOne = () => {
 
     const [acknowledgeRow] = useAcknowledgeRowMutation();
 
-    const [isTemplate, setIsTemplate] = useState<boolean>(false);
+    // const [isTemplate, setIsTemplate] = useState<boolean>(false);
     const [templateNameValue, setTemplateNameValue] = useState<string>('');
 
     const [existingTemplateNames, setExistingTemplateNames] = useState<string[]>([]);
@@ -146,11 +151,11 @@ const ViewOne = () => {
         localStorage.setItem('workspaceId', id || '');
         localStorage.setItem('dataCollectionId', dataCollectionId || '');
 
-        const dataCollectionCopy: any = dataCollection;
+        // const dataCollectionCopy: any = dataCollection;
 
-        if (dataCollectionCopy?.asTemplate !== undefined && dataCollectionCopy?.asTemplate?.active == true) {
-            setIsTemplate(true);
-        }
+        // if (dataCollectionCopy?.asTemplate !== undefined && dataCollectionCopy?.asTemplate?.active == true) {
+        //     setIsTemplate(true);
+        // }
     }, [dataCollection]);
 
     useEffect(() => {
@@ -284,23 +289,66 @@ const ViewOne = () => {
                             </SimpleGrid> */}
                         <Card w={'100%'}>
                             <CardHeader>
-                                <SimpleGrid
-                                    spacing={6}
-                                    // templateColumns="repeat(auto-fill, minmax(300px, 1fr))"
-                                    columns={{ base: 1, sm: 2 }}
-                                    pb={'14px'}
-                                >
-                                    <Flex>
-                                        <Box>
-                                            <Heading size={'sm'} mt={'5px'} mb={'4px'} color={'#666666'} fontWeight={'semibold'}>
-                                                {!workspaceIsFetching ? `${workspace?.name} - ${dataCollection?.name}` : null}
-                                            </Heading>
-                                            <Text fontSize={'md'} color={'rgb(123, 128, 154)'}>
-                                                {dataCollection?.description}
-                                            </Text>
-                                        </Box>
-                                    </Flex>
-                                    {(permissions || 0) > 1 ? (
+                                <Flex>
+                                    <Box>
+                                        <Heading size={'sm'} mt={'5px'} mb={'4px'} color={'#666666'} fontWeight={'semibold'}>
+                                            {!workspaceIsFetching ? `${workspace?.name} - ${dataCollection?.name}` : null}
+                                        </Heading>
+                                        <Text fontSize={'md'} color={'rgb(123, 128, 154)'}>
+                                            {dataCollection?.description}
+                                        </Text>
+                                    </Box>
+                                    <Spacer />
+                                    <Box>
+                                        {(permissions || 0) > 1 ? (
+                                            <Menu>
+                                                <MenuButton
+                                                    as={Button}
+                                                    size={'sm'}
+                                                    fontSize={'13px'}
+                                                    rightIcon={<ChevronDownIcon />}
+                                                    w={'100px'}
+                                                    bgColor={'#24a2f0'}
+                                                    color={'white'}
+                                                    _hover={{
+                                                        boxShadow: 'lg',
+                                                    }}
+                                                    _active={{ bgColor: '#24a2f0' }}
+                                                >
+                                                    Options
+                                                </MenuButton>
+                                                <MenuList>
+                                                    <MenuItem
+                                                        fontSize={'14px'}
+                                                        onClick={() => {
+                                                            console.log(showDoneRows);
+                                                            dispatch(toggleShowDoneRows());
+                                                            // const filteredRows = rows?.filter((row) => {});
+                                                            // setRows(
+                                                            //     rows?.filter((row) => {
+                                                            //         return row.values['status'] !== 'Done' && !showDoneRows;
+                                                            //     })
+                                                            // );
+                                                        }}
+                                                    >{`${showDoneRows ? 'Hide' : 'Show'} Done`}</MenuItem>
+                                                    <MenuItem fontSize={'14px'} onClick={onOpenFormDrawer}>
+                                                        Form
+                                                    </MenuItem>
+                                                    <MenuItem fontSize={'14px'} onClick={onOpen}>
+                                                        Template
+                                                    </MenuItem>
+                                                    <MenuItem fontSize={'14px'}>
+                                                        <CSVLink data={valuesForExport}>Export</CSVLink>
+                                                    </MenuItem>
+                                                    <MenuItem fontSize={'14px'}>
+                                                        <ImportDrawer />
+                                                    </MenuItem>
+                                                </MenuList>
+                                            </Menu>
+                                        ) : null}
+                                    </Box>
+                                </Flex>
+                                {/* {(permissions || 0) > 1 ? (
                                         <Flex>
                                             <Spacer />
                                             <Box mr={'5px'}>
@@ -332,16 +380,18 @@ const ViewOne = () => {
                                                     </PrimaryButton>
                                                 </Box>
                                             ) : null}
-                                            <Box>
+                                            <Box mr={'5px'}>
                                                 {valuesForExport !== undefined ? (
                                                     <PrimaryButton size="sm">
                                                         <CSVLink data={valuesForExport}>Export</CSVLink>
                                                     </PrimaryButton>
                                                 ) : null}
                                             </Box>
+                                            <Box>
+                                                <PrimaryButton size="sm">Import</PrimaryButton>
+                                            </Box>
                                         </Flex>
-                                    ) : null}
-                                </SimpleGrid>
+                                    ) : null} */}
                             </CardHeader>
                             <CardBody p={'0'}>
                                 {/* <Skeleton isLoaded={!isFetching && !isLoading}> */}
