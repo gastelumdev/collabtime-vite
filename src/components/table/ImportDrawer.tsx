@@ -1,10 +1,28 @@
-import { Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, Text, useDisclosure } from '@chakra-ui/react';
+import {
+    Button,
+    Drawer,
+    DrawerBody,
+    DrawerCloseButton,
+    DrawerContent,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerOverlay,
+    Table,
+    TableContainer,
+    Tbody,
+    Td,
+    Text,
+    Th,
+    Thead,
+    Tr,
+    useDisclosure,
+} from '@chakra-ui/react';
 import React, { useState } from 'react';
 
 const ImportDrawer = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const [file, setFile] = useState<any>();
+    // const [file, setFile] = useState<any>();
     const [array, setArray] = useState<any>([]);
 
     const fileReader = new FileReader();
@@ -30,23 +48,35 @@ const ImportDrawer = () => {
 
     const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         console.log(event.target.files);
+        let f;
         if (event.target.files) {
-            setFile(event.target.files[0]);
+            // setFile(event.target.files[0]);
+            f = event.target.files[0];
         }
-    };
 
-    const handleOnSubmit = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        event.preventDefault();
-
-        if (file) {
+        if (f) {
             fileReader.onload = function (event) {
                 const csvOutput: any = event.target?.result;
                 console.log(csvOutput);
                 csvFileToArray(csvOutput);
             };
 
-            fileReader.readAsText(file);
+            fileReader.readAsText(f);
         }
+    };
+
+    const handleOnSubmit = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        event.preventDefault();
+
+        // if (file) {
+        //     fileReader.onload = function (event) {
+        //         const csvOutput: any = event.target?.result;
+        //         console.log(csvOutput);
+        //         csvFileToArray(csvOutput);
+        //     };
+
+        //     fileReader.readAsText(file);
+        // }
     };
 
     const headerKeys = Object.keys(Object.assign({}, ...array));
@@ -61,9 +91,28 @@ const ImportDrawer = () => {
                     <DrawerHeader>Import</DrawerHeader>
 
                     <DrawerBody>
-                        <Text>Imports</Text>
                         <input type={'file'} accept={'.csv'} onChange={handleOnChange} />
-                        <table>
+                        <TableContainer h={'100%'} mt={'30px'}>
+                            <Table size="sm">
+                                <Thead>
+                                    <Tr>
+                                        {headerKeys.map((key) => (
+                                            <Th>{key.split('"')[1]}</Th>
+                                        ))}
+                                    </Tr>
+                                </Thead>
+                                <Tbody>
+                                    {array.map((item: any) => (
+                                        <Tr key={item.id}>
+                                            {Object.values(item).map((val: any) => (
+                                                <Td>{val.split('"')[1]}</Td>
+                                            ))}
+                                        </Tr>
+                                    ))}
+                                </Tbody>
+                            </Table>
+                        </TableContainer>
+                        {/* <table>
                             <thead>
                                 <tr key={'header'}>
                                     {headerKeys.map((key) => (
@@ -76,12 +125,12 @@ const ImportDrawer = () => {
                                 {array.map((item: any) => (
                                     <tr key={item.id}>
                                         {Object.values(item).map((val: any) => (
-                                            <td>{val}</td>
+                                            <td>{val.split('"')[1]}</td>
                                         ))}
                                     </tr>
                                 ))}
                             </tbody>
-                        </table>
+                        </table> */}
                     </DrawerBody>
 
                     <DrawerFooter>
