@@ -56,7 +56,7 @@ ITableProps) => {
 
     const {
         data: rowsData,
-        // refetch,
+        refetch,
         isFetching,
         // isLoading,
     } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
@@ -131,12 +131,14 @@ ITableProps) => {
         async (row: any) => {
             // We wait for the call to return new rows if it is the last row
             const newRows: any = await updateRowNoTag(row);
+            console.log(newRows);
             // If it's the last row, add the new blank rows to the current rows
-            setRows((prev: any) => prev.map((prevRow: any) => (prevRow._id === row._id ? row : prevRow)));
+            // setRows((prev: any) => prev.map((prevRow: any) => (prevRow._id === row._id ? row : prevRow)));
             if (newRows.data.length > 0) {
                 setRows((prev: any) => {
                     return [...prev, ...newRows.data];
                 });
+                refetch();
             }
         },
         [rows]
@@ -487,7 +489,7 @@ ITableProps) => {
                 isFetching={isFetching}
             />
             <TableContent
-                rows={rowsData || []}
+                rows={rows || []}
                 columns={columns}
                 setRows={handleSetRows}
                 gridTemplateColumnsIn={gridTemplateColumns}
