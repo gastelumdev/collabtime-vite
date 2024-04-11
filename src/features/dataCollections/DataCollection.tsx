@@ -26,7 +26,7 @@ const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) =>
 
     const {
         data: rowsData,
-        // refetch,
+        refetch,
         isFetching,
         // isLoading,
     } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
@@ -73,9 +73,9 @@ const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) =>
     //     setRows(rowsData);
     // }, [rowsData, showDoneRows]);
 
-    // useEffect(() => {
-    //     refetch();
-    // }, [showDoneRows]);
+    useEffect(() => {
+        refetch();
+    }, [showDoneRows]);
 
     useEffect(() => {
         getPermissions();
