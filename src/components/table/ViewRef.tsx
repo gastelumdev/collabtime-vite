@@ -25,7 +25,7 @@ const ViewRef = ({ columns, rowData, value, allowed = false }: IProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
-    const { data: rowFetched } = useGetRowQuery({ rowId: rowData._id, workspaceId: id, dataCollectionId });
+    const { data: rowFetched, refetch } = useGetRowQuery({ rowId: rowData._id, workspaceId: id, dataCollectionId });
     const [updateRow] = useUpdateRowMutation();
 
     const [currentColumns, setCurrentColumns] = useState<any>(columns);
@@ -33,6 +33,11 @@ const ViewRef = ({ columns, rowData, value, allowed = false }: IProps) => {
     const [row, setRow] = useState(rowFetched);
 
     useEffect(() => {
+        refetch();
+    }, []);
+
+    useEffect(() => {
+        console.log(rowFetched);
         setRow(rowFetched);
     }, [rowFetched, rowData]);
 

@@ -32,7 +32,7 @@ const Reference = ({
     onRemoveRef: any;
     allowed?: boolean;
 }) => {
-    const { data: rowsData } = useGetRowsQuery({
+    const { data: rowsData, refetch } = useGetRowsQuery({
         dataCollectionId: column.dataCollectionRef._id !== undefined ? column.dataCollectionRef._id : column.dataCollectionRef,
         limit: 0,
         skip: 0,
@@ -47,6 +47,12 @@ const Reference = ({
     const [rowKey, setRowKey] = useState<any>('');
     const [rowsList, setRowsList] = useState<any>([]);
     const [rows, setRows] = useState(refs || []);
+
+    useEffect(() => {
+        console.log('ROWS FETCHED');
+        refetch();
+    }, []);
+
     useEffect(() => {
         let rowKey;
 
