@@ -32,8 +32,8 @@ const TableContent = ({
     // columnResizingOffset,
     // updateColumn,
     // reorderColumns,
-    // handleUpdateRowNoRender,
-    handleUpdateRow,
+    handleUpdateRowNoRender,
+    // handleUpdateRow,
     handleDeleteBoxChange,
     rowCallUpdate,
     showDoneRows = false,
@@ -300,8 +300,8 @@ const TableContent = ({
     const handleChange = (row: any) => {
         // handleUpdateRow(row);
 
-        // setCurrentRows((prev) => prev.map((prevRow) => (prevRow._id === row._id ? row : prevRow)));
-        handleUpdateRow(row);
+        setCurrentRows((prev) => prev.map((prevRow) => (prevRow._id === row._id ? row : prevRow)));
+        handleUpdateRowNoRender(row);
     };
 
     const handleSubrowVisibility = (row: any) => {
