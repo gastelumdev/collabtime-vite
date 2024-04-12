@@ -316,6 +316,13 @@ export const api = createApi({
             }),
             invalidatesTags: ["Rows"]
         }),
+        getBlankRows: builder.mutation<any, any>({
+            query: (data) => ({
+                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${data.dataCollectionId}/getBlankRows`,
+                method: "POST",
+                body: data,
+            })
+        }),
         rowCallUpdate: builder.mutation<null, null>({
             query: () => ({
                 url: "rows/callUpdate",
