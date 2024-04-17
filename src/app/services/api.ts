@@ -544,6 +544,7 @@ export const {
     useUpdateRowNoTagMutation,
     useDeleteRowMutation,
     useDeleteRowsMutation,
+    useGetBlankRowsMutation,
     useRowCallUpdateMutation,
     useAcknowledgeRowMutation,
     useReorderRowsMutation,

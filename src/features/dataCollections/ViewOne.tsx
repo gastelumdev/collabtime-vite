@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
     useAcknowledgeRowMutation,
+    useGetBlankRowsMutation,
     useGetColumnsQuery,
     useGetDataCollectionQuery,
     useGetDataCollectionsQuery,
@@ -75,6 +76,7 @@ const ViewOne = () => {
     const { data: dataCollections } = useGetDataCollectionsQuery(null);
     const { data: columnsData } = useGetColumnsQuery(localStorage.getItem('dataCollectionId') || '');
     const [updateColumn] = useUpdateColumnMutation();
+    const [getBlankRows] = useGetBlankRowsMutation();
 
     const [updateDataCollection] = useUpdateDataCollectionMutation();
     const [sendForm] = useSendFormMutation();
@@ -182,6 +184,7 @@ const ViewOne = () => {
 
         if (columnsCopy !== undefined) {
             const key: any = columnsCopy[0].name;
+            console.log(key);
             for (const row of rowsCopy || []) {
                 let values: any = {};
 
@@ -189,9 +192,10 @@ const ViewOne = () => {
                     if (column.type === 'reference') {
                         if (row.refs !== undefined && row.refs[column.name] !== undefined) {
                             const refs: any = row.refs[column.name];
+                            console.log(refs);
                             let refsString = '';
                             for (const ref of refs) {
-                                refsString += `${ref.values[key]}, `;
+                                refsString += `${ref.values[key]} `;
                             }
                             values[column.name] = refsString;
                         } else {
@@ -252,6 +256,11 @@ const ViewOne = () => {
             ...dataCollectionCopy,
             formRecipients: filteredFormRecipients,
         });
+    };
+
+    const handleImportRows = async (array: any) => {
+        const blankRows = await getBlankRows({ numberOfRowsToCreate: array.length });
+        console.log(blankRows);
     };
 
     return (
@@ -341,7 +350,7 @@ const ViewOne = () => {
                                                         <CSVLink data={valuesForExport}>Export</CSVLink>
                                                     </MenuItem>
                                                     <MenuItem fontSize={'14px'}>
-                                                        <ImportDrawer />
+                                                        <ImportDrawer columns={columnsData} handleImportRows={handleImportRows} />
                                                     </MenuItem>
                                                 </MenuList>
                                             </Menu>
