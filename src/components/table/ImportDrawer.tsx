@@ -19,7 +19,12 @@ import {
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
 
-const ImportDrawer = () => {
+interface IProps {
+    columns: any;
+    handleImportRows: any;
+}
+
+const ImportDrawer = ({ columns, handleImportRows }: IProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     // const [file, setFile] = useState<any>();
@@ -31,19 +36,33 @@ const ImportDrawer = () => {
         const csvHeader = string.slice(0, string.indexOf('\n')).split(',');
         const csvRows = string.slice(string.indexOf('\n') + 1).split('\n');
 
-        const array = csvRows.map((i) => {
-            const values = i.split(',');
-            console.log(values);
-            const obj = csvHeader.reduce((object: any, header: any, index: number) => {
-                object[header] = values[index];
-                return object;
-            }, {});
-            return obj;
+        const formattedCsvHeaders = csvHeader.map((header) => {
+            return header.split('"')[1];
         });
 
-        console.log(array);
+        let allColumnsMatch = true;
 
-        setArray(array);
+        for (const column of columns) {
+            if (!formattedCsvHeaders.includes(column.name)) {
+                allColumnsMatch = false;
+            }
+        }
+
+        if (allColumnsMatch) {
+            const array = csvRows.map((i) => {
+                const values = i.split(',');
+                console.log(values);
+                const obj = csvHeader.reduce((object: any, header: any, index: number) => {
+                    object[header] = values[index];
+                    return object;
+                }, {});
+                return obj;
+            });
+
+            console.log(array);
+
+            setArray(array);
+        }
     };
 
     const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,6 +86,8 @@ const ImportDrawer = () => {
 
     const handleOnSubmit = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
+
+        handleImportRows(array);
 
         // if (file) {
         //     fileReader.onload = function (event) {
