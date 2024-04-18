@@ -8,14 +8,11 @@ import {
     // useUpdateRowMutation,
 } from '../../app/services/api';
 import { useParams } from 'react-router-dom';
-import {
-    Box,
-    // Progress
-} from '@chakra-ui/react';
+import { Box, Progress } from '@chakra-ui/react';
 import Table from '../../components/table/Table';
 import { TColumn } from '../../types';
 
-const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) => {
+const DataCollection = ({ showDoneRows = false, rowsProp }: { showDoneRows?: boolean; rowsProp: any }) => {
     const { dataCollectionId } = useParams();
 
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
@@ -28,7 +25,7 @@ const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) =>
         data: rowsData,
         refetch,
         isFetching,
-        // isLoading,
+        isLoading,
     } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
     // const [updateRow] = useUpdateRowMutation();
     const [permissions, setPermissions] = useState<number>();
@@ -78,6 +75,11 @@ const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) =>
     }, [showDoneRows]);
 
     useEffect(() => {
+        console.log('UPDATING DATA COLLECTION');
+        refetch();
+    }, [rowsProp]);
+
+    useEffect(() => {
         getPermissions();
     }, [user]);
 
@@ -111,7 +113,7 @@ const DataCollection = ({ showDoneRows = false }: { showDoneRows?: boolean }) =>
 
     return (
         <Box>
-            {/* <Box h={'4px'}>{isFetching || isLoading ? <Progress size="xs" isIndeterminate /> : null}</Box> */}
+            <Box h={'4px'}>{isFetching || isLoading ? <Progress size="xs" isIndeterminate /> : null}</Box>
             <Table
                 rowsData={rowsData || []}
                 columnsData={columns || []}
