@@ -1,4 +1,5 @@
 import {
+    Box,
     Button,
     Drawer,
     DrawerBody,
@@ -7,6 +8,7 @@ import {
     DrawerFooter,
     DrawerHeader,
     DrawerOverlay,
+    Progress,
     Table,
     TableContainer,
     Tbody,
@@ -22,9 +24,11 @@ import React, { useState } from 'react';
 interface IProps {
     columns: any;
     handleImportRows: any;
+    isFetching: boolean;
+    isLoading: boolean;
 }
 
-const ImportDrawer = ({ columns, handleImportRows }: IProps) => {
+const ImportDrawer = ({ columns, handleImportRows, isFetching, isLoading }: IProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     // const [file, setFile] = useState<any>();
@@ -33,6 +37,7 @@ const ImportDrawer = ({ columns, handleImportRows }: IProps) => {
     const fileReader = new FileReader();
 
     const csvFileToArray = (string: string) => {
+        console.log('CSV FILE TO ARRAY');
         const csvHeader = string.slice(0, string.indexOf('\n')).split(',');
         const csvRows = string.slice(string.indexOf('\n') + 1).split('\n');
 
@@ -51,9 +56,9 @@ const ImportDrawer = ({ columns, handleImportRows }: IProps) => {
         if (allColumnsMatch) {
             const array = csvRows.map((i) => {
                 const values = i.split(',');
-                console.log(values);
-                const obj = csvHeader.reduce((object: any, header: any, index: number) => {
-                    object[header] = values[index];
+                const obj = formattedCsvHeaders.reduce((object: any, header: any, index: number) => {
+                    console.log(values[index].split('"')[1]);
+                    object[header] = values[index].split('"')[1];
                     return object;
                 }, {});
                 return obj;
@@ -84,10 +89,12 @@ const ImportDrawer = ({ columns, handleImportRows }: IProps) => {
         }
     };
 
-    const handleOnSubmit = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const handleOnSubmit = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
 
-        handleImportRows(array);
+        await handleImportRows(array);
+
+        if (!isFetching && !isLoading) onClose();
 
         // if (file) {
         //     fileReader.onload = function (event) {
@@ -113,20 +120,23 @@ const ImportDrawer = ({ columns, handleImportRows }: IProps) => {
 
                     <DrawerBody>
                         <input type={'file'} accept={'.csv'} onChange={handleOnChange} />
+                        <Box h={'4px'} mt={'10px'}>
+                            {isFetching || isLoading ? <Progress size="xs" isIndeterminate /> : null}
+                        </Box>
                         <TableContainer h={'100%'} mt={'30px'}>
                             <Table size="sm">
                                 <Thead>
                                     <Tr>
-                                        {headerKeys.map((key) => (
-                                            <Th>{key.split('"')[1]}</Th>
+                                        {headerKeys.map((key, index) => (
+                                            <Th key={index}>{key}</Th>
                                         ))}
                                     </Tr>
                                 </Thead>
                                 <Tbody>
-                                    {array.map((item: any) => (
-                                        <Tr key={item.id}>
-                                            {Object.values(item).map((val: any) => (
-                                                <Td>{val.split('"')[1]}</Td>
+                                    {array.map((item: any, itemIndex: number) => (
+                                        <Tr key={itemIndex}>
+                                            {Object.values(item).map((val: any, index) => (
+                                                <Td key={index}>{val}</Td>
                                             ))}
                                         </Tr>
                                     ))}

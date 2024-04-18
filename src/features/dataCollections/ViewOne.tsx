@@ -11,6 +11,8 @@ import {
     useSendFormMutation,
     useUpdateColumnMutation,
     useUpdateDataCollectionMutation,
+    useUpdateRowMutation,
+    useUpdateRowNoTagMutation,
 } from '../../app/services/api';
 import {
     Box,
@@ -72,10 +74,17 @@ const ViewOne = () => {
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
     const { data: dataCollection } = useGetDataCollectionQuery(dataCollectionId || '');
     const { data: workspace, isFetching: workspaceIsFetching } = useGetOneWorkspaceQuery(localStorage.getItem('workspaceId') || '');
-    const { data: rowsData } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
+    const {
+        data: rowsData,
+        refetch,
+        isFetching: rowsAreFetching,
+        isLoading: rowsAreLoading,
+    } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
     const { data: dataCollections } = useGetDataCollectionsQuery(null);
     const { data: columnsData } = useGetColumnsQuery(localStorage.getItem('dataCollectionId') || '');
     const [updateColumn] = useUpdateColumnMutation();
+    const [updateRow] = useUpdateRowMutation();
+    const [updatedRowNoTag] = useUpdateRowNoTagMutation();
     const [getBlankRows] = useGetBlankRowsMutation();
 
     const [updateDataCollection] = useUpdateDataCollectionMutation();
@@ -95,7 +104,6 @@ const ViewOne = () => {
     const [recipientValue, setRecipientValue] = useState<string>('');
 
     const [valuesForExport, setValuesForExport] = useState<any>('');
-
     // useEffect(() => {
     //     setRows(rowsData);
     // }, [rowsData]);
@@ -178,6 +186,7 @@ const ViewOne = () => {
     }, [queryParameters]);
 
     useEffect(() => {
+        const setupValues: any = [];
         const valsForExport: any = [];
         const rowsCopy: any = rowsData;
         const columnsCopy: any = columnsData;
@@ -206,8 +215,18 @@ const ViewOne = () => {
                     }
                 }
 
-                valsForExport.push(values);
+                setupValues.push(values);
             }
+
+            for (const values of setupValues) {
+                let hasValues = false;
+                for (const key in values) {
+                    if (values[key] !== '') hasValues = true;
+                }
+
+                if (hasValues) valsForExport.push(values);
+            }
+            console.log(valsForExport);
             setValuesForExport(valsForExport);
         }
     }, [rowsData, columnsData]);
@@ -259,8 +278,52 @@ const ViewOne = () => {
     };
 
     const handleImportRows = async (array: any) => {
-        const blankRows = await getBlankRows({ numberOfRowsToCreate: array.length });
-        console.log(blankRows);
+        const blankRowsRes: any = await getBlankRows({ numberOfRowsToCreate: array.length, dataCollectionId });
+        const blankRows = blankRowsRes.data;
+        console.log(blankRows.length);
+
+        let lastNonEmptyRow = 0;
+
+        rowsData?.map((row: any) => {
+            const values = row.values;
+
+            for (const key in values) {
+                const value = values[key];
+                const position = row.position;
+                if (value !== '') {
+                    lastNonEmptyRow = position;
+                }
+            }
+        });
+
+        const rowsDataCopy: any = rowsData;
+
+        const newRows: any = [...rowsDataCopy, ...blankRows];
+
+        let positionToUpdate = lastNonEmptyRow + 1;
+        let arrayPosition = 0;
+        const lastPositionToUpdate = lastNonEmptyRow + blankRows.length;
+
+        newRows.map(async (row: any) => {
+            console.log({ position: row.position, positionToUpdate, arrayPosition, lastPositionToUpdate });
+            if (row.position == positionToUpdate && row.position < lastPositionToUpdate) {
+                console.log(`Updating row ${row.position}`);
+                updatedRowNoTag({ ...row, values: array[arrayPosition] });
+                positionToUpdate = positionToUpdate + 1;
+                arrayPosition = arrayPosition + 1;
+                console.log({ positionToUpdate, arrayPosition });
+            }
+
+            if (row.position == positionToUpdate && row.position == lastPositionToUpdate) {
+                console.log(`Updating row ${row.position}`);
+                await updateRow({ ...row, values: array[arrayPosition] });
+                positionToUpdate = positionToUpdate + 1;
+                arrayPosition = arrayPosition + 1;
+                console.log({ positionToUpdate, arrayPosition });
+            }
+        });
+
+        await refetch();
     };
 
     return (
@@ -350,7 +413,12 @@ const ViewOne = () => {
                                                         <CSVLink data={valuesForExport}>Export</CSVLink>
                                                     </MenuItem>
                                                     <MenuItem fontSize={'14px'}>
-                                                        <ImportDrawer columns={columnsData} handleImportRows={handleImportRows} />
+                                                        <ImportDrawer
+                                                            columns={columnsData}
+                                                            handleImportRows={handleImportRows}
+                                                            isFetching={rowsAreFetching}
+                                                            isLoading={rowsAreLoading}
+                                                        />
                                                     </MenuItem>
                                                 </MenuList>
                                             </Menu>
@@ -404,7 +472,7 @@ const ViewOne = () => {
                             </CardHeader>
                             <CardBody p={'0'}>
                                 {/* <Skeleton isLoaded={!isFetching && !isLoading}> */}
-                                <DataCollection showDoneRows={showDoneRows} />
+                                <DataCollection showDoneRows={showDoneRows} rowsProp={rowsData} />
                                 {/* </Skeleton> */}
                             </CardBody>
                         </Card>
