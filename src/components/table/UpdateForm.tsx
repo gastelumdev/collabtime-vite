@@ -134,6 +134,7 @@ const UpdateForm = () => {
                                                     columnName={column.name}
                                                     value={row && row.values[column.name] !== undefined ? row.values[column.name] : ''}
                                                     onChange={onChange}
+                                                    allowed={true}
                                                 />
                                             ) : column.type === 'people' ? (
                                                 <PeopleMenu
@@ -141,12 +142,14 @@ const UpdateForm = () => {
                                                     people={column.people}
                                                     value={row && row.values[column.name] !== undefined ? row.values[column.name] : ''}
                                                     onChange={onChange}
+                                                    allowed={true}
                                                 />
                                             ) : column.type === 'date' ? (
                                                 <DateInput
                                                     value={row && row.values[column.name] !== undefined ? row.values[column.name] : ''}
                                                     columnName={column.name}
                                                     onChange={onChange}
+                                                    allowed={true}
                                                 />
                                             ) : column.type === 'reference' ? (
                                                 <>
@@ -165,6 +168,7 @@ const UpdateForm = () => {
                                                                 }
                                                                 onRefChange={onRefChange}
                                                                 onRemoveRef={onRemoveRef}
+                                                                allowed={true}
                                                             />
                                                         </>
                                                     ) : null}
@@ -176,6 +180,7 @@ const UpdateForm = () => {
                                                     value={row && row.values[column.name] !== undefined ? row.values[column.name] : ''}
                                                     type="form"
                                                     onChange={onChange}
+                                                    allowed={true}
                                                 />
                                             )}
                                         </Box>
