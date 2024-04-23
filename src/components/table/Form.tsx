@@ -135,11 +135,18 @@ const Form = () => {
                                                     .join(' ')}`}</Text>
                                             ) : null}
                                             {column.type === 'label' || column.type === 'priority' || column.type === 'status' ? (
-                                                <LabelMenu id={0} labels={column.labels} columnName={column.name} value={''} onChange={onChange} />
+                                                <LabelMenu
+                                                    id={0}
+                                                    labels={column.labels}
+                                                    columnName={column.name}
+                                                    value={''}
+                                                    onChange={onChange}
+                                                    allowed={true}
+                                                />
                                             ) : column.type === 'people' ? (
-                                                <PeopleMenu columnName={column.name} people={column.people} value={''} onChange={onChange} />
+                                                <PeopleMenu columnName={column.name} people={column.people} value={''} onChange={onChange} allowed={true} />
                                             ) : column.type === 'date' ? (
-                                                <DateInput value={''} columnName={column.name} onChange={onChange} />
+                                                <DateInput value={''} columnName={column.name} onChange={onChange} allowed={true} />
                                             ) : column.type === 'reference' ? (
                                                 <>
                                                     {user ? (
@@ -153,12 +160,13 @@ const Form = () => {
                                                                 refs={row.refs && row.refs[column.name] !== undefined ? row.refs[column.name] : []}
                                                                 onRefChange={onRefChange}
                                                                 onRemoveRef={onRemoveRef}
+                                                                allowed={true}
                                                             />
                                                         </>
                                                     ) : null}
                                                 </>
                                             ) : (
-                                                <TextInput id={''} columnName={column.name} value={''} type="form" onChange={onChange} />
+                                                <TextInput id={''} columnName={column.name} value={''} type="form" onChange={onChange} allowed={true} />
                                             )}
                                         </Box>
                                     </div>
