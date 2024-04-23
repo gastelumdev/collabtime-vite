@@ -77,9 +77,10 @@ const PeopleMenu = ({ row, columnName, people, value = '', onChange, allowed = f
     };
 
     return (
-        <>
+        <Box border={'1px solid #f1f3f5'}>
             {active && allowed ? (
-                <div
+                <Box
+
                 // onBlur={(event: React.FocusEvent<HTMLDivElement, Element>) => {
                 //     setActive(false);
                 // }}
@@ -98,7 +99,7 @@ const PeopleMenu = ({ row, columnName, people, value = '', onChange, allowed = f
                                 variant={'unstyled'}
                                 _hover={{ bgColor: labelColor }}
                             >
-                                {labelLabel}
+                                {labelLabel ? labelLabel : 'Select'}
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent>
@@ -123,7 +124,7 @@ const PeopleMenu = ({ row, columnName, people, value = '', onChange, allowed = f
                             </PopoverBody>
                         </PopoverContent>
                     </Popover>
-                </div>
+                </Box>
             ) : (
                 <Text
                     // backgroundColor={labelColor}
@@ -137,10 +138,10 @@ const PeopleMenu = ({ row, columnName, people, value = '', onChange, allowed = f
                         setActive(true);
                     }}
                 >
-                    {labelLabel}
+                    {labelLabel ? labelLabel : 'Select'}
                 </Text>
             )}
-        </>
+        </Box>
         // <Menu matchWidth={true}>
         //     {/* <Tooltip
         //         label={labelLabel}

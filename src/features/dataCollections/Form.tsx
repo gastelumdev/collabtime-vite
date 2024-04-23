@@ -131,6 +131,7 @@ const Form = () => {
     return (
         <>
             <Container>
+                <Text>Something</Text>
                 <Card mt={'60px'}>
                     <CardBody>
                         {columns?.map((column: TColumn, index: number) => {
