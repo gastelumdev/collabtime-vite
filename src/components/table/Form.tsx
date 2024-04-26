@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Box, Card, CardBody, CardHeader, Center, Container, Flex, Spacer, Text } from '@chakra-ui/react';
+import { Box, Card, CardBody, CardHeader, Center, Container, Flex, Spacer, Text, useToast } from '@chakra-ui/react';
 import { useGetFormDataQuery, useGetUserQuery, useUpdateFormDataMutation } from '../../app/services/api';
 import LabelMenu from '../../features/dataCollections/LabelMenu';
 import PeopleMenu from '../../features/dataCollections/PeopleMenu';
@@ -28,6 +28,8 @@ const Form = () => {
     const [row, setRow] = useState<any>(formData?.row || {});
     const [columns, setColumns] = useState<any>(formData?.columns);
     const [dataCollection, setDataCollection] = useState<any>(formData?.dataCollection);
+
+    const toast = useToast();
 
     const [_, setPermissions] = useState<number>();
 
@@ -92,6 +94,17 @@ const Form = () => {
     const updateData = async () => {
         console.log(row);
         const newRow: any = await updateFormData(row);
+
+        if (newRow) {
+            toast({
+                title: 'Saved!',
+                description: '',
+                status: 'success',
+                duration: 4000,
+                position: 'bottom-right',
+                isClosable: true,
+            });
+        }
         if (user) {
             navigate(`/workspaces/${id}/dataCollections/${dataCollectionId}/form/${newRow.data._id}`);
         } else {
