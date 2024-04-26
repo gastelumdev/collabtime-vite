@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Box, Card, CardBody, CardHeader, Center, Container, Flex, Spacer, Text } from '@chakra-ui/react';
-import { useGetFormDataQuery, useGetRowQuery, useGetUserQuery, useUpdateFormDataMutation } from '../../app/services/api';
+import { Box, Card, CardBody, CardHeader, Center, Container, Flex, Spacer, Text, useToast } from '@chakra-ui/react';
+import { useGetFormDataQuery, useGetRowQuery, useGetUserQuery, useUpdateRowMutation } from '../../app/services/api';
 import LabelMenu from '../../features/dataCollections/LabelMenu';
 import PeopleMenu from '../../features/dataCollections/PeopleMenu';
 import DateInput from '../../features/dataCollections/DateInput';
@@ -17,11 +17,14 @@ const UpdateForm = () => {
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
     const { data: formData } = useGetFormDataQuery(dataCollectionId);
     const { data: rowData } = useGetRowQuery({ workspaceId: id, dataCollectionId, rowId });
-    const [updateFormData] = useUpdateFormDataMutation();
+    // const [updateFormData] = useUpdateFormDataMutation();
+    const [updateRow] = useUpdateRowMutation();
 
-    const [row, setRow] = useState<any>(formData?.row || {});
+    const [row, setRow] = useState<any>(rowData);
     const [columns, setColumns] = useState<any>(formData?.columns);
     const [dataCollection, setDataCollection] = useState<any>(formData?.dataCollection);
+
+    const toast = useToast();
 
     const [_, setPermissions] = useState<number>();
 
@@ -88,7 +91,20 @@ const UpdateForm = () => {
 
     const updateData = async () => {
         console.log(row);
-        await updateFormData(row);
+        const newRow = await updateRow(row);
+
+        console.log(newRow);
+
+        if (newRow) {
+            toast({
+                title: 'Saved!',
+                description: '',
+                status: 'success',
+                duration: 4000,
+                position: 'bottom-right',
+                isClosable: true,
+            });
+        }
     };
     return (
         <>
@@ -111,7 +127,6 @@ const UpdateForm = () => {
                     <CardBody>
                         {columns?.map((column: any, columnIndex: number) => {
                             if (column.includeInForm) {
-                                console.log(row);
                                 return (
                                     <div
                                         key={columnIndex}
@@ -135,6 +150,7 @@ const UpdateForm = () => {
                                                     value={row && row.values[column.name] !== undefined ? row.values[column.name] : ''}
                                                     onChange={onChange}
                                                     allowed={true}
+                                                    border={'1px solid #f1f3f5'}
                                                 />
                                             ) : column.type === 'people' ? (
                                                 <PeopleMenu
@@ -143,6 +159,7 @@ const UpdateForm = () => {
                                                     value={row && row.values[column.name] !== undefined ? row.values[column.name] : ''}
                                                     onChange={onChange}
                                                     allowed={true}
+                                                    border={'1px solid #f1f3f5'}
                                                 />
                                             ) : column.type === 'date' ? (
                                                 <DateInput
@@ -191,7 +208,7 @@ const UpdateForm = () => {
                         })}
                         <Flex mt={'10px'} width={'full'}>
                             <Spacer />
-                            <PrimaryButton onClick={updateData}>SUBMIT</PrimaryButton>
+                            <PrimaryButton onClick={updateData}>UPDATE</PrimaryButton>
                         </Flex>
                     </CardBody>
                 </Card>

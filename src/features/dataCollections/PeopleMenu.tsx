@@ -17,12 +17,13 @@ interface IProps {
     value: string;
     onChange: any;
     allowed?: boolean;
+    border?: string | null;
     // label?: string;
     // bgColor?: string;
     // options: { value: string; label: string; color: string }[] | undefined;
 }
 
-const PeopleMenu = ({ row, columnName, people, value = '', onChange, allowed = false }: IProps) => {
+const PeopleMenu = ({ row, columnName, people, value = '', onChange, allowed = false, border = null }: IProps) => {
     const { onClose } = useDisclosure();
     // const [updateRow] = useUpdateRowMutation();
 
@@ -77,7 +78,7 @@ const PeopleMenu = ({ row, columnName, people, value = '', onChange, allowed = f
     };
 
     return (
-        <Box border={'1px solid #f1f3f5'}>
+        <Box border={border ? border : 'none'}>
             {active && allowed ? (
                 <Box
 
