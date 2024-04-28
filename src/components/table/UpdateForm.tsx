@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Box, Card, CardBody, CardHeader, Center, Container, Flex, Spacer, Text, useToast } from '@chakra-ui/react';
+import { Box, Card, CardBody, CardHeader, Center, Container, Flex, Spacer, Spinner, Text, useToast } from '@chakra-ui/react';
 import { useGetFormDataQuery, useGetRowQuery, useGetUserQuery, useUpdateRowMutation } from '../../app/services/api';
 import LabelMenu from '../../features/dataCollections/LabelMenu';
 import PeopleMenu from '../../features/dataCollections/PeopleMenu';
@@ -18,7 +18,7 @@ const UpdateForm = () => {
     const { data: formData } = useGetFormDataQuery(dataCollectionId);
     const { data: rowData } = useGetRowQuery({ workspaceId: id, dataCollectionId, rowId });
     // const [updateFormData] = useUpdateFormDataMutation();
-    const [updateRow] = useUpdateRowMutation();
+    const [updateRow, { isLoading, isSuccess, isError }] = useUpdateRowMutation();
 
     const [row, setRow] = useState<any>(rowData);
     const [columns, setColumns] = useState<any>(formData?.columns);
@@ -89,13 +89,8 @@ const UpdateForm = () => {
         setRow({ ...row, refs: { ...row.refs, [columnName]: filteredRefs } });
     };
 
-    const updateData = async () => {
-        console.log(row);
-        const newRow = await updateRow(row);
-
-        console.log(newRow);
-
-        if (newRow) {
+    useEffect(() => {
+        if (isSuccess) {
             toast({
                 title: 'Saved!',
                 description: '',
@@ -105,6 +100,24 @@ const UpdateForm = () => {
                 isClosable: true,
             });
         }
+    }, [isSuccess]);
+
+    useEffect(() => {
+        if (isError) {
+            toast({
+                title: 'Error',
+                description: 'Try again.',
+                status: 'error',
+                duration: 4000,
+                position: 'bottom-right',
+                isClosable: true,
+            });
+        }
+    }, [isError]);
+
+    const updateData = async () => {
+        console.log(row);
+        updateRow(row);
     };
     return (
         <>
@@ -208,7 +221,7 @@ const UpdateForm = () => {
                         })}
                         <Flex mt={'10px'} width={'full'}>
                             <Spacer />
-                            <PrimaryButton onClick={updateData}>UPDATE</PrimaryButton>
+                            <PrimaryButton onClick={updateData}>{isLoading ? <Spinner /> : 'UPDATE'}</PrimaryButton>
                         </Flex>
                     </CardBody>
                 </Card>
