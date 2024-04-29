@@ -1,10 +1,10 @@
-import { Box, Flex, Input, MenuItem, Spacer, Text, useDisclosure } from "@chakra-ui/react";
-import PrimaryDrawer from "../../components/PrimaryDrawer";
-import PrimaryButton from "../../components/Buttons/PrimaryButton";
-import { useCreateDocumentMutation, useUpdateCellMutation } from "../../app/services/api";
-import { useRef, useState } from "react";
-import { Editor } from "@tinymce/tinymce-react";
-import { TCell, TDocument } from "../../types";
+import { Box, Flex, Input, MenuItem, Spacer, Text, useDisclosure } from '@chakra-ui/react';
+import PrimaryDrawer from '../../components/PrimaryDrawer';
+import PrimaryButton from '../../components/Buttons/PrimaryButton';
+import { useCreateDocumentMutation, useUpdateCellMutation } from '../../app/services/api';
+import { useRef, useState } from 'react';
+import { Editor } from '@tinymce/tinymce-react';
+import { TCell, TDocument } from '../../types';
 
 interface IProps {
     documents?: TDocument[];
@@ -22,17 +22,18 @@ const DocDrawer = ({ cell, addToCell = false, handleDocsChange, create = false, 
     const [createDocument] = useCreateDocumentMutation();
     const [updateCell] = useUpdateCellMutation();
 
-    const [createdDocName, setCreatedDocName] = useState<string>("");
-    const [editorValue, setEditorValue] = useState<string>("");
+    const [createdDocName, setCreatedDocName] = useState<string>('');
+    const [editorValue, setEditorValue] = useState<string>('');
 
     const handleDocumentClick = async () => {
+        console.log({ createdDocName, editorValue });
         createOnClose();
         const documentCreated: any = await createDocument({
-            workspace: localStorage.getItem("workspaceId") || "",
+            workspace: localStorage.getItem('workspaceId') || '',
             filename: createdDocName,
-            type: "created",
+            type: 'created',
             value: editorValue,
-            ext: "created",
+            ext: 'created',
             tags: [],
         });
 
@@ -45,19 +46,19 @@ const DocDrawer = ({ cell, addToCell = false, handleDocsChange, create = false, 
         if (create) {
             handleDocsChange(columnName, [documentCreated.data]);
         }
+
+        setCreatedDocName('');
+        setEditorValue('');
     };
     return (
         <>
             <MenuItem onClick={createOnOpen}>Create doc</MenuItem>
-            <PrimaryDrawer isOpen={createIsOpen} onClose={createOnClose} title={"Create doc"} size="full">
-                <Box pb={"20px"}>
-                    <Text mb={"5px"}>Document name</Text>
-                    <Input
-                        value={createdDocName}
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => setCreatedDocName(event.target.value)}
-                    />
+            <PrimaryDrawer isOpen={createIsOpen} onClose={createOnClose} title={'Create doc'} size="full">
+                <Box pb={'20px'}>
+                    <Text mb={'5px'}>Document name</Text>
+                    <Input value={createdDocName} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setCreatedDocName(event.target.value)} />
                 </Box>
-                <Text mb={"5px"}>Content</Text>
+                <Text mb={'5px'}>Content</Text>
                 <Editor
                     apiKey={import.meta.env.VITE_EDITOR_KEY}
                     onInit={(evt, editor) => {
@@ -74,39 +75,38 @@ const DocDrawer = ({ cell, addToCell = false, handleDocsChange, create = false, 
                         menubar: true,
                         plugins: [
                             // "a11ychecker",
-                            "advlist",
+                            'advlist',
                             // "advcode",
                             // "advtable",
-                            "autolink",
+                            'autolink',
                             // "checklist",
                             // "export",
-                            "lists",
-                            "link",
-                            "image",
-                            "charmap",
-                            "preview",
-                            "anchor",
-                            "searchreplace",
-                            "visualblocks",
+                            'lists',
+                            'link',
+                            'image',
+                            'charmap',
+                            'preview',
+                            'anchor',
+                            'searchreplace',
+                            'visualblocks',
                             // "powerpaste",
-                            "fullscreen",
+                            'fullscreen',
                             // "formatpainter",
-                            "insertdatetime",
-                            "media",
-                            "table",
-                            "help",
-                            "wordcount",
+                            'insertdatetime',
+                            'media',
+                            'table',
+                            'help',
+                            'wordcount',
                         ],
-                        toolbar:
-                            "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify",
+                        toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify',
                         // toolbar:
                         //     "undo redo | casechange blocks | bold italic backcolor | " +
                         //     "alignleft aligncenter alignright alignjustify | " +
                         //     "bullist numlist checklist outdent indent | removeformat | a11ycheck code table help",
-                        content_style: " .tox-menu {z-index: 10000000000 !important} ",
+                        content_style: ' .tox-menu {z-index: 10000000000 !important} ',
                     }}
                 />
-                <Flex mt={"10px"}>
+                <Flex mt={'10px'}>
                     <Spacer />
                     <PrimaryButton onClick={handleDocumentClick}>SAVE</PrimaryButton>
                 </Flex>
