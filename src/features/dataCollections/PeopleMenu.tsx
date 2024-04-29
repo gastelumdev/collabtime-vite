@@ -35,7 +35,7 @@ const PeopleMenu = ({ row, columnName, people, value = '', onChange, allowed = f
     const [active, setActive] = useState<boolean>(false);
 
     useEffect(() => {
-        row;
+        console.log({ columnName, people, row });
         labelValue;
         const cellOptions: ILabel[] | undefined = people?.map((item) => {
             return {
@@ -53,7 +53,7 @@ const PeopleMenu = ({ row, columnName, people, value = '', onChange, allowed = f
         setLabelLabel(label);
         setLabelColor('#ffffff');
         setOptions(cellOptions);
-    }, [value]);
+    }, [value, people]);
 
     const handleLabelClick = (label: ILabel) => {
         // updateRow({ ...row, values: { ...row.values, [columnName]: label.label } });

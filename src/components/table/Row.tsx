@@ -354,6 +354,7 @@ const Row = ({
                                     </Flex>
                                 </span>
                                 {columns.map((column: any, columnIndex: number) => {
+                                    console.log({ columnName: column.name, people: column.people });
                                     return (
                                         <div
                                             key={columnIndex}
