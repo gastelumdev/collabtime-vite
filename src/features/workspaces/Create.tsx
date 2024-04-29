@@ -28,6 +28,7 @@ let defaultValues: TWorkspace = {
 
 interface IProps {
     addNewWorkspace: any;
+    workspaces: any;
 }
 
 /**
@@ -35,7 +36,7 @@ interface IProps {
  * @param {IProps} {addNewWorkspace}
  * @returns {JSX}
  */
-const Create = ({ addNewWorkspace }: IProps) => {
+const Create = ({ addNewWorkspace, workspaces }: IProps) => {
     /**
      * ChakraUI drawer disclosure
      */
@@ -50,6 +51,7 @@ const Create = ({ addNewWorkspace }: IProps) => {
     const [data, setData] = useState<TWorkspace>(defaultValues);
 
     const [inputError, setInputError] = useState<boolean>(false);
+    const [isError, setIsError] = useState(false);
     /**
      * This function updates the workspace data and create a new workspace
      */
@@ -86,10 +88,27 @@ const Create = ({ addNewWorkspace }: IProps) => {
         } else {
             setInputError(false);
         }
+
+        const workspaceNames = workspaces.map((workspace: any) => {
+            return workspace.name;
+        });
+
+        if (workspaceNames.includes(value)) {
+            setIsError(true);
+        } else {
+            setIsError(false);
+        }
         setData({
             ...data,
             [name]: value,
         });
+    };
+
+    const handleOnClose = () => {
+        setData(defaultValues);
+        setIsError(false);
+        setInputError(false);
+        onClose();
     };
 
     /**
@@ -114,13 +133,16 @@ const Create = ({ addNewWorkspace }: IProps) => {
             <PrimaryButton onClick={onOpen} px="0">
                 <HiPlus size={'18px'} />
             </PrimaryButton>
-            <PrimaryDrawer isOpen={isOpen} onClose={onClose} size={'md'} title={'Create a new workspace'}>
-                <Text pb={'5px'} color={'rgb(123, 128, 154)'}>
-                    Name
-                </Text>
-                <Text ml={'8px'} pt={'2px'} fontSize={'14px'} color={'#e53e3e'}>
-                    {inputError ? '* Name exceeds character limit' : ''}
-                </Text>
+            <PrimaryDrawer isOpen={isOpen} onClose={handleOnClose} size={'md'} title={'Create a new workspace'}>
+                <Flex>
+                    <Text pb={'5px'} color={'rgb(123, 128, 154)'}>
+                        Name
+                    </Text>
+                    <Text ml={'8px'} pt={'2px'} fontSize={'14px'} color={'#e53e3e'}>
+                        {inputError ? '* Name exceeds character limit' : ''}
+                        {isError ? '* Name already exists' : ''}
+                    </Text>
+                </Flex>
                 <Input
                     name="name"
                     placeholder="Please enter workspace name"
@@ -173,7 +195,7 @@ const Create = ({ addNewWorkspace }: IProps) => {
                     {/* <Divider gradient="radial-gradient(#eceef1 40%, white 60%)" marginBottom="0" /> */}
                     <Flex mt={'10px'} width={'full'}>
                         <Spacer />
-                        <PrimaryButton onClick={createData} isDisabled={inputError}>
+                        <PrimaryButton onClick={createData} isDisabled={inputError || isError}>
                             SAVE
                         </PrimaryButton>
                     </Flex>

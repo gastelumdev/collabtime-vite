@@ -9,6 +9,7 @@ import PrimaryDrawer from '../../components/PrimaryDrawer';
 interface IProps {
     workspace: TWorkspace;
     updateWorkspace: any;
+    workspaces: any;
 }
 
 /**
@@ -17,7 +18,7 @@ interface IProps {
  * @param {function} updateWorkspace - provided by workspace View.tsx
  * @returns {JSX}
  */
-const Edit = ({ workspace, updateWorkspace }: IProps) => {
+const Edit = ({ workspace, updateWorkspace, workspaces }: IProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     /**
      * State management for checked items that turn on and off the
@@ -37,6 +38,7 @@ const Edit = ({ workspace, updateWorkspace }: IProps) => {
     const [data, setData] = useState<TWorkspace>(workspace);
 
     const [inputError, setInputError] = useState<boolean>(false);
+    const [isError, setIsError] = useState(false);
 
     /**
      * Sets tools based on the checkboxes and sets updates the workspace with
@@ -68,6 +70,21 @@ const Edit = ({ workspace, updateWorkspace }: IProps) => {
         } else {
             setInputError(false);
         }
+
+        const workspaceNames = workspaces.map((ws: any) => {
+            if (workspace.name !== ws.name) {
+                return ws.name;
+            } else {
+                return null;
+            }
+        });
+
+        if (workspaceNames.includes(value)) {
+            setIsError(true);
+        } else {
+            setIsError(false);
+        }
+
         setData({
             ...data,
             [name]: value,
@@ -78,12 +95,15 @@ const Edit = ({ workspace, updateWorkspace }: IProps) => {
         <>
             <Button flex="1" variant="ghost" leftIcon={<AiOutlineEdit />} color={'#b3b8cf'} onClick={onOpen} zIndex={10}></Button>
             <PrimaryDrawer isOpen={isOpen} onClose={onClose} title="Edit workspace">
-                <Text pb={'5px'} color={'rgb(123, 128, 154)'} fontSize={'14px'}>
-                    Name
-                </Text>
-                <Text ml={'8px'} pt={'2px'} fontSize={'14px'} color={'#e53e3e'}>
-                    {inputError ? '* Name exceeds character limit' : ''}
-                </Text>
+                <Flex>
+                    <Text pb={'5px'} color={'rgb(123, 128, 154)'} fontSize={'14px'}>
+                        Name
+                    </Text>
+                    <Text ml={'8px'} pt={'2px'} fontSize={'14px'} color={'#e53e3e'}>
+                        {inputError ? '* Name exceeds character limit' : ''}
+                        {isError ? '* Name already exists' : ''}
+                    </Text>
+                </Flex>
                 <Input
                     name="name"
                     value={data.name}
@@ -144,7 +164,7 @@ const Edit = ({ workspace, updateWorkspace }: IProps) => {
                 <Divider gradient="radial-gradient(#eceef1 40%, white 60%)" marginBottom="0" />
                 <Flex mt={'10px'} width={'full'}>
                     <Spacer />
-                    <PrimaryButton onClick={editData} isDisabled={inputError}>
+                    <PrimaryButton onClick={editData} isDisabled={inputError || isError}>
                         SAVE
                     </PrimaryButton>
                 </Flex>
