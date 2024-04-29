@@ -8,7 +8,6 @@ import TextInput from '../../features/dataCollections/TextInput';
 // import SubRowsContent from './SubRowsContent';
 import EditRow from '../../features/dataCollections/EditRow';
 import NoteModal from '../../features/dataCollections/NoteModal';
-import { FaRegBell } from 'react-icons/fa';
 import { FaRegSquareCheck } from 'react-icons/fa6';
 // import UploadMenu from '../../features/dataCollections/UploadMenu';
 import UploadModal from './UploadModal';
@@ -18,6 +17,7 @@ import Reference from './Reference';
 // import { useUpdateRowMutation } from '../../app/services/api';
 import { useTypedSelector, useAppDispatch } from '../../hooks/store';
 import { addCheckedRowId, removeCheckedRowId } from '../../components/table/tableSlice';
+import RemindersDrawer from './RemindersDrawer';
 
 const Row = ({
     row,
@@ -312,9 +312,10 @@ const Row = ({
                                             onClick={allowed ? handleRemindersChange : () => {}}
                                             cursor={allowed ? 'pointer' : 'default'}
                                         >
-                                            <Text fontSize={'15px'} color={row.reminder && allowed ? '#16b2fc' : '#cccccc'}>
+                                            {/* <Text fontSize={'15px'} color={row.reminder && allowed ? '#16b2fc' : '#cccccc'}>
                                                 <FaRegBell />
-                                            </Text>
+                                            </Text> */}
+                                            <RemindersDrawer row={row} handleChange={editRowOnChange} />
                                         </Box>
                                         <Box
                                             pt={'7px'}
@@ -354,7 +355,6 @@ const Row = ({
                                     </Flex>
                                 </span>
                                 {columns.map((column: any, columnIndex: number) => {
-                                    console.log({ columnName: column.name, people: column.people });
                                     return (
                                         <div
                                             key={columnIndex}
