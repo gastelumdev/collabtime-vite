@@ -314,7 +314,7 @@ const UploadModal = ({ rowDocuments, getDocs, getUpdatedDoc, removeDoc, allowed 
                                         <Text>Create Document</Text>
                                     </Center>
                                     <Center>
-                                        <DocDrawer getDocs={getDocs} />
+                                        <DocDrawer getDocs={getDocs} documents={documents} />
                                     </Center>
                                 </GridItem>
                             </Grid>
