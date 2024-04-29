@@ -171,11 +171,25 @@ const Form = () => {
                                                     value={''}
                                                     onChange={onChange}
                                                     allowed={true}
+                                                    border={'1px solid #f1f3f5'}
                                                 />
                                             ) : column.type === 'people' ? (
-                                                <PeopleMenu columnName={column.name} people={column.people} value={''} onChange={onChange} allowed={true} />
+                                                <PeopleMenu
+                                                    columnName={column.name}
+                                                    people={column.people}
+                                                    value={''}
+                                                    onChange={onChange}
+                                                    allowed={true}
+                                                    border={'1px solid #f1f3f5'}
+                                                />
                                             ) : column.type === 'date' ? (
-                                                <DateInput value={''} columnName={column.name} onChange={onChange} allowed={true} />
+                                                <DateInput
+                                                    value={''}
+                                                    columnName={column.name}
+                                                    onChange={onChange}
+                                                    allowed={true}
+                                                    border={'1px solid #f1f3f5'}
+                                                />
                                             ) : column.type === 'reference' ? (
                                                 <>
                                                     {user ? (

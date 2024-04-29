@@ -6,9 +6,10 @@ interface IProps {
     columnName: string;
     onChange: any;
     allowed?: boolean;
+    border?: string | null;
 }
 
-const DateInput = ({ value, columnName, onChange, allowed = false }: IProps) => {
+const DateInput = ({ value, columnName, onChange, allowed = false, border = null }: IProps) => {
     // const [updateCell] = useUpdateCellMutation();
     const [inputValue, setInputValue] = useState<string>(value);
 
@@ -38,7 +39,7 @@ const DateInput = ({ value, columnName, onChange, allowed = false }: IProps) => 
     // };
 
     return (
-        <Box px={'20px'} pt={'5px'}>
+        <Box px={'20px'} pt={'5px'} border={border ? border : 'none'}>
             <Input
                 value={inputValue}
                 type="datetime-local"
