@@ -142,7 +142,7 @@ const SearchContent = ({ onClose, firstField }: IProps) => {
                 </Flex>
             </Box>
             {searchInputText !== '' ? (
-                <>
+                <Box>
                     <HStack>
                         <Box w={'150px'}>
                             <Button w={'145px'} variant={tabSelectedName === 'all' ? 'solid' : 'ghost'} mr={'20px'} onClick={() => setTabSelectedName('all')}>
@@ -246,7 +246,7 @@ const SearchContent = ({ onClose, firstField }: IProps) => {
                                                   </a>
                                               </Text>
                                           ) : (
-                                              <UpdateModal document={doc} />
+                                              <UpdateModal document={doc} fontSize="16px" color={'rgb(123, 128, 154)'} />
                                           )}
                                       </Box>
                                   );
@@ -374,7 +374,7 @@ const SearchContent = ({ onClose, firstField }: IProps) => {
                             </>
                         ) : null}
                     </Box>
-                </>
+                </Box>
             ) : null}
         </>
     );

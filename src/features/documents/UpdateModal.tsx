@@ -10,9 +10,11 @@ import './styles.css';
 
 interface IProps {
     document: TDocument;
+    fontSize?: string;
+    color?: string;
 }
 
-const UpdateModal = ({ document }: IProps) => {
+const UpdateModal = ({ document, fontSize = '13px', color = '#666' }: IProps) => {
     const { isOpen: updateDocIsOpen, onOpen: updateDocOnOpen, onClose: updateDocOnClose } = useDisclosure();
     const editorRef = useRef<any>(null);
 
@@ -42,8 +44,8 @@ const UpdateModal = ({ document }: IProps) => {
                     updateDocOnOpen();
                 }}
                 cursor={'pointer'}
-                color={'#666666'}
-                fontSize={'13px'}
+                color={color}
+                fontSize={fontSize}
                 overflow={'hidden'}
                 textOverflow={'ellipsis'}
             >
