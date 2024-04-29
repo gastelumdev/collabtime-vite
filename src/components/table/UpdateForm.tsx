@@ -212,6 +212,7 @@ const UpdateForm = () => {
                                                     type="form"
                                                     onChange={onChange}
                                                     allowed={true}
+                                                    isTextarea={false}
                                                 />
                                             )}
                                         </Box>
