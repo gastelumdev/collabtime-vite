@@ -32,6 +32,7 @@ const Create = ({ addNewDataCollection }: IProps) => {
     const [data, setData] = useState<TDataCollection>(defaultValues);
     const [inputError, setInputError] = useState<boolean>(false);
     const [selectFormattedDataCollections, setSelectFormattedDataCollections] = useState<any[]>([]);
+    const [isError, setIsError] = useState(false);
 
     useEffect(() => {
         const formattedDC = [];
@@ -60,12 +61,23 @@ const Create = ({ addNewDataCollection }: IProps) => {
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value, name } = event.target;
-        console.log(data);
+
+        const dataCollectionNames = dataCollections?.map((dataCollection) => {
+            return dataCollection.name;
+        });
+
         if (value.length > 30) {
             setInputError(true);
         } else {
             setInputError(false);
         }
+
+        if (dataCollectionNames?.includes(value)) {
+            setIsError(true);
+        } else {
+            setIsError(false);
+        }
+
         setData({
             ...data,
             [name]: value,
@@ -80,16 +92,24 @@ const Create = ({ addNewDataCollection }: IProps) => {
         });
     };
 
+    const handleOnClose = () => {
+        setData(defaultValues);
+        setIsError(false);
+        setInputError(false);
+        onClose();
+    };
+
     return (
         <>
             <PrimaryButton onClick={showDrawer} px="0" size="sm">
                 <HiPlus size={'18px'} />
             </PrimaryButton>
-            <PrimaryDrawer title="Create a new data collection" onClose={onClose} isOpen={open}>
+            <PrimaryDrawer title="Create a new data collection" onClose={handleOnClose} isOpen={open}>
                 <Flex>
                     <Text pb={'5px'}>Name</Text>
                     <Text ml={'8px'} pt={'2px'} fontSize={'14px'} color={'#e53e3e'}>
                         {inputError ? '* Name exceeds character limit' : ''}
+                        {isError ? '* Name already exists' : ''}
                     </Text>
                 </Flex>
                 <Input
@@ -120,7 +140,7 @@ const Create = ({ addNewDataCollection }: IProps) => {
                 />
                 <Flex>
                     <Spacer />
-                    <PrimaryButton onClick={createData} isDisabled={inputError}>
+                    <PrimaryButton onClick={createData} isDisabled={inputError || isError}>
                         SAVE
                     </PrimaryButton>
                 </Flex>
