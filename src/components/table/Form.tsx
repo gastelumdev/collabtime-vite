@@ -209,7 +209,15 @@ const Form = () => {
                                                     ) : null}
                                                 </>
                                             ) : (
-                                                <TextInput id={''} columnName={column.name} value={''} type="form" onChange={onChange} allowed={true} />
+                                                <TextInput
+                                                    id={''}
+                                                    columnName={column.name}
+                                                    value={''}
+                                                    type="form"
+                                                    onChange={onChange}
+                                                    allowed={true}
+                                                    isTextarea={false}
+                                                />
                                             )}
                                         </Box>
                                     </div>
