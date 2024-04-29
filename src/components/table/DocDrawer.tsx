@@ -32,6 +32,9 @@ const DocDrawer = ({ getDocs }: IProps) => {
 
         getDocs([documentCreated.data]);
 
+        setCreatedDocName('');
+        setEditorValue('');
+
         // if (addToCell) {
         //     const cellCopy: any = cell;
         //     const docsCopy: any = cell?.docs;
