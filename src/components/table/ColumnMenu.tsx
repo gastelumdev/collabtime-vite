@@ -1,14 +1,17 @@
-import { Box, Button, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Portal } from '@chakra-ui/react';
+import { Box, Button, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Portal, useDisclosure } from '@chakra-ui/react';
 
 const ColumnMenu = ({ column, handleDeleteColumn, index }: { column: any; handleDeleteColumn: any; index: number }) => {
+    const { isOpen, onToggle, onClose } = useDisclosure();
+
     const handleDeleteColumnClick = () => {
         console.log(column);
         handleDeleteColumn(column);
+        onClose();
     };
     return (
-        <Popover>
+        <Popover isOpen={isOpen} onClose={onClose}>
             <PopoverTrigger>
-                <Button variant={'unstyled'} fontSize={'14px'} fontWeight={'medium'} h={'20px'} w={'100px'} color={'#666666'}>
+                <Button variant={'unstyled'} fontSize={'14px'} fontWeight={'medium'} h={'20px'} w={'100px'} color={'#666666'} onClick={onToggle}>
                     {`${column.name[0].toUpperCase()}${column.name.slice(1, column.name.length).split('_').join(' ')}`}
                 </Button>
             </PopoverTrigger>
