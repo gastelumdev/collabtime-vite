@@ -9,6 +9,7 @@ import LabelMenu from './LabelMenu';
 import PeopleMenu from './PeopleMenu';
 import DateInput from './DateInput';
 import TextInput from './TextInput';
+import Reference from '../../components/table/Reference';
 
 interface IProps {
     cells?: TCell[];
@@ -23,6 +24,12 @@ const EditRow = ({ columns, row, handleChange, allowed = false }: IProps) => {
 
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
     // const [updateCell] = useUpdateCellMutation();
+
+    const [rowState, setRowState] = useState(row);
+
+    useEffect(() => {
+        setRowState(row);
+    }, [row]);
 
     // const [editMode, setEditMode] = useState<string[]>([]);
     // const [tempValue, setTempValue] = useState('');
@@ -40,6 +47,37 @@ const EditRow = ({ columns, row, handleChange, allowed = false }: IProps) => {
                 setPermissions(workspace.permissions);
             }
         }
+    };
+
+    const onRefChange = (columnName: string, ref: any) => {
+        console.log(ref);
+        const refs: any = [];
+        if (rowState !== null && rowState.refs === undefined) {
+            console.log(rowState.refs);
+            refs.push(ref);
+            console.log({ ...rowState, refs: { [columnName]: refs } });
+            handleChange({ ...rowState, refs: { [columnName]: refs } });
+        } else {
+            if (rowState !== null && rowState.refs[columnName] === undefined) {
+                console.log({ ...rowState, refs: { ...rowState.refs, [columnName]: [ref] } });
+                handleChange({ ...rowState, refs: { ...rowState.refs, [columnName]: [ref] } });
+            } else {
+                console.log({ ...rowState, refs: { ...rowState.refs, [columnName]: [...rowState.refs[columnName], ref] } });
+                handleChange({ ...rowState, refs: { ...rowState.refs, [columnName]: [...rowState.refs[columnName], ref] } });
+            }
+        }
+    };
+
+    const onRemoveRef = (columnName: string, ref: any) => {
+        const rowCopy: any = rowState;
+        const refs: any = rowCopy.refs;
+        const refTarget: any = refs[columnName];
+
+        const filteredRefs = refTarget.filter((r: any) => {
+            return r._id !== ref._id;
+        });
+
+        handleChange({ ...rowState, refs: { ...rowState.refs, [columnName]: filteredRefs } });
     };
 
     // const handleUpdateRowInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,9 +116,9 @@ const EditRow = ({ columns, row, handleChange, allowed = false }: IProps) => {
     const onChange = useCallback(
         (columnName: string, value: string) => {
             console.log(value);
-            handleChange({ ...row, values: { ...row.values, [columnName]: value } });
+            handleChange({ ...rowState, values: { ...rowState.values, [columnName]: value } });
         },
-        [row]
+        [rowState]
     );
     return (
         <>
@@ -111,26 +149,34 @@ const EditRow = ({ columns, row, handleChange, allowed = false }: IProps) => {
                                         id={0}
                                         labels={column.labels}
                                         columnName={column.name}
-                                        value={row.values[column.name]}
+                                        value={rowState.values[column.name]}
                                         onChange={onChange}
                                         allowed={allowed}
                                     />
                                 ) : column.type === 'people' ? (
                                     <PeopleMenu
-                                        row={row}
+                                        row={rowState}
                                         columnName={column.name}
                                         people={column.people}
-                                        value={row.values[column.name]}
+                                        value={rowState.values[column.name]}
                                         onChange={onChange}
                                         allowed={allowed}
                                     />
                                 ) : column.type === 'date' ? (
-                                    <DateInput value={row.values[column.name]} columnName={column.name} onChange={onChange} allowed={allowed} />
+                                    <DateInput value={rowState.values[column.name]} columnName={column.name} onChange={onChange} allowed={allowed} />
+                                ) : column.type === 'reference' ? (
+                                    <Reference
+                                        column={column !== undefined ? column : {}}
+                                        refs={row.refs && row.refs[column.name] !== undefined ? row.refs[column.name] : []}
+                                        onRefChange={onRefChange}
+                                        onRemoveRef={onRemoveRef}
+                                        allowed={allowed}
+                                    />
                                 ) : (
                                     <TextInput
-                                        id={row._id}
+                                        id={rowState._id}
                                         columnName={column.name}
-                                        value={row.values[column.name]}
+                                        value={rowState.values[column.name]}
                                         type="form"
                                         onChange={onChange}
                                         allowed={allowed}
