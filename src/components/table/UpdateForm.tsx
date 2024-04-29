@@ -180,6 +180,7 @@ const UpdateForm = () => {
                                                     columnName={column.name}
                                                     onChange={onChange}
                                                     allowed={true}
+                                                    border={'1px solid #f1f3f5'}
                                                 />
                                             ) : column.type === 'reference' ? (
                                                 <>
