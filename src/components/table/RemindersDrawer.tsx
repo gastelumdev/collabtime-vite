@@ -173,26 +173,28 @@ const RemindersDrawer = ({ row, handleChange, allowed }: IProps) => {
                         </Box>
 
                         <Box mt={'50px'}>
-                            {row.reminders.map((reminder: any, index: number) => {
-                                return (
-                                    <Flex key={index} color={'white'} bgColor={'#24a2f0'} mb={'5px'} borderRadius={'3px'} pt={'3px'} pl={'10px'}>
-                                        <Text mb={'10px'} mt={'3px'}>
-                                            {formatTime(reminder)}
-                                        </Text>
-                                        <Spacer />
-                                        <Text
-                                            fontSize={'12px'}
-                                            ml={'16px'}
-                                            mr={'14px'}
-                                            mt={'5px'}
-                                            cursor={'pointer'}
-                                            onClick={() => handleDeleteReminder(reminder)}
-                                        >
-                                            <CloseIcon />
-                                        </Text>
-                                    </Flex>
-                                );
-                            })}
+                            {row.reminders !== undefined
+                                ? row.reminders.map((reminder: any, index: number) => {
+                                      return (
+                                          <Flex key={index} color={'white'} bgColor={'#24a2f0'} mb={'5px'} borderRadius={'3px'} pt={'3px'} pl={'10px'}>
+                                              <Text mb={'10px'} mt={'3px'}>
+                                                  {formatTime(reminder)}
+                                              </Text>
+                                              <Spacer />
+                                              <Text
+                                                  fontSize={'12px'}
+                                                  ml={'16px'}
+                                                  mr={'14px'}
+                                                  mt={'5px'}
+                                                  cursor={'pointer'}
+                                                  onClick={() => handleDeleteReminder(reminder)}
+                                              >
+                                                  <CloseIcon />
+                                              </Text>
+                                          </Flex>
+                                      );
+                                  })
+                                : null}
                         </Box>
                     </DrawerBody>
 
