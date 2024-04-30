@@ -17,6 +17,7 @@ import {
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { FaRegBell } from 'react-icons/fa';
+import { useUpdateRowMutation } from '../../app/services/api';
 
 interface IProps {
     row: any;
@@ -26,6 +27,8 @@ interface IProps {
 
 const RemindersDrawer = ({ row, handleChange, allowed }: IProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
+
+    const [updateRow] = useUpdateRowMutation();
 
     const [date, setDate] = useState<string | null>(null);
     const [time, setTime] = useState<string | null>(null);
@@ -97,7 +100,7 @@ const RemindersDrawer = ({ row, handleChange, allowed }: IProps) => {
             return rem !== reminder;
         });
 
-        handleChange({ ...row, reminders: newReminders });
+        updateRow({ ...row, reminders: newReminders });
     };
 
     const handleOnClose = () => {

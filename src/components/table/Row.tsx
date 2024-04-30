@@ -194,10 +194,6 @@ const Row = ({
         handleChange(row);
     };
 
-    const handleRemindersChange = () => {
-        handleChange({ ...row, reminder: !row.reminder });
-    };
-
     const handleAcknowledgeClick = () => {
         handleChange({ ...row, acknowledged: !row.acknowledged });
     };
@@ -309,7 +305,7 @@ const Row = ({
                                         <Box
                                             pt={'7px'}
                                             ml={'10px'}
-                                            onClick={allowed ? handleRemindersChange : () => {}}
+                                            // onClick={allowed ? handleRemindersChange : () => {}}
                                             cursor={allowed ? 'pointer' : 'default'}
                                         >
                                             {/* <Text fontSize={'15px'} color={row.reminder && allowed ? '#16b2fc' : '#cccccc'}>
