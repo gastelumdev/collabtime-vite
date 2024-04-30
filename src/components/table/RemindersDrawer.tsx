@@ -1,3 +1,4 @@
+import { CloseIcon } from '@chakra-ui/icons';
 import {
     Box,
     Button,
@@ -63,6 +64,10 @@ const RemindersDrawer = ({ row, handleChange, allowed }: IProps) => {
         return -1;
     };
 
+    const formatTime = (isoString: string) => {
+        return isoString.split('T').join(' ');
+    };
+
     const handleSave = () => {
         console.log({ date, time });
         const fullTime = `${date}T${time}`;
@@ -106,14 +111,14 @@ const RemindersDrawer = ({ row, handleChange, allowed }: IProps) => {
 
     return (
         <>
-            <Text fontSize={'15px'} onClick={onOpen} color={row.reminders.length > 0 && allowed ? '#16b2fc' : '#cccccc'}>
+            <Text fontSize={'15px'} onClick={onOpen} color={row.reminders !== undefined && row.reminders.length > 0 && allowed ? '#16b2fc' : '#cccccc'}>
                 <FaRegBell />
             </Text>
             <Drawer
                 isOpen={isOpen}
                 placement="right"
                 onClose={handleOnClose}
-                size={'md'}
+                size={'xs'}
                 // finalFocusRef={btnRef}
             >
                 <DrawerOverlay />
@@ -170,10 +175,20 @@ const RemindersDrawer = ({ row, handleChange, allowed }: IProps) => {
                         <Box mt={'50px'}>
                             {row.reminders.map((reminder: any, index: number) => {
                                 return (
-                                    <Flex key={index}>
-                                        <Text mb={'10px'}>{reminder.split('T').join(' ')}</Text>
-                                        <Text ml={'16px'} cursor={'pointer'} onClick={() => handleDeleteReminder(reminder)}>
-                                            X
+                                    <Flex key={index} color={'white'} bgColor={'#24a2f0'} mb={'5px'} borderRadius={'3px'} pt={'3px'} pl={'10px'}>
+                                        <Text mb={'10px'} mt={'3px'}>
+                                            {formatTime(reminder)}
+                                        </Text>
+                                        <Spacer />
+                                        <Text
+                                            fontSize={'12px'}
+                                            ml={'16px'}
+                                            mr={'14px'}
+                                            mt={'5px'}
+                                            cursor={'pointer'}
+                                            onClick={() => handleDeleteReminder(reminder)}
+                                        >
+                                            <CloseIcon />
                                         </Text>
                                     </Flex>
                                 );
