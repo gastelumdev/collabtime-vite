@@ -315,7 +315,7 @@ const Row = ({
                                             {/* <Text fontSize={'15px'} color={row.reminder && allowed ? '#16b2fc' : '#cccccc'}>
                                                 <FaRegBell />
                                             </Text> */}
-                                            <RemindersDrawer row={row} handleChange={editRowOnChange} />
+                                            <RemindersDrawer row={row} handleChange={editRowOnChange} allowed={allowed} />
                                         </Box>
                                         <Box
                                             pt={'7px'}

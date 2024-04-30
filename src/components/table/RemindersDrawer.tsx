@@ -20,9 +20,10 @@ import { FaRegBell } from 'react-icons/fa';
 interface IProps {
     row: any;
     handleChange: any;
+    allowed: boolean;
 }
 
-const RemindersDrawer = ({ row, handleChange }: IProps) => {
+const RemindersDrawer = ({ row, handleChange, allowed }: IProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const [date, setDate] = useState<string | null>(null);
@@ -105,11 +106,7 @@ const RemindersDrawer = ({ row, handleChange }: IProps) => {
 
     return (
         <>
-            <Text
-                fontSize={'15px'}
-                onClick={onOpen}
-                // color={row.reminder && allowed ? '#16b2fc' : '#cccccc'}
-            >
+            <Text fontSize={'15px'} onClick={onOpen} color={row.reminders.length > 0 && allowed ? '#16b2fc' : '#cccccc'}>
                 <FaRegBell />
             </Text>
             <Drawer
