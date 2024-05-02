@@ -112,13 +112,21 @@ const PeopleMenu = ({ row, columnName, people, value = '', onChange, allowed = f
                                     const name = splitPerson.join(' ');
                                     console.log({ splitPerson, email, name });
                                     return (
-                                        <Box key={index} p={'6px'} cursor={'pointer'} onClick={() => handleLabelClick(label)}>
-                                            <Box>
+                                        <Box key={index} mb={'3px'} cursor={'pointer'} onClick={() => handleLabelClick(label)}>
+                                            <Button
+                                                bgColor={label.color}
+                                                w={'100%'}
+                                                fontSize={'12px'}
+                                                fontWeight={'normal'}
+                                                size={'xs'}
+                                                onClick={() => handleLabelClick(label)}
+                                                textAlign={'left'}
+                                            >
                                                 <Text color={getTextColor(label.color)}>
                                                     {name}
                                                     <span style={{ color: 'gray' }}>{` ${email}`}</span>
                                                 </Text>
-                                            </Box>
+                                            </Button>
                                         </Box>
                                     );
                                 })}
@@ -127,20 +135,39 @@ const PeopleMenu = ({ row, columnName, people, value = '', onChange, allowed = f
                     </Popover>
                 </Box>
             ) : (
-                <Text
-                    // backgroundColor={labelColor}
-                    color={getTextColor(labelColor)}
+                <Button
+                    variant={'unstyled'}
+                    borderRadius={'none'}
+                    w={'100%'}
                     h={'29px'}
-                    textAlign={'center'}
-                    paddingY={'4px'}
-                    cursor={'pointer'}
+                    fontSize={'12px'}
+                    fontWeight={'normal'}
                     onMouseDown={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
                         event;
                         setActive(true);
                     }}
+                    onKeyDown={(event: React.KeyboardEvent<HTMLButtonElement>) => {
+                        if (event.key === 'Enter') {
+                            console.log('Enter key pressed');
+                            setActive(true);
+                        }
+                    }}
                 >
-                    {labelLabel ? labelLabel : 'Select'}
-                </Text>
+                    <Text
+                        // backgroundColor={labelColor}
+                        color={getTextColor(labelColor)}
+                        h={'29px'}
+                        textAlign={'center'}
+                        paddingY={'4px'}
+                        cursor={'pointer'}
+                        onMouseDown={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+                            event;
+                            setActive(true);
+                        }}
+                    >
+                        {labelLabel ? labelLabel : 'Select'}
+                    </Text>
+                </Button>
             )}
         </Box>
         // <Menu matchWidth={true}>
