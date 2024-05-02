@@ -49,24 +49,28 @@ const TextInput = ({ columnName, value, type = 'tableCell', onChange, allowed = 
             {!active || !allowed ? (
                 <Box
                     w={'100%'}
-                    p={val ? '0px' : type === 'tableCell' ? '14px' : '0px'}
+                    // p={val ? '0px' : type === 'tableCell' ? '14px' : '0px'}
                     onClick={() => setActive(!active)}
-                    px={type === 'tableCell' ? '20px' : '0px'}
+                    // px={type === 'tableCell' ? '20px' : '0px'}
+                    p={'2px'}
                     overflow={'hidden'}
                 >
                     <Button
                         variant={'unstyled'}
                         border={type === 'tableCell' ? 'none' : '1px solid #edf2f7'}
+                        borderRadius={'none'}
                         fontSize={'12px'}
                         fontWeight={'normal'}
                         padding={0}
-                        pl={type === 'tableCell' ? '0px' : '12px'}
+                        // pl={type === 'tableCell' ? '0px' : '12px'}
+                        pl={'12px'}
                         overflow={'hidden'}
                         textOverflow={'ellipsis'}
                         w={'100%'}
                         h={'29px'}
                         textAlign={'left'}
                         cursor={'text'}
+                        size={'xs'}
                     >
                         {val}
                     </Button>
@@ -99,7 +103,7 @@ const TextInput = ({ columnName, value, type = 'tableCell', onChange, allowed = 
                             zIndex={1000000}
                             onBlur={() => setActive(!active)}
                             bgColor={'white'}
-                            size={'sm'}
+                            size={'xs'}
                             autoFocus={true}
                             onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) => {
                                 // event.target.select();
