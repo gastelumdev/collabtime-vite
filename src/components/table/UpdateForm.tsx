@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Box, Card, CardBody, CardHeader, Center, Container, Flex, Spacer, Text } from '@chakra-ui/react';
-import { useGetFormDataQuery, useGetRowQuery, useGetUserQuery, useUpdateFormDataMutation } from '../../app/services/api';
+import { Box, Card, CardBody, CardHeader, Center, Container, Flex, Spacer, Spinner, Text, useToast } from '@chakra-ui/react';
+import { useGetFormDataQuery, useGetRowQuery, useGetUserQuery, useUpdateRowMutation } from '../../app/services/api';
 import LabelMenu from '../../features/dataCollections/LabelMenu';
 import PeopleMenu from '../../features/dataCollections/PeopleMenu';
 import DateInput from '../../features/dataCollections/DateInput';
@@ -17,11 +17,14 @@ const UpdateForm = () => {
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
     const { data: formData } = useGetFormDataQuery(dataCollectionId);
     const { data: rowData } = useGetRowQuery({ workspaceId: id, dataCollectionId, rowId });
-    const [updateFormData] = useUpdateFormDataMutation();
+    // const [updateFormData] = useUpdateFormDataMutation();
+    const [updateRow, { isLoading, isSuccess, isError }] = useUpdateRowMutation();
 
-    const [row, setRow] = useState<any>(formData?.row || {});
+    const [row, setRow] = useState<any>(rowData);
     const [columns, setColumns] = useState<any>(formData?.columns);
     const [dataCollection, setDataCollection] = useState<any>(formData?.dataCollection);
+
+    const toast = useToast();
 
     const [_, setPermissions] = useState<number>();
 
@@ -86,9 +89,35 @@ const UpdateForm = () => {
         setRow({ ...row, refs: { ...row.refs, [columnName]: filteredRefs } });
     };
 
+    useEffect(() => {
+        if (isSuccess) {
+            toast({
+                title: 'Saved!',
+                description: '',
+                status: 'success',
+                duration: 4000,
+                position: 'bottom-right',
+                isClosable: true,
+            });
+        }
+    }, [isSuccess]);
+
+    useEffect(() => {
+        if (isError) {
+            toast({
+                title: 'Error',
+                description: 'Try again.',
+                status: 'error',
+                duration: 4000,
+                position: 'bottom-right',
+                isClosable: true,
+            });
+        }
+    }, [isError]);
+
     const updateData = async () => {
         console.log(row);
-        await updateFormData(row);
+        updateRow(row);
     };
     return (
         <>
@@ -111,7 +140,6 @@ const UpdateForm = () => {
                     <CardBody>
                         {columns?.map((column: any, columnIndex: number) => {
                             if (column.includeInForm) {
-                                console.log(row);
                                 return (
                                     <div
                                         key={columnIndex}
@@ -134,6 +162,8 @@ const UpdateForm = () => {
                                                     columnName={column.name}
                                                     value={row && row.values[column.name] !== undefined ? row.values[column.name] : ''}
                                                     onChange={onChange}
+                                                    allowed={true}
+                                                    border={'1px solid #f1f3f5'}
                                                 />
                                             ) : column.type === 'people' ? (
                                                 <PeopleMenu
@@ -141,12 +171,16 @@ const UpdateForm = () => {
                                                     people={column.people}
                                                     value={row && row.values[column.name] !== undefined ? row.values[column.name] : ''}
                                                     onChange={onChange}
+                                                    allowed={true}
+                                                    border={'1px solid #f1f3f5'}
                                                 />
                                             ) : column.type === 'date' ? (
                                                 <DateInput
                                                     value={row && row.values[column.name] !== undefined ? row.values[column.name] : ''}
                                                     columnName={column.name}
                                                     onChange={onChange}
+                                                    allowed={true}
+                                                    border={'1px solid #f1f3f5'}
                                                 />
                                             ) : column.type === 'reference' ? (
                                                 <>
@@ -165,6 +199,7 @@ const UpdateForm = () => {
                                                                 }
                                                                 onRefChange={onRefChange}
                                                                 onRemoveRef={onRemoveRef}
+                                                                allowed={true}
                                                             />
                                                         </>
                                                     ) : null}
@@ -176,6 +211,8 @@ const UpdateForm = () => {
                                                     value={row && row.values[column.name] !== undefined ? row.values[column.name] : ''}
                                                     type="form"
                                                     onChange={onChange}
+                                                    allowed={true}
+                                                    isTextarea={false}
                                                 />
                                             )}
                                         </Box>
@@ -186,7 +223,7 @@ const UpdateForm = () => {
                         })}
                         <Flex mt={'10px'} width={'full'}>
                             <Spacer />
-                            <PrimaryButton onClick={updateData}>SUBMIT</PrimaryButton>
+                            <PrimaryButton onClick={updateData}>{isLoading ? <Spinner /> : 'UPDATE'}</PrimaryButton>
                         </Flex>
                     </CardBody>
                 </Card>

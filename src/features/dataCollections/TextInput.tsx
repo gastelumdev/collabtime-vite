@@ -1,4 +1,4 @@
-import { Box, Button, Textarea } from '@chakra-ui/react';
+import { Box, Button, Input, Textarea } from '@chakra-ui/react';
 import { memo, useEffect, useState } from 'react';
 
 // interface IProps {
@@ -18,9 +18,10 @@ interface ITextInputProps {
     type?: string;
     onChange: any;
     allowed?: boolean;
+    isTextarea?: boolean;
 }
 
-const TextInput = ({ columnName, value, type = 'tableCell', onChange, allowed = false }: ITextInputProps) => {
+const TextInput = ({ columnName, value, type = 'tableCell', onChange, allowed = false, isTextarea = true }: ITextInputProps) => {
     const [active, setActive] = useState<boolean>(false);
     const [val, setVal] = useState<string>(value);
 
@@ -48,47 +49,72 @@ const TextInput = ({ columnName, value, type = 'tableCell', onChange, allowed = 
             {!active || !allowed ? (
                 <Box
                     w={'100%'}
-                    p={val ? '0px' : type === 'tableCell' ? '14px' : '0px'}
+                    // p={val ? '0px' : type === 'tableCell' ? '14px' : '0px'}
                     onClick={() => setActive(!active)}
-                    px={type === 'tableCell' ? '20px' : '0px'}
+                    // px={type === 'tableCell' ? '20px' : '0px'}
+                    p={'2px'}
                     overflow={'hidden'}
                 >
                     <Button
                         variant={'unstyled'}
                         border={type === 'tableCell' ? 'none' : '1px solid #edf2f7'}
+                        borderRadius={'none'}
                         fontSize={'12px'}
                         fontWeight={'normal'}
                         padding={0}
-                        pl={type === 'tableCell' ? '0px' : '12px'}
+                        // pl={type === 'tableCell' ? '0px' : '12px'}
+                        pl={'12px'}
                         overflow={'hidden'}
                         textOverflow={'ellipsis'}
                         w={'100%'}
                         h={'29px'}
                         textAlign={'left'}
                         cursor={'text'}
+                        size={'xs'}
                     >
                         {val}
                     </Button>
                 </Box>
             ) : (
                 <Box pos={'relative'}>
-                    <Textarea
-                        fontSize={'12px'}
-                        value={val}
-                        position={'absolute'}
-                        zIndex={1000000}
-                        onBlur={() => setActive(!active)}
-                        bgColor={'white'}
-                        autoFocus={true}
-                        onFocus={(event: React.FocusEvent<HTMLTextAreaElement, Element>) => {
-                            // event.target.select();
-                            let v = event.target.value;
-                            event.target.value = '';
-                            event.target.value = v;
-                        }}
-                        onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => onTextChange(event.target.value)}
-                        onBlurCapture={(event: React.FocusEvent<HTMLTextAreaElement, Element>) => handleBlur(event.target.value)}
-                    />
+                    {isTextarea ? (
+                        <Textarea
+                            fontSize={'12px'}
+                            value={val}
+                            position={'absolute'}
+                            zIndex={1000000}
+                            onBlur={() => setActive(!active)}
+                            bgColor={'white'}
+                            autoFocus={true}
+                            onFocus={(event: React.FocusEvent<HTMLTextAreaElement, Element>) => {
+                                // event.target.select();
+                                let v = event.target.value;
+                                event.target.value = '';
+                                event.target.value = v;
+                            }}
+                            onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => onTextChange(event.target.value)}
+                            onBlurCapture={(event: React.FocusEvent<HTMLTextAreaElement, Element>) => handleBlur(event.target.value)}
+                        />
+                    ) : (
+                        <Input
+                            fontSize={'12px'}
+                            value={val}
+                            // position={'absolute'}
+                            zIndex={1000000}
+                            onBlur={() => setActive(!active)}
+                            bgColor={'white'}
+                            size={'xs'}
+                            autoFocus={true}
+                            onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) => {
+                                // event.target.select();
+                                let v = event.target.value;
+                                event.target.value = '';
+                                event.target.value = v;
+                            }}
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => onTextChange(event.target.value)}
+                            onBlurCapture={(event: React.FocusEvent<HTMLInputElement, Element>) => handleBlur(event.target.value)}
+                        />
+                    )}
                 </Box>
             )}
         </>

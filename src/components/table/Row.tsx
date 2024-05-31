@@ -8,7 +8,6 @@ import TextInput from '../../features/dataCollections/TextInput';
 // import SubRowsContent from './SubRowsContent';
 import EditRow from '../../features/dataCollections/EditRow';
 import NoteModal from '../../features/dataCollections/NoteModal';
-import { FaRegBell } from 'react-icons/fa';
 import { FaRegSquareCheck } from 'react-icons/fa6';
 // import UploadMenu from '../../features/dataCollections/UploadMenu';
 import UploadModal from './UploadModal';
@@ -18,6 +17,7 @@ import Reference from './Reference';
 // import { useUpdateRowMutation } from '../../app/services/api';
 import { useTypedSelector, useAppDispatch } from '../../hooks/store';
 import { addCheckedRowId, removeCheckedRowId } from '../../components/table/tableSlice';
+import RemindersDrawer from './RemindersDrawer';
 
 const Row = ({
     row,
@@ -194,10 +194,6 @@ const Row = ({
         handleChange(row);
     };
 
-    const handleRemindersChange = () => {
-        handleChange({ ...row, reminder: !row.reminder });
-    };
-
     const handleAcknowledgeClick = () => {
         handleChange({ ...row, acknowledged: !row.acknowledged });
     };
@@ -309,12 +305,13 @@ const Row = ({
                                         <Box
                                             pt={'7px'}
                                             ml={'10px'}
-                                            onClick={allowed ? handleRemindersChange : () => {}}
+                                            // onClick={allowed ? handleRemindersChange : () => {}}
                                             cursor={allowed ? 'pointer' : 'default'}
                                         >
-                                            <Text fontSize={'15px'} color={row.reminder && allowed ? '#16b2fc' : '#cccccc'}>
+                                            {/* <Text fontSize={'15px'} color={row.reminder && allowed ? '#16b2fc' : '#cccccc'}>
                                                 <FaRegBell />
-                                            </Text>
+                                            </Text> */}
+                                            <RemindersDrawer row={row} handleChange={editRowOnChange} allowed={allowed} />
                                         </Box>
                                         <Box
                                             pt={'7px'}

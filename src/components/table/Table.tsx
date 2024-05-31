@@ -206,6 +206,7 @@ ITableProps) => {
             }
         }
         setNumberOfDeleteItems(0);
+        dispatch(clearCheckedRowIds());
     };
 
     const handleReorderRows = useCallback((rowIds: string[]) => {

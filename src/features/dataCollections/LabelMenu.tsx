@@ -15,12 +15,13 @@ interface IProps {
     value: string;
     onChange: any;
     allowed?: boolean;
+    border?: string | null;
     // label?: string;
     // bgColor?: string;
     // options: { value: string; label: string; color: string }[] | undefined;
 }
 
-const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false }: IProps) => {
+const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false, border = null }: IProps) => {
     const { onClose } = useDisclosure();
     // const [updateRow] = useUpdateRowMutation();
 
@@ -75,7 +76,7 @@ const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false }
     };
 
     return (
-        <>
+        <Box border={border ? border : 'none'}>
             {active && allowed ? (
                 <div
                 // onBlur={(event: React.FocusEvent<HTMLDivElement, Element>) => {
@@ -103,10 +104,17 @@ const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false }
                             <PopoverBody>
                                 {options?.map((label, index) => {
                                     return (
-                                        <Box key={index} bgColor={label.color} p={'6px'} cursor={'pointer'} onClick={() => handleLabelClick(label)}>
-                                            <Box bgColor={label.color}>
+                                        <Box key={index} bgColor={label.color} mb={'3px'} cursor={'pointer'} onClick={() => handleLabelClick(label)}>
+                                            <Button
+                                                bgColor={label.color}
+                                                w={'100%'}
+                                                fontSize={'12px'}
+                                                fontWeight={'normal'}
+                                                size={'sm'}
+                                                onClick={() => handleLabelClick(label)}
+                                            >
                                                 <Text color={getTextColor(label.color)}>{label.label}</Text>
-                                            </Box>
+                                            </Button>
                                         </Box>
                                     );
                                 })}
@@ -115,23 +123,43 @@ const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false }
                     </Popover>
                 </div>
             ) : (
-                <Text
-                    backgroundColor={labelColor}
-                    color={getTextColor(labelColor)}
-                    // h={'100%'}
+                <Button
+                    variant={'unstyled'}
+                    borderRadius={'none'}
+                    w={'100%'}
                     h={'29px'}
-                    textAlign={'center'}
-                    paddingY={'4px'}
-                    cursor={'pointer'}
+                    fontSize={'12px'}
+                    fontWeight={'normal'}
                     onMouseDown={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
                         event;
                         setActive(true);
                     }}
+                    onKeyDown={(event: React.KeyboardEvent<HTMLButtonElement>) => {
+                        if (event.key === 'Enter') {
+                            console.log('Enter key pressed');
+                            setActive(true);
+                        }
+                    }}
                 >
-                    {labelLabel}
-                </Text>
+                    <Text
+                        backgroundColor={labelColor}
+                        color={getTextColor(labelColor)}
+                        // h={'100%'}
+                        h={'29px'}
+                        textAlign={'center'}
+                        paddingY={'4px'}
+                        cursor={'pointer'}
+                        onMouseDown={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+                            event;
+                            setActive(true);
+                        }}
+                        // tabIndex={0}
+                    >
+                        {labelLabel}
+                    </Text>
+                </Button>
             )}
-        </>
+        </Box>
     );
 };
 

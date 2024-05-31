@@ -17,12 +17,13 @@ interface IProps {
     value: string;
     onChange: any;
     allowed?: boolean;
+    border?: string | null;
     // label?: string;
     // bgColor?: string;
     // options: { value: string; label: string; color: string }[] | undefined;
 }
 
-const PeopleMenu = ({ row, columnName, people, value = '', onChange, allowed = false }: IProps) => {
+const PeopleMenu = ({ row, columnName, people, value = '', onChange, allowed = false, border = null }: IProps) => {
     const { onClose } = useDisclosure();
     // const [updateRow] = useUpdateRowMutation();
 
@@ -34,7 +35,7 @@ const PeopleMenu = ({ row, columnName, people, value = '', onChange, allowed = f
     const [active, setActive] = useState<boolean>(false);
 
     useEffect(() => {
-        row;
+        console.log({ columnName, people, row });
         labelValue;
         const cellOptions: ILabel[] | undefined = people?.map((item) => {
             return {
@@ -52,7 +53,7 @@ const PeopleMenu = ({ row, columnName, people, value = '', onChange, allowed = f
         setLabelLabel(label);
         setLabelColor('#ffffff');
         setOptions(cellOptions);
-    }, [value]);
+    }, [value, people]);
 
     const handleLabelClick = (label: ILabel) => {
         // updateRow({ ...row, values: { ...row.values, [columnName]: label.label } });
@@ -77,9 +78,10 @@ const PeopleMenu = ({ row, columnName, people, value = '', onChange, allowed = f
     };
 
     return (
-        <>
+        <Box border={border ? border : 'none'}>
             {active && allowed ? (
-                <div
+                <Box
+
                 // onBlur={(event: React.FocusEvent<HTMLDivElement, Element>) => {
                 //     setActive(false);
                 // }}
@@ -98,7 +100,7 @@ const PeopleMenu = ({ row, columnName, people, value = '', onChange, allowed = f
                                 variant={'unstyled'}
                                 _hover={{ bgColor: labelColor }}
                             >
-                                {labelLabel}
+                                {labelLabel ? labelLabel : 'Select'}
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent>
@@ -110,37 +112,64 @@ const PeopleMenu = ({ row, columnName, people, value = '', onChange, allowed = f
                                     const name = splitPerson.join(' ');
                                     console.log({ splitPerson, email, name });
                                     return (
-                                        <Box key={index} p={'6px'} cursor={'pointer'} onClick={() => handleLabelClick(label)}>
-                                            <Box>
+                                        <Box key={index} mb={'3px'} cursor={'pointer'} onClick={() => handleLabelClick(label)}>
+                                            <Button
+                                                bgColor={label.color}
+                                                w={'100%'}
+                                                fontSize={'12px'}
+                                                fontWeight={'normal'}
+                                                size={'xs'}
+                                                onClick={() => handleLabelClick(label)}
+                                                textAlign={'left'}
+                                            >
                                                 <Text color={getTextColor(label.color)}>
                                                     {name}
                                                     <span style={{ color: 'gray' }}>{` ${email}`}</span>
                                                 </Text>
-                                            </Box>
+                                            </Button>
                                         </Box>
                                     );
                                 })}
                             </PopoverBody>
                         </PopoverContent>
                     </Popover>
-                </div>
+                </Box>
             ) : (
-                <Text
-                    // backgroundColor={labelColor}
-                    color={getTextColor(labelColor)}
+                <Button
+                    variant={'unstyled'}
+                    borderRadius={'none'}
+                    w={'100%'}
                     h={'29px'}
-                    textAlign={'center'}
-                    paddingY={'4px'}
-                    cursor={'pointer'}
+                    fontSize={'12px'}
+                    fontWeight={'normal'}
                     onMouseDown={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
                         event;
                         setActive(true);
                     }}
+                    onKeyDown={(event: React.KeyboardEvent<HTMLButtonElement>) => {
+                        if (event.key === 'Enter') {
+                            console.log('Enter key pressed');
+                            setActive(true);
+                        }
+                    }}
                 >
-                    {labelLabel}
-                </Text>
+                    <Text
+                        // backgroundColor={labelColor}
+                        color={getTextColor(labelColor)}
+                        h={'29px'}
+                        textAlign={'center'}
+                        paddingY={'4px'}
+                        cursor={'pointer'}
+                        onMouseDown={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+                            event;
+                            setActive(true);
+                        }}
+                    >
+                        {labelLabel ? labelLabel : 'Select'}
+                    </Text>
+                </Button>
             )}
-        </>
+        </Box>
         // <Menu matchWidth={true}>
         //     {/* <Tooltip
         //         label={labelLabel}

@@ -139,7 +139,7 @@ const View = () => {
                             <Flex>
                                 <Spacer />
                                 <Box pb={'20px'}>
-                                    <Create addNewWorkspace={createWorkspace} />
+                                    <Create addNewWorkspace={createWorkspace} workspaces={data} />
                                 </Box>
                             </Flex>
                         </SimpleGrid>
@@ -165,7 +165,7 @@ const View = () => {
                                             // divider={workspace?.owner === localStorage.getItem('userId') || isAuthorized}
                                             editButton={
                                                 workspace?.owner === localStorage.getItem('userId') || isAuthorized ? (
-                                                    <Edit workspace={workspace} updateWorkspace={updateWorkspace} />
+                                                    <Edit workspace={workspace} updateWorkspace={updateWorkspace} workspaces={data} />
                                                 ) : null
                                             }
                                             deleteButton={
