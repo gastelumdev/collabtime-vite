@@ -64,8 +64,6 @@ const View = () => {
             callUpdate(null);
         });
 
-        socket.on('getWorkspaces-' + localStorage.getItem('userId'), () => {});
-
         return () => {
             socket.disconnect();
         };
