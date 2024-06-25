@@ -63,7 +63,7 @@ export const api = createApi({
         updateWorkspace: builder.mutation<TWorkspace, TWorkspace>({
             query: (workspace) => ({
                 url: `workspaces/update/${workspace._id}`,
-                method: "POST",
+                method: "PUT",
                 body: workspace
             }),
             invalidatesTags: ["Workspace"]
