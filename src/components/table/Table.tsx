@@ -67,7 +67,7 @@ ITableProps) => {
     const [updateRowNoTag] = useUpdateRowNoTagMutation();
     const [deleteRow] = useDeleteRowMutation();
     const [reorderRows] = useReorderRowsMutation();
-    const [createColumn] = useCreateColumnMutation();
+    const [createColumn, { isLoading: columnIsUpdating }] = useCreateColumnMutation();
     const [deleteColumn] = useDeleteColumnMutation();
     const [rowCallUpdate] = useRowCallUpdateMutation();
 
@@ -215,7 +215,7 @@ ITableProps) => {
 
     const handleAddNewColumnToRows = useCallback(
         async (column: TColumn) => {
-            createColumn(column);
+            // createColumn(column);
 
             setColumns([...columns, column]);
             setRows((prev: any) =>
@@ -475,6 +475,8 @@ ITableProps) => {
             ) : null}
             <TableHeader
                 columns={columns}
+                columnIsUpdating={columnIsUpdating}
+                createColumn={createColumn}
                 gridTemplateColumns={gridTemplateColumns}
                 minCellWidth={minCellWidth}
                 columnResizingOffset={columnResizingOffset}
@@ -483,7 +485,7 @@ ITableProps) => {
                 updateBackendColumns={updateBackendColumns}
                 updateBackendColumnWidth={updateBackendColumnWidth}
                 handleGridTemplateColumns={handleSetGridTemplateColumns}
-                handleAddNewColumnToRows={handleAddNewColumnToRows}
+                addNewColumnToRows={handleAddNewColumnToRows}
                 handleRemoveColumnFormRows={handleRemoveColumnFromRows}
                 deleteColumn={handleDeleteColumn}
                 allowed={allowed}
