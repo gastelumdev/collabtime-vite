@@ -154,6 +154,7 @@ const Row = ({
     };
 
     const onChange = (columnName: string, value: string) => {
+        console.log('On change was called');
         if (columnName === 'status' && value === 'Done') {
             setShowRow(false);
         } else {

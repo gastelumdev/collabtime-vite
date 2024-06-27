@@ -298,8 +298,6 @@ const TableContent = ({
     };
 
     const handleChange = (row: any) => {
-        // handleUpdateRow(row);
-
         setCurrentRows((prev) => prev.map((prevRow) => (prevRow._id === row._id ? row : prevRow)));
         handleUpdateRowNoRender(row);
     };
