@@ -792,7 +792,12 @@ const DataCollectionTable = ({
                             })}
                             {(permissions || 0) > 1 ? (
                                 <Th>
-                                    <CreateColumn columns={columns || []} createColumn={createColumn} />
+                                    <CreateColumn
+                                        columns={columns || []}
+                                        createColumn={createColumn}
+                                        columnIsUpdating={false}
+                                        addNewColumnToRows={createColumn}
+                                    />
                                 </Th>
                             ) : null}
                         </Tr>
