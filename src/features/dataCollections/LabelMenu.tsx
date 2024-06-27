@@ -60,6 +60,8 @@ const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false, 
         // updateRow({ ...row, values: { ...row.values, [columnName]: label.value } });
         // console.log({ ...row, values: { ...row.values, [columnName]: label.value } });
 
+        console.log('Label was changed');
+
         setLabelValue(label.value);
         setLabelColor(label.color);
         setLabelLabel(label.label);
@@ -111,7 +113,7 @@ const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false, 
                                                 fontSize={'12px'}
                                                 fontWeight={'normal'}
                                                 size={'sm'}
-                                                onClick={() => handleLabelClick(label)}
+                                                // onClick={() => handleLabelClick(label)}
                                             >
                                                 <Text color={getTextColor(label.color)}>{label.label}</Text>
                                             </Button>

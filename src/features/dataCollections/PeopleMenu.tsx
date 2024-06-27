@@ -119,7 +119,7 @@ const PeopleMenu = ({ row, columnName, people, value = '', onChange, allowed = f
                                                 fontSize={'12px'}
                                                 fontWeight={'normal'}
                                                 size={'xs'}
-                                                onClick={() => handleLabelClick(label)}
+                                                // onClick={() => handleLabelClick(label)}
                                                 textAlign={'left'}
                                             >
                                                 <Text color={getTextColor(label.color)}>
