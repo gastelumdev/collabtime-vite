@@ -6,6 +6,8 @@ import ColumnMenu from './ColumnMenu';
 
 interface IProps {
     columns: any[];
+    columnIsUpdating?: boolean;
+    createColumn?: any;
     gridTemplateColumns: string;
     minCellWidth: number;
     columnResizingOffset: number;
@@ -15,7 +17,7 @@ interface IProps {
     updateBackendColumns: any;
     updateBackendColumnWidth: any;
     handleGridTemplateColumns: any;
-    handleAddNewColumnToRows: any;
+    addNewColumnToRows: any;
     handleRemoveColumnFormRows: any;
     deleteColumn: any;
     allowed?: boolean;
@@ -24,6 +26,8 @@ interface IProps {
 
 const TableHeader = ({
     columns,
+    columnIsUpdating,
+    createColumn,
     gridTemplateColumns,
     minCellWidth,
     columnResizingOffset,
@@ -32,7 +36,7 @@ const TableHeader = ({
     updateBackendColumns,
     updateBackendColumnWidth,
     handleGridTemplateColumns,
-    handleAddNewColumnToRows,
+    addNewColumnToRows,
     handleRemoveColumnFormRows,
     deleteColumn,
     allowed = false,
@@ -268,13 +272,13 @@ const TableHeader = ({
         }
     }, [activeIndex]);
 
-    const handleAddColumn = useCallback(
+    const handleAddNewColumnToRows = useCallback(
         (column: TColumn) => {
             console.log(column);
             setCurrentColumns([...currentColumns, column]);
-            handleAddNewColumnToRows(column);
+            addNewColumnToRows(column);
         },
-        [handleAddNewColumnToRows, currentColumns]
+        [addNewColumnToRows, currentColumns]
     );
 
     const handleDeleteColumn = useCallback(
@@ -413,7 +417,14 @@ const TableHeader = ({
                         padding: '0px 20px',
                     }}
                 >
-                    {allowed ? <CreateColumn columns={columns} createColumn={handleAddColumn} /> : null}
+                    {allowed ? (
+                        <CreateColumn
+                            columns={columns}
+                            createColumn={createColumn}
+                            addNewColumnToRows={handleAddNewColumnToRows}
+                            columnIsUpdating={columnIsUpdating as boolean}
+                        />
+                    ) : null}
                 </span>
             </div>
         </div>

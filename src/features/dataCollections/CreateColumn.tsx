@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Flex, HStack, Input, Spacer, Stack, Text, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Input, Spacer, Spinner, Stack, Text, useDisclosure } from '@chakra-ui/react';
 import Select from 'react-select';
 
 import { AiOutlineClose } from 'react-icons/ai';
@@ -18,9 +18,11 @@ import { useGetDataCollectionsQuery } from '../../app/services/api';
 interface TProps {
     columns: TColumn[];
     createColumn: any;
+    columnIsUpdating: boolean;
+    addNewColumnToRows: any;
 }
 
-const CreateColumn = ({ columns, createColumn }: TProps) => {
+const CreateColumn = ({ columns, createColumn, columnIsUpdating = false, addNewColumnToRows }: TProps) => {
     const { dataCollectionId } = useParams();
     const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -59,7 +61,7 @@ const CreateColumn = ({ columns, createColumn }: TProps) => {
      * Creates a new column
      * This should be replaced by RTK
      */
-    const handleAddColumn = () => {
+    const handleAddColumn = async () => {
         if (!columnNameError) {
             const newColumn: TColumn = {
                 dataCollection: dataCollectionId || '',
@@ -77,7 +79,8 @@ const CreateColumn = ({ columns, createColumn }: TProps) => {
             // Set column name to a database friendly underscore naming
             newColumn.name = newColumn.name.toLowerCase().split(' ').join('_');
 
-            createColumn(newColumn);
+            await createColumn(newColumn);
+            addNewColumnToRows(newColumn);
             setShowLabelForm(false);
             setShowReferenceForm(false);
             onClose();
@@ -329,8 +332,8 @@ const CreateColumn = ({ columns, createColumn }: TProps) => {
                 </Stack>
                 <Flex mt={'20px'}>
                     <Spacer />
-                    <PrimaryButton onClick={handleAddColumn} isDisabled={columnNameError || columnName == ''}>
-                        SAVE
+                    <PrimaryButton onClick={handleAddColumn} isDisabled={columnNameError || columnName == '' || columnIsUpdating}>
+                        {columnIsUpdating ? <Spinner /> : 'SAVE'}
                     </PrimaryButton>
                 </Flex>
             </PrimaryDrawer>
