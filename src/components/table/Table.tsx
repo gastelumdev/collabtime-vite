@@ -8,7 +8,7 @@ import {
     useCreateColumnMutation,
     useDeleteColumnMutation,
     useDeleteRowMutation,
-    useGetRowsQuery,
+    // useGetRowsQuery,
     useReorderRowsMutation,
     useRowCallUpdateMutation,
     useUpdateRowMutation,
@@ -16,7 +16,7 @@ import {
 } from '../../app/services/api';
 import { Box, Center, Flex, Spacer, Text } from '@chakra-ui/react';
 import { ArrowDownIcon, ArrowUpIcon, DeleteIcon } from '@chakra-ui/icons';
-import { useParams } from 'react-router';
+// import { useParams } from 'react-router';
 import { useTypedSelector, useAppDispatch } from '../../hooks/store';
 import { clearCheckedRowIds } from '../../components/table/tableSlice';
 
@@ -30,10 +30,11 @@ interface ITableProps {
     showDoneRows?: boolean;
     allowed?: boolean;
     isFetching?: boolean;
+    refetch?: any;
 }
 
 const Table = ({
-    // rowsData,
+    rowsData,
     columnsData,
     minCellWidth,
     columnResizingOffset,
@@ -41,9 +42,10 @@ const Table = ({
     reorderColumns,
     showDoneRows = false,
     allowed = false,
-}: // isFetching = true,
-ITableProps) => {
-    const { dataCollectionId } = useParams();
+    refetch,
+    isFetching = true,
+}: ITableProps) => {
+    // const { dataCollectionId } = useParams();
     const dispatch = useAppDispatch();
 
     const checkedRowIds = useTypedSelector((state: any) => {
@@ -54,12 +56,12 @@ ITableProps) => {
 
     const [gridTemplateColumns, setGridTemplateColumns] = useState<string>(columnsData.map((_) => '180px').join(' '));
 
-    const {
-        data: rowsData,
-        refetch,
-        isFetching,
-        // isLoading,
-    } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
+    // const {
+    //     data: rowsData,
+    //     refetch,
+    //     isFetching,
+    //     // isLoading,
+    // } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
 
     const [rows, setRows] = useState<any>(rowsData);
 
