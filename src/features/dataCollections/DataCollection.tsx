@@ -31,45 +31,6 @@ const DataCollection = ({ showDoneRows = false, rowsProp }: { showDoneRows?: boo
     const [permissions, setPermissions] = useState<number>();
     const [windowWidthOffset, setWindowWidthOffset] = useState(window.innerWidth > 990 ? 90 : 7);
 
-    // const [rows, setRows] = useState(rowsData);
-
-    // useEffect(() => {
-    //     let position = 0;
-    //     let currentParent: any = null;
-    //     const parentsToMakeCommon: any = [];
-
-    //     const repositionedRows = rowsData?.map((row) => {
-    //         if (currentParent !== null && row.parentRowId !== currentParent._id) {
-    //             parentsToMakeCommon.push(currentParent._id);
-    //         }
-
-    //         if (row.isParent) {
-    //             currentParent = row;
-    //         } else {
-    //             currentParent = null;
-    //         }
-
-    //         position = position + 1;
-    //         if (row.position != position) {
-    //             console.log('UPDATING POSITION OF ROW');
-    //             updateRow({ ...row, position: position });
-    //             return { ...row, position: position };
-    //         }
-    //         return row;
-    //     });
-
-    //     const resetRows = repositionedRows?.map((row) => {
-    //         if (parentsToMakeCommon.includes(row._id)) {
-    //             console.log('UPDATING PARENTS TO COMMON');
-    //             updateRow({ ...row, isParent: false, showSubrows: true });
-    //             return { ...row, isParent: false, showSubrows: true };
-    //         }
-    //         return row;
-    //     });
-    //     setRows(resetRows);
-    //     setRows(rowsData);
-    // }, [rowsData, showDoneRows]);
-
     useEffect(() => {
         refetch();
     }, [showDoneRows]);
