@@ -85,6 +85,7 @@ const DataCollection = ({ showDoneRows = false, rowsProp }: { showDoneRows?: boo
                 showDoneRows={showDoneRows}
                 allowed={(permissions || 0) > 1}
                 isFetching={isFetching}
+                refetch={refetch}
             />
         </Box>
     );

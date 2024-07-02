@@ -12,7 +12,7 @@ import {
     useReorderRowsMutation,
     useRowCallUpdateMutation,
     useUpdateRowMutation,
-    useUpdateRowNoTagMutation,
+    // useUpdateRowNoTagMutation,
 } from '../../app/services/api';
 import { Box, Center, Flex, Spacer, Text } from '@chakra-ui/react';
 import { ArrowDownIcon, ArrowUpIcon, DeleteIcon } from '@chakra-ui/icons';
@@ -66,7 +66,7 @@ const Table = ({
     const [rows, setRows] = useState<any>(rowsData);
 
     const [updateRow] = useUpdateRowMutation();
-    const [updateRowNoTag] = useUpdateRowNoTagMutation();
+    // const [updateRowNoTag] = useUpdateRowNoTagMutation();
     const [deleteRow] = useDeleteRowMutation();
     const [reorderRows] = useReorderRowsMutation();
     const [createColumn, { isLoading: columnIsUpdating }] = useCreateColumnMutation();
@@ -132,7 +132,7 @@ const Table = ({
     const handleUpdateRowNoRender = useCallback(
         async (row: any) => {
             // We wait for the call to return new rows if it is the last row
-            const newRows: any = await updateRowNoTag(row);
+            const newRows: any = await updateRow(row);
             console.log(newRows);
             // If it's the last row, add the new blank rows to the current rows
             // setRows((prev: any) => prev.map((prevRow: any) => (prevRow._id === row._id ? row : prevRow)));
@@ -140,6 +140,7 @@ const Table = ({
                 setRows((prev: any) => {
                     return [...prev, ...newRows.data];
                 });
+                console.log('CALL REFETCH');
                 refetch();
             }
         },
