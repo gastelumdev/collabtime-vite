@@ -4,15 +4,7 @@ import './Table.css';
 import TableContent from './TableContent';
 import TableHeader from './TableHeader';
 import { TColumn } from '../../types';
-import {
-    useCreateColumnMutation,
-    useDeleteColumnMutation,
-    useDeleteRowMutation,
-    // useGetRowsQuery,
-    useReorderRowsMutation,
-    useRowCallUpdateMutation,
-    // useUpdateRowNoTagMutation,
-} from '../../app/services/api';
+import { useCreateColumnMutation, useDeleteColumnMutation } from '../../app/services/api';
 import { Box, Center, Flex, Spacer, Text } from '@chakra-ui/react';
 import { ArrowDownIcon, ArrowUpIcon, DeleteIcon } from '@chakra-ui/icons';
 // import { useParams } from 'react-router';
@@ -25,6 +17,7 @@ interface ITableProps {
     minCellWidth: number;
     columnResizingOffset: number;
     updateColumn: any;
+    deleteRow: any;
     reorderColumns: any;
     showDoneRows?: boolean;
     allowed?: boolean;
@@ -40,6 +33,7 @@ const Table = ({
     minCellWidth,
     columnResizingOffset,
     updateColumn,
+    deleteRow,
     reorderColumns,
     showDoneRows = false,
     allowed = false,
@@ -68,11 +62,11 @@ const Table = ({
     const [rows, setRows] = useState<any>(rowsData);
 
     // const [updateRowNoTag] = useUpdateRowNoTagMutation();
-    const [deleteRow] = useDeleteRowMutation();
-    const [reorderRows] = useReorderRowsMutation();
+    // const [deleteRow] = useDeleteRowMutation();
+    // const [reorderRows] = useReorderRowsMutation();
     const [createColumn, { isLoading: columnIsUpdating }] = useCreateColumnMutation();
     const [deleteColumn] = useDeleteColumnMutation();
-    const [rowCallUpdate] = useRowCallUpdateMutation();
+    // const [rowCallUpdate] = useRowCallUpdateMutation();
 
     useEffect(() => {
         // console.log(rowsData);
@@ -212,9 +206,9 @@ const Table = ({
         dispatch(clearCheckedRowIds());
     };
 
-    const handleReorderRows = useCallback((rowIds: string[]) => {
-        reorderRows(rowIds);
-    }, []);
+    // const handleReorderRows = useCallback((rowIds: string[]) => {
+    //     reorderRows(rowIds);
+    // }, []);
 
     const handleAddNewColumnToRows = useCallback(
         async (column: TColumn) => {
@@ -506,8 +500,8 @@ const Table = ({
                 handleUpdateRowNoRender={handleUpdateRowNoRender}
                 handleUpdateRow={handleUpdateRow}
                 handleDeleteBoxChange={handleDeleteBoxChange}
-                handleReorderRows={handleReorderRows}
-                rowCallUpdate={rowCallUpdate}
+                // handleReorderRows={handleReorderRows}
+                // rowCallUpdate={rowCallUpdate}
                 showDoneRows={showDoneRows}
                 allowed={allowed}
             />

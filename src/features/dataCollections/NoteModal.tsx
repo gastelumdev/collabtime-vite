@@ -190,7 +190,7 @@ const NoteModal = ({ row, updateRow, allowed = false }: IProps) => {
                     <FaRegStickyNote
                         style={{
                             color: row?.notesList.length < 1 ? '#cccccc' : hasUnreadItems ? '#ffa507' : '#16b2fc',
-                            size: '30px',
+                            // size: '30px',
                         }}
                     />
                 </IconContext.Provider>
