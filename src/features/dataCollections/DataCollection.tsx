@@ -1,5 +1,7 @@
 import { memo, useCallback, useEffect, useState } from 'react';
 import {
+    useCreateColumnMutation,
+    useDeleteColumnMutation,
     useDeleteRowMutation,
     useGetColumnsQuery,
     useGetRowsQuery,
@@ -25,6 +27,8 @@ const DataCollection = ({ showDoneRows = false, rowsProp }: { showDoneRows?: boo
 
     const [updateRow, { isLoading: updateRowIsLoading }] = useUpdateRowMutation();
     const [deleteRow] = useDeleteRowMutation();
+    const [createColumn, { isLoading: createColumnIsUpdating }] = useCreateColumnMutation();
+    const [deleteColumn] = useDeleteColumnMutation();
 
     const {
         data: rowsData,
@@ -85,6 +89,9 @@ const DataCollection = ({ showDoneRows = false, rowsProp }: { showDoneRows?: boo
                 columnsData={columns || []}
                 minCellWidth={120}
                 columnResizingOffset={windowWidthOffset}
+                createColumn={createColumn}
+                createColumnIsUpdating={createColumnIsUpdating}
+                deleteColumn={deleteColumn}
                 updateColumn={handleColumnUpdate}
                 reorderColumns={handleReorderColumns}
                 showDoneRows={showDoneRows}
