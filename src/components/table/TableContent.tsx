@@ -17,8 +17,8 @@ interface IProps {
     handleUpdateRowNoRender: any;
     handleUpdateRow?: any;
     handleDeleteBoxChange: any;
-    handleReorderRows: any;
-    rowCallUpdate: any;
+    handleReorderRows?: any;
+    rowCallUpdate?: any;
     showDoneRows?: boolean;
     allowed?: boolean;
 }
@@ -35,7 +35,7 @@ const TableContent = ({
     handleUpdateRowNoRender,
     // handleUpdateRow,
     handleDeleteBoxChange,
-    rowCallUpdate,
+    // rowCallUpdate,
     showDoneRows = false,
     allowed = false,
 }: IProps) => {
@@ -360,7 +360,7 @@ const TableContent = ({
                                             deleteBoxIsChecked={row.checked}
                                             handleDeleteBoxChange={handleDeleteBoxChangeForRow}
                                             handleSubrowVisibility={handleSubrowVisibility}
-                                            rowCallUpdate={rowCallUpdate}
+                                            // rowCallUpdate={rowCallUpdate}
                                             allowed={allowed}
                                             showDoneRows={showDoneRows}
                                         />

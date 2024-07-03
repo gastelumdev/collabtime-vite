@@ -31,7 +31,7 @@ const Row = ({
     deleteBoxIsChecked,
     handleDeleteBoxChange,
     // handleSubrowVisibility,
-    rowCallUpdate,
+    // rowCallUpdate,
     allowed = false,
 }: {
     row: any;
@@ -45,7 +45,7 @@ const Row = ({
     deleteBoxIsChecked: boolean;
     handleDeleteBoxChange: any;
     handleSubrowVisibility?: any;
-    rowCallUpdate: any;
+    rowCallUpdate?: any;
     allowed?: boolean;
     showDoneRows?: boolean;
 }) => {
@@ -301,7 +301,12 @@ const Row = ({
                                             <EditRow row={row} columns={columns} handleChange={editRowOnChange} allowed={allowed} />
                                         </Box>
                                         <Box pt={'6px'}>
-                                            <NoteModal row={row} updateRow={editRowOnChange} rowCallUpdate={rowCallUpdate} allowed={allowed} />
+                                            <NoteModal
+                                                row={row}
+                                                updateRow={editRowOnChange}
+                                                // rowCallUpdate={rowCallUpdate}
+                                                allowed={allowed}
+                                            />
                                         </Box>
                                         <Box
                                             pt={'7px'}

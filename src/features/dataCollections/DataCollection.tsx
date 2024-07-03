@@ -1,5 +1,6 @@
 import { memo, useCallback, useEffect, useState } from 'react';
 import {
+    useDeleteRowMutation,
     useGetColumnsQuery,
     useGetRowsQuery,
     useGetUserQuery,
@@ -23,6 +24,7 @@ const DataCollection = ({ showDoneRows = false, rowsProp }: { showDoneRows?: boo
     const [reorderColumns] = useReorderColumnsMutation();
 
     const [updateRow, { isLoading: updateRowIsLoading }] = useUpdateRowMutation();
+    const [deleteRow] = useDeleteRowMutation();
 
     const {
         data: rowsData,
@@ -77,7 +79,7 @@ const DataCollection = ({ showDoneRows = false, rowsProp }: { showDoneRows?: boo
 
     return (
         <Box>
-            <Box h={'4px'}>{isFetching || isLoading || updateRowIsLoading ? <Progress size="xs" isIndeterminate /> : null}</Box>
+            <Box h={'4px'}>{isFetching || isLoading ? <Progress size="xs" isIndeterminate /> : null}</Box>
             <Table
                 rowsData={rowsData || []}
                 columnsData={columns || []}
@@ -89,6 +91,7 @@ const DataCollection = ({ showDoneRows = false, rowsProp }: { showDoneRows?: boo
                 allowed={(permissions || 0) > 1}
                 isFetching={isFetching}
                 updateRow={updateRow}
+                deleteRow={deleteRow}
                 updateRowIsLoading={updateRowIsLoading}
                 refetch={refetch}
             />
