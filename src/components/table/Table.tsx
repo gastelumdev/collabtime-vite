@@ -4,7 +4,7 @@ import './Table.css';
 import TableContent from './TableContent';
 import TableHeader from './TableHeader';
 import { TColumn } from '../../types';
-import { useCreateColumnMutation, useDeleteColumnMutation } from '../../app/services/api';
+// import { useCreateColumnMutation, useDeleteColumnMutation } from '../../app/services/api';
 import { Box, Center, Flex, Spacer, Text } from '@chakra-ui/react';
 import { ArrowDownIcon, ArrowUpIcon, DeleteIcon } from '@chakra-ui/icons';
 // import { useParams } from 'react-router';
@@ -14,9 +14,12 @@ import { clearCheckedRowIds } from '../../components/table/tableSlice';
 interface ITableProps {
     rowsData?: any[];
     columnsData: any[];
-    minCellWidth: number;
-    columnResizingOffset: number;
+    minCellWidth?: number;
+    columnResizingOffset?: number;
     updateColumn: any;
+    createColumn: any;
+    createColumnIsUpdating: boolean;
+    deleteColumn: any;
     deleteRow: any;
     reorderColumns: any;
     showDoneRows?: boolean;
@@ -30,9 +33,12 @@ interface ITableProps {
 const Table = ({
     rowsData,
     columnsData,
-    minCellWidth,
-    columnResizingOffset,
+    minCellWidth = 120,
+    columnResizingOffset = 0,
     updateColumn,
+    createColumn,
+    createColumnIsUpdating,
+    deleteColumn,
     deleteRow,
     reorderColumns,
     showDoneRows = false,
@@ -64,8 +70,8 @@ const Table = ({
     // const [updateRowNoTag] = useUpdateRowNoTagMutation();
     // const [deleteRow] = useDeleteRowMutation();
     // const [reorderRows] = useReorderRowsMutation();
-    const [createColumn, { isLoading: columnIsUpdating }] = useCreateColumnMutation();
-    const [deleteColumn] = useDeleteColumnMutation();
+    // const [createColumn, { isLoading: columnIsUpdating }] = useCreateColumnMutation();
+    // const [deleteColumn] = useDeleteColumnMutation();
     // const [rowCallUpdate] = useRowCallUpdateMutation();
 
     useEffect(() => {
@@ -472,7 +478,7 @@ const Table = ({
             ) : null}
             <TableHeader
                 columns={columns}
-                columnIsUpdating={columnIsUpdating}
+                columnIsUpdating={createColumnIsUpdating}
                 createColumn={createColumn}
                 gridTemplateColumns={gridTemplateColumns}
                 minCellWidth={minCellWidth}
