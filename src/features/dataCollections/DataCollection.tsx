@@ -5,6 +5,7 @@ import {
     useGetUserQuery,
     useReorderColumnsMutation,
     useUpdateColumnMutation,
+    useUpdateRowMutation,
     // useUpdateRowMutation,
 } from '../../app/services/api';
 import { useParams } from 'react-router-dom';
@@ -20,6 +21,8 @@ const DataCollection = ({ showDoneRows = false, rowsProp }: { showDoneRows?: boo
     const { data: columns } = useGetColumnsQuery(dataCollectionId || '');
     const [updateColumn] = useUpdateColumnMutation();
     const [reorderColumns] = useReorderColumnsMutation();
+
+    const [updateRow, { isLoading: updateRowIsLoading }] = useUpdateRowMutation();
 
     const {
         data: rowsData,
@@ -74,7 +77,7 @@ const DataCollection = ({ showDoneRows = false, rowsProp }: { showDoneRows?: boo
 
     return (
         <Box>
-            <Box h={'4px'}>{isFetching || isLoading ? <Progress size="xs" isIndeterminate /> : null}</Box>
+            <Box h={'4px'}>{isFetching || isLoading || updateRowIsLoading ? <Progress size="xs" isIndeterminate /> : null}</Box>
             <Table
                 rowsData={rowsData || []}
                 columnsData={columns || []}
@@ -85,6 +88,8 @@ const DataCollection = ({ showDoneRows = false, rowsProp }: { showDoneRows?: boo
                 showDoneRows={showDoneRows}
                 allowed={(permissions || 0) > 1}
                 isFetching={isFetching}
+                updateRow={updateRow}
+                updateRowIsLoading={updateRowIsLoading}
                 refetch={refetch}
             />
         </Box>

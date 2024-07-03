@@ -11,7 +11,6 @@ import {
     // useGetRowsQuery,
     useReorderRowsMutation,
     useRowCallUpdateMutation,
-    useUpdateRowMutation,
     // useUpdateRowNoTagMutation,
 } from '../../app/services/api';
 import { Box, Center, Flex, Spacer, Text } from '@chakra-ui/react';
@@ -31,6 +30,8 @@ interface ITableProps {
     allowed?: boolean;
     isFetching?: boolean;
     refetch?: any;
+    updateRow?: any;
+    updateRowIsLoading?: boolean;
 }
 
 const Table = ({
@@ -44,6 +45,7 @@ const Table = ({
     allowed = false,
     refetch,
     isFetching = true,
+    updateRow,
 }: ITableProps) => {
     // const { dataCollectionId } = useParams();
     const dispatch = useAppDispatch();
@@ -65,7 +67,6 @@ const Table = ({
 
     const [rows, setRows] = useState<any>(rowsData);
 
-    const [updateRow] = useUpdateRowMutation();
     // const [updateRowNoTag] = useUpdateRowNoTagMutation();
     const [deleteRow] = useDeleteRowMutation();
     const [reorderRows] = useReorderRowsMutation();
@@ -140,7 +141,6 @@ const Table = ({
                 setRows((prev: any) => {
                     return [...prev, ...newRows.data];
                 });
-                console.log('CALL REFETCH');
                 refetch();
             }
         },
