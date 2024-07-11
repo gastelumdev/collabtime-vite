@@ -2,7 +2,7 @@ import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { ViewportList } from 'react-viewport-list';
 import Row from './Row';
 import { swapItems } from '../../utils/helpers';
-import { useUpdateRowMutation } from '../../app/services/api';
+// import { useUpdateRowMutation } from '../../app/services/api';
 import { Box } from '@chakra-ui/react';
 
 interface IProps {
@@ -15,7 +15,7 @@ interface IProps {
     updateColumn?: any;
     reorderColumns?: any;
     handleUpdateRowNoRender: any;
-    handleUpdateRow?: any;
+    updateRow?: any;
     handleDeleteBoxChange: any;
     handleReorderRows?: any;
     rowCallUpdate?: any;
@@ -32,8 +32,9 @@ const TableContent = ({
     // columnResizingOffset,
     // updateColumn,
     // reorderColumns,
+
     handleUpdateRowNoRender,
-    // handleUpdateRow,
+    updateRow,
     handleDeleteBoxChange,
     // rowCallUpdate,
     showDoneRows = false,
@@ -57,7 +58,7 @@ const TableContent = ({
         }
     }, [showDoneRows, rows]);
 
-    const [updateRow] = useUpdateRowMutation();
+    // const [updateRow] = useUpdateRowMutation();
 
     useEffect(() => {
         setGridTemplateColumns(gridTemplateColumnsIn);

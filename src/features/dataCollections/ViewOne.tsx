@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     useAcknowledgeRowMutation,
     useGetBlankRowsMutation,
@@ -63,23 +63,25 @@ import ImportDrawer from '../../components/table/ImportDrawer';
 
 const ViewOne = () => {
     const { id, dataCollectionId } = useParams();
-    const { pathname } = useLocation();
     const [queryParameters] = useSearchParams();
-    const finalRef = useRef<any>(null);
+    const { pathname } = useLocation(); // Pathname is used to append /form the current pathname
+    const dispatch = useAppDispatch();
 
-    const { onClose, onOpen, isOpen } = useDisclosure();
-    const { onClose: onCloseFormDrawer, onOpen: onOpenFormDrawer, isOpen: isOpenFormDrawer } = useDisclosure();
+    const { onClose, onOpen, isOpen } = useDisclosure(); // For template modal
+    const { onClose: onCloseFormDrawer, onOpen: onOpenFormDrawer, isOpen: isOpenFormDrawer } = useDisclosure(); // For form modal
     const toast = useToast();
 
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
-    const { data: dataCollection } = useGetDataCollectionQuery(dataCollectionId || '');
     const { data: workspace, isFetching: workspaceIsFetching } = useGetOneWorkspaceQuery(localStorage.getItem('workspaceId') || '');
+    const { data: dataCollection } = useGetDataCollectionQuery(dataCollectionId || '');
+
     const {
         data: rowsData,
         refetch,
         isFetching: rowsAreFetching,
         isLoading: rowsAreLoading,
     } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
+
     const { data: dataCollections } = useGetDataCollectionsQuery(null);
     const { data: columnsData } = useGetColumnsQuery(localStorage.getItem('dataCollectionId') || '');
     const [updateColumn] = useUpdateColumnMutation();
@@ -90,12 +92,10 @@ const ViewOne = () => {
     const [updateDataCollection] = useUpdateDataCollectionMutation();
     const [sendForm] = useSendFormMutation();
 
-    // const [rows, setRows] = useState(rowsData);
     const [columns, setColumns] = useState(columnsData);
 
     const [acknowledgeRow] = useAcknowledgeRowMutation();
 
-    // const [isTemplate, setIsTemplate] = useState<boolean>(false);
     const [templateNameValue, setTemplateNameValue] = useState<string>('');
 
     const [existingTemplateNames, setExistingTemplateNames] = useState<string[]>([]);
@@ -104,10 +104,8 @@ const ViewOne = () => {
     const [recipientValue, setRecipientValue] = useState<string>('');
 
     const [valuesForExport, setValuesForExport] = useState<any>('');
-    // useEffect(() => {
-    //     setRows(rowsData);
-    // }, [rowsData]);
 
+    // Checkboxes for selecting columns for form
     const [checkBoxes, setCheckBoxes] = useState<any>(
         Array(columns?.length)
             .fill(null)
@@ -116,11 +114,10 @@ const ViewOne = () => {
             })
     );
 
-    // const [showDoneRows, setShowDoneRows] = useState<boolean>(false);
+    // Redux state that toggles done rows
     const showDoneRows = useTypedSelector((state: any) => {
         return state.table.showDoneRows;
     });
-    const dispatch = useAppDispatch();
 
     const [permissions, setPermissions] = useState<number>();
 
@@ -128,6 +125,11 @@ const ViewOne = () => {
         getPermissions();
     }, [user]);
 
+    /**
+     * Goes through each of the current user's workspaces
+     * And if the workspace matches the currently selected workspace
+     * The permissions of that workspace are set
+     */
     const getPermissions = () => {
         for (const workspace of user?.workspaces || []) {
             if (workspace.id == localStorage.getItem('workspaceId')) {
@@ -137,14 +139,12 @@ const ViewOne = () => {
     };
 
     useEffect(() => {
-        // for (const column of columns || []) {
-        //     if (column.type === 'status') {
-        //         setShowDoneRows(false);
-        //     }
-        // }
         setColumns(columnsData);
     }, [columnsData]);
 
+    /**
+     * Set the columns that are included in the form
+     */
     useEffect(() => {
         setCheckBoxes(
             Array(columns?.length)
@@ -157,17 +157,18 @@ const ViewOne = () => {
         );
     }, [columns]);
 
+    /**
+     * Set workspace and data collection ids in local storage in case this is being redirected
+     * and not set from the workspaces page
+     */
     useEffect(() => {
         localStorage.setItem('workspaceId', id || '');
         localStorage.setItem('dataCollectionId', dataCollectionId || '');
-
-        // const dataCollectionCopy: any = dataCollection;
-
-        // if (dataCollectionCopy?.asTemplate !== undefined && dataCollectionCopy?.asTemplate?.active == true) {
-        //     setIsTemplate(true);
-        // }
     }, [dataCollection]);
 
+    /**
+     * Get all the data collection template names to avoid creating duplicates
+     */
     useEffect(() => {
         const templateNames = [];
         for (const dataCollection of dataCollections || []) {
@@ -178,6 +179,9 @@ const ViewOne = () => {
         setExistingTemplateNames(templateNames);
     }, [dataCollections]);
 
+    /**
+     * Set the row being acknowledged through email link
+     */
     useEffect(() => {
         const acknowledgedRowId = queryParameters.get('acknowledgedRow');
         if (acknowledgedRowId && acknowledgedRowId !== undefined) {
@@ -185,6 +189,9 @@ const ViewOne = () => {
         }
     }, [queryParameters]);
 
+    /**
+     * Sets up values for export
+     */
     useEffect(() => {
         const setupValues: any = [];
         const valsForExport: any = [];
@@ -231,6 +238,9 @@ const ViewOne = () => {
         }
     }, [rowsData, columnsData]);
 
+    /**
+     * Creates template based on the current data collection
+     */
     const handleAddAsTemplateClick = () => {
         if (templateNameValue === '') return;
         const dataCollectionCopy: any = dataCollection;
@@ -249,6 +259,9 @@ const ViewOne = () => {
         });
     };
 
+    /**
+     * Sends form invite via email
+     */
     const handleAddRecipientClick = () => {
         const dataCollectionCopy: any = dataCollection;
         const formRecipientsCopy: any = dataCollection?.formRecipients;
@@ -263,6 +276,10 @@ const ViewOne = () => {
         setRecipientValue('');
     };
 
+    /**
+     * Removes a form recipient from the send form list
+     * @param formRecipient
+     */
     const handleDeleteRecipientClick = (formRecipient: any) => {
         const dataCollectionCopy: any = dataCollection;
         const formRecipientsCopy: any = dataCollection?.formRecipients;
@@ -277,6 +294,10 @@ const ViewOne = () => {
         });
     };
 
+    /**
+     * Handles the import rows click
+     * @param array
+     */
     const handleImportRows = async (array: any) => {
         const blankRowsRes: any = await getBlankRows({ numberOfRowsToCreate: array.length, dataCollectionId });
         const blankRows = blankRowsRes.data;
@@ -330,37 +351,15 @@ const ViewOne = () => {
         <>
             <SideBarLayout linkItems={LinkItems}>
                 <Box>
-                    {/* <Flex
-                        minH={'100vh'}
-                        // justify={"center"}
-                        bg={'#eff2f5'}
-                    > */}
-                    <Container
-                        maxW={'full'}
-                        // w={"100%"}
-                        mt={{ base: 4, sm: 0 }}
-                        p={1}
-                        // px={'20px'}
-                    >
-                        {/* <SimpleGrid
-                                spacing={6}
-                                // templateColumns="repeat(auto-fill, minmax(300px, 1fr))"
-                                columns={{ base: 1, sm: 2 }}
-                                pb={"30px"}
-                            >
-                                <Flex>
-                                    <Box>
-                                        <Heading size={"sm"} mb={"12px"} color={"rgb(52, 71, 103)"}>
-                                            Data Collections
-                                        </Heading>
-                                        <Text color={"rgb(123, 128, 154)"} fontSize={"md"} fontWeight={300}>
-                                            Create data collection tables to visualize and manage your data.
-                                        </Text>
-                                    </Box>
-                                </Flex>
-                            </SimpleGrid> */}
+                    <Container maxW={'full'} mt={{ base: 4, sm: 0 }} p={1}>
+                        {/* 
+                            This is the card that contains the entire data collection information
+                        */}
                         <Card w={'100%'}>
                             <CardHeader>
+                                {/* 
+                                        Data collection header
+                                    */}
                                 <Flex>
                                     <Box>
                                         <Heading size={'sm'} mt={'5px'} mb={'4px'} color={'#666666'} fontWeight={'semibold'}>
@@ -371,6 +370,9 @@ const ViewOne = () => {
                                         </Text>
                                     </Box>
                                     <Spacer />
+                                    {/* 
+                                        Options dropdown
+                                    */}
                                     <Box>
                                         {(permissions || 0) > 1 ? (
                                             <Menu>
@@ -395,12 +397,6 @@ const ViewOne = () => {
                                                         onClick={() => {
                                                             console.log(showDoneRows);
                                                             dispatch(toggleShowDoneRows());
-                                                            // const filteredRows = rows?.filter((row) => {});
-                                                            // setRows(
-                                                            //     rows?.filter((row) => {
-                                                            //         return row.values['status'] !== 'Done' && !showDoneRows;
-                                                            //     })
-                                                            // );
                                                         }}
                                                     >{`${showDoneRows ? 'Hide' : 'Show'} Done`}</MenuItem>
                                                     <MenuItem fontSize={'14px'} onClick={onOpenFormDrawer}>
@@ -425,63 +421,20 @@ const ViewOne = () => {
                                         ) : null}
                                     </Box>
                                 </Flex>
-                                {/* {(permissions || 0) > 1 ? (
-                                        <Flex>
-                                            <Spacer />
-                                            <Box mr={'5px'}>
-                                                <PrimaryButton
-                                                    onClick={() => {
-                                                        console.log(showDoneRows);
-                                                        dispatch(toggleShowDoneRows());
-                                                        // const filteredRows = rows?.filter((row) => {});
-                                                        // setRows(
-                                                        //     rows?.filter((row) => {
-                                                        //         return row.values['status'] !== 'Done' && !showDoneRows;
-                                                        //     })
-                                                        // );
-                                                    }}
-                                                    size="sm"
-                                                >
-                                                    {`${showDoneRows ? 'Hide' : 'Show'} Done`}
-                                                </PrimaryButton>
-                                            </Box>
-                                            <Box mr={'5px'}>
-                                                <PrimaryButton onClick={onOpenFormDrawer} size="sm">
-                                                    Form
-                                                </PrimaryButton>
-                                            </Box>
-                                            {!isTemplate ? (
-                                                <Box mr={'5px'}>
-                                                    <PrimaryButton onClick={onOpen} size="sm">
-                                                        <AddIcon style={{ marginRight: '4px' }} /> Template
-                                                    </PrimaryButton>
-                                                </Box>
-                                            ) : null}
-                                            <Box mr={'5px'}>
-                                                {valuesForExport !== undefined ? (
-                                                    <PrimaryButton size="sm">
-                                                        <CSVLink data={valuesForExport}>Export</CSVLink>
-                                                    </PrimaryButton>
-                                                ) : null}
-                                            </Box>
-                                            <Box>
-                                                <PrimaryButton size="sm">Import</PrimaryButton>
-                                            </Box>
-                                        </Flex>
-                                    ) : null} */}
                             </CardHeader>
+                            {/* 
+                                The actual data collection table
+                            */}
                             <CardBody p={'0'}>
-                                {/* <Skeleton isLoaded={!isFetching && !isLoading}> */}
                                 <DataCollection showDoneRows={showDoneRows} rowsProp={rowsData} />
-                                {/* </Skeleton> */}
                             </CardBody>
-                        </Card>
-
-                        {/* </SimpleGrid> */}
+                        </Card>{' '}
+                        {/* This is the end of the card that contains the data collection */}
                     </Container>
-                    {/* </Flex> */}
                 </Box>
-                <Modal finalFocusRef={finalRef} isOpen={isOpen} onClose={onClose} size={'2xl'}>
+
+                {/* ***************** TEMPLATE MODAL ******************** */}
+                <Modal isOpen={isOpen} onClose={onClose} size={'2xl'}>
                     <ModalOverlay />
                     <ModalContent>
                         <ModalHeader>Create template</ModalHeader>
@@ -513,6 +466,8 @@ const ViewOne = () => {
                         </ModalFooter>
                     </ModalContent>
                 </Modal>
+
+                {/* ******************* FORM DRAWER *************************** */}
                 <PrimaryDrawer title={`${dataCollection?.name} Form`} isOpen={isOpenFormDrawer} onClose={onCloseFormDrawer} size="full">
                     <Box w={{ md: '100%', lg: '50%' }} float={{ lg: 'left' }} pr={{ lg: '20px' }}>
                         <Text fontSize={'14px'} mb={'5px'}>
@@ -615,7 +570,6 @@ const ViewOne = () => {
                                     });
 
                                     let option = options[0];
-                                    // let peopleOption = peopleOptions[0];
 
                                     return (
                                         <Box mb={'20px'} key={index}>
@@ -649,8 +603,6 @@ const ViewOne = () => {
                                                             padding: '7px',
                                                         })}
                                                         defaultValue={option}
-                                                        // onChange={(newValue) => handleLabelSelectChange(newValue, cell)}
-                                                        // isDisabled={rowsLoading || rowsFetching || !((permissions || 0) > 1)}
                                                     />
                                                 </Box>
                                             ) : column.type === 'people' ? (
@@ -661,14 +613,10 @@ const ViewOne = () => {
                                                         padding: '7px',
                                                         border: '1px solid #e2e8f0',
                                                     })}
-                                                    // defaultValue={peopleOption}
-                                                    // onChange={(newValue) => handleLabelSelectChange(newValue, cell)}
-                                                    // isDisabled={rowsLoading || rowsFetching || !((permissions || 0) > 1)}
                                                 />
                                             ) : column.type === 'date' ? (
                                                 <input
                                                     type="datetime-local"
-                                                    // defaultValue={column.value.slice(0, 16)}
                                                     style={{
                                                         border: '1px solid #e2e8f0',
                                                         borderRadius: '5px',
@@ -676,33 +624,11 @@ const ViewOne = () => {
                                                         padding: '6px',
                                                     }}
                                                     name={column.name}
-                                                    // onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                                    //     handleUpdateRowInputChange(event);
-                                                    // }}
-                                                    // onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) =>
-                                                    //     handleUpdateRowOnFocus(event, cell)
-                                                    // }
-                                                    // onBlur={(event: React.FocusEvent<HTMLInputElement, Element>) =>
-                                                    //     handleUpdateRowOnBlur(event, cell)
-                                                    // }
                                                 />
                                             ) : column.type === 'number' ? (
                                                 <input
                                                     type="number"
-                                                    // defaultValue={cell.value}
                                                     name={column.name}
-                                                    // onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                                    //     handleUpdateRowInputChange(event);
-                                                    // }}
-                                                    // onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) =>
-                                                    //     handleUpdateRowOnFocus(event, cell)
-                                                    // }
-                                                    // onBlur={(event: React.FocusEvent<HTMLInputElement, Element>) =>
-                                                    //     handleUpdateRowOnBlur(event, cell)
-                                                    // }
-                                                    // disabled={
-                                                    //     rowsLoading || rowsFetching || !((permissions || 0) > 1)
-                                                    // }
                                                     style={{
                                                         outline: 'none',
                                                         paddingLeft: '15px',
@@ -714,46 +640,19 @@ const ViewOne = () => {
                                                     }}
                                                 />
                                             ) : column.type === 'upload' ? (
-                                                <Box>
-                                                    {/* <UploadMenu
-                                                        // cell={cell}
-                                                        // docs={cell.docs}
-                                                        addToCell={false}
-                                                        // handleDocsChange={handleCellDocsChange}
-                                                        // handleAddExistingDoc={handleAddExistingDoc}
-                                                        // handleAddExistingDocToCell={handleAddExistingDocToCell}
-                                                        create={false}
-                                                        columnName={column.name}
-                                                        topPadding="7px"
-                                                        border={true}
-                                                    /> */}
-                                                </Box>
+                                                <Box></Box>
                                             ) : column.type === 'link' ? (
                                                 <Box>
-                                                    <LinksMenu
-                                                        // cell={cell}
-                                                        topPadding="7px"
-                                                        border={true}
-                                                        // handleAddLinkClick={handleAddLinkClick}
-                                                    />
+                                                    <LinksMenu topPadding="7px" border={true} />
                                                 </Box>
                                             ) : (
                                                 <Input
                                                     value={''}
                                                     size={'md'}
                                                     w={'100%'}
-                                                    // variant={"unstyled"}
                                                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                                                         event;
                                                     }}
-                                                    // onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) =>
-                                                    //     handleUpdateRowOnFocus(event, cell)
-                                                    // }
-                                                    // onBlur={(event: React.FocusEvent<HTMLInputElement, Element>) =>
-                                                    //     handleUpdateRowOnBlur(event, cell)
-                                                    // }
-                                                    // // isDisabled={rowsLoading || deletingRows || creatingRow || rowsFetching}
-                                                    // isReadOnly={!((permissions || 0) > 1)}
                                                 />
                                             )}
                                         </Box>
@@ -765,7 +664,6 @@ const ViewOne = () => {
                 </PrimaryDrawer>
             </SideBarLayout>
         </>
-        // </Layout>
     );
 };
 
