@@ -147,19 +147,19 @@ const Table = ({
         [rows]
     );
 
-    const handleUpdateRow = useCallback(
-        async (row: any) => {
-            const newRows: any = await updateRow(row);
+    // const handleUpdateRow = useCallback(
+    //     async (row: any) => {
+    //         const newRows: any = await updateRow(row);
 
-            // This handles adding additional rows if the last row is not empty
-            if (newRows.data.length > 0) {
-                setRows((prev: any) => {
-                    return [...prev, ...newRows.data];
-                });
-            }
-        },
-        [rows]
-    );
+    //         // This handles adding additional rows if the last row is not empty
+    //         if (newRows.data.length > 0) {
+    //             setRows((prev: any) => {
+    //                 return [...prev, ...newRows.data];
+    //             });
+    //         }
+    //     },
+    //     [rows]
+    // );
     const [numberOfDeleteItems, setNumberOfDeleteItems] = useState(0);
 
     const handleDeleteBoxChange = useCallback(
@@ -504,7 +504,8 @@ const Table = ({
                 reorderColumns={reorderColumns}
                 updateColumn={updateColumn}
                 handleUpdateRowNoRender={handleUpdateRowNoRender}
-                handleUpdateRow={handleUpdateRow}
+                // handleUpdateRow={handleUpdateRow}
+                updateRow={updateRow}
                 handleDeleteBoxChange={handleDeleteBoxChange}
                 // handleReorderRows={handleReorderRows}
                 // rowCallUpdate={rowCallUpdate}
