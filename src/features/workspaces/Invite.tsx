@@ -289,9 +289,9 @@ const Invite = ({}: InviteProps) => {
                                     <Text color={'rgb(123, 128, 154)'} fontSize={'14px'}>
                                         {`${item.firstname} ${item.lastname}`}
                                     </Text>
-                                    <Text ml={'10px'} pt={'2px'} color={'#afb3c9'} fontSize={'12px'}>
+                                    {/* <Text ml={'10px'} pt={'2px'} color={'#afb3c9'} fontSize={'12px'}>
                                         {getPermissions(item) > 1 ? 'Read/Write' : 'Read-Only'}
-                                    </Text>
+                                    </Text> */}
                                 </Flex>
                             );
                         })
