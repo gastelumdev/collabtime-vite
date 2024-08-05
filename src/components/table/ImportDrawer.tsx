@@ -94,17 +94,10 @@ const ImportDrawer = ({ columns, handleImportRows, isFetching, isLoading }: IPro
 
         await handleImportRows(array);
 
-        if (!isFetching && !isLoading) onClose();
-
-        // if (file) {
-        //     fileReader.onload = function (event) {
-        //         const csvOutput: any = event.target?.result;
-        //         console.log(csvOutput);
-        //         csvFileToArray(csvOutput);
-        //     };
-
-        //     fileReader.readAsText(file);
-        // }
+        if (!isFetching && !isLoading) {
+            setArray([]);
+            onClose();
+        }
     };
 
     const headerKeys = Object.keys(Object.assign({}, ...array));
