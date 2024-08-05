@@ -95,9 +95,13 @@ const ImportDrawer = ({ columns, handleImportRows, isFetching, isLoading }: IPro
         await handleImportRows(array);
 
         if (!isFetching && !isLoading) {
-            setArray([]);
-            onClose();
+            handleCloseDrawer();
         }
+    };
+
+    const handleCloseDrawer = () => {
+        setArray([]);
+        onClose();
     };
 
     const headerKeys = Object.keys(Object.assign({}, ...array));
@@ -105,7 +109,7 @@ const ImportDrawer = ({ columns, handleImportRows, isFetching, isLoading }: IPro
     return (
         <>
             <Text onClick={() => onOpen()}>Import</Text>
-            <Drawer isOpen={isOpen} onClose={onClose} size={'full'}>
+            <Drawer isOpen={isOpen} onClose={handleCloseDrawer} size={'full'}>
                 <DrawerOverlay />
                 <DrawerContent>
                     <DrawerCloseButton />
@@ -158,7 +162,7 @@ const ImportDrawer = ({ columns, handleImportRows, isFetching, isLoading }: IPro
                     </DrawerBody>
 
                     <DrawerFooter>
-                        <Button variant="outline" mr={3} onClick={onClose}>
+                        <Button variant="outline" mr={3} onClick={handleCloseDrawer}>
                             Cancel
                         </Button>
                         <Button colorScheme="blue" onClick={handleOnSubmit}>
