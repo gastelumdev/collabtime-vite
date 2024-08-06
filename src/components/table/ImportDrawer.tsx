@@ -8,6 +8,7 @@ import {
     DrawerFooter,
     DrawerHeader,
     DrawerOverlay,
+    ListItem,
     Progress,
     Table,
     TableContainer,
@@ -17,6 +18,7 @@ import {
     Th,
     Thead,
     Tr,
+    UnorderedList,
     useDisclosure,
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
@@ -33,6 +35,8 @@ const ImportDrawer = ({ columns, handleImportRows, isFetching, isLoading }: IPro
 
     // const [file, setFile] = useState<any>();
     const [array, setArray] = useState<any>([]);
+    const [error, setError] = useState<string>('');
+    const [unmatchingColumns, setUnmatchingColumns] = useState<string[]>([]);
 
     const fileReader = new FileReader();
 
@@ -50,6 +54,7 @@ const ImportDrawer = ({ columns, handleImportRows, isFetching, isLoading }: IPro
         for (const column of columns) {
             if (!formattedCsvHeaders.includes(column.name)) {
                 allColumnsMatch = false;
+                setUnmatchingColumns([...unmatchingColumns, column.name]);
             }
         }
 
@@ -67,6 +72,8 @@ const ImportDrawer = ({ columns, handleImportRows, isFetching, isLoading }: IPro
             console.log(array);
 
             setArray(array);
+        } else {
+            setError('All columns from import file must match the columns of this data collection. Please try again.');
         }
     };
 
@@ -101,6 +108,8 @@ const ImportDrawer = ({ columns, handleImportRows, isFetching, isLoading }: IPro
 
     const handleCloseDrawer = () => {
         setArray([]);
+        setError('');
+        setUnmatchingColumns([]);
         onClose();
     };
 
@@ -117,9 +126,27 @@ const ImportDrawer = ({ columns, handleImportRows, isFetching, isLoading }: IPro
 
                     <DrawerBody>
                         <input type={'file'} accept={'.csv'} onChange={handleOnChange} />
+
                         <Box h={'4px'} mt={'10px'}>
                             {isFetching || isLoading ? <Progress size="xs" isIndeterminate /> : null}
                         </Box>
+                        <Box color={'red'}>
+                            {error !== '' ? '**' : null} {error}
+                        </Box>
+                        {error ? (
+                            <Box mt={'12px'}>
+                                <Text>These columns are missing from import: </Text>
+                                <UnorderedList>
+                                    {unmatchingColumns.map((unmatchingColumn, index) => {
+                                        return (
+                                            <ListItem key={index} color={'blue.500'}>
+                                                <Text color={'blue.500'}>{unmatchingColumn}</Text>
+                                            </ListItem>
+                                        );
+                                    })}
+                                </UnorderedList>
+                            </Box>
+                        ) : null}
                         <TableContainer h={'100%'} mt={'30px'}>
                             <Table size="sm">
                                 <Thead>
@@ -165,7 +192,7 @@ const ImportDrawer = ({ columns, handleImportRows, isFetching, isLoading }: IPro
                         <Button variant="outline" mr={3} onClick={handleCloseDrawer}>
                             Cancel
                         </Button>
-                        <Button colorScheme="blue" onClick={handleOnSubmit}>
+                        <Button colorScheme="blue" onClick={handleOnSubmit} isDisabled={array.length < 1 || error !== ''}>
                             Import
                         </Button>
                     </DrawerFooter>
