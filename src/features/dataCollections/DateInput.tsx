@@ -20,12 +20,13 @@ const DateInput = ({ value, columnName, onChange, allowed = false, border = null
         var localISOTimeWithoutSeconds = localISOTime.slice(0, 16);
 
         console.log(localISOTimeWithoutSeconds);
+        console.log(value);
 
         if (value !== 'Invalid Date') {
             const newValue = value?.slice(0, 16);
-            setInputValue(newValue || localISOTimeWithoutSeconds);
+            setInputValue(newValue || '');
         } else {
-            setInputValue(localISOTimeWithoutSeconds);
+            setInputValue('');
         }
     }, [value]);
 
@@ -40,6 +41,8 @@ const DateInput = ({ value, columnName, onChange, allowed = false, border = null
 
     return (
         <Box px={'20px'} pt={'5px'} border={border ? border : 'none'}>
+            {/* <Box>{value !== '' || value === undefined ? '#1a202c' : 'lightgray'}</Box> */}
+            {/* <Box>{value !== '' || value === undefined ? 'Nothing' : value}</Box> */}
             <Input
                 value={inputValue}
                 type="datetime-local"
@@ -51,7 +54,7 @@ const DateInput = ({ value, columnName, onChange, allowed = false, border = null
                 cursor={allowed ? 'text' : 'default'}
                 textOverflow={'ellipsis'}
                 fontSize={'12px'}
-                color={value !== '' ? '#1a202c' : 'lightgray'}
+                color={inputValue !== '' || inputValue === undefined ? '#1a202c' : 'lightgray'}
                 placeholder="2000-01-01T12:00"
             />
         </Box>
