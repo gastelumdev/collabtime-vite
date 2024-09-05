@@ -158,7 +158,7 @@ const EditRow = ({ columns, row, handleChange, allowed = false }: IProps) => {
                                         row={rowState}
                                         columnName={column.name}
                                         people={column.people}
-                                        value={rowState.values[column.name]}
+                                        values={rowState.values[column.name]}
                                         onChange={onChange}
                                         allowed={allowed}
                                     />

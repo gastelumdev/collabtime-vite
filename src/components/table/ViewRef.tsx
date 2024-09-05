@@ -155,7 +155,7 @@ const ViewRef = ({ columns, rowData, value, allowed = false }: IProps) => {
                                         row={row}
                                         columnName={column.name}
                                         people={column.people}
-                                        value={row ? row.values[column.name] : ''}
+                                        values={row ? row.values[column.name] : []}
                                         onChange={onChange}
                                         allowed={allowed}
                                     />

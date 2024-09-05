@@ -169,7 +169,7 @@ const UpdateForm = () => {
                                                 <PeopleMenu
                                                     columnName={column.name}
                                                     people={column.people}
-                                                    value={row && row.values[column.name] !== undefined ? row.values[column.name] : ''}
+                                                    values={row && row.values[column.name] !== undefined ? row.values[column.name] : []}
                                                     onChange={onChange}
                                                     allowed={true}
                                                     border={'1px solid #f1f3f5'}

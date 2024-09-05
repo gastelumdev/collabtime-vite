@@ -177,7 +177,7 @@ const Form = () => {
                                                 <PeopleMenu
                                                     columnName={column.name}
                                                     people={column.people}
-                                                    value={''}
+                                                    values={[]}
                                                     onChange={onChange}
                                                     allowed={true}
                                                     border={'1px solid #f1f3f5'}
