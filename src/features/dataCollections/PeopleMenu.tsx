@@ -1,4 +1,4 @@
-import { Box, Button, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, Checkbox, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text, useDisclosure } from '@chakra-ui/react';
 import { getTextColor } from '../../utils/helpers';
 import { useEffect, useState } from 'react';
 import { TRow, TUser } from '../../types';
@@ -10,11 +10,16 @@ interface ILabel {
     color: string;
 }
 
+interface IValues {
+    name: string;
+    email: string;
+}
+
 interface IProps {
     row?: TRow;
     columnName: string;
     people: TUser[];
-    value: string;
+    values: IValues[];
     onChange: any;
     allowed?: boolean;
     border?: string | null;
@@ -23,19 +28,20 @@ interface IProps {
     // options: { value: string; label: string; color: string }[] | undefined;
 }
 
-const PeopleMenu = ({ row, columnName, people, value = '', onChange, allowed = false, border = null }: IProps) => {
+const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = false, border = null }: IProps) => {
     const { onClose } = useDisclosure();
     // const [updateRow] = useUpdateRowMutation();
 
     const [labelValue, setLabelValue] = useState<string>('');
     const [labelLabel, setLabelLabel] = useState<string>('');
+    const [labels, setLabels] = useState<IValues[]>(values);
     const [labelColor, setLabelColor] = useState<string>('');
     const [options, setOptions] = useState<ILabel[] | undefined>([]);
 
     const [active, setActive] = useState<boolean>(false);
 
     useEffect(() => {
-        console.log({ columnName, people, row });
+        console.log({ columnName, people, row, values });
         labelValue;
         const cellOptions: ILabel[] | undefined = people?.map((item) => {
             return {
@@ -45,36 +51,48 @@ const PeopleMenu = ({ row, columnName, people, value = '', onChange, allowed = f
             };
         });
 
-        const splitValue = value.split(' - ');
-        splitValue.pop();
-        const label = splitValue.join(' ');
+        // const v: any = value;
+        const firstItem: any = values[0] !== undefined ? values[0].name : '';
 
-        setLabelValue(value);
-        setLabelLabel(label);
+        // const splitValue = v[0].split(' - ');
+        // splitValue.pop();
+        // const label = splitValue.join(' ');
+
+        setLabelValue(values.length > 0 ? (values as any)[0] : '');
+        setLabelLabel(firstItem);
+        setLabels(values);
         setLabelColor('#ffffff');
         setOptions(cellOptions);
-    }, [value, people]);
+    }, [values, people]);
 
-    const handleLabelClick = (label: ILabel) => {
-        // updateRow({ ...row, values: { ...row.values, [columnName]: label.label } });
+    // const handleLabelClick = (label: ILabel) => {
+    //     // updateRow({ ...row, values: { ...row.values, [columnName]: label.label } });
 
-        const splitValue = label.label.split(' - ');
-        splitValue.pop();
-        const labelResult = splitValue.join(' ');
+    //     const splitValue = label.label.split(' - ');
+    //     splitValue.pop();
+    //     const labelResult = splitValue.join(' ');
 
-        setLabelValue(label.value);
-        setLabelColor(label.color);
-        setLabelLabel(labelResult);
+    //     setLabelValue(label.value);
+    //     setLabelColor(label.color);
+    //     setLabelLabel(labelResult);
 
-        onClose();
-        setActive(false);
+    //     onClose();
+    //     setActive(false);
 
-        onChange(columnName, label.label);
-    };
+    //     onChange(columnName, label.label);
+    // };
 
     const handleClose = () => {
         onClose();
         setActive(false);
+    };
+
+    const isAssignedTo = (email: string) => {
+        for (const personMap of labels) {
+            if (email === personMap.email) return true;
+        }
+
+        return false;
     };
 
     return (
@@ -101,6 +119,11 @@ const PeopleMenu = ({ row, columnName, people, value = '', onChange, allowed = f
                                 _hover={{ bgColor: labelColor }}
                             >
                                 {labelLabel ? labelLabel : 'Select'}
+                                {/* {labels.length > 0
+                                    ? labels.map((label) => {
+                                          return label.name;
+                                      })
+                                    : 'Select'} */}
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent>
@@ -111,22 +134,66 @@ const PeopleMenu = ({ row, columnName, people, value = '', onChange, allowed = f
                                     const email = splitPerson.pop();
                                     const name = splitPerson.join(' ');
                                     console.log({ splitPerson, email, name });
+                                    const itsAssigned = isAssignedTo(email as string);
+                                    // return (
+                                    //     <Box key={index} mb={'3px'} cursor={'pointer'} onClick={() => handleLabelClick(label)}>
+                                    //         <Button
+                                    //             bgColor={label.color}
+                                    //             w={'100%'}
+                                    //             fontSize={'12px'}
+                                    //             fontWeight={'normal'}
+                                    //             size={'xs'}
+                                    //             // onClick={() => handleLabelClick(label)}
+                                    //             textAlign={'left'}
+                                    //         >
+                                    //             <Text color={getTextColor(label.color)}>
+                                    //                 {name}
+                                    //                 <span style={{ color: 'gray' }}>{` ${email}`}</span>
+                                    //             </Text>
+                                    //         </Button>
+                                    //     </Box>
+                                    // );
                                     return (
-                                        <Box key={index} mb={'3px'} cursor={'pointer'} onClick={() => handleLabelClick(label)}>
-                                            <Button
-                                                bgColor={label.color}
-                                                w={'100%'}
-                                                fontSize={'12px'}
-                                                fontWeight={'normal'}
-                                                size={'xs'}
-                                                // onClick={() => handleLabelClick(label)}
-                                                textAlign={'left'}
+                                        <Box
+                                            key={index}
+                                            mb={'3px'}
+                                            cursor={'pointer'}
+                                            // onClick={() => handleLabelClick(label)}
+                                        >
+                                            <Checkbox
+                                                isChecked={itsAssigned}
+                                                onChange={() => {
+                                                    let newValues: IValues[];
+
+                                                    if (isAssignedTo(email as string)) {
+                                                        newValues = labels.filter((label) => {
+                                                            return label.email !== email;
+                                                        });
+                                                        setLabels(newValues);
+                                                    } else {
+                                                        newValues = [...labels, { name, email: email as string }];
+                                                        setLabels(newValues);
+                                                    }
+
+                                                    onChange(columnName, newValues);
+                                                }}
                                             >
-                                                <Text color={getTextColor(label.color)}>
-                                                    {name}
-                                                    <span style={{ color: 'gray' }}>{` ${email}`}</span>
-                                                </Text>
-                                            </Button>
+                                                <Box
+                                                    bgColor={label.color}
+                                                    w={'100%'}
+                                                    fontSize={'12px'}
+                                                    fontWeight={'normal'}
+                                                    // size={'xs'}
+                                                    // onClick={() => handleLabelClick(label)}
+                                                    textAlign={'left'}
+                                                    ml={'5px'}
+                                                >
+                                                    <Text color={getTextColor(label.color)}>
+                                                        {name}
+                                                        <span style={{ color: 'gray' }}>{` ${email}`}</span>
+                                                    </Text>
+                                                </Box>
+                                            </Checkbox>
                                         </Box>
                                     );
                                 })}
@@ -170,42 +237,6 @@ const PeopleMenu = ({ row, columnName, people, value = '', onChange, allowed = f
                 </Button>
             )}
         </Box>
-        // <Menu matchWidth={true}>
-        //     {/* <Tooltip
-        //         label={labelLabel}
-        //         openDelay={500}
-        //         // isDisabled={isFocused}
-        //         placement={'top'}
-        //     > */}
-        //     <MenuButton
-        //         as={Button}
-        //         w={'100%'}
-        //         p="0"
-        //         bgColor={labelColor}
-        //         color={labelColor == 'white' ? 'black' : getTextColor(labelColor)}
-        //         border={'unset'}
-        //         borderRadius={'none'}
-        //         variant={'unstyled'}
-        //         fontSize={'14px'}
-        //         fontWeight={'normal'}
-        //         _hover={{ bgColor: 'none' }}
-        //         _active={{ bgColor: 'none' }}
-        //     >
-        //         <Text>{labelLabel || labelValue}</Text>
-        //     </MenuButton>
-        //     {/* </Tooltip> */}
-        //     <MenuList px={'5px'}>
-        //         {options?.map((label, index) => {
-        //             return (
-        //                 <Box key={index} bgColor={label.color} p={'6px'} onClick={() => handleLabelClick(label)}>
-        //                     <MenuItem bgColor={'white'}>
-        //                         <Text color={getTextColor(label.color)}>{label.label}</Text>
-        //                     </MenuItem>
-        //                 </Box>
-        //             );
-        //         })}
-        //     </MenuList>
-        // </Menu>
     );
 };
 

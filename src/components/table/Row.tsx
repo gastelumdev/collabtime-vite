@@ -382,7 +382,7 @@ const Row = ({
                                                     row={row}
                                                     columnName={column.name}
                                                     people={column.people}
-                                                    value={row.values[column.name]}
+                                                    values={row.values[column.name]}
                                                     onChange={onChange}
                                                     allowed={allowed}
                                                 />
