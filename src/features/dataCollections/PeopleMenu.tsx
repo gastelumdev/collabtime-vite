@@ -43,6 +43,7 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
     useEffect(() => {
         console.log({ columnName, people, row, values });
         labelValue;
+        labelLabel;
         const cellOptions: ILabel[] | undefined = people?.map((item) => {
             return {
                 value: item._id,
@@ -118,21 +119,21 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
                                 variant={'unstyled'}
                                 _hover={{ bgColor: labelColor }}
                             >
-                                {labelLabel ? labelLabel : 'Select'}
-                                {/* {labels.length > 0
-                                    ? labels.map((label) => {
-                                          return label.name;
+                                {/* {labelLabel ? labelLabel : 'Select'} */}
+                                {labels.length > 0
+                                    ? labels.map((label, index) => {
+                                          return `${label.name}${labels.length > 1 ? (index < labels.length - 1 ? ', ' : '') : ''}`;
                                       })
-                                    : 'Select'} */}
+                                    : 'Select'}
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent>
                             <PopoverArrow />
                             <PopoverBody>
                                 {options?.map((label, index) => {
-                                    const splitPerson = label.label.split(' ');
+                                    const splitPerson = label.label.split(' - ');
                                     const email = splitPerson.pop();
-                                    const name = splitPerson.join(' ');
+                                    const name = splitPerson[0];
                                     console.log({ splitPerson, email, name });
                                     const itsAssigned = isAssignedTo(email as string);
                                     // return (
@@ -232,7 +233,12 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
                             setActive(true);
                         }}
                     >
-                        {labelLabel ? labelLabel : 'Select'}
+                        {/* {labelLabel ? labelLabel : 'Select'} */}
+                        {labels.length > 0
+                            ? labels.map((label, index) => {
+                                  return `${label.name}${labels.length > 1 ? (index < labels.length - 1 ? ', ' : '') : ''}`;
+                              })
+                            : 'Select'}
                     </Text>
                 </Button>
             )}
