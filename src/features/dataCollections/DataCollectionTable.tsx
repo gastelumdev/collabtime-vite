@@ -267,6 +267,7 @@ const DataCollectionTable = ({
         const socket = io(import.meta.env.VITE_API_URL);
         socket.connect();
         socket.on('update row', () => {
+            console.log('CALL FOR UPDATE ROW');
             rowCallUpdate(null);
             // setNotifications(callNotificationsUpdate(priority) as any);
         });
