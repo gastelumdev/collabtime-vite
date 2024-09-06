@@ -14,14 +14,6 @@ const DateInput = ({ value, columnName, onChange, allowed = false, border = null
     const [inputValue, setInputValue] = useState<string>(value);
 
     useEffect(() => {
-        // get the iso time string formatted for usage in an input['type="datetime-local"']
-        var tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
-        var localISOTime = new Date(Date.now() - tzoffset).toISOString().slice(0, -1);
-        var localISOTimeWithoutSeconds = localISOTime.slice(0, 16);
-
-        console.log(localISOTimeWithoutSeconds);
-        console.log(value);
-
         if (value !== 'Invalid Date') {
             const newValue = value?.slice(0, 16);
             setInputValue(newValue || '');

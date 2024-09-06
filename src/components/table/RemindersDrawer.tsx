@@ -48,7 +48,6 @@ const RemindersDrawer = ({ row, handleChange, allowed }: IProps) => {
         const socket = io(import.meta.env.VITE_API_URL);
         socket.connect();
         socket.on('update row', () => {
-            console.log('CALL FOR UPDATE ROW');
             rowCallUpdate(null);
             // setNotifications(callNotificationsUpdate(priority) as any);
         });
@@ -59,12 +58,9 @@ const RemindersDrawer = ({ row, handleChange, allowed }: IProps) => {
     }, []);
 
     const checkDateStatus = (dateString: string) => {
-        console.log(dateString);
         const newDate = new Date(dateString);
         const now = new Date();
         const today = new Date(now.toISOString().split('T')[0]);
-        console.log(newDate.toISOString());
-        console.log(now.toISOString());
         // if (newDate.toISOString().split('T')[0] == now.toISOString().split('T')[0]) {
         //     return 1;
         // }
@@ -77,11 +73,8 @@ const RemindersDrawer = ({ row, handleChange, allowed }: IProps) => {
     };
 
     const checkTimeStatus = (dateString: string) => {
-        console.log(dateString);
         const newDate = new Date(dateString);
         const now = new Date();
-        console.log(newDate.toISOString());
-        console.log(now.toISOString());
 
         if (newDate.getTime() > now.getTime()) {
             return 1;
@@ -95,16 +88,13 @@ const RemindersDrawer = ({ row, handleChange, allowed }: IProps) => {
     // };
 
     const handleSave = () => {
-        console.log({ date, time });
         const fullTime = `${date}T${time}`;
         const timeStatus = checkTimeStatus(fullTime);
 
         if (timeStatus == 1) {
-            console.log('Date is in the future');
             handleChange({ ...row, reminder: true, reminders: [...row.reminders, { title, comments, date: fullTime }] });
             setIsDateError(false);
         } else {
-            console.log('Date is in the past');
             setIsDateError(true);
         }
 

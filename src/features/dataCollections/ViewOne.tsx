@@ -200,7 +200,6 @@ const ViewOne = () => {
 
         if (columnsCopy !== undefined) {
             const key: any = columnsCopy[0].name;
-            console.log(key);
             for (const row of rowsCopy || []) {
                 let values: any = {};
 
@@ -208,7 +207,6 @@ const ViewOne = () => {
                     if (column.type === 'reference') {
                         if (row.refs !== undefined && row.refs[column.name] !== undefined) {
                             const refs: any = row.refs[column.name];
-                            console.log(refs);
                             let refsString = '';
                             for (const ref of refs) {
                                 refsString += `${ref.values[key]} `;
@@ -233,7 +231,6 @@ const ViewOne = () => {
 
                 if (hasValues) valsForExport.push(values);
             }
-            console.log(valsForExport);
             setValuesForExport(valsForExport);
         }
     }, [rowsData, columnsData]);
@@ -301,7 +298,6 @@ const ViewOne = () => {
     const handleImportRows = async (array: any) => {
         const blankRowsRes: any = await getBlankRows({ numberOfRowsToCreate: array.length, dataCollectionId });
         const blankRows = blankRowsRes.data;
-        console.log(blankRows.length);
 
         let lastNonEmptyRow = 0;
 
@@ -326,21 +322,16 @@ const ViewOne = () => {
         const lastPositionToUpdate = lastNonEmptyRow + blankRows.length;
 
         newRows.map(async (row: any) => {
-            console.log({ position: row.position, positionToUpdate, arrayPosition, lastPositionToUpdate });
             if (row.position == positionToUpdate && row.position < lastPositionToUpdate) {
-                console.log(`Updating row ${row.position}`);
                 updatedRowNoTag({ ...row, values: array[arrayPosition] });
                 positionToUpdate = positionToUpdate + 1;
                 arrayPosition = arrayPosition + 1;
-                console.log({ positionToUpdate, arrayPosition });
             }
 
             if (row.position == positionToUpdate && row.position == lastPositionToUpdate) {
-                console.log(`Updating row ${row.position}`);
                 await updateRow({ ...row, values: array[arrayPosition] });
                 positionToUpdate = positionToUpdate + 1;
                 arrayPosition = arrayPosition + 1;
-                console.log({ positionToUpdate, arrayPosition });
             }
         });
 
@@ -395,7 +386,6 @@ const ViewOne = () => {
                                                     <MenuItem
                                                         fontSize={'14px'}
                                                         onClick={() => {
-                                                            console.log(showDoneRows);
                                                             dispatch(toggleShowDoneRows());
                                                         }}
                                                     >{`${showDoneRows ? 'Hide' : 'Show'} Done`}</MenuItem>

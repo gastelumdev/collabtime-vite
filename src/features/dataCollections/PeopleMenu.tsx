@@ -41,7 +41,7 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
     const [active, setActive] = useState<boolean>(false);
 
     useEffect(() => {
-        console.log({ columnName, people, row, values });
+        row;
         labelValue;
         labelLabel;
         const cellOptions: ILabel[] | undefined = people?.map((item) => {
@@ -134,7 +134,6 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
                                     const splitPerson = label.label.split(' - ');
                                     const email = splitPerson.pop();
                                     const name = splitPerson[0];
-                                    console.log({ splitPerson, email, name });
                                     const itsAssigned = isAssignedTo(email as string);
                                     // return (
                                     //     <Box key={index} mb={'3px'} cursor={'pointer'} onClick={() => handleLabelClick(label)}>
@@ -216,7 +215,6 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
                     }}
                     onKeyDown={(event: React.KeyboardEvent<HTMLButtonElement>) => {
                         if (event.key === 'Enter') {
-                            console.log('Enter key pressed');
                             setActive(true);
                         }
                     }}

@@ -113,6 +113,7 @@ const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false, 
                                                 fontSize={'12px'}
                                                 fontWeight={'normal'}
                                                 size={'sm'}
+                                                _hover={{ bgColor: label.color }}
                                                 // onClick={() => handleLabelClick(label)}
                                             >
                                                 <Text color={getTextColor(label.color)}>{label.label}</Text>

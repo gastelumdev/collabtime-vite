@@ -45,7 +45,6 @@ const DataCollection = ({ showDoneRows = false, rowsProp }: { showDoneRows?: boo
     }, [showDoneRows]);
 
     useEffect(() => {
-        console.log('UPDATING DATA COLLECTION');
         refetch();
     }, [rowsProp]);
 
