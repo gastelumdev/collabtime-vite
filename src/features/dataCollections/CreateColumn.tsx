@@ -106,7 +106,7 @@ const CreateColumn = ({ column = null, columns, updateColumn, createColumn, colu
 
     const handleUpdateColumn = async () => {
         if (!columnNameError) {
-            const updatedColumn = { ...column, name: columnName.toLowerCase().split(' ').join('_'), labels: labels };
+            const updatedColumn = { ...column, name: columnName.toLowerCase().split(' ').join('_'), labels: labels, type: columnType };
 
             await updateColumn(updatedColumn);
             addNewColumnToRows(updatedColumn);
