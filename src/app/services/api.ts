@@ -337,6 +337,13 @@ export const api = createApi({
                 body: row
             })
         }),
+        deleteValues: builder.mutation<any, any>({
+            query: (column) => ({
+                url: `dataCollections/${column.dataCollection}/deleteValues`,
+                method: "PUT",
+                body: column,
+            })
+        }),
         updateCell: builder.mutation<TCell, TCell>({
             query: (cell) => ({
                 url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${cell.dataCollection}/cells/${cell._id}`,
@@ -519,6 +526,7 @@ export const {
     useDeleteRowMutation,
     useDeleteRowsMutation,
     useGetBlankRowsMutation,
+    useDeleteValuesMutation,
     useRowCallUpdateMutation,
     useAcknowledgeRowMutation,
     useReorderRowsMutation,

@@ -10,6 +10,7 @@ import { ArrowDownIcon, ArrowUpIcon, DeleteIcon } from '@chakra-ui/icons';
 // import { useParams } from 'react-router';
 import { useTypedSelector, useAppDispatch } from '../../hooks/store';
 import { clearCheckedRowIds } from '../../components/table/tableSlice';
+import { useDeleteValuesMutation } from '../../app/services/api';
 
 interface ITableProps {
     rowsData?: any[];
@@ -49,6 +50,8 @@ const Table = ({
 }: ITableProps) => {
     // const { dataCollectionId } = useParams();
     const dispatch = useAppDispatch();
+
+    const [deleteValues] = useDeleteValuesMutation();
 
     const checkedRowIds = useTypedSelector((state: any) => {
         return state.table.checkedRowIds;
@@ -248,6 +251,7 @@ const Table = ({
         (column: any) => {
             setColumns((prev) => prev.filter((prevColumn) => prevColumn.name !== column.name));
             deleteColumn(column);
+            deleteValues(column);
         },
         [columns]
     );
