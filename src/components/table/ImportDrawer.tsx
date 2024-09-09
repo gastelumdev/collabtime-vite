@@ -46,13 +46,19 @@ const ImportDrawer = ({ columns, handleImportRows, isFetching, isLoading }: IPro
         const csvRows = string.slice(string.indexOf('\n') + 1).split('\n');
 
         const formattedCsvHeaders = csvHeader.map((header) => {
-            return header.split('"')[1];
+            console.log(header);
+            // return header.split('"')[1];
+            return header.replace(/(\r\n|\n|\r)/gm, '');
         });
+
+        console.log(csvHeader);
+        console.log(formattedCsvHeaders);
 
         let allColumnsMatch = true;
 
         for (const column of columns) {
             if (!formattedCsvHeaders.includes(column.name)) {
+                console.log(formattedCsvHeaders.includes(column.name));
                 allColumnsMatch = false;
                 setUnmatchingColumns([...unmatchingColumns, column.name]);
             }
@@ -62,8 +68,8 @@ const ImportDrawer = ({ columns, handleImportRows, isFetching, isLoading }: IPro
             const array = csvRows.map((i) => {
                 const values = i.split(',');
                 const obj = formattedCsvHeaders.reduce((object: any, header: any, index: number) => {
-                    console.log(values[index].split('"')[1]);
-                    object[header] = values[index].split('"')[1];
+                    console.log(values[index]);
+                    object[header] = values[index];
                     return object;
                 }, {});
                 return obj;

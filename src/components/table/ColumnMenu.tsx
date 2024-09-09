@@ -1,7 +1,23 @@
 import { Box, Button, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Portal, useDisclosure } from '@chakra-ui/react';
+import CreateColumn from '../../features/dataCollections/CreateColumn';
+import { useUpdateColumnMutation } from '../../app/services/api';
 
-const ColumnMenu = ({ column, handleDeleteColumn, index }: { column: any; handleDeleteColumn: any; index: number }) => {
+const ColumnMenu = ({
+    column,
+    columns,
+    handleDeleteColumn,
+    handleAddNewColumnToRows,
+    index,
+}: {
+    column: any;
+    columns: any;
+    handleDeleteColumn: any;
+    handleAddNewColumnToRows: any;
+    index: number;
+}) => {
     const { isOpen, onToggle, onClose } = useDisclosure();
+
+    const [updateColumn, { isLoading: columnIsUpdating }] = useUpdateColumnMutation();
 
     const handleDeleteColumnClick = () => {
         console.log(column);
@@ -20,8 +36,19 @@ const ColumnMenu = ({ column, handleDeleteColumn, index }: { column: any; handle
                     <PopoverArrow />
                     <PopoverBody>
                         {index !== 0 ? (
-                            <Box w={'100%'} textAlign={'left'} fontSize={'14px'} cursor={'pointer'} onClick={handleDeleteColumnClick}>
-                                Delete column
+                            <Box>
+                                <Box w={'100%'} textAlign={'left'} fontSize={'14px'} cursor={'pointer'} onClick={handleDeleteColumnClick}>
+                                    Delete column
+                                </Box>
+                                <Box>
+                                    <CreateColumn
+                                        column={column}
+                                        columns={columns}
+                                        updateColumn={updateColumn}
+                                        addNewColumnToRows={handleAddNewColumnToRows}
+                                        columnIsUpdating={columnIsUpdating as boolean}
+                                    />
+                                </Box>
                             </Box>
                         ) : (
                             <Box w={'100%'} textAlign={'left'} fontSize={'14px'} cursor={'default'} color="lightgray">

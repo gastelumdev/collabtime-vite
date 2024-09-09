@@ -358,7 +358,13 @@ const TableHeader = ({
                                     onClick={() => console.log('HEADER CLICKED')}
                                 >
                                     {allowed ? (
-                                        <ColumnMenu column={column} handleDeleteColumn={handleDeleteColumn} index={columnIndex} />
+                                        <ColumnMenu
+                                            column={column}
+                                            columns={columns}
+                                            handleDeleteColumn={handleDeleteColumn}
+                                            handleAddNewColumnToRows={addNewColumnToRows}
+                                            index={columnIndex}
+                                        />
                                     ) : (
                                         <Text fontSize={'14px'} fontWeight={'medium'} color={'#666666'}>{`${column.name[0].toUpperCase()}${column.name
                                             .slice(1, column.name.length)
@@ -387,7 +393,13 @@ const TableHeader = ({
                                     // onClick={() => console.log('HEADER CLICKED')}
                                 >
                                     {allowed ? (
-                                        <ColumnMenu column={column} handleDeleteColumn={handleDeleteColumn} index={columnIndex} />
+                                        <ColumnMenu
+                                            column={column}
+                                            columns={columns}
+                                            handleDeleteColumn={handleDeleteColumn}
+                                            handleAddNewColumnToRows={handleAddNewColumnToRows}
+                                            index={columnIndex}
+                                        />
                                     ) : (
                                         <Text fontSize={'14px'} fontWeight={'medium'} color={'#666666'}>{`${column.name[0].toUpperCase()}${column.name
                                             .slice(1, column.name.length)

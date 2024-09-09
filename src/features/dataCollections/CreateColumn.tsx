@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Flex, HStack, Input, Spacer, Spinner, Stack, Text, useDisclosure } from '@chakra-ui/react';
-import Select from 'react-select';
+import { Box, Button, Flex, HStack, Input, Spacer, Spinner, Stack, Text, useDisclosure, Select } from '@chakra-ui/react';
+import ReactSelect from 'react-select';
 
 import { AiOutlineClose } from 'react-icons/ai';
 import { MdOutlineColorLens } from 'react-icons/md';
@@ -16,13 +16,15 @@ import { useParams } from 'react-router-dom';
 import { useGetDataCollectionsQuery } from '../../app/services/api';
 
 interface TProps {
+    column?: TColumn | null;
     columns: TColumn[];
-    createColumn: any;
+    updateColumn?: any;
+    createColumn?: any;
     columnIsUpdating: boolean;
     addNewColumnToRows: any;
 }
 
-const CreateColumn = ({ columns, createColumn, columnIsUpdating = false, addNewColumnToRows }: TProps) => {
+const CreateColumn = ({ column = null, columns, updateColumn, createColumn, columnIsUpdating = false, addNewColumnToRows }: TProps) => {
     const { dataCollectionId } = useParams();
     const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -48,6 +50,21 @@ const CreateColumn = ({ columns, createColumn, columnIsUpdating = false, addNewC
     ]);
     const [labelStyles, setLabelStyles] = useState<any>({});
     const [labelTitleError, setLabelTitleError] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (column !== null) {
+            setColumnName(column.name);
+
+            console.log(column);
+
+            if (column.type === 'label') {
+                console.log('THIS IS A LABEL COLUMN');
+                setShowLabelForm(true);
+                setColumnType(column.type);
+            }
+        }
+    }, [column]);
+
     useEffect(() => {
         for (const column of columns || []) {
             if (column.type === 'label') {
@@ -87,6 +104,18 @@ const CreateColumn = ({ columns, createColumn, columnIsUpdating = false, addNewC
         }
     };
 
+    const handleUpdateColumn = async () => {
+        if (!columnNameError) {
+            const updatedColumn = { ...column, name: columnName.toLowerCase().split(' ').join('_'), labels: labels };
+
+            await updateColumn(updatedColumn);
+            addNewColumnToRows(updatedColumn);
+            setShowLabelForm(false);
+            setShowReferenceForm(false);
+            onClose();
+        }
+    };
+
     /**
      * Sets the column name when input changes in create column drawer
      * @param event
@@ -108,16 +137,17 @@ const CreateColumn = ({ columns, createColumn, columnIsUpdating = false, addNewC
         }
     };
 
-    const handleSelectType = (selectedOption: any) => {
-        setColumnType(selectedOption.value);
+    const handleTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedOption = event.target.value;
+        setColumnType(selectedOption);
 
-        if (selectedOption.value === 'label') {
+        if (selectedOption === 'label') {
             setShowLabelForm(true);
         } else {
             setShowLabelForm(false);
         }
 
-        if (selectedOption.value === 'priority') {
+        if (selectedOption === 'priority') {
             setLabels([
                 { title: 'Low', color: '#28B542' },
                 { title: 'High', color: '#FFA500' },
@@ -125,7 +155,7 @@ const CreateColumn = ({ columns, createColumn, columnIsUpdating = false, addNewC
             ]);
         }
 
-        if (selectedOption.value === 'status') {
+        if (selectedOption === 'status') {
             setLabels([
                 { title: 'Ready to start', color: '#121f82' },
                 { title: 'Working on it', color: '#146c96' },
@@ -134,12 +164,45 @@ const CreateColumn = ({ columns, createColumn, columnIsUpdating = false, addNewC
             ]);
         }
 
-        if (selectedOption.value === 'reference') {
+        if (selectedOption === 'reference') {
             setShowReferenceForm(true);
         } else {
             setShowReferenceForm(false);
         }
     };
+
+    // const handleSelectType = (selectedOption: any) => {
+    //     setColumnType(selectedOption.value);
+
+    //     if (selectedOption.value === 'label') {
+    //         setShowLabelForm(true);
+    //     } else {
+    //         setShowLabelForm(false);
+    //     }
+
+    //     if (selectedOption.value === 'priority') {
+    //         setLabels([
+    //             { title: 'Low', color: '#28B542' },
+    //             { title: 'High', color: '#FFA500' },
+    //             { title: 'Critical', color: '#FF0000' },
+    //         ]);
+    //     }
+
+    //     if (selectedOption.value === 'status') {
+    //         setLabels([
+    //             { title: 'Ready to start', color: '#121f82' },
+    //             { title: 'Working on it', color: '#146c96' },
+    //             { title: 'Pending review', color: '#FFA500' },
+    //             { title: 'Done', color: '#28B542' },
+    //         ]);
+    //     }
+
+    //     if (selectedOption.value === 'reference') {
+    //         setShowReferenceForm(true);
+    //     } else {
+    //         setShowReferenceForm(false);
+    //     }
+    // };
 
     const handleSelectDataCollection = (selectedOption: any) => {
         console.log(selectedOption);
@@ -194,10 +257,18 @@ const CreateColumn = ({ columns, createColumn, columnIsUpdating = false, addNewC
         setShowLabelForm(false);
         setShowReferenceForm(false);
     };
+
+    const handleOnOpen = () => {
+        if (columnType === 'label') {
+            setShowLabelForm(true);
+            if (column !== null) setLabels((column as any).labels);
+        }
+        onOpen();
+    };
     return (
         <>
-            <Button onClick={onOpen} variant={'unstyled'}>
-                <BsPlusCircle size={'19px'} color={'gray'} />
+            <Button onClick={handleOnOpen} variant={'unstyled'}>
+                {column !== null ? 'Edit Column' : <BsPlusCircle size={'19px'} color={'gray'} />}
             </Button>
             <PrimaryDrawer isOpen={isOpen} onClose={closeDrawer} title={'Create a new column'}>
                 <Stack spacing="24px">
@@ -212,6 +283,7 @@ const CreateColumn = ({ columns, createColumn, columnIsUpdating = false, addNewC
                             // ref={firstField}
                             id="columnName"
                             name="columnName"
+                            value={columnName}
                             placeholder="Please enter column name"
                             onChange={handleColumnNameChange}
                             isInvalid={columnNameError}
@@ -222,28 +294,39 @@ const CreateColumn = ({ columns, createColumn, columnIsUpdating = false, addNewC
                         <Select
                             id="columnType"
                             name="columnType"
+                            value={columnType}
+                            // defaultValue={columnType}
                             placeholder="Please select column type"
-                            onChange={(selectedOption: any) => handleSelectType(selectedOption)}
-                            options={[
-                                { value: 'text', label: 'Text' },
-                                // { value: 'number', label: 'Number' },
-                                { value: 'date', label: 'Date' },
-                                { value: 'label', label: 'Label' },
-                                { value: 'people', label: 'Assign To' },
-                                { value: 'priority', label: 'Priority' },
-                                { value: 'status', label: 'Status' },
-                                { value: 'reference', label: 'Reference' },
-                                // { value: 'upload', label: 'Uploads' },
-                                // { value: 'link', label: 'Link' },
-                            ]}
-                            styles={
-                                {
-                                    control: (styles: any) => {
-                                        return { ...styles, borderColor: '#e2e8f0' };
-                                    },
-                                } as any
-                            }
-                        />
+                            // onChange={(selectedOption: any) => handleSelectType(selectedOption)}
+                            onChange={handleTypeChange}
+                            // options={[
+                            //     { value: 'text', label: 'Text' },
+                            //     // { value: 'number', label: 'Number' },
+                            //     { value: 'date', label: 'Date' },
+                            //     { value: 'label', label: 'Label' },
+                            //     { value: 'people', label: 'Assign To' },
+                            //     { value: 'priority', label: 'Priority' },
+                            //     { value: 'status', label: 'Status' },
+                            //     { value: 'reference', label: 'Reference' },
+                            //     // { value: 'upload', label: 'Uploads' },
+                            //     // { value: 'link', label: 'Link' },
+                            // ]}
+                            // styles={
+                            //     {
+                            //         control: (styles: any) => {
+                            //             return { ...styles, borderColor: '#e2e8f0' };
+                            //         },
+                            //     } as any
+                            // }
+                        >
+                            <option value="text">Text</option>
+                            <option value="date">Date</option>
+                            <option value="label">Label</option>
+                            <option value="people">People</option>
+                            <option value="priority">Priority</option>
+                            <option value="status">Status</option>
+                            <option value="reference">Reference</option>
+                        </Select>
                     </Box>
                     {showLabelForm ? (
                         <>
@@ -307,7 +390,7 @@ const CreateColumn = ({ columns, createColumn, columnIsUpdating = false, addNewC
                         </>
                     ) : null}
                     {showReferenceForm ? (
-                        <Select
+                        <ReactSelect
                             id="dataCollections"
                             name="dataCollections"
                             placeholder="Please select the data collection that will be referenced"
@@ -332,9 +415,15 @@ const CreateColumn = ({ columns, createColumn, columnIsUpdating = false, addNewC
                 </Stack>
                 <Flex mt={'20px'}>
                     <Spacer />
-                    <PrimaryButton onClick={handleAddColumn} isDisabled={columnNameError || columnName == '' || columnIsUpdating}>
-                        {columnIsUpdating ? <Spinner /> : 'SAVE'}
-                    </PrimaryButton>
+                    {column !== null ? (
+                        <PrimaryButton onClick={handleUpdateColumn} isDisabled={columnNameError || columnName == '' || columnIsUpdating}>
+                            {columnIsUpdating ? <Spinner /> : 'UPDATE'}
+                        </PrimaryButton>
+                    ) : (
+                        <PrimaryButton onClick={handleAddColumn} isDisabled={columnNameError || columnName == '' || columnIsUpdating}>
+                            {columnIsUpdating ? <Spinner /> : 'SAVE'}
+                        </PrimaryButton>
+                    )}
                 </Flex>
             </PrimaryDrawer>
         </>
