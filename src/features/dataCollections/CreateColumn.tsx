@@ -100,7 +100,7 @@ const CreateColumn = ({ column = null, columns, updateColumn, createColumn, colu
             addNewColumnToRows(newColumn);
             setShowLabelForm(false);
             setShowReferenceForm(false);
-            onClose();
+            closeDrawer();
         }
     };
 
@@ -112,7 +112,7 @@ const CreateColumn = ({ column = null, columns, updateColumn, createColumn, colu
             addNewColumnToRows(updatedColumn);
             setShowLabelForm(false);
             setShowReferenceForm(false);
-            onClose();
+            closeDrawer();
         }
     };
 
@@ -262,6 +262,18 @@ const CreateColumn = ({ column = null, columns, updateColumn, createColumn, colu
         if (columnType === 'label') {
             setShowLabelForm(true);
             if (column !== null) setLabels((column as any).labels);
+        }
+        if (column !== null) {
+            setColumnName(column.name);
+
+            console.log(column);
+
+            if (column.type === 'label') {
+                console.log('THIS IS A LABEL COLUMN');
+                setShowLabelForm(true);
+                setColumnType(column.type);
+                setLabels((column as any).labels);
+            }
         }
         onOpen();
     };
