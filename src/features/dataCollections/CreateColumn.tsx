@@ -267,10 +267,18 @@ const CreateColumn = ({ column = null, columns, updateColumn, createColumn, colu
     };
     return (
         <>
-            <Button onClick={handleOnOpen} variant={'unstyled'}>
-                {column !== null ? 'Edit Column' : <BsPlusCircle size={'19px'} color={'gray'} />}
-            </Button>
-            <PrimaryDrawer isOpen={isOpen} onClose={closeDrawer} title={'Create a new column'}>
+            <Box>
+                {column !== null ? (
+                    <Box w={'100%'} textAlign={'left'} fontSize={'14px'} cursor={'pointer'} onClick={handleOnOpen}>
+                        Update column
+                    </Box>
+                ) : (
+                    <Button onClick={handleOnOpen} variant={'unstyled'}>
+                        {column !== null ? 'Edit Column' : <BsPlusCircle size={'19px'} color={'gray'} />}
+                    </Button>
+                )}
+            </Box>
+            <PrimaryDrawer isOpen={isOpen} onClose={closeDrawer} title={column !== null ? 'Update existing column' : 'Create a new column'}>
                 <Stack spacing="24px">
                     <Box>
                         <Flex>
