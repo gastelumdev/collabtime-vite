@@ -133,8 +133,9 @@ const CreateColumn = ({ column = null, columns, updateColumn, createColumn, colu
             setColumnNameError(true);
         } else {
             setColumnNameError(false);
-            setColumnName(value);
         }
+
+        setColumnName(value);
     };
 
     const handleTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
