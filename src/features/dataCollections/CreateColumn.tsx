@@ -55,8 +55,6 @@ const CreateColumn = ({ column = null, columns, updateColumn, createColumn, colu
         if (column !== null) {
             setColumnName(column.name);
 
-            console.log(column);
-
             if (column.type === 'label') {
                 console.log('THIS IS A LABEL COLUMN');
                 setShowLabelForm(true);
@@ -90,7 +88,8 @@ const CreateColumn = ({ column = null, columns, updateColumn, createColumn, colu
                 people: [],
                 includeInForm: true,
                 includeInExport: true,
-                position: columns[columns.length - 1].position + 1,
+                // position: columns[columns.length - 1].position + 1,
+                position: 0,
             };
 
             // Set column name to a database friendly underscore naming

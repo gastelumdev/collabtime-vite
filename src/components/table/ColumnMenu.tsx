@@ -91,6 +91,11 @@ const ColumnMenu = ({
 
 function DeleteModal({ column, handleDeleteColumnClick }: { column: any; handleDeleteColumnClick: any }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
+
+    const handleOnClose = () => {
+        handleDeleteColumnClick();
+        onClose();
+    };
     return (
         <>
             <Box w={'100%'} mt={'4px'} textAlign={'left'} fontSize={'14px'} cursor={'pointer'} onClick={onOpen}>
@@ -108,7 +113,7 @@ function DeleteModal({ column, handleDeleteColumnClick }: { column: any; handleD
                         <Button colorScheme="gray" mr={3} onClick={onClose}>
                             Cancel
                         </Button>
-                        <Button variant={'outline'} colorScheme={'red'} onClick={handleDeleteColumnClick}>
+                        <Button variant={'outline'} colorScheme={'red'} onClick={handleOnClose}>
                             Delete
                         </Button>
                     </ModalFooter>

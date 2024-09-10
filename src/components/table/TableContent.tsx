@@ -46,7 +46,6 @@ const TableContent = ({
     const [currentRows, setCurrentRows] = useState(rows);
 
     useEffect(() => {
-        console.log(rows);
         if (showDoneRows) {
             setCurrentRows(rows);
         } else {

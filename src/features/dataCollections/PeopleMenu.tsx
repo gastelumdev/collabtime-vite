@@ -41,7 +41,8 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
     const [active, setActive] = useState<boolean>(false);
 
     useEffect(() => {
-        row;
+        console.log(row);
+        console.log(values);
         labelValue;
         labelLabel;
         const cellOptions: ILabel[] | undefined = people?.map((item) => {
@@ -232,7 +233,7 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
                         }}
                     >
                         {/* {labelLabel ? labelLabel : 'Select'} */}
-                        {labels.length > 0
+                        {Array.isArray(labels) && labels.length > 0
                             ? labels.map((label, index) => {
                                   return `${label.name}${labels.length > 1 ? (index < labels.length - 1 ? ', ' : '') : ''}`;
                               })

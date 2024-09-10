@@ -127,6 +127,7 @@ const TableHeader = ({
 
                 handleGridTemplateColumns(columnWidths.join(' '));
                 // API call needed persist column order
+                console.log(newColumns);
                 updateBackendColumns(newColumns);
             }
 
