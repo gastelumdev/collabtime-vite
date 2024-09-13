@@ -39,8 +39,8 @@ const Row = ({
     rowIndex: number;
     columns: any;
     gridTemplateColumns: string;
-    handleSetDraggedId: any;
-    handleSetOverId: any;
+    // handleSetDraggedId: any;
+    // handleSetOverId: any;
     handleSwap: any;
     handleChange: any;
     deleteBoxIsChecked: boolean;
@@ -74,22 +74,6 @@ const Row = ({
     const [deleteCheckboxIsChecked, setDeleteCheckboxIsChecked] = useState(deleteBoxIsChecked);
 
     const [showRow, setShowRow] = useState(true);
-
-    // const [show, setShow] = useState(row.values['status'] !== undefined && row.values['status'] === 'Done' && !showDoneRows);
-
-    // useEffect(() => {
-    //     const rowIsDone = row.values['status'] !== undefined && row.values['status'] === 'Done' && !showDoneRows;
-    //     if (rowIsDone) {
-    //         setShow(false);
-    //     } else {
-    //         setShow(true);
-    //     }
-    // }, [row, rowIndex, showDoneRows]);
-
-    // const [updateRow] = useUpdateRowMutation();
-    useEffect(() => {
-        console.log(isDraggable);
-    }, [isDraggable]);
 
     useEffect(() => {
         setDeleteCheckboxIsChecked(deleteBoxIsChecked);

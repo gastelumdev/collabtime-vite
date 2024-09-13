@@ -122,33 +122,26 @@ const TableContent = ({
         setGridTemplateColumns(gridTemplateColumnsIn);
     }, [gridTemplateColumnsIn]);
 
-    const [_, setOverId] = useState<number | null>(null);
-    const [draggedId, setDraggedId] = useState<number | null>(null);
+    // const [_, setOverId] = useState<number | null>(null);
+    // const [draggedId, setDraggedId] = useState<number | null>(null);
 
-    const handleDragEnter = useCallback(
-        (event: React.DragEvent<HTMLDivElement>) => {
-            event.preventDefault();
-            event.stopPropagation();
-            if (draggedId !== null) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-        },
-        [draggedId]
-    );
+    const handleDragEnter = useCallback((event: React.DragEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        event.stopPropagation();
+    }, []);
     const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
         event.preventDefault();
         event.stopPropagation();
     };
 
     //****************************************************** */
-    const handleSetDraggedId = useCallback((rowIndex: number) => {
-        setDraggedId(rowIndex);
-    }, []);
+    // const handleSetDraggedId = useCallback((rowIndex: number) => {
+    //     setDraggedId(rowIndex);
+    // }, []);
 
-    const handleSetOverId = useCallback((rowIndex: number | null) => {
-        setOverId(rowIndex);
-    }, []);
+    // const handleSetOverId = useCallback((rowIndex: number | null) => {
+    //     setOverId(rowIndex);
+    // }, []);
 
     const handleSwap = () => {
         // let position = 0;
@@ -188,14 +181,7 @@ const TableContent = ({
             setRows(reorderedRows);
             setCurrentRows(reorderedRows);
 
-            // const repositionedRows: any = setPositions(reorderedRows);
-
             const rowsToUpdate: any = {};
-
-            // if ((draggedIsParent && overIsCommon) || (draggedIsCommon && overIsCommon)) {
-            //     setRows(repositionedRows);
-            //     setCurrentRows(repositionedRows);
-            // }
 
             const relAdjustedRow = reorderedRows.map((row: any, index: number) => {
                 let rowToUpdate: any = row;
@@ -267,92 +253,10 @@ const TableContent = ({
             setRows(relAdjustedRow);
 
             setCurrentRows(relAdjustedRow);
-
-            // if (draggedIsCommon && overIsParent && draggedRowData.position < overRowData.position) {
-            //     // The dragged row needs to update to be set as parent false and parentRowId of over row
-
-            //     const relAdjustedRow = repositionedRows.map((row: any) => {
-            //         if (row.position === overRowData.position) {
-            //             updateRow({ ...row, isParent: false, parentRowId: overRowData._id, isVisible: overRowData.showSubrows });
-            //             return { ...row, isParent: false, parentRowId: overRowData._id, isVisible: overRowData.showSubrows };
-            //         }
-            //         return row;
-            //     });
-
-            //     setRows(relAdjustedRow);
-
-            //     setCurrentRows(relAdjustedRow);
-            // }
-
-            // if (draggedIsCommon && overIsChild) {
-            //     // The dragged row needs to update to be set as parent false and share the parentRowId of the over row
-            //     console.log('Common into child');
-            //     const relAdjustedRows = repositionedRows.map((row: any) => {
-            //         if (row.position === overRowData.position) {
-            //             console.log(row);
-            //             updateRow({ ...row, isParent: false, parentRowId: overRowData.parentRowId });
-            //             return { ...row, isParent: false, parentRowId: overRowData.parentRowId };
-            //         }
-            //         return row;
-            //     });
-
-            //     setRows(relAdjustedRows);
-
-            //     setCurrentRows(relAdjustedRows);
-            // }
-
-            // if (draggedIsChild && overIsCommon) {
-            //     // The dragged row needs to update to be set as parent false and parentRowId as null
-            //     // console.log('Child into common');
-            //     const relAdjustedRows = repositionedRows.map((row: any) => {
-            //         if (row.position === overRowData.position) {
-            //             console.log(row);
-            //             updateRow({ ...row, isParent: false, parentRowId: null });
-            //             return { ...row, isParent: false, parentRowId: null };
-            //         }
-            //         return row;
-            //     });
-
-            //     setRows(relAdjustedRows);
-
-            //     setCurrentRows(relAdjustedRows);
-            // }
-
-            // if (draggedIsChild && overIsParent) {
-            //     if (draggedRowData.position < overRowData.position) {
-            //         // The dragged row needs to update to be set as parent false and parentRowId of over row
-
-            //         const relAdjustedRows = repositionedRows.map((row: any) => {
-            //             if (row.position === overRowData.position) {
-            //                 updateRow({ ...row, isParent: false, parentRowId: overRowData._id });
-            //                 return { ...row, isParent: false, parentRowId: overRowData._id };
-            //             }
-            //             return row;
-            //         });
-
-            //         setRows(relAdjustedRows);
-
-            //         setCurrentRows(relAdjustedRows);
-            //     } else {
-            //         // The dragged row needs to update to be set as parent false and parentRowId as null
-
-            //         const relAdjustedRows = repositionedRows.map((row: any) => {
-            //             if (row.position === overRowData.position) {
-            //                 updateRow({ ...row, isParent: false, parentRowId: null });
-            //                 return { ...row, isParent: false, parentRowId: null };
-            //             }
-            //             return row;
-            //         });
-
-            //         setRows(relAdjustedRows);
-
-            //         setCurrentRows(relAdjustedRows);
-            //     }
-            // }
         }
 
-        setOverId(null);
-        setDraggedId(null);
+        // setOverId(null);
+        // setDraggedId(null);
         localStorage.setItem('dragging', '');
     };
 
@@ -413,8 +317,8 @@ const TableContent = ({
                                             rowIndex={rowIndex}
                                             columns={columns}
                                             gridTemplateColumns={gridTemplateColumns}
-                                            handleSetDraggedId={handleSetDraggedId}
-                                            handleSetOverId={handleSetOverId}
+                                            // handleSetDraggedId={handleSetDraggedId}
+                                            // handleSetOverId={handleSetOverId}
                                             handleSwap={handleSwap}
                                             handleChange={handleChange}
                                             deleteBoxIsChecked={row.checked}
