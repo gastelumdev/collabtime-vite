@@ -33,6 +33,7 @@ const Row = ({
     // handleSubrowVisibility,
     // rowCallUpdate,
     allowed = false,
+    isDraggable = false,
 }: {
     row: any;
     rowIndex: number;
@@ -48,6 +49,7 @@ const Row = ({
     rowCallUpdate?: any;
     allowed?: boolean;
     showDoneRows?: boolean;
+    isDraggable?: boolean;
 }) => {
     // const rowsData = useMemo(
     //     () => [
@@ -85,21 +87,27 @@ const Row = ({
     // }, [row, rowIndex, showDoneRows]);
 
     // const [updateRow] = useUpdateRowMutation();
+    useEffect(() => {
+        console.log(isDraggable);
+    }, [isDraggable]);
 
     useEffect(() => {
         setDeleteCheckboxIsChecked(deleteBoxIsChecked);
     }, [deleteBoxIsChecked]);
 
     const handleDragStart = (event: React.DragEvent<HTMLDivElement>, rowIndex: number) => {
-        event.dataTransfer.setData('text', '');
-        localStorage.setItem('rowDragged', `${rowIndex}`);
-        localStorage.setItem('dragging', 'true');
-        // handleSetDraggedId(rowIndex);
-        draggedId;
-        setDraggedId(rowIndex);
-        // const reorderHandle: any = document.getElementById(`reorder-handle-${rowIndex}`);
-        // reorderHandle.style.cursor = 'move';
-        // setRows((prev) => prev.filter((_, index) => index !== rowIndex));
+        if (isDraggable) {
+            console.log('Drag started');
+            event.dataTransfer.setData('text', '');
+            localStorage.setItem('rowDragged', `${rowIndex}`);
+            localStorage.setItem('dragging', 'true');
+            // handleSetDraggedId(rowIndex);
+            draggedId;
+            setDraggedId(rowIndex);
+            // const reorderHandle: any = document.getElementById(`reorder-handle-${rowIndex}`);
+            // reorderHandle.style.cursor = 'move';
+            // setRows((prev) => prev.filter((_, index) => index !== rowIndex));
+        }
     };
 
     const handleDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
@@ -227,11 +235,12 @@ const Row = ({
     return (
         <>
             {row.isVisible && showRow ? (
-                <>
+                <Box bgColor={row.parentRowId ? '#f5faff' : row.isParent ? '#ebf5ff' : 'inherit'}>
                     <div
                         className="drop-indicator-container"
                         onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, rowIndex)}
                         onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
+                        // draggable={isDraggable}
                     >
                         {/* <>{console.log(Boolean(localStorage.getItem('dragging')))}</> */}
                         <Box
@@ -265,6 +274,7 @@ const Row = ({
                                 style={{
                                     gridTemplateColumns: '220px ' + gridTemplateColumns,
                                 }}
+                                // draggable={allowed && isDraggable}
                                 onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, row.position)}
                                 onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, row.position)}
                                 // onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
@@ -274,21 +284,23 @@ const Row = ({
                             >
                                 <span style={{ borderRight: '1px solid #edf2f7' }}>
                                     <Flex>
-                                        <Box
-                                            id={`reorder-handle-${rowIndex}`}
-                                            w={'15px'}
-                                            h={'30px'}
-                                            bgColor={'#24a2f0'}
-                                            cursor={allowed ? 'move' : 'default'}
-                                            draggable={allowed}
-                                            onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, row.position)}
-                                            onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, row.position)}
-                                            // onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
-                                            onDragEnter={(event: React.DragEvent<HTMLDivElement>) => handleDragEnter(event)}
-                                            onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
-                                            // onDrop={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
-                                            style={{ backgroundColor: row.parentRowId ? '#9fdaff' : '#24a2f0' }}
-                                        ></Box>
+                                        {isDraggable ? (
+                                            <Box
+                                                id={`reorder-handle-${rowIndex}`}
+                                                w={'15px'}
+                                                h={'30px'}
+                                                bgColor={'#24a2f0'}
+                                                cursor={allowed && isDraggable ? 'move' : 'default'}
+                                                draggable={allowed && isDraggable}
+                                                onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, row.position)}
+                                                onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, row.position)}
+                                                // onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
+                                                onDragEnter={(event: React.DragEvent<HTMLDivElement>) => handleDragEnter(event)}
+                                                onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
+                                                // onDrop={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
+                                                style={{ backgroundColor: row.parentRowId ? '#9fdaff' : '#24a2f0' }}
+                                            ></Box>
+                                        ) : null}
                                         <Box mt={'6px'} ml={'14px'}>
                                             <Checkbox
                                                 mr={'1px'}
@@ -413,7 +425,7 @@ const Row = ({
                         </Box>
                         {/* <SubRowsContent rows={rowsData} columns={columns} gridTemplateColumns={'170px ' + gridTemplateColumns} opened={opened} /> */}
                     </Box>
-                </>
+                </Box>
             ) : null}
         </>
     );

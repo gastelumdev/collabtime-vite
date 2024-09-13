@@ -90,6 +90,7 @@ const Table = ({
                 })
                 .join(' ')
         );
+        localStorage.setItem('draggable', 'true');
     }, [rowsData, columnsData]);
 
     const handleSetRows = useCallback((newRows: any[]) => {
@@ -419,6 +420,21 @@ const Table = ({
         setNumberOfDeleteItems(0);
     }, [rows]);
 
+    const [columnToSortBy, setColumnToSortBy] = useState(null);
+    const [directionToSortBy, setDirectionToSortBy] = useState('Asc');
+
+    const handleSortByColumnAsc = (column: any) => {
+        console.log({ direction: 'asc' });
+        setColumnToSortBy(column);
+        setDirectionToSortBy('Asc');
+    };
+
+    const handleSortByColumnDes = (column: any) => {
+        console.log({ direction: 'des' });
+        setColumnToSortBy(column);
+        setDirectionToSortBy('Des');
+    };
+
     return (
         <div id={'data-collection-table'} className={'table'} style={{ position: 'relative' }}>
             {checkedRowIds.length > 0 ? (
@@ -493,6 +509,8 @@ const Table = ({
                 deleteColumn={handleDeleteColumn}
                 allowed={allowed}
                 isFetching={isFetching}
+                handleSortByColumnAsc={handleSortByColumnAsc}
+                handleSortByColumnDes={handleSortByColumnDes}
             />
             <TableContent
                 rows={rows || []}
@@ -511,6 +529,8 @@ const Table = ({
                 // rowCallUpdate={rowCallUpdate}
                 showDoneRows={showDoneRows}
                 allowed={allowed}
+                columnToSortBy={columnToSortBy}
+                directionToSortBy={directionToSortBy}
             />
             {/* <Box w={'100%'} h={'30px'}>
                 <Text ml={'10px'}>Add row</Text>

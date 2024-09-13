@@ -22,6 +22,8 @@ interface IProps {
     deleteColumn: any;
     allowed?: boolean;
     isFetching?: boolean;
+    handleSortByColumnAsc: any;
+    handleSortByColumnDes: any;
 }
 
 const TableHeader = ({
@@ -40,6 +42,8 @@ const TableHeader = ({
     handleRemoveColumnFormRows,
     deleteColumn,
     allowed = false,
+    handleSortByColumnAsc,
+    handleSortByColumnDes,
 }: IProps) => {
     const [currentColumns, setCurrentColumns] = useState(columns);
     // ******************* COLUMN REORDERING ******************************
@@ -365,6 +369,8 @@ const TableHeader = ({
                                             handleDeleteColumn={handleDeleteColumn}
                                             handleAddNewColumnToRows={addNewColumnToRows}
                                             index={columnIndex}
+                                            handleSortByColumnAsc={handleSortByColumnAsc}
+                                            handleSortByColumnDes={handleSortByColumnDes}
                                         />
                                     ) : (
                                         <Text fontSize={'14px'} fontWeight={'medium'} color={'#666666'}>{`${column.name[0].toUpperCase()}${column.name
@@ -400,6 +406,8 @@ const TableHeader = ({
                                             handleDeleteColumn={handleDeleteColumn}
                                             handleAddNewColumnToRows={handleAddNewColumnToRows}
                                             index={columnIndex}
+                                            handleSortByColumnAsc={handleSortByColumnAsc}
+                                            handleSortByColumnDes={handleSortByColumnDes}
                                         />
                                     ) : (
                                         <Text fontSize={'14px'} fontWeight={'medium'} color={'#666666'}>{`${column.name[0].toUpperCase()}${column.name

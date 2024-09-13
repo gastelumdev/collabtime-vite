@@ -41,8 +41,6 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
     const [active, setActive] = useState<boolean>(false);
 
     useEffect(() => {
-        console.log(row);
-        console.log(values);
         labelValue;
         labelLabel;
         const cellOptions: ILabel[] | undefined = people?.map((item) => {

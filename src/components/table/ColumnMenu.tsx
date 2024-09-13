@@ -25,12 +25,16 @@ const ColumnMenu = ({
     handleDeleteColumn,
     handleAddNewColumnToRows,
     index,
+    handleSortByColumnAsc,
+    handleSortByColumnDes,
 }: {
     column: any;
     columns: any;
     handleDeleteColumn: any;
     handleAddNewColumnToRows: any;
     index: number;
+    handleSortByColumnAsc?: any;
+    handleSortByColumnDes?: any;
 }) => {
     const { isOpen, onToggle, onClose } = useDisclosure();
 
@@ -39,6 +43,16 @@ const ColumnMenu = ({
     const handleDeleteColumnClick = () => {
         console.log(column);
         handleDeleteColumn(column);
+        onClose();
+    };
+
+    const sortByColumnAsc = () => {
+        handleSortByColumnAsc(column);
+        onClose();
+    };
+
+    const sortByColumnDes = () => {
+        handleSortByColumnDes(column);
         onClose();
     };
     return (
@@ -52,35 +66,39 @@ const ColumnMenu = ({
                 <PopoverContent>
                     <PopoverArrow />
                     <PopoverBody>
-                        <Box>
-                            <CreateColumn
-                                column={column}
-                                columns={columns}
-                                updateColumn={updateColumn}
-                                addNewColumnToRows={handleAddNewColumnToRows}
-                                columnIsUpdating={columnIsUpdating as boolean}
-                            />
-                        </Box>
                         {index !== 0 ? (
-                            <Box>
-                                {/* <Box
-                                    color={'red'}
-                                    fontWeight={'semibold'}
-                                    w={'100%'}
-                                    mt={'4px'}
-                                    textAlign={'left'}
-                                    fontSize={'14px'}
-                                    cursor={'pointer'}
-                                    onClick={handleDeleteColumnClick}
-                                >
-                                    Delete column
-                                </Box> */}
-                                <DeleteModal column={column} handleDeleteColumnClick={handleDeleteColumnClick} />
-                            </Box>
+                            <>
+                                <Box onClick={sortByColumnAsc} textAlign={'left'} fontSize={'14px'} cursor={'pointer'} mb={'4px'}>
+                                    Sort ascending
+                                </Box>
+                                <Box onClick={sortByColumnDes} textAlign={'left'} fontSize={'14px'} cursor={'pointer'} mb={'4px'}>
+                                    Sort descending
+                                </Box>
+                                <Box>
+                                    <CreateColumn
+                                        column={column}
+                                        columns={columns}
+                                        updateColumn={updateColumn}
+                                        addNewColumnToRows={handleAddNewColumnToRows}
+                                        columnIsUpdating={columnIsUpdating as boolean}
+                                    />
+                                </Box>
+                                <Box>
+                                    <DeleteModal column={column} handleDeleteColumnClick={handleDeleteColumnClick} />
+                                </Box>
+                            </>
                         ) : (
-                            <Box w={'100%'} textAlign={'left'} fontSize={'14px'} cursor={'default'} color="lightgray">
-                                Delete column
-                            </Box>
+                            <>
+                                <Box onClick={sortByColumnAsc} textAlign={'left'} fontSize={'14px'} cursor={'pointer'} mb={'4px'}>
+                                    Sort ascending
+                                </Box>
+                                <Box onClick={sortByColumnDes} textAlign={'left'} fontSize={'14px'} cursor={'pointer'} mb={'4px'}>
+                                    Sort descending
+                                </Box>
+                                <Box w={'100%'} textAlign={'left'} fontSize={'14px'} cursor={'default'} color="lightgray">
+                                    Delete column
+                                </Box>
+                            </>
                         )}
                     </PopoverBody>
                 </PopoverContent>

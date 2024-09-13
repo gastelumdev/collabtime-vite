@@ -49,7 +49,6 @@ const Reference = ({
     const [rows, setRows] = useState(refs || []);
 
     useEffect(() => {
-        console.log('ROWS FETCHED');
         refetch();
     }, []);
 

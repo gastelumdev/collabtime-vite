@@ -4,6 +4,7 @@ import Row from './Row';
 import { swapItems } from '../../utils/helpers';
 // import { useUpdateRowMutation } from '../../app/services/api';
 import { Box } from '@chakra-ui/react';
+import { TRow } from '../../types';
 
 interface IProps {
     rows: any[];
@@ -21,6 +22,8 @@ interface IProps {
     rowCallUpdate?: any;
     showDoneRows?: boolean;
     allowed?: boolean;
+    columnToSortBy: any;
+    directionToSortBy: string;
 }
 
 const TableContent = ({
@@ -39,6 +42,8 @@ const TableContent = ({
     // rowCallUpdate,
     showDoneRows = false,
     allowed = false,
+    columnToSortBy = null,
+    directionToSortBy = 'Asc',
 }: IProps) => {
     const ref = useRef<HTMLDivElement | null>(null);
     const [gridTemplateColumns, setGridTemplateColumns] = useState('');
@@ -56,6 +61,60 @@ const TableContent = ({
             );
         }
     }, [showDoneRows, rows]);
+
+    useEffect(() => {
+        console.log(columnToSortBy);
+        if (columnToSortBy !== null) {
+            const rowsCopy: TRow[] = [...rows];
+
+            let rowValue = '';
+
+            const rowsWithSortKey = rowsCopy.map((row) => {
+                if (row.parentRowId === null) rowValue = row.values[columnToSortBy.name];
+
+                return { ...row, sortKey: rowValue };
+            });
+
+            console.log(rowsWithSortKey);
+
+            if (directionToSortBy === 'Asc') {
+                rowsWithSortKey.sort((a: any, b: any) => {
+                    let aValue = a.sortKey;
+                    let bValue = b.sortKey;
+
+                    if (aValue === undefined || aValue === '') aValue = '~';
+                    if (bValue === undefined || bValue === '') bValue = '~';
+
+                    if (aValue.toLowerCase() < bValue.toLowerCase()) {
+                        return -1;
+                    } else if (aValue.toLowerCase() > bValue.toLowerCase()) {
+                        return 1;
+                    }
+
+                    return 0;
+                });
+            } else {
+                rowsWithSortKey.sort((a: any, b: any) => {
+                    let aValue = a.sortKey;
+                    let bValue = b.sortKey;
+
+                    if (aValue === undefined || aValue === '') aValue = ' ';
+                    if (bValue === undefined || bValue === '') bValue = ' ';
+
+                    if (aValue.toLowerCase() > bValue.toLowerCase()) {
+                        return -1;
+                    } else if (aValue.toLowerCase() < bValue.toLowerCase()) {
+                        return 1;
+                    }
+
+                    return 0;
+                });
+            }
+
+            setCurrentRows(rowsWithSortKey);
+            setRows(rowsWithSortKey);
+        }
+    }, [columnToSortBy, directionToSortBy]);
 
     // const [updateRow] = useUpdateRowMutation();
 
@@ -299,6 +358,7 @@ const TableContent = ({
 
     const handleChange = (row: any) => {
         setCurrentRows((prev) => prev.map((prevRow) => (prevRow._id === row._id ? row : prevRow)));
+        setRows((prev: any) => prev.map((prevRow: any) => (prevRow._id === row._id ? row : prevRow)));
         handleUpdateRowNoRender(row);
     };
 
@@ -363,6 +423,7 @@ const TableContent = ({
                                             // rowCallUpdate={rowCallUpdate}
                                             allowed={allowed}
                                             showDoneRows={showDoneRows}
+                                            isDraggable={columnToSortBy === null}
                                         />
                                     </div>
                                     <div></div>
