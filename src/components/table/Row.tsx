@@ -79,15 +79,16 @@ const Row = ({
         setDeleteCheckboxIsChecked(deleteBoxIsChecked);
     }, [deleteBoxIsChecked]);
 
-    const handleDragStart = (event: React.DragEvent<HTMLDivElement>, rowIndex: number) => {
+    const handleDragStart = (event: React.DragEvent<HTMLDivElement>, _rowIndex: number) => {
+        console.log(row.position);
         if (isDraggable) {
             console.log('Drag started');
             event.dataTransfer.setData('text', '');
-            localStorage.setItem('rowDragged', `${rowIndex}`);
+            localStorage.setItem('rowDragged', `${row.position}`);
             localStorage.setItem('dragging', 'true');
             // handleSetDraggedId(rowIndex);
             draggedId;
-            setDraggedId(rowIndex);
+            setDraggedId(row.position);
             // const reorderHandle: any = document.getElementById(`reorder-handle-${rowIndex}`);
             // reorderHandle.style.cursor = 'move';
             // setRows((prev) => prev.filter((_, index) => index !== rowIndex));
@@ -111,14 +112,15 @@ const Row = ({
         // setOver(false);
     };
 
-    const handleDragOver = (event: React.DragEvent<HTMLDivElement>, rowIndex: number) => {
+    const handleDragOver = (event: React.DragEvent<HTMLDivElement>, _rowIndex: number) => {
+        console.log(row.position);
         if (localStorage.getItem('rowDragged') !== null) {
             event.preventDefault();
             event.stopPropagation();
 
             // handleSetOverId(rowIndex);
-            setOverId(rowIndex);
-            localStorage.setItem('rowOver', `${rowIndex}`);
+            setOverId(row.position);
+            localStorage.setItem('rowOver', `${row.position}`);
         }
     };
 
@@ -222,7 +224,7 @@ const Row = ({
                 <Box bgColor={row.parentRowId ? '#f5faff' : row.isParent ? '#ebf5ff' : 'inherit'}>
                     <div
                         className="drop-indicator-container"
-                        onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, rowIndex)}
+                        onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, row.position)}
                         onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
                         // draggable={isDraggable}
                     >
