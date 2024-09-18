@@ -1,5 +1,5 @@
 import { ReactNode, useCallback, useEffect, useState } from 'react';
-import { useGetUserQuery } from '../../app/services/api';
+import { useCreateWorkspaceMutation, useGetOneWorkspaceQuery, useGetUserQuery, useGetWorkspacesQuery, useUpdateUserMutation } from '../../app/services/api';
 
 import {
     IconButton,
@@ -20,28 +20,33 @@ import {
     MenuItem,
     MenuList,
     Center,
-    Container,
     Spacer,
     Stack,
-    Tooltip,
+    useToast,
+    // Tooltip,
 } from '@chakra-ui/react';
-import { FiMenu, FiLogOut } from 'react-icons/fi';
+import { FiMenu } from 'react-icons/fi';
 
-import { IconContext, IconType } from 'react-icons';
-import Divider from '../Divider/Divider';
-import { Link, useNavigate } from 'react-router-dom';
-import { FaSignOutAlt, FaUserCircle } from 'react-icons/fa';
+import { IconType } from 'react-icons';
+// import Divider from '../Divider/Divider';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { LiaSignOutAltSolid, LiaUserSolid } from 'react-icons/lia';
 import View from '../../features/notifications/View';
 import Search from '../../features/search/View';
+import { ChevronDownIcon } from '@chakra-ui/icons';
+import Create from '../../features/workspaces/Create';
+import { bgColor, color, topNavBgColor, hoverBg } from '../../utils/colors';
 
 interface LinkItemProps {
     name: string;
+    active?: boolean;
     icon: IconType;
     path: string;
 }
 
 interface NavItemProps extends FlexProps {
     icon: IconType;
+    active?: boolean;
     children: React.ReactNode;
 }
 
@@ -64,22 +69,30 @@ interface SidebarContentProps {
     children: ReactNode;
 }
 
-const mvpUserEmails = ['islas@mvpsecuritysystems.com', 'jvargas@mvpsecuritysystems.com', 'acastro@mvpsecuritysystems.com'];
+interface NavItemSubHeaderProps {
+    title: string;
+    description: string;
+}
 
 const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) => {
-    const { data: userData } = useGetUserQuery(localStorage.getItem('userId') as string);
+    const { id } = useParams();
+    const { data: workspace } = useGetOneWorkspaceQuery(id as any);
+    const { data } = useGetWorkspacesQuery(null);
+    const { data: user } = useGetUserQuery(localStorage.getItem('userId') as string);
+    const [createWorkspace, { isError: createWorkspaceIsError, error: createWorkspaceError }] = useCreateWorkspaceMutation();
+    const [updateUser] = useUpdateUserMutation();
     const height = window.innerHeight;
     const [sidebarHeight, setSidebarHeight] = useState(height);
+
+    const toast = useToast();
 
     const resizeSidebar = useCallback(() => {
         setSidebarHeight(window.innerHeight);
     }, [sidebarHeight]);
 
-    const [user, setUser] = useState(userData);
-
     useEffect(() => {
-        setUser(userData);
-    }, [userData]);
+        console.log(workspace?.name);
+    }, [workspace, data]);
 
     useEffect(() => {
         window.addEventListener('resize', resizeSidebar);
@@ -88,70 +101,108 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
             window.removeEventListener('resize', resizeSidebar);
         };
     }, []);
+
+    if (createWorkspaceIsError) {
+        toast({
+            title: 'Create Workspace Error',
+            description: (createWorkspaceError as any)?.data.error._message,
+            status: 'error',
+        });
+    }
+
     return (
         <Box
             transition="3s ease"
             borderRight="px"
             borderRightColor={useColorModeValue('gray.200', 'gray.700')}
-            w={{ base: 'full', md: '80px' }}
+            w={{ base: 'full', md: '260px' }}
             pos="fixed"
-            // h={window.innerHeight}
             h={'100%'}
             p={'0'}
             {...rest}
         >
             <Box bg={'black'} h={height}>
-                <Box
-                    pt={'20px'}
-                    bgImage={mvpUserEmails.includes(user?.email || '') ? 'black' : 'radial-gradient(circle at center top, rgb(66, 66, 74), black)'}
-                    height={'full'}
-                    // borderRadius={'xl'}
-                >
-                    <Box pt={'6px'} pb={'4px'}>
+                <Box pt={'14px'} bgColor={bgColor} height={'full'}>
+                    <Box pb={'4px'}>
                         <Center>
-                            <Text as={'b'} fontSize={'16px'} color={'white'}>
-                                {/* <LikeOutlined
-                                    style={{
-                                        marginRight: "4px",
-                                        fontSize: "20px",
-                                    }}
-                                /> */}
-                                <img src={user?.logoURL} width={mvpUserEmails.includes(user?.email || '') ? '55px' : '30px'} />
+                            <Text as={'b'} fontSize={'20px'} color={'white'}>
+                                Collabtime
                             </Text>
                         </Center>
                     </Box>
-                    <Divider gradient="radial-gradient(#5e5b5b 40%, #1c1c1c)" marginBottom="10px" />
-                    <Box transition="3s ease">
-                        {linkItems.map((link, index) => (
-                            <Box key={index}>
-                                <Tooltip
-                                    label={link.name}
-                                    openDelay={0}
-                                    // isDisabled={isFocused}
-                                    placement={'right'}
-                                >
-                                    <Link to={link.path}>
-                                        <NavItem key={link.name} icon={link.icon}>
-                                            {isOpen ? <Text color={'white'}>{link.name}</Text> : null}
-                                        </NavItem>
-                                    </Link>
-                                </Tooltip>
-                                {link.name === 'Workspaces' ? (
-                                    <Divider gradient="radial-gradient(#5e5b5b 40%, black)" marginBottom="10px" marginTop="10px" />
-                                ) : null}
+                    <Box>
+                        <Box px={'24px'}>
+                            <NavItemSubHeader title={'Workspaces'} description={'Choose Workspace from dropdown'} />
+                            <Box pt={'8px'}>
+                                <Menu>
+                                    <MenuButton
+                                        color={color}
+                                        w={'100%'}
+                                        border={'1px solid ' + color}
+                                        borderRadius={'5px'}
+                                        fontSize={'14px'}
+                                        fontWeight={'semibold'}
+                                        py={'5px'}
+                                    >
+                                        <Text color={'white'}>
+                                            {workspace?.name || '|'} <ChevronDownIcon fontSize={'20px'} />
+                                        </Text>
+                                    </MenuButton>
+                                    <MenuList>
+                                        {data?.map((ws: any, index: number) => {
+                                            return (
+                                                <MenuItem
+                                                    key={index}
+                                                    as={'a'}
+                                                    href={`/workspaces/${ws._id}`}
+                                                    onClick={() => {
+                                                        localStorage.setItem('workspaceId', ws._id);
+                                                        updateUser({ ...user, defaultWorkspaceId: ws._id });
+                                                    }}
+                                                    fontSize={'14px'}
+                                                    color={bgColor}
+                                                >
+                                                    {ws.name}
+                                                </MenuItem>
+                                            );
+                                        })}
+                                        <MenuDivider />
+                                        {/* <MenuItem
+                                            as={'a'}
+                                            icon={<AddIcon />}
+                                            fontSize={'14px'}
+                                            color={bgColor}
+                                            cursor={'pointer'}
+                                            onClick={() => {
+                                                console.log('Menu item clicked');
+                                            }}
+                                        > */}
+                                        <Create addNewWorkspace={createWorkspace} workspaces={data} />
+                                        {/* </MenuItem> */}
+                                    </MenuList>
+                                </Menu>
                             </Box>
-                        ))}
-                        <Divider gradient="radial-gradient(#5e5b5b 40%, black)" marginBottom="10px" marginTop="10px" />
-                        <Tooltip
-                            label={'Logout'}
-                            openDelay={0}
-                            // isDisabled={isFocused}
-                            placement={'top'}
-                        >
+                        </Box>
+                        <Box transition="3s ease">
+                            <Box px={'24px'}>
+                                <NavItemSubHeader title={'Dashboards'} description="Data Collection Views" />
+                            </Box>
+                            {linkItems.map((link, index) => {
+                                console.log(linkItems);
+                                return (
+                                    <Box key={index}>
+                                        <Link to={link.path}>
+                                            <NavItem key={link.name} icon={link.icon} active={link.active}>
+                                                {link.name}
+                                            </NavItem>
+                                        </Link>
+                                    </Box>
+                                );
+                            })}
                             <Link to={'/login'}>
-                                <NavItem icon={FaSignOutAlt}>{isOpen ? <Text color={'white'}>Logout</Text> : null}</NavItem>
+                                <NavItem icon={LiaSignOutAltSolid}>Logout</NavItem>
                             </Link>
-                        </Tooltip>
+                        </Box>
                     </Box>
                 </Box>
             </Box>
@@ -159,33 +210,52 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
     );
 };
 
-const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
+const NavItemSubHeader = ({ title, description }: NavItemSubHeaderProps) => {
+    return (
+        <Box mb={'10px'} mt={'50px'}>
+            <Text color={'#24A2F0'} fontSize={'12px'} fontWeight={'semibold'}>
+                {title.toUpperCase()}
+            </Text>
+            <Text color={'#797E89'} fontSize={'11px'} fontWeight={'semibold'}>
+                {description}
+            </Text>
+        </Box>
+    );
+};
+
+const NavItem = ({ icon, active = false, children, ...rest }: NavItemProps) => {
     return (
         <Flex
             align="center"
-            p="4"
-            mx="4"
+            py="2"
+            my="2"
+            mx="2"
+            px="14px"
             borderRadius="lg"
             role="group"
             cursor="pointer"
-            // _hover={{
-            //     bgImage: 'linear(195deg, rgb(73, 163, 241), rgb(26, 115, 232))',
-            //     color: 'white',
-            // }}
+            color={active ? 'white' : color}
+            _hover={{
+                bgColor: hoverBg,
+                color: 'white',
+            }}
+            bgColor={active ? hoverBg : 'inherit'}
             {...rest}
         >
             {icon && (
                 <Icon
-                    mr="4"
-                    fontSize="19"
-                    _groupHover={{
-                        color: '#24a2f0',
-                    }}
+                    mr="5"
+                    fontSize="24"
+                    // _groupHover={{
+                    //     color: '#24a2f0',
+                    // }}
                     as={icon}
-                    color={'lightgray'}
+                    // color={'#c6c2d9'}
                 />
             )}
-            {children}
+            <Text fontSize={'14px'} fontWeight={'semibold'}>
+                {children}
+            </Text>
         </Flex>
     );
 };
@@ -200,113 +270,72 @@ const TopNav = ({ sidebar = true, onOpen, leftContent, ...rest }: TopNavProps) =
     const { data } = useGetUserQuery(localStorage.getItem('userId') as string);
 
     return (
-        <Flex
-            ml={{ base: 0, lg: sidebar ? '400px' : '0' }}
-            pl={{ base: 0, lg: 0 }}
-            pt={'35px'}
-            h={{ sm: '22px' }}
-            mb={{ sm: '20px' }}
-            alignItems="center"
-            // bg={useColorModeValue('gray.100', 'gray.900')}
-            borderBottomColor={useColorModeValue('gray.200', 'gray.700')}
-            justifyContent={{ base: 'space-between', md: 'flex-end' }}
-            {...rest}
-        >
-            <Container maxW={'full'} mt={{ base: 0 }} px={'18px'}>
-                <Box pb={3} bg={'#f6f8fa'}>
-                    <Box bg={'#f6f8fa'}>
-                        {/* <SimpleGrid columns={[1, 2, 2]} spacingY={{ sm: 3 }}> */}
-                        <Flex alignItems={'center'} justifyContent={'space-between'}>
-                            <IconButton display={{ base: 'flex', lg: 'none' }} onClick={onOpen} variant="outline" aria-label="open menu" icon={<FiMenu />} />
-                            <Box
-                                ml={{ base: 3, lg: 0 }}
-                                // pt={"18px"}
-                                bg={'#f6f8fa'}
-                            >
-                                {leftContent}
-                            </Box>
-                            <Spacer />
-                            <Stack direction={'row'} spacing={6}>
-                                <Menu>
-                                    <Search />
-                                </Menu>
-                                <Menu>
-                                    <View />
-                                </Menu>
-                                <Menu autoSelect={false}>
-                                    <MenuButton
-                                        style={{
-                                            backgroundColor: '#f6f8fa',
-                                        }}
-                                    >
-                                        <Text size={'20px'} pt={1}>
-                                            <IconContext.Provider
-                                                value={{
-                                                    size: '18px',
-                                                    color: '#7b809a',
-                                                }}
-                                            >
-                                                <FaUserCircle />
-                                            </IconContext.Provider>
-                                        </Text>
-                                    </MenuButton>
-                                    <MenuList alignItems={'center'} zIndex={'10'}>
-                                        <br />
-                                        <Center>
-                                            <Avatar size={'lg'} src={`https://api.dicebear.com/7.x/initials/svg?seed=${data?.firstname}%20${data?.lastname}`} />
-                                        </Center>
-                                        <br />
-                                        <Center>
-                                            <p>{`${data?.firstname} ${data?.lastname}`}</p>
-                                        </Center>
-                                        <Center>
-                                            <p
-                                                style={{
-                                                    fontSize: '12px',
-                                                    color: 'gray',
-                                                }}
-                                            >
-                                                {data?.email}
-                                            </p>
-                                        </Center>
-                                        <br />
-                                        <MenuDivider />
-                                        <MenuItem color={'#7b809a'} onClick={() => navigate('/resetPasswordRequest')}>
-                                            Reset Password
-                                        </MenuItem>
-                                        {/* <MenuItem color={'#7b809a'} onClick={() => navigate('/resetPasswordRequest')}>
-                                            Change Logo
-                                        </MenuItem> */}
-                                        <MenuItem onClick={logout} color={'#7b809a'}>
-                                            Logout
-                                        </MenuItem>
-                                    </MenuList>
-                                </Menu>
-                            </Stack>
-                        </Flex>
-                        {/* <Flex mt={"10px"}>
-                                <Hide below="sm">
-                                    <Spacer />
-                                </Hide>
-                            </Flex> */}
-                        {/* </SimpleGrid> */}
-                    </Box>
-                </Box>
-            </Container>
-            {/* </Flex> */}
-        </Flex>
+        <Box px={'15px'} {...rest}>
+            <Flex>
+                <IconButton
+                    display={{ base: 'flex', lg: 'none' }}
+                    onClick={onOpen}
+                    variant="outline"
+                    aria-label="open menu"
+                    icon={<FiMenu />}
+                    color={'white'}
+                    bgColor={topNavBgColor}
+                />
+                <Spacer />
+                <Stack direction={'row'} spacing={6}>
+                    <Menu>
+                        <Search />
+                    </Menu>
+                    <Menu>
+                        <View />
+                    </Menu>
+                    <Menu autoSelect={false}>
+                        <MenuButton
+                            style={{
+                                backgroundColor: topNavBgColor,
+                            }}
+                        >
+                            <Text size={'20px'} pt={1} color={'white'} fontSize={'22px'}>
+                                <LiaUserSolid />
+                            </Text>
+                        </MenuButton>
+                        <MenuList alignItems={'center'} zIndex={'10'}>
+                            <br />
+                            <Center>
+                                <Avatar size={'lg'} src={`https://api.dicebear.com/7.x/initials/svg?seed=${data?.firstname}%20${data?.lastname}`} />
+                            </Center>
+                            <br />
+                            <Center>
+                                <p>{`${data?.firstname} ${data?.lastname}`}</p>
+                            </Center>
+                            <Center>
+                                <p
+                                    style={{
+                                        fontSize: '12px',
+                                        color: 'gray',
+                                    }}
+                                >
+                                    {data?.email}
+                                </p>
+                            </Center>
+                            <br />
+                            <MenuDivider />
+                            <MenuItem color={color} onClick={() => navigate('/resetPasswordRequest')}>
+                                Reset Password
+                            </MenuItem>
+                            <MenuItem onClick={logout} color={color}>
+                                Logout
+                            </MenuItem>
+                        </MenuList>
+                    </Menu>
+                </Stack>
+            </Flex>
+        </Box>
     );
 };
 
 const SideBarLayout = ({ linkItems, leftContent, sidebar = true, children }: SidebarContentProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-
-    const { data: userData } = useGetUserQuery(localStorage.getItem('userId') as string);
-
-    // useEffect(() => {
-    //     console.log(userData?.email, userData?.logoURL);
-    //     console.log(mvpUserEmails.includes(userData?.email || ''));
-    // }, [userData]);
 
     return (
         <Box minH="100vh" bg={"useColorModeValue('gray.100', 'gray.900')"} pl={{ base: 0, lg: 0 }} pr={0} pt={0}>
@@ -314,57 +343,15 @@ const SideBarLayout = ({ linkItems, leftContent, sidebar = true, children }: Sid
             <Box mx={'6px'} ml={'6px'} h={'full'}>
                 <Drawer isOpen={isOpen} placement="left" onClose={onClose} returnFocusOnClose={false} onOverlayClick={onClose} size="xs">
                     <DrawerContent boxShadow={'none'}>
-                        <Box py={6} pl={6} minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
-                            <Box
-                                pt={'20px'}
-                                bgImage={
-                                    mvpUserEmails.includes(userData?.email || '')
-                                        ? 'radial-gradient(black, black)'
-                                        : 'radial-gradient(circle at center top, rgb(66, 66, 74), black)'
-                                }
-                                height={'full'}
-                                borderRadius={'xl'}
-                            >
-                                <Box pt={'6px'} pb={'4px'}>
-                                    <Center>
-                                        <Text as={'b'} fontSize={'16px'} color={'white'}>
-                                            {/* <LikeOutlined
-                                                style={{
-                                                    marginRight: "4px",
-                                                    fontSize: "20px",
-                                                }}
-                                            /> */}
-                                            <img src={userData?.logoURL} width={mvpUserEmails.includes(userData?.email || '') ? '120px' : '30px'} />
-                                        </Text>
-                                    </Center>
-                                </Box>
-                                <Divider gradient="radial-gradient(#5e5b5b 40%, #1c1c1c)" marginBottom="10px" />
-                                <Box transition="3s ease">
-                                    {linkItems.map((link) => (
-                                        <Link to={link.path} key={link.name}>
-                                            <NavItem key={link.name} icon={link.icon}>
-                                                <Text color={'#dbdbdb'}>{link.name}</Text>
-                                            </NavItem>
-                                        </Link>
-                                    ))}
-                                    <Divider gradient="radial-gradient(#5e5b5b 40%, black)" marginBottom="10px" marginTop="10px" />
-                                    <Link to={'/login'}>
-                                        <NavItem icon={FiLogOut}>
-                                            <Text color={'#dbdbdb'}>Logout</Text>
-                                        </NavItem>
-                                    </Link>
-                                </Box>
-                            </Box>
-                        </Box>
+                        <SidebarContent linkItems={linkItems} onClose={onClose} isOpen={isOpen} />
                     </DrawerContent>
                 </Drawer>
             </Box>
-            {/* mobilenav */}
-            <Box ml={{ base: 0, lg: sidebar ? '100px' : '0' }} p={{ base: 0 }}>
+            <Box ml={{ base: 0, lg: sidebar ? '260px' : '0' }} p={{ base: 0 }} h={'60px'} bgColor={topNavBgColor} pt={'2'}>
                 <TopNav sidebar={false} onOpen={onOpen} leftContent={leftContent} />
             </Box>
             <Box
-                ml={{ base: 0, lg: sidebar ? '85px' : '0' }}
+                ml={{ base: 0, lg: sidebar ? '260px' : '0' }}
                 p={{ base: 0 }}
                 pt={{
                     base: sidebar ? '0px' : '20px',

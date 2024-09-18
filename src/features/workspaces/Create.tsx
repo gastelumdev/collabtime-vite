@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Flex, Input, Spacer, Stack, Text, useDisclosure } from '@chakra-ui/react';
+import { Flex, Input, MenuItem, Spacer, Stack, Text, useDisclosure } from '@chakra-ui/react';
 import { TWorkspace } from '../../types';
 
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
 import PrimaryDrawer from '../../components/PrimaryDrawer';
-import { HiPlus } from 'react-icons/hi';
+import { AddIcon } from '@chakra-ui/icons';
 
 /**
  * Workspace default values should be deleted once RTK is implemented
@@ -128,11 +128,16 @@ const Create = ({ addNewWorkspace, workspaces }: IProps) => {
     //     setData(newWorkspace);
     // };
 
+    const handleOnOpen = () => {
+        console.log('OPEN CLICK');
+        onOpen();
+    };
+
     return (
         <>
-            <PrimaryButton onClick={onOpen} px="0">
-                <HiPlus size={'18px'} />
-            </PrimaryButton>
+            <MenuItem onClick={handleOnOpen} icon={<AddIcon />}>
+                Create Workspace
+            </MenuItem>
             <PrimaryDrawer isOpen={isOpen} onClose={handleOnClose} size={'md'} title={'Create a new workspace'}>
                 <Flex>
                     <Text pb={'5px'} color={'rgb(123, 128, 154)'}>

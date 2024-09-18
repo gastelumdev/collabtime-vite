@@ -1,20 +1,23 @@
-import { MenuButton, useDisclosure } from '@chakra-ui/react';
-import { BellIcon } from '@chakra-ui/icons';
+import { Box, MenuButton, Text, useDisclosure } from '@chakra-ui/react';
 import DisplayList from './DisplayList';
 import PrimaryDrawer from '../../components/PrimaryDrawer';
+import { LiaBell } from 'react-icons/lia';
 
 const View = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     return (
-        <>
-            <MenuButton bg={'#f6f8fa'} onClick={onOpen}>
-                <BellIcon boxSize={5} color={'#7b809a'} />
+        <Box mt={'10px'}>
+            <MenuButton bg={'#0f172a'} onClick={onOpen}>
+                {/* <BellIcon boxSize={5} color={'white'} /> */}
+                <Text color={'white'} fontSize={'20px'}>
+                    <LiaBell />
+                </Text>
             </MenuButton>
             <PrimaryDrawer title="Notifications" isOpen={isOpen} onClose={onClose} size="lg">
                 <DisplayList />
             </PrimaryDrawer>
-        </>
+        </Box>
     );
 };
 

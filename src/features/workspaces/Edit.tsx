@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Text, Checkbox, Stack, Flex, Input, Spacer, useDisclosure } from '@chakra-ui/react';
+import { Text, Flex, Input, Spacer, useDisclosure, MenuItem } from '@chakra-ui/react';
 import { TWorkspace } from '../../types';
-import { AiOutlineEdit } from 'react-icons/ai';
-import Divider from '../../components/Divider/Divider';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
 import PrimaryDrawer from '../../components/PrimaryDrawer';
 
@@ -24,12 +22,12 @@ const Edit = ({ workspace, updateWorkspace, workspaces }: IProps) => {
      * State management for checked items that turn on and off the
      * tools that will be available in the workspace
      */
-    const [checkedItems, setCheckedItems] = React.useState([
-        workspace.tools.dataCollections.access > 0 ? true : false,
-        workspace.tools.taskLists.access > 0 ? true : false,
-        workspace.tools.docs.access > 0 ? true : false,
-        workspace.tools.messageBoard.access > 0 ? true : false,
-    ]);
+    // const [checkedItems, setCheckedItems] = React.useState([
+    //     workspace.tools.dataCollections.access > 0 ? true : false,
+    //     workspace.tools.taskLists.access > 0 ? true : false,
+    //     workspace.tools.docs.access > 0 ? true : false,
+    //     workspace.tools.messageBoard.access > 0 ? true : false,
+    // ]);
     /**
      * Data is set to the workspace passed in from the main view component.
      * This will be updated when the form is updated and then passed back to
@@ -48,12 +46,12 @@ const Edit = ({ workspace, updateWorkspace, workspaces }: IProps) => {
         let newWorkspace: TWorkspace = data;
         newWorkspace = {
             ...data,
-            tools: {
-                dataCollections: { access: checkedItems[0] ? 2 : 0 },
-                taskLists: { access: checkedItems[1] ? 2 : 0 },
-                docs: { access: checkedItems[2] ? 2 : 0 },
-                messageBoard: { access: checkedItems[3] ? 2 : 0 },
-            },
+            // tools: {
+            //     dataCollections: { access: checkedItems[0] ? 2 : 0 },
+            //     taskLists: { access: checkedItems[1] ? 2 : 0 },
+            //     docs: { access: checkedItems[2] ? 2 : 0 },
+            //     messageBoard: { access: checkedItems[3] ? 2 : 0 },
+            // },
         };
         updateWorkspace(newWorkspace);
         onClose();
@@ -93,7 +91,8 @@ const Edit = ({ workspace, updateWorkspace, workspaces }: IProps) => {
 
     return (
         <>
-            <Button flex="1" variant="ghost" leftIcon={<AiOutlineEdit />} color={'#b3b8cf'} onClick={onOpen} zIndex={10}></Button>
+            {/* <Button flex="1" variant="ghost" leftIcon={<AiOutlineEdit />} color={'#b3b8cf'} onClick={onOpen} zIndex={10}></Button> */}
+            <MenuItem onClick={onOpen}>Edit Workspace</MenuItem>
             <PrimaryDrawer isOpen={isOpen} onClose={onClose} title="Edit workspace">
                 <Flex>
                     <Text pb={'5px'} color={'rgb(123, 128, 154)'} fontSize={'14px'}>
@@ -107,7 +106,7 @@ const Edit = ({ workspace, updateWorkspace, workspaces }: IProps) => {
                 <Input
                     name="name"
                     value={data.name}
-                    placeholder="Please enter user name"
+                    placeholder="Please workspace name"
                     required={true}
                     onChange={handleChange}
                     style={{ marginBottom: '15px' }}
@@ -120,13 +119,13 @@ const Edit = ({ workspace, updateWorkspace, workspaces }: IProps) => {
                 <Input
                     name="description"
                     value={data.description}
-                    placeholder="please enter url description"
+                    placeholder="Please enter workspace description"
                     onChange={handleChange}
                     style={{ marginBottom: '15px' }}
                     color={'rgb(123, 128, 154)'}
                     size={'sm'}
                 />
-                <Text pb={'5px'}>Tools</Text>
+                {/* <Text pb={'5px'}>Tools</Text>
                 <Stack mt={1} spacing={1}>
                     <Checkbox
                         isChecked={checkedItems[0]}
@@ -160,8 +159,8 @@ const Edit = ({ workspace, updateWorkspace, workspaces }: IProps) => {
                     >
                         <Text fontSize={'14px'}>Message Board</Text>
                     </Checkbox>
-                </Stack>
-                <Divider gradient="radial-gradient(#eceef1 40%, white 60%)" marginBottom="0" />
+                </Stack> */}
+                {/* <Divider gradient="radial-gradient(#eceef1 40%, white 60%)" marginBottom="0" /> */}
                 <Flex mt={'10px'} width={'full'}>
                     <Spacer />
                     <PrimaryButton onClick={editData} isDisabled={inputError || isError}>

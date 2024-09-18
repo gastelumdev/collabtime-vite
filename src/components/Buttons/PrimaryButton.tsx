@@ -28,7 +28,7 @@ const PrimaryButton = ({
         <Button
             // colorScheme="twitter"
             isLoading={isLoading}
-            bgColor={'#24a2f0'}
+            bgColor={'#2295e8'}
             color={'white'}
             fontSize={fontSize}
             px={px}

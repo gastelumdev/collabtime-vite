@@ -1,21 +1,9 @@
-import {
-    Box,
-    Card,
-    CardBody,
-    Center,
-    Container,
-    Flex,
-    Heading,
-    Input,
-    SimpleGrid,
-    Spacer,
-    Text,
-} from "@chakra-ui/react";
-import LinkItems from "../../utils/linkItems";
+import { Box, Card, CardBody, Center, Container, Flex, Input, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
+import linkItems from '../../utils/linkItems';
 
-import SideBarLayout from "../../components/Layouts/SideBarLayout";
-import PrimaryButton from "../../components/Buttons/PrimaryButton";
-import { useEffect, useRef, useState } from "react";
+import SideBarLayout from '../../components/Layouts/SideBarLayout';
+import PrimaryButton from '../../components/Buttons/PrimaryButton';
+import { useEffect, useRef, useState } from 'react';
 import {
     useCallUpdateMutation,
     useCreateMessageMutation,
@@ -24,24 +12,26 @@ import {
     useGetUserQuery,
     useMarkAsReadMutation,
     useTypingMessageMutation,
-} from "../../app/services/api";
-import { Link, useParams } from "react-router-dom";
-import { formatTime } from "../../utils/helpers";
-import { io } from "socket.io-client";
+} from '../../app/services/api';
+import { Link, useParams } from 'react-router-dom';
+import { formatTime } from '../../utils/helpers';
+import { io } from 'socket.io-client';
+import { bgColor } from '../../utils/colors';
+import '../../App.css';
 
 const View = () => {
     const { id } = useParams();
     const messagesEndRef = useRef<any>(null);
-    const { data: messages } = useGetMessagesQuery(id || "");
-    const { data: workspace, isFetching } = useGetOneWorkspaceQuery(id || "");
-    const { data: user } = useGetUserQuery(localStorage.getItem("userId") || "");
+    const { data: messages } = useGetMessagesQuery(id || '');
+    const { data: workspace, isFetching } = useGetOneWorkspaceQuery(id || '');
+    const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
 
     const [createMessage] = useCreateMessageMutation();
     const [callUpdate] = useCallUpdateMutation();
     const [typingMessage] = useTypingMessageMutation();
     const [markAsRead] = useMarkAsReadMutation();
 
-    const [messageInput, setMessageInput] = useState<string>("");
+    const [messageInput, setMessageInput] = useState<string>('');
 
     // const [usersTyping, setUsersTyping] = useState<TUser[]>([]);
     const [usersTyping, setUsersTyping] = useState<boolean>(false);
@@ -56,12 +46,12 @@ const View = () => {
         const socket = io(import.meta.env.VITE_API_URL);
         socket.connect();
 
-        socket.on("update-message", () => {
+        socket.on('update-message', () => {
             callUpdate(null);
             setUsersTyping(false);
         });
 
-        socket.on("user-typing-message", (typingUser) => {
+        socket.on('user-typing-message', (typingUser) => {
             // setUsersTyping([...usersTyping, user]);
             if (user?._id !== typingUser.user._id) {
                 setUsersTyping(true);
@@ -94,12 +84,25 @@ const View = () => {
         };
     }, []);
 
+    const [newLinkItems, setNewLinkItems] = useState(linkItems);
+
+    useEffect(() => {
+        const newLinkItems = linkItems.map((item) => {
+            if (item.name === 'Message Board') {
+                return { ...item, active: true };
+            }
+            return { ...item, active: false };
+        });
+
+        setNewLinkItems(newLinkItems);
+    }, [linkItems]);
+
     const runMarkAsRead = async () => {
         await markAsRead(null);
     };
 
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
     const handleMessageInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,110 +115,99 @@ const View = () => {
     const handleCreateMessageClick = () => {
         createMessage({
             content: messageInput,
-            workspace: id || "",
+            workspace: id || '',
         });
-        setMessageInput("");
+        setMessageInput('');
         scrollToBottom();
     };
 
     const handleCreateMessageOnKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === "Enter") {
+        if (event.key === 'Enter') {
             createMessage({
                 content: messageInput,
-                workspace: id || "",
+                workspace: id || '',
             });
-            setMessageInput("");
+            setMessageInput('');
             scrollToBottom();
         }
     };
     return (
-        <SideBarLayout linkItems={LinkItems}>
-            <Box>
+        <SideBarLayout linkItems={newLinkItems}>
+            <Box mt={'30px'}>
                 {/* <Flex minH={"100vh"} bg={"#eff2f5"}> */}
-                <Container maxW={"full"} mt={{ base: 4, sm: 0 }}>
+                <Container maxW={'full'} mt={{ base: 4, sm: 0 }}>
                     <SimpleGrid spacing={6} columns={{ base: 1, sm: 2 }}>
                         <Flex>
-                            <Box>
-                                <Heading size={"sm"} mb={"12px"} color={"rgb(52, 71, 103)"}>
+                            <Box pl={'6px'}>
+                                <Text fontSize={'20px'} mb={'30px'} color={bgColor} className="dmsans-600">
                                     {!isFetching ? (
                                         <>
-                                            <Link to={`/workspaces/${localStorage.getItem("workspaceId")}`}>
-                                                <Text
-                                                    display={"inline"}
-                                                    textDecor={"underline"}
-                                                >{`${workspace?.name}`}</Text>
+                                            <Link to={`/workspaces/${localStorage.getItem('workspaceId')}`}>
+                                                <Text display={'inline'}>{`${workspace?.name}`}</Text>
                                             </Link>
-                                            <Text display={"inline"}>{" / Message Board"}</Text>
+                                            <Text display={'inline'} className="dmsans-600">
+                                                {' / Message Board'}
+                                            </Text>
                                         </>
                                     ) : null}
-                                </Heading>
+                                </Text>
                             </Box>
                         </Flex>
                         <Flex>
                             <Spacer />
-                            <Box pb={"20px"}>{/* <Create addNewWorkspace={addNewWorkspace} /> */}</Box>
+                            <Box pb={'20px'}>{/* <Create addNewWorkspace={addNewWorkspace} /> */}</Box>
                         </Flex>
                     </SimpleGrid>
 
-                    <Box w={"100%"}>
+                    <Box w={'100%'}>
                         <Card>
                             <CardBody>
                                 <>
                                     {messages?.length || 0 > 0
                                         ? messages?.map((message, index) => {
                                               return (
-                                                  <Box key={index} mb={"10px"} width={"100%"}>
+                                                  <Box key={index} mb={'10px'} width={'100%'}>
                                                       {user?._id === message?.createdBy?._id ? (
                                                           <>
-                                                              <Box display={"flex"} justifyContent={"flex-end"}>
-                                                                  <Flex minW={"300px"} w={"40%"}>
+                                                              <Box display={'flex'} justifyContent={'flex-end'}>
+                                                                  <Flex minW={'300px'} w={'40%'}>
                                                                       <Spacer />
-                                                                      <Text fontSize={"12px"} mb={"3px"}>{`${
-                                                                          message?.createdBy?.firstname
-                                                                      } ${message?.createdBy?.lastname} - ${formatTime(
-                                                                          message?.createdAt || new Date()
-                                                                      )}`}</Text>
+                                                                      <Text fontSize={'12px'} mb={'3px'}>{`${message?.createdBy?.firstname} ${
+                                                                          message?.createdBy?.lastname
+                                                                      } - ${formatTime(message?.createdAt || new Date())}`}</Text>
                                                                   </Flex>
                                                               </Box>
-                                                              <Box display={"flex"} justifyContent={"flex-end"}>
-                                                                  <Box
-                                                                      bgColor={"#2b81eb"}
-                                                                      p={"10px"}
-                                                                      borderRadius={"5px"}
-                                                                      minW={"300px"}
-                                                                      w={"40%"}
-                                                                  >
-                                                                      <Text color={"white"}>{message.content}</Text>
+                                                              <Box display={'flex'} justifyContent={'flex-end'}>
+                                                                  <Box bgColor={'#2b81eb'} p={'10px'} borderRadius={'5px'} minW={'300px'} w={'40%'}>
+                                                                      <Text color={'white'}>{message.content}</Text>
                                                                   </Box>
                                                               </Box>
                                                           </>
                                                       ) : (
                                                           <Box>
-                                                              <Flex minW={"300px"} w={"40%"}>
+                                                              <Flex minW={'300px'} w={'40%'}>
                                                                   <Spacer />
-                                                                  <Text fontSize={"12px"}>{`${
-                                                                      message?.createdBy?.firstname
-                                                                  } ${message?.createdBy?.lastname} - ${formatTime(
-                                                                      message?.createdAt || new Date()
-                                                                  )}`}</Text>
+                                                                  <Text fontSize={'12px'}>{`${message?.createdBy?.firstname} ${
+                                                                      message?.createdBy?.lastname
+                                                                  } - ${formatTime(message?.createdAt || new Date())}`}</Text>
                                                               </Flex>
                                                               <Box
-                                                                  bgColor={"gray"}
-                                                                  p={"10px"}
-                                                                  borderRadius={"5px"}
-                                                                  display={"inline-block"}
-                                                                  minW={"300px"}
-                                                                  w={"40%"}
+                                                                  bgColor={'gray'}
+                                                                  p={'10px'}
+                                                                  borderRadius={'5px'}
+                                                                  display={'inline-block'}
+                                                                  minW={'300px'}
+                                                                  w={'40%'}
                                                               >
-                                                                  <Text color={"white"}>{message.content}</Text>
+                                                                  <Text color={'white'}>{message.content}</Text>
                                                               </Box>
                                                           </Box>
                                                       )}
                                                   </Box>
                                               );
                                           })
-                                        : "No messages"}
-                                    <Box h={"20px"}>
+                                        : 'No messages'}
+                                    <Box h={'20px'}>
                                         <Center>
                                             {usersTyping && userWhosTyping.user._id !== user?._id ? (
                                                 <Text>{`${userWhosTyping.user.firstname} ${userWhosTyping.user.lastname} typing...`}</Text>
@@ -225,13 +217,13 @@ const View = () => {
                                 </>
                             </CardBody>
                         </Card>
-                        <Box mt={"10px"} mb={"20px"}>
+                        <Box mt={'10px'} mb={'20px'}>
                             <Box>
                                 <Card>
                                     <CardBody>
                                         <Flex>
                                             <Input
-                                                mr={"10px"}
+                                                mr={'10px'}
                                                 value={messageInput}
                                                 onChange={handleMessageInputChange}
                                                 onKeyDown={handleCreateMessageOnKeyDown}

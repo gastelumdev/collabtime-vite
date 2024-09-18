@@ -20,12 +20,13 @@ import Edit from './Edit';
 
 import SideBarLayout from '../../components/Layouts/SideBarLayout';
 import PrimaryCard from '../../components/PrimaryCard';
-import { BsPersonWorkspace } from 'react-icons/bs';
+// import { BsPersonWorkspace } from 'react-icons/bs';
 import TagsModal from '../tags/TagsModal';
 import Delete from './Delete';
 import mvpLogo from '../../assets/MVPOriginalLogo.png';
+import { LiaHomeSolid } from 'react-icons/lia';
 
-const LinkItems: Array<LinkItemProps> = [{ name: 'Workspaces', icon: BsPersonWorkspace, path: '/workspaces' }];
+const LinkItems: Array<LinkItemProps> = [{ name: 'Workspaces', icon: LiaHomeSolid, path: '/workspaces' }];
 
 const mvpUserEmails = ['islas@mvpsecuritysystems.com', 'jvargas@mvpsecuritysystems.com', 'acastro@mvpsecuritysystems.com'];
 
@@ -120,7 +121,7 @@ const View = () => {
                     <img src={pageLogo || ''} width={mvpUserEmails.includes(user?.email || '') ? '90px' : '30px'} />
                 </Box>
             }
-            sidebar={false}
+            sidebar={true}
         >
             <Box>
                 <Flex minH={'100vh'} bg={'#f6f8fa'}>

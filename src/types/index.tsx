@@ -20,6 +20,7 @@ export type TUser = {
     organization: string;
     logoURL: string;
     workspaces: TUserWorkspace[];
+    defaultWorkspaceId: string;
 };
 
 export type TWorkspace = {
@@ -161,6 +162,7 @@ export type TAccess = {
 
 export interface LinkItemProps {
     name: string;
+    active?: boolean;
     icon: IconType;
     path: string;
 }

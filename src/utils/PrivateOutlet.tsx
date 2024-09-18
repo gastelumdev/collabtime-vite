@@ -69,6 +69,7 @@ export function PrivateOutlet({ redirectPath = '/login' }: PrivateOutletProps) {
             socket.disconnect();
         };
     }, [status]);
+
     if (!localStorage.getItem('workspaceId')) localStorage.setItem('workspaceId', 'none');
 
     if (!localStorage.getItem('token')) {

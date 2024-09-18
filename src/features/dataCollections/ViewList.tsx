@@ -14,10 +14,9 @@ import {
     Box,
     Card,
     CardBody,
+    Center,
     Container,
     Flex,
-    Heading,
-    SimpleGrid,
     Spacer,
     Table,
     TableContainer,
@@ -44,7 +43,7 @@ const ViewList = ({ allowed = false }: { allowed?: boolean }) => {
     // const [data, setData] = useState<TDataCollection[]>(dataCollections);
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
     const { data } = useGetDataCollectionsQuery(null);
-    const { data: workspace, isFetching: workspaceIsFetching } = useGetOneWorkspaceQuery(localStorage.getItem('workspaceId') || '');
+    const { data: workspace } = useGetOneWorkspaceQuery(localStorage.getItem('workspaceId') || '');
     const [createDataCollection] = useCreateDataCollecionMutation();
     const [updateDataCollection] = useUpdateDataCollectionMutation();
     const [deleteDataCollection] = useDeleteDataCollectionMutation();
@@ -55,10 +54,16 @@ const ViewList = ({ allowed = false }: { allowed?: boolean }) => {
 
     const [permissions, setPermissions] = useState<number>();
 
+    const [dataCollections, setDataCollections] = useState(data);
+
     useEffect(() => {
+        console.log(workspace);
+        console.log(data);
         permissions;
         getPermissions();
-    }, [user]);
+
+        setDataCollections(data);
+    }, [user, workspace, data]);
 
     const getPermissions = () => {
         for (const workspace of user?.workspaces || []) {
@@ -103,7 +108,7 @@ const ViewList = ({ allowed = false }: { allowed?: boolean }) => {
 
     return (
         <Card>
-            <CardBody>
+            <CardBody p={1} pt={7}>
                 <Box>
                     <Flex
                         minH={'100vh'}
@@ -111,148 +116,94 @@ const ViewList = ({ allowed = false }: { allowed?: boolean }) => {
                         // bg={'#eff2f5'}
                     >
                         <Container maxW={'full'} mt={{ base: 4, sm: 0 }}>
-                            <SimpleGrid
-                                spacing={6}
-                                // templateColumns="repeat(auto-fill, minmax(300px, 1fr))"
-                                columns={{ base: 1, sm: 2 }}
-                                pb={'14px'}
-                            >
-                                <Flex>
-                                    <Box>
-                                        <Heading size={'sm'} mb={'12px'} color={'rgb(52, 71, 103)'}>
-                                            {!workspaceIsFetching ? (
-                                                <>
-                                                    {/* <Link to={`/workspaces/${localStorage.getItem('workspaceId')}`}>
-                                                        <Text display={'inline'} textDecor={'underline'}>{`${workspace?.name}`}</Text>
-                                                    </Link>{' '} */}
-                                                    <Text display={'inline'} color={'#666666'} fontWeight={'semibold'}>
-                                                        {'Data Collections'}
-                                                    </Text>
-                                                </>
-                                            ) : null}
-                                        </Heading>
-                                        <Text color={'rgb(123, 128, 154)'} fontSize={'sm'} fontWeight={300}>
-                                            Create data collection tables to visualize and manage your data.
+                            {allowed ? (
+                                <Flex h={'50px'} mb={'10px'}>
+                                    <Box pt={'4px'}>
+                                        <Text fontSize={'18px'} fontWeight={'semibold'} className="dmsans-600">
+                                            Data Collections
                                         </Text>
                                     </Box>
+                                    <Spacer />
+                                    <Box pb={'20px'} mr={'10px'}>
+                                        <Templates />
+                                    </Box>
+                                    <Box>
+                                        <Create addNewDataCollection={createDataCollection} />
+                                    </Box>
                                 </Flex>
-                                {allowed ? (
-                                    <Flex>
-                                        <Spacer />
-                                        <Box pb={'20px'} mr={'10px'}>
-                                            <Templates />
-                                        </Box>
-                                        <Box pb={'20px'}>
-                                            <Create addNewDataCollection={createDataCollection} />
-                                        </Box>
-                                    </Flex>
-                                ) : null}
-                            </SimpleGrid>
-                            <TableContainer>
-                                <Table size="sm">
-                                    <Thead>
-                                        <Tr>
-                                            {allowed ? <Th></Th> : null}
-                                            <Th color={'#666666'} fontWeight={'semibold'}>
-                                                Name
-                                            </Th>
-                                            {/* <Th>Description</Th> */}
+                            ) : null}
+                            {dataCollections && dataCollections.length > 0 ? (
+                                <TableContainer>
+                                    <Table size="sm">
+                                        <Thead>
+                                            <Tr>
+                                                {allowed ? <Th></Th> : null}
+                                                <Th color={'#666666'} fontWeight={'semibold'}>
+                                                    Name
+                                                </Th>
+                                                {/* <Th>Description</Th> */}
 
-                                            <Th color={'#666666'} fontWeight={'semibold'}>
-                                                Tags
-                                            </Th>
-                                        </Tr>
-                                    </Thead>
-                                    <Tbody>
-                                        {data?.map((dataCollection: any, index: number) => {
-                                            return (
-                                                <Tr key={index}>
-                                                    {allowed ? (
-                                                        <Td w={'120px'}>
-                                                            <Edit dataCollection={dataCollection} updateDataCollection={updateDataCollection} />
-                                                            <Delete dataCollection={dataCollection} deleteDataCollection={deleteDataCollection} />
-                                                            <TagsModal
-                                                                tagType={'dataCollection'}
-                                                                data={dataCollection}
-                                                                tags={dataCollection.tags}
-                                                                update={updateDataCollection}
-                                                                workspaceId={workspace?._id || ''}
-                                                            />
+                                                <Th color={'#666666'} fontWeight={'semibold'}>
+                                                    Tags
+                                                </Th>
+                                            </Tr>
+                                        </Thead>
+                                        <Tbody>
+                                            {data?.map((dataCollection: any, index: number) => {
+                                                return (
+                                                    <Tr key={index}>
+                                                        {allowed ? (
+                                                            <Td w={'120px'} p={0}>
+                                                                <Edit dataCollection={dataCollection} updateDataCollection={updateDataCollection} />
+                                                                <Delete dataCollection={dataCollection} deleteDataCollection={deleteDataCollection} />
+                                                                <TagsModal
+                                                                    tagType={'dataCollection'}
+                                                                    data={dataCollection}
+                                                                    tags={dataCollection.tags}
+                                                                    update={updateDataCollection}
+                                                                    workspaceId={workspace?._id || ''}
+                                                                />
+                                                            </Td>
+                                                        ) : null}
+                                                        <Td>
+                                                            <Link to={`/workspaces/${workspace?._id}/dataCollections/${dataCollection._id}`}>
+                                                                <Text fontSize={'13px'} color={'#666666'}>
+                                                                    {dataCollection.name}
+                                                                </Text>
+                                                            </Link>
                                                         </Td>
-                                                    ) : null}
-                                                    <Td>
-                                                        <Link to={`/workspaces/${workspace?._id}/dataCollections/${dataCollection._id}`}>
-                                                            <Text fontSize={'13px'} color={'#666666'}>
-                                                                {dataCollection.name}
-                                                            </Text>
-                                                        </Link>
-                                                    </Td>
-                                                    {/* <Td>
+                                                        {/* <Td>
                                                         <Text fontSize={'13px'}>{dataCollection.description}</Text>
                                                     </Td> */}
 
-                                                    <Td w={'300px'}>
-                                                        {dataCollection.tags.map((tag: TTag, index: number) => {
-                                                            return (
-                                                                <Tag key={index} size={'sm'} variant="subtle" colorScheme="blue" mr={'5px'} zIndex={1000}>
-                                                                    <TagLabel pb={'2px'}>{tag.name}</TagLabel>
-                                                                    {allowed ? (
-                                                                        <TagCloseButton
-                                                                            onClick={() => handleCloseTagButtonClick(dataCollection, tag)}
-                                                                            zIndex={1000}
-                                                                        />
-                                                                    ) : null}
-                                                                </Tag>
-                                                            );
-                                                        })}
-                                                    </Td>
-                                                </Tr>
-                                            );
-                                        })}
-                                    </Tbody>
-                                </Table>
-                            </TableContainer>
-                            {/* <SimpleGrid
-                                spacing={4}
-                                // templateColumns="repeat(3, minmax(300px, 1fr))"
-                                columns={{ base: 1, sm: 1, md: 2, lg: 2, xl: 3 }}
-                            >
-                                {data?.map((dataCollection, index) => {
-                                    return (
-                                        <Box key={index}>
-                                            <PrimaryCard
-                                                index={index}
-                                                data={dataCollection}
-                                                redirectUrl={`/workspaces/${workspace?._id}/dataCollections/${dataCollection._id}`}
-                                                localStorageId="dataCollectionId"
-                                                divider={(permissions || 0) > 1}
-                                                editButton={
-                                                    (permissions || 0) > 1 ? (
-                                                        <Edit dataCollection={dataCollection} updateDataCollection={updateDataCollection} />
-                                                    ) : null
-                                                }
-                                                deleteButton={
-                                                    (permissions || 0) > 1 ? (
-                                                        <Delete dataCollection={dataCollection} deleteDataCollection={deleteDataCollection} />
-                                                    ) : null
-                                                }
-                                                tagButton={
-                                                    (permissions || 0) > 1 ? (
-                                                        <TagsModal
-                                                            tagType={'dataCollection'}
-                                                            data={dataCollection}
-                                                            tags={dataCollection.tags}
-                                                            update={updateDataCollection}
-                                                            workspaceId={workspace?._id || ''}
-                                                        />
-                                                    ) : null
-                                                }
-                                                handleCloseTagButtonClick={handleCloseTagButtonClick}
-                                            />
-                                        </Box>
-                                    );
-                                })}
-                            </SimpleGrid> */}
+                                                        <Td w={'300px'}>
+                                                            {dataCollection.tags.map((tag: TTag, index: number) => {
+                                                                return (
+                                                                    <Tag key={index} size={'sm'} variant="subtle" colorScheme="blue" mr={'5px'} zIndex={1000}>
+                                                                        <TagLabel pb={'2px'}>{tag.name}</TagLabel>
+                                                                        {allowed ? (
+                                                                            <TagCloseButton
+                                                                                onClick={() => handleCloseTagButtonClick(dataCollection, tag)}
+                                                                                zIndex={1000}
+                                                                            />
+                                                                        ) : null}
+                                                                    </Tag>
+                                                                );
+                                                            })}
+                                                        </Td>
+                                                    </Tr>
+                                                );
+                                            })}
+                                        </Tbody>
+                                    </Table>
+                                </TableContainer>
+                            ) : (
+                                <Box mt={'30px'}>
+                                    <Center>
+                                        <Text>Create a Data Collection to get started.</Text>
+                                    </Center>
+                                </Box>
+                            )}
                         </Container>
                     </Flex>
                 </Box>

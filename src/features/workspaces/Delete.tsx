@@ -6,11 +6,12 @@ import {
     AlertDialogHeader,
     AlertDialogOverlay,
     Button,
+    MenuItem,
     useDisclosure,
 } from '@chakra-ui/react';
-import React from 'react';
-import { AiOutlineDelete } from 'react-icons/ai';
+import React, { useEffect, useState } from 'react';
 import { TWorkspace } from '../../types';
+import { useGetWorkspacesQuery } from '../../app/services/api';
 
 interface IProps {
     workspace: TWorkspace;
@@ -18,11 +19,22 @@ interface IProps {
 }
 
 const Delete = ({ workspace, deleteWorkspace }: IProps) => {
+    const { data: workspaces } = useGetWorkspacesQuery(null);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const cancelRef = React.useRef<any>(null);
+    const [redirectWorkspaceId, setRedirectWorkspaceId] = useState('');
+
+    useEffect(() => {
+        const redirectWorkspace: any = workspaces?.find((ws: any) => {
+            return workspace._id !== ws._id;
+        });
+
+        console.log(redirectWorkspace);
+        if (redirectWorkspace !== undefined) setRedirectWorkspaceId(redirectWorkspace._id);
+    }, [workspaces]);
     return (
         <>
-            <Button flex="1" variant="ghost" leftIcon={<AiOutlineDelete />} color={'#b3b8cf'} zIndex={10} onClick={onOpen}></Button>
+            <MenuItem onClick={onOpen}>Delete Workspace</MenuItem>
             <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
                 <AlertDialogOverlay>
                     <AlertDialogContent>
@@ -38,9 +50,13 @@ const Delete = ({ workspace, deleteWorkspace }: IProps) => {
                             </Button>
                             <Button
                                 colorScheme="red"
+                                as={'a'}
+                                href={'/workspaces/' + redirectWorkspaceId}
                                 onClick={() => {
                                     deleteWorkspace(workspace._id as string);
                                     onClose();
+                                    localStorage.setItem('workspaceId', redirectWorkspaceId);
+                                    // navigate('/workspaces/' + redirectWorkspaceId);
                                 }}
                                 ml={3}
                             >

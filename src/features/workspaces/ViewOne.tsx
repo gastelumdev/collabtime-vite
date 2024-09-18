@@ -6,11 +6,15 @@ import {
     useGetUserQuery,
     // useGetUnreadMessagesQuery,
     useCallUpdateMessagesMutation,
+    useUpdateWorkspaceMutation,
+    useDeleteWorkspaceMutation,
+    useGetWorkspacesQuery,
 } from '../../app/services/api';
 
-import { Avatar, AvatarGroup, Box, Container, Flex, Heading, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
+import { Avatar, AvatarGroup, Box, Container, Flex, Menu, MenuButton, MenuList, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
+import { IoSettingsOutline } from 'react-icons/io5';
 
-import LinkItems from '../../utils/linkItems';
+import linkItems from '../../utils/linkItems';
 import { TUser } from '../../types';
 
 import SideBarLayout from '../../components/Layouts/SideBarLayout';
@@ -18,6 +22,11 @@ import Invite from './Invite';
 import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import ViewList from '../dataCollections/ViewList';
+import PrimaryButton from '../../components/Buttons/PrimaryButton';
+import Edit from './Edit';
+import Delete from './Delete';
+import { bgColor } from '../../utils/colors';
+import '../../App.css';
 
 /**
  * This funcion renders a workspace when selected from the workspaces page
@@ -28,9 +37,13 @@ import ViewList from '../dataCollections/ViewList';
  */
 const ViewOne = () => {
     const { id } = useParams();
+    console.log(id);
+    const { data: workspaces } = useGetWorkspacesQuery(null);
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
     const { data: workspace, isError, error } = useGetOneWorkspaceQuery(id as string);
     const { data: workspaceUser } = useGetWorkspaceUsersQuery(id as string);
+    const [updateWorkspace] = useUpdateWorkspaceMutation();
+    const [deleteWorkspace] = useDeleteWorkspaceMutation();
     // const { data: unreadMessages } = useGetUnreadMessagesQuery(null);
 
     const [callUpdateMessages] = useCallUpdateMessagesMutation();
@@ -67,19 +80,35 @@ const ViewOne = () => {
         }
     };
 
+    const [newLinkItems, setNewLinkItems] = useState(linkItems);
+
+    useEffect(() => {
+        const newLinkItems = linkItems.map((item) => {
+            if (item.name === 'Dashboard') {
+                return { ...item, active: true };
+            }
+            return { ...item, active: false };
+        });
+
+        setNewLinkItems(newLinkItems);
+    }, [linkItems]);
+
     if (isError) return <Navigate to={'/workspaces'} />;
 
     return (
-        <SideBarLayout linkItems={LinkItems}>
+        <SideBarLayout linkItems={newLinkItems}>
             <Box>
                 <Flex minH={'100vh'} bg={'#f6f8fa'}>
                     <Container maxW={'full'} mt={{ base: 4, sm: 0 }}>
-                        <SimpleGrid spacing={6} columns={{ base: 1, sm: 2 }} pb={'20px'}>
+                        <SimpleGrid spacing={6} columns={{ base: 1, sm: 2 }} pb={'30px'} mt={'18px'}>
                             <Flex>
-                                <Box pt={'30px'}>
-                                    <Heading size={'sm'} color={'#666666'} fontWeight={'semibold'}>
+                                <Box pt={workspace?.description === '' ? '30px' : '10px'} pl={'5px'}>
+                                    <Text fontSize={'22px'} color={bgColor} mb={'3px'} className="dmsans-600">
                                         {workspace?.name}
-                                    </Heading>
+                                    </Text>
+                                    <Text fontSize={'14px'} color={'#64758E'} className="dmsans-400">
+                                        {workspace?.description}
+                                    </Text>
                                     {/* <Text color={'rgb(123, 128, 154)'} fontSize={'md'} fontWeight={300}>
                                         The tools below will help manage your projects and teams.
                                     </Text> */}
@@ -88,7 +117,7 @@ const ViewOne = () => {
                             <Flex>
                                 <Spacer />
                                 <Box pt={'30px'} mr={'10px'}>
-                                    <Text color={'rgb(123, 128, 154)'} fontSize={'14px'}>
+                                    <Text fontSize={'14px'} color={'#64758E'} className="dmsans-400">
                                         Team Members:
                                     </Text>
                                 </Box>
@@ -110,53 +139,29 @@ const ViewOne = () => {
                                     </AvatarGroup>
                                 </Box>
                                 {(permissions || 1) > 1 ? (
-                                    <Box mt={'22px'}>
-                                        <Invite />
-                                    </Box>
+                                    <>
+                                        <Box mt={'22px'}>
+                                            <Invite />
+                                        </Box>
+                                        <Box mt={'22px'} ml={'6px'}>
+                                            <Menu>
+                                                <MenuButton>
+                                                    <PrimaryButton size="sm">
+                                                        <Text fontSize={'16px'}>
+                                                            <IoSettingsOutline />
+                                                        </Text>
+                                                    </PrimaryButton>
+                                                </MenuButton>
+                                                <MenuList fontSize={'13px'}>
+                                                    <Edit workspace={workspace as any} updateWorkspace={updateWorkspace} workspaces={workspaces} />
+                                                    <Delete workspace={workspace as any} deleteWorkspace={deleteWorkspace} />
+                                                </MenuList>
+                                            </Menu>
+                                        </Box>
+                                    </>
                                 ) : null}
                             </Flex>
                         </SimpleGrid>
-                        {/* <SimpleGrid spacing={6} spacingY={12} columns={{ base: 1, sm: 1, md: 3, lg: 3 }}>
-                            {(workspace?.tools.dataCollections.access || 0) > 0 ? (
-                                <a href={`/workspaces/${workspace?._id}/dataCollections`}>
-                                    <SecondaryCard
-                                        title={'Data Collections'}
-                                        description={'Create and manage data.'}
-                                        // icon={AiOutlineTable}
-                                        bgImage="linear-gradient(195deg, rgb(73, 163, 241), rgb(26, 115, 232))"
-                                    />
-                                </a>
-                            ) : null}
-                            {(workspace?.tools.docs.access || 0) > 0 ? (
-                                <a href={`/workspaces/${workspace?._id}/documents`}>
-                                    <SecondaryCard
-                                        title={'Documents'}
-                                        description={'Create and upload docs.'}
-                                        // icon={BsFiletypeDoc}
-                                        bgImage="linear-gradient(195deg, rgb(102, 187, 106), rgb(67, 160, 71))"
-                                        // bgImage="linear-gradient(195deg, rgb(73, 163, 241), rgb(26, 115, 232))"
-                                    />
-                                </a>
-                            ) : null}
-                            {(workspace?.tools.messageBoard.access || 0) > 0 ? (
-                                <a href={`/workspaces/${workspace?._id}/messageBoard/active`}>
-                                    <SecondaryCard
-                                        title={'Message Board'}
-                                        description={'Message your team.'}
-                                        // icon={AiOutlineMessage}
-                                        bgImage="linear-gradient(195deg, #FF548A, #EC1559)"
-                                        // bgImage="linear-gradient(195deg, rgb(73, 163, 241), rgb(26, 115, 232))"
-                                        badge={
-                                            (unreadMessages?.length || 0) > 0 ? (
-                                                <Box display={'inline'} bgColor={'white'} px={'5px'} color={'red'} borderRadius={'full'}>
-                                                    {unreadMessages?.length}
-                                                </Box>
-                                            ) : null
-                                        }
-                                    />
-                                </a>
-                            ) : null}
-                        </SimpleGrid> */}
                         <Box>
                             <ViewList allowed={(permissions || 0) > 1} />
                         </Box>

@@ -38,7 +38,7 @@ const DataCollection = ({ showDoneRows = false, rowsProp }: { showDoneRows?: boo
     } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
     // const [updateRow] = useUpdateRowMutation();
     const [permissions, setPermissions] = useState<number>();
-    const [windowWidthOffset, setWindowWidthOffset] = useState(window.innerWidth > 990 ? 90 : 7);
+    const [windowWidthOffset, setWindowWidthOffset] = useState(window.innerWidth > 990 ? 265 : 7);
 
     useEffect(() => {
         refetch();
@@ -53,7 +53,7 @@ const DataCollection = ({ showDoneRows = false, rowsProp }: { showDoneRows?: boo
     }, [user]);
 
     const setOffset = useCallback(() => {
-        setWindowWidthOffset(window.innerWidth > 990 ? 90 : 5);
+        setWindowWidthOffset(window.innerWidth > 990 ? 265 : 5);
     }, [windowWidthOffset]);
 
     useEffect(() => {

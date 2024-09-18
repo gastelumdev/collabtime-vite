@@ -26,6 +26,13 @@ export const api = createApi({
                 url: `user/${userId}`,
             })
         }),
+        updateUser: builder.mutation<TUser, any>({
+            query: (user) => ({
+                url: `user/${user._id}/update`,
+                method: "PUT",
+                body: user
+            })
+        }),
         resetPasswordRequest: builder.mutation<BasicResponse, ResetPasswordRequestRequest>({
             query: (email) => ({
                 url: "resetPasswordRequest",
@@ -491,6 +498,7 @@ export const api = createApi({
 export const {
     useLoginMutation,
     useGetUserQuery,
+    useUpdateUserMutation,
     useResetPasswordRequestMutation,
     useResetPasswordMutation,
     useGetWorkspacesQuery,

@@ -24,7 +24,7 @@ function App() {
             {/* <Layout> */}
             <Routes>
                 <Route element={<PrivateOutlet />}>
-                    <Route path="workspaces" element={<Workspaces />} />
+                    {/* <Route path="workspaces" element={<Workspaces />} /> */}
                     {/* <Route element={<WorkspaceOutlet />}> */}
                     <Route path="workspaces/:id" element={<Workspace />} />
                     <Route path="workspaces/:id/dataCollections" element={<DataCollections />} />

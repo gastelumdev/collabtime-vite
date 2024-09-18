@@ -5,7 +5,6 @@ import {
     CardBody,
     Container,
     Flex,
-    Heading,
     Menu,
     MenuButton,
     MenuList,
@@ -26,7 +25,7 @@ import {
 
 import './styles.css';
 import SideBarLayout from '../../components/Layouts/SideBarLayout';
-import LinkItems from '../../utils/linkItems';
+import linkItems from '../../utils/linkItems';
 import { IconContext } from 'react-icons';
 import { FaRegFileAlt, FaRegFileExcel } from 'react-icons/fa';
 import {
@@ -49,6 +48,8 @@ import DocDrawer from './DocDrawer';
 import DeleteFileAlert from './DeleteFileAlert';
 import UpdateFileModal from './UpdateFileModal';
 import { useEffect, useState } from 'react';
+import { bgColor } from '../../utils/colors';
+import '../../App.css';
 
 const View = () => {
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
@@ -67,6 +68,19 @@ const View = () => {
     useEffect(() => {
         getPermissions();
     }, [user]);
+
+    const [newLinkItems, setNewLinkItems] = useState(linkItems);
+
+    useEffect(() => {
+        const newLinkItems = linkItems.map((item) => {
+            if (item.name === 'Documents') {
+                return { ...item, active: true };
+            }
+            return { ...item, active: false };
+        });
+
+        setNewLinkItems(newLinkItems);
+    }, [linkItems]);
 
     const getPermissions = () => {
         for (const workspace of user?.workspaces || []) {
@@ -112,61 +126,62 @@ const View = () => {
     };
 
     return (
-        <SideBarLayout linkItems={LinkItems}>
-            <Box>
+        <SideBarLayout linkItems={newLinkItems}>
+            <Box mt={'30px'}>
                 {/* <Flex
                     minH={"100vh"}
                     // justify={"center"}
                     bg={"#eff2f5"}
                 > */}
                 <Container maxW={'full'} mt={{ base: 4, sm: 0 }}>
-                    <Box mb={{ base: '15px' }}>
-                        <Heading size={'sm'} mb={'12px'} color={'rgb(52, 71, 103)'}>
+                    <Flex pl={'6px'}>
+                        <Box mb={{ base: '15px' }} mt={'4px'}>
+                            <Text size={'sm'} mb={'12px'} color={'rgb(52, 71, 103)'}>
+                                <>
+                                    {!isFetching ? (
+                                        <>
+                                            <Link to={`/workspaces/${localStorage.getItem('workspaceId')}`}>
+                                                <Text
+                                                    display={'inline'}
+                                                    // textDecor={'underline'}
+                                                    color={bgColor}
+                                                    fontWeight={'bold'}
+                                                    fontSize={'20px'}
+                                                    className="dmsans-600"
+                                                >{`${workspace?.name}`}</Text>
+                                            </Link>
+
+                                            <Text display={'inline'} color={bgColor} fontSize={'20px'} fontWeight={'bold'} className="dmsans-600">
+                                                {' / Documents'}
+                                            </Text>
+                                        </>
+                                    ) : null}
+                                </>
+                            </Text>
+                        </Box>
+
+                        {(permissions || 0) > 1 ? (
                             <>
-                                {!isFetching ? (
-                                    <>
-                                        <Link to={`/workspaces/${localStorage.getItem('workspaceId')}`}>
-                                            <Text
-                                                display={'inline'}
-                                                textDecor={'underline'}
-                                                color={'#666666'}
-                                                fontWeight={'semibold'}
-                                            >{`${workspace?.name}`}</Text>
-                                        </Link>
-
-                                        <Text display={'inline'} color={'#666666'} fontWeight={'semibold'}>
-                                            {' / Documents'}
-                                        </Text>
-                                    </>
-                                ) : null}
+                                <Spacer />
+                                <Menu>
+                                    <MenuButton
+                                        as={Button}
+                                        bgColor={'#24a2f0'}
+                                        color={'white'}
+                                        rightIcon={<ChevronDownIcon />}
+                                        size={'sm'}
+                                        _hover={{ backgroundColor: '#24a2f0' }}
+                                    >
+                                        Actions
+                                    </MenuButton>
+                                    <MenuList zIndex={2000}>
+                                        <UploadModal documents={documents || []} />
+                                        <DocDrawer />
+                                    </MenuList>
+                                </Menu>
                             </>
-                        </Heading>
-                        <Text color={'rgb(123, 128, 154)'} fontSize={'md'} fontWeight={300}>
-                            Upload files or create them with a Rich-Text editor.
-                        </Text>
-                    </Box>
-
-                    {(permissions || 0) > 1 ? (
-                        <Flex>
-                            <Spacer />
-                            <Menu>
-                                <MenuButton
-                                    as={Button}
-                                    bgColor={'#24a2f0'}
-                                    color={'white'}
-                                    rightIcon={<ChevronDownIcon />}
-                                    size={'sm'}
-                                    _hover={{ backgroundColor: '#24a2f0' }}
-                                >
-                                    Actions
-                                </MenuButton>
-                                <MenuList zIndex={2000}>
-                                    <UploadModal documents={documents || []} />
-                                    <DocDrawer />
-                                </MenuList>
-                            </Menu>
-                        </Flex>
-                    ) : null}
+                        ) : null}
+                    </Flex>
                     <Card mt={'10px'}>
                         <CardBody>
                             {documents?.length || 0 > 0 ? (

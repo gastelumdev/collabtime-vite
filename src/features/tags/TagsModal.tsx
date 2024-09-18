@@ -122,7 +122,7 @@ const TagsModal = ({ data, tags, update, workspaceId, tagType }: IProps) => {
                     <BsPlusCircle color={'rgb(123, 128, 154)'} />
                 </Button>
             ) : tagType === 'dataCollection' ? (
-                <Button flex="1" variant="unstyled" h={'14px'} w={'5px'} leftIcon={<GoTag />} color={'#b3b8cf'} zIndex={10} onClick={onOpen}></Button>
+                <Button flex="1" variant="unstyled" h={'12px'} w={'5px'} leftIcon={<GoTag />} color={'#b3b8cf'} zIndex={10} onClick={onOpen}></Button>
             ) : (
                 <Button flex="1" variant="ghost" leftIcon={<GoTag />} color={'#b3b8cf'} zIndex={10} onClick={onOpen}></Button>
             )}
