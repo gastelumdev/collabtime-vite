@@ -33,7 +33,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { LiaSignOutAltSolid, LiaUserSolid } from 'react-icons/lia';
 import View from '../../features/notifications/View';
 import Search from '../../features/search/View';
-import { ChevronDownIcon } from '@chakra-ui/icons';
+// import { ChevronDownIcon } from '@chakra-ui/icons';
 import Create from '../../features/workspaces/Create';
 import { bgColor, color, topNavBgColor, hoverBg } from '../../utils/colors';
 
@@ -144,9 +144,7 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
                                         fontWeight={'semibold'}
                                         py={'5px'}
                                     >
-                                        <Text color={'white'}>
-                                            {workspace?.name || '|'} <ChevronDownIcon fontSize={'20px'} />
-                                        </Text>
+                                        <Text color={'white'}>{/* {workspace?.name || '|'} <ChevronDownIcon fontSize={'20px'} /> */}</Text>
                                     </MenuButton>
                                     <MenuList>
                                         {data?.map((ws: any, index: number) => {

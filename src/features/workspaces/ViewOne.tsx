@@ -22,7 +22,7 @@ import Invite from './Invite';
 import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import ViewList from '../dataCollections/ViewList';
-import PrimaryButton from '../../components/Buttons/PrimaryButton';
+// import PrimaryButton from '../../components/Buttons/PrimaryButton';
 import Edit from './Edit';
 import Delete from './Delete';
 import { bgColor } from '../../utils/colors';
@@ -146,11 +146,11 @@ const ViewOne = () => {
                                         <Box mt={'22px'} ml={'6px'}>
                                             <Menu>
                                                 <MenuButton>
-                                                    <PrimaryButton size="sm">
-                                                        <Text fontSize={'16px'}>
-                                                            <IoSettingsOutline />
-                                                        </Text>
-                                                    </PrimaryButton>
+                                                    {/* <PrimaryButton size="sm"> */}
+                                                    <Text fontSize={'16px'}>
+                                                        <IoSettingsOutline />
+                                                    </Text>
+                                                    {/* </PrimaryButton> */}
                                                 </MenuButton>
                                                 <MenuList fontSize={'13px'}>
                                                     <Edit workspace={workspace as any} updateWorkspace={updateWorkspace} workspaces={workspaces} />
