@@ -1,5 +1,5 @@
 import './App.css';
-import { default as Workspaces } from './features/workspaces/View';
+// import { default as Workspaces } from './features/workspaces/View';
 import { default as Workspace } from './features/workspaces/ViewOne';
 import { default as DataCollections } from './features/dataCollections/View';
 import { default as DataCollection } from './features/dataCollections/ViewOne';
