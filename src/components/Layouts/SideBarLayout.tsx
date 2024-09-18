@@ -36,6 +36,7 @@ import Search from '../../features/search/View';
 // import { ChevronDownIcon } from '@chakra-ui/icons';
 import Create from '../../features/workspaces/Create';
 import { bgColor, color, topNavBgColor, hoverBg } from '../../utils/colors';
+import { ChevronDownIcon } from '@chakra-ui/icons';
 
 interface LinkItemProps {
     name: string;
@@ -144,7 +145,9 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
                                         fontWeight={'semibold'}
                                         py={'5px'}
                                     >
-                                        <Text color={'white'}>{/* {workspace?.name || '|'} <ChevronDownIcon fontSize={'20px'} /> */}</Text>
+                                        <Text color={'white'}>
+                                            {workspace?.name || '|'} <ChevronDownIcon fontSize={'20px'} />
+                                        </Text>
                                     </MenuButton>
                                     <MenuList>
                                         {data?.map((ws: any, index: number) => {
