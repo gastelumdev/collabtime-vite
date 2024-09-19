@@ -90,9 +90,9 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
         setSidebarHeight(window.innerHeight);
     }, [sidebarHeight]);
 
-    useEffect(() => {
-        console.log(workspace?.name);
-    }, [workspace, data]);
+    // useEffect(() => {
+    //     console.log(workspace?.name);
+    // }, [workspace, data]);
 
     useEffect(() => {
         window.addEventListener('resize', resizeSidebar);
@@ -162,7 +162,7 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
                                                     fontSize={'14px'}
                                                     color={bgColor}
                                                 >
-                                                    {/* {ws.name} */}
+                                                    {ws.name}
                                                 </MenuItem>
                                             );
                                         })}
