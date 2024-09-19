@@ -104,10 +104,10 @@ const ViewOne = () => {
                             <Flex>
                                 <Box pt={workspace?.description === '' ? '30px' : '10px'} pl={'5px'}>
                                     <Text fontSize={'22px'} color={bgColor} mb={'3px'} className="dmsans-600">
-                                        {/* {workspace?.name} */}
+                                        {workspace?.name}
                                     </Text>
                                     <Text fontSize={'14px'} color={'#64758E'} className="dmsans-400">
-                                        {/* {workspace?.description} */}
+                                        {workspace?.description}
                                     </Text>
                                     {/* <Text color={'rgb(123, 128, 154)'} fontSize={'md'} fontWeight={300}>
                                         The tools below will help manage your projects and teams.
