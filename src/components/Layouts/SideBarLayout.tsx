@@ -90,10 +90,6 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
         setSidebarHeight(window.innerHeight);
     }, [sidebarHeight]);
 
-    // useEffect(() => {
-    //     console.log(workspace?.name);
-    // }, [workspace, data]);
-
     useEffect(() => {
         window.addEventListener('resize', resizeSidebar);
 
@@ -187,15 +183,15 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
                             <Box px={'24px'}>
                                 <NavItemSubHeader title={'Dashboards'} description="Data Collection Views" />
                             </Box>
-                            {linkItems.map((link, index) => {
+                            {linkItems.map((_link, index) => {
                                 console.log(linkItems);
                                 return (
                                     <Box key={index}>
-                                        <Link to={link.path}>
+                                        {/* <Link to={link.path}>
                                             <NavItem key={link.name} icon={link.icon} active={link.active}>
                                                 {link.name}
                                             </NavItem>
-                                        </Link>
+                                        </Link> */}
                                     </Box>
                                 );
                             })}
