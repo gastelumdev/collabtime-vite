@@ -18,7 +18,7 @@ import linkItems from '../../utils/linkItems';
 import { TUser } from '../../types';
 
 import SideBarLayout from '../../components/Layouts/SideBarLayout';
-// import Invite from './Invite';
+import Invite from './Invite';
 import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import ViewList from '../dataCollections/ViewList';
@@ -138,9 +138,9 @@ const ViewOne = () => {
                                 </Box>
                                 {(permissions || 1) > 1 ? (
                                     <>
-                                        {/* <Box mt={'22px'}>
+                                        <Box mt={'22px'}>
                                             <Invite />
-                                        </Box> */}
+                                        </Box>
                                         <Box mt={'22px'} ml={'6px'}>
                                             <Menu>
                                                 <MenuButton>
@@ -151,8 +151,8 @@ const ViewOne = () => {
                                                     </PrimaryButton>
                                                 </MenuButton>
                                                 <MenuList fontSize={'13px'}>
-                                                    <Edit workspace={workspace as any} updateWorkspace={updateWorkspace} workspaces={workspaces} />
-                                                    <Delete workspace={workspace as any} deleteWorkspace={deleteWorkspace} />
+                                                    <Edit workspace={workspace!} updateWorkspace={updateWorkspace} workspaces={workspaces} />
+                                                    <Delete workspace={workspace!} deleteWorkspace={deleteWorkspace} />
                                                 </MenuList>
                                             </Menu>
                                         </Box>
