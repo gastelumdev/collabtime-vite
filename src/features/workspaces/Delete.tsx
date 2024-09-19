@@ -26,7 +26,7 @@ const Delete = ({ workspace, deleteWorkspace }: IProps) => {
 
     useEffect(() => {
         const redirectWorkspace: any = workspaces?.find((ws: any) => {
-            return workspace._id !== ws._id;
+            return workspace?._id !== ws._id;
         });
 
         console.log(redirectWorkspace);
@@ -53,7 +53,7 @@ const Delete = ({ workspace, deleteWorkspace }: IProps) => {
                                 as={'a'}
                                 href={'/workspaces/' + redirectWorkspaceId}
                                 onClick={() => {
-                                    deleteWorkspace(workspace._id as string);
+                                    deleteWorkspace(workspace?._id as string);
                                     onClose();
                                     localStorage.setItem('workspaceId', redirectWorkspaceId);
                                     // navigate('/workspaces/' + redirectWorkspaceId);
