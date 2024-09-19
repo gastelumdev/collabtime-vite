@@ -80,23 +80,23 @@ const ViewOne = () => {
         }
     };
 
-    const [newLinkItems, setNewLinkItems] = useState(linkItems);
+    // const [newLinkItems, setNewLinkItems] = useState(linkItems);
 
-    useEffect(() => {
-        const newLinkItems = linkItems.map((item) => {
-            if (item.name === 'Dashboard') {
-                return { ...item, active: true };
-            }
-            return { ...item, active: false };
-        });
+    // useEffect(() => {
+    //     const newLinkItems = linkItems.map((item) => {
+    //         if (item.name === 'Dashboard') {
+    //             return { ...item, active: true };
+    //         }
+    //         return { ...item, active: false };
+    //     });
 
-        setNewLinkItems(newLinkItems);
-    }, [linkItems]);
+    //     setNewLinkItems(newLinkItems);
+    // }, [linkItems]);
 
     if (isError) return <Navigate to={'/workspaces'} />;
 
     return (
-        <SideBarLayout linkItems={newLinkItems}>
+        <SideBarLayout linkItems={linkItems}>
             <Box>
                 <Flex minH={'100vh'} bg={'#f6f8fa'}>
                     <Container maxW={'full'} mt={{ base: 4, sm: 0 }}>
