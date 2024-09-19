@@ -162,7 +162,7 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
                                                     fontSize={'14px'}
                                                     color={bgColor}
                                                 >
-                                                    {ws.name}
+                                                    {/* {ws.name} */}
                                                 </MenuItem>
                                             );
                                         })}
