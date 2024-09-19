@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Text, Flex, Input, Spacer, useDisclosure, MenuItem } from '@chakra-ui/react';
 import { TWorkspace } from '../../types';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
@@ -18,9 +18,6 @@ interface IProps {
  */
 const Edit = ({ workspace, updateWorkspace, workspaces }: IProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    useEffect(() => {
-        console.log(workspace);
-    }, [workspace]);
     /**
      * State management for checked items that turn on and off the
      * tools that will be available in the workspace
@@ -108,7 +105,7 @@ const Edit = ({ workspace, updateWorkspace, workspaces }: IProps) => {
                 </Flex>
                 <Input
                     name="name"
-                    value={data.name}
+                    value={data?.name}
                     placeholder="Please workspace name"
                     required={true}
                     onChange={handleChange}
@@ -121,7 +118,7 @@ const Edit = ({ workspace, updateWorkspace, workspaces }: IProps) => {
                 </Text>
                 <Input
                     name="description"
-                    value={data.description}
+                    value={data?.description}
                     placeholder="Please enter workspace description"
                     onChange={handleChange}
                     style={{ marginBottom: '15px' }}
