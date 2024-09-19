@@ -6,13 +6,13 @@ import {
     useGetUserQuery,
     // useGetUnreadMessagesQuery,
     useCallUpdateMessagesMutation,
-    // useUpdateWorkspaceMutation,
-    // useDeleteWorkspaceMutation,
-    // useGetWorkspacesQuery,
+    useUpdateWorkspaceMutation,
+    useDeleteWorkspaceMutation,
+    useGetWorkspacesQuery,
 } from '../../app/services/api';
 
-import { Avatar, AvatarGroup, Box, Container, Flex, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
-// import { IoSettingsOutline } from 'react-icons/io5';
+import { Avatar, AvatarGroup, Box, Container, Flex, Menu, MenuButton, MenuList, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
+import { IoSettingsOutline } from 'react-icons/io5';
 
 import linkItems from '../../utils/linkItems';
 import { TUser } from '../../types';
@@ -23,11 +23,11 @@ import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import ViewList from '../dataCollections/ViewList';
 // import PrimaryButton from '../../components/Buttons/PrimaryButton';
-// import Edit from './Edit';
-// import Delete from './Delete';
+import Edit from './Edit';
+import Delete from './Delete';
 import { bgColor } from '../../utils/colors';
 import '../../App.css';
-// import PrimaryButton from '../../components/Buttons/PrimaryButton';
+import PrimaryButton from '../../components/Buttons/PrimaryButton';
 
 /**
  * This funcion renders a workspace when selected from the workspaces page
@@ -39,12 +39,12 @@ import '../../App.css';
 const ViewOne = () => {
     const { id } = useParams();
     console.log(id);
-    // const { data: workspaces } = useGetWorkspacesQuery(null);
+    const { data: workspaces } = useGetWorkspacesQuery(null);
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
     const { data: workspace, isError, error } = useGetOneWorkspaceQuery(id as string);
     const { data: workspaceUser } = useGetWorkspaceUsersQuery(id as string);
-    // const [updateWorkspace] = useUpdateWorkspaceMutation();
-    // const [deleteWorkspace] = useDeleteWorkspaceMutation();
+    const [updateWorkspace] = useUpdateWorkspaceMutation();
+    const [deleteWorkspace] = useDeleteWorkspaceMutation();
     // const { data: unreadMessages } = useGetUnreadMessagesQuery(null);
 
     const [callUpdateMessages] = useCallUpdateMessagesMutation();
@@ -136,18 +136,18 @@ const ViewOne = () => {
                                         })}
                                     </AvatarGroup>
                                 </Box>
-                                {/* {(permissions || 1) > 1 ? (
+                                {(permissions || 1) > 1 ? (
                                     <>
-                                        <Box mt={'22px'}>
+                                        {/* <Box mt={'22px'}>
                                             <Invite />
-                                        </Box>
+                                        </Box> */}
                                         <Box mt={'22px'} ml={'6px'}>
                                             <Menu>
                                                 <MenuButton>
                                                     <PrimaryButton size="sm">
-                                                    <Text fontSize={'16px'}>
-                                                        <IoSettingsOutline />
-                                                    </Text>
+                                                        <Text fontSize={'16px'}>
+                                                            <IoSettingsOutline />
+                                                        </Text>
                                                     </PrimaryButton>
                                                 </MenuButton>
                                                 <MenuList fontSize={'13px'}>
@@ -157,7 +157,7 @@ const ViewOne = () => {
                                             </Menu>
                                         </Box>
                                     </>
-                                ) : null} */}
+                                ) : null}
                             </Flex>
                         </SimpleGrid>
                         <Box>
