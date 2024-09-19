@@ -184,7 +184,6 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
                                 <NavItemSubHeader title={'Dashboards'} description="Data Collection Views" />
                             </Box>
                             {linkItems.map((link, index) => {
-                                console.log(linkItems);
                                 return (
                                     <Box key={index}>
                                         <Link to={link.path}>

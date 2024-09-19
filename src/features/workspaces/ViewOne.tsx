@@ -1,31 +1,32 @@
-// import { useParams, Navigate } from 'react-router-dom';
+import { useParams, Navigate } from 'react-router-dom';
 
-// import {
-//     useGetOneWorkspaceQuery,
-//     useGetWorkspaceUsersQuery,
-//     useGetUserQuery,
-//     useCallUpdateMessagesMutation,
-//     useUpdateWorkspaceMutation,
-//     useDeleteWorkspaceMutation,
-//     useGetWorkspacesQuery,
-// } from '../../app/services/api';
+import {
+    useGetOneWorkspaceQuery,
+    useGetWorkspaceUsersQuery,
+    useGetUserQuery,
+    // useGetUnreadMessagesQuery,
+    useCallUpdateMessagesMutation,
+    // useUpdateWorkspaceMutation,
+    // useDeleteWorkspaceMutation,
+    // useGetWorkspacesQuery,
+} from '../../app/services/api';
 
-// import { Avatar, AvatarGroup, Box, Container, Flex, Menu, MenuButton, MenuList, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
+import { Avatar, AvatarGroup, Box, Container, Flex, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
 // import { IoSettingsOutline } from 'react-icons/io5';
 
-// import { TUser } from '../../types';
-
 import linkItems from '../../utils/linkItems';
+import { TUser } from '../../types';
 
 import SideBarLayout from '../../components/Layouts/SideBarLayout';
 // import Invite from './Invite';
-// import { useEffect, useState } from 'react';
-// import { io } from 'socket.io-client';
-// import ViewList from '../dataCollections/ViewList';
+import { useEffect, useState } from 'react';
+import { io } from 'socket.io-client';
+import ViewList from '../dataCollections/ViewList';
+// import PrimaryButton from '../../components/Buttons/PrimaryButton';
 // import Edit from './Edit';
 // import Delete from './Delete';
-// import { bgColor } from '../../utils/colors';
-// import '../../App.css';
+import { bgColor } from '../../utils/colors';
+import '../../App.css';
 // import PrimaryButton from '../../components/Buttons/PrimaryButton';
 
 /**
@@ -36,69 +37,68 @@ import SideBarLayout from '../../components/Layouts/SideBarLayout';
  * @returns {JSX}
  */
 const ViewOne = () => {
-    // const { id } = useParams();
-    // console.log(id);
+    const { id } = useParams();
+    console.log(id);
     // const { data: workspaces } = useGetWorkspacesQuery(null);
-    // const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
-    // const { data: workspace, isError, error } = useGetOneWorkspaceQuery(id as string);
-    // const { data: workspaceUser } = useGetWorkspaceUsersQuery(id as string);
+    const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
+    const { data: workspace, isError, error } = useGetOneWorkspaceQuery(id as string);
+    const { data: workspaceUser } = useGetWorkspaceUsersQuery(id as string);
     // const [updateWorkspace] = useUpdateWorkspaceMutation();
     // const [deleteWorkspace] = useDeleteWorkspaceMutation();
-    // // const { data: unreadMessages } = useGetUnreadMessagesQuery(null);
+    // const { data: unreadMessages } = useGetUnreadMessagesQuery(null);
 
-    // const [callUpdateMessages] = useCallUpdateMessagesMutation();
+    const [callUpdateMessages] = useCallUpdateMessagesMutation();
 
-    // const [permissions, setPermissions] = useState<number>();
+    const [permissions, setPermissions] = useState<number>();
 
-    // /**
-    //  * Socket.io listening for update to refetch data
-    //  */
-    // useEffect(() => {
-    //     const socket = io(import.meta.env.VITE_API_URL);
-    //     socket.connect();
+    /**
+     * Socket.io listening for update to refetch data
+     */
+    useEffect(() => {
+        const socket = io(import.meta.env.VITE_API_URL);
+        socket.connect();
 
-    //     socket.on('update-message', () => {
-    //         callUpdateMessages(null);
-    //     });
+        socket.on('update-message', () => {
+            callUpdateMessages(null);
+        });
 
-    //     return () => {
-    //         socket.disconnect();
-    //     };
-    // }, []);
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
 
-    // useEffect(() => {
-    //     localStorage.setItem('workspaceId', id || '');
+    useEffect(() => {
+        localStorage.setItem('workspaceId', id || '');
 
-    //     getPermissions();
-    // }, [user, error]);
+        getPermissions();
+    }, [user, error]);
 
-    // const getPermissions = () => {
-    //     for (const workspace of user?.workspaces || []) {
-    //         if (workspace.id == localStorage.getItem('workspaceId')) {
-    //             setPermissions(workspace.permissions);
-    //         }
-    //     }
-    // };
+    const getPermissions = () => {
+        for (const workspace of user?.workspaces || []) {
+            if (workspace.id == localStorage.getItem('workspaceId')) {
+                setPermissions(workspace.permissions);
+            }
+        }
+    };
 
-    // const [newLinkItems, setNewLinkItems] = useState(linkItems);
+    const [newLinkItems, setNewLinkItems] = useState(linkItems);
 
-    // useEffect(() => {
-    //     const newLinkItems = linkItems.map((item) => {
-    //         if (item.name === 'Dashboard') {
-    //             return { ...item, active: true };
-    //         }
-    //         return { ...item, active: false };
-    //     });
+    useEffect(() => {
+        const newLinkItems = linkItems.map((item) => {
+            if (item.name === 'Dashboard') {
+                return { ...item, active: true };
+            }
+            return { ...item, active: false };
+        });
 
-    //     setNewLinkItems(newLinkItems);
-    // }, [linkItems]);
+        setNewLinkItems(newLinkItems);
+    }, [linkItems]);
 
-    // if (isError) return <Navigate to={'/workspaces'} />;
+    if (isError) return <Navigate to={'/workspaces'} />;
 
     return (
-        <SideBarLayout linkItems={linkItems}>
-            <p>Test</p>
-            {/* <Box>
+        <SideBarLayout linkItems={newLinkItems}>
+            <Box>
                 <Flex minH={'100vh'} bg={'#f6f8fa'}>
                     <Container maxW={'full'} mt={{ base: 4, sm: 0 }}>
                         <SimpleGrid spacing={6} columns={{ base: 1, sm: 2 }} pb={'30px'} mt={'18px'}>
@@ -136,7 +136,7 @@ const ViewOne = () => {
                                         })}
                                     </AvatarGroup>
                                 </Box>
-                                {(permissions || 1) > 1 ? (
+                                {/* {(permissions || 1) > 1 ? (
                                     <>
                                         <Box mt={'22px'}>
                                             <Invite />
@@ -157,7 +157,7 @@ const ViewOne = () => {
                                             </Menu>
                                         </Box>
                                     </>
-                                ) : null}
+                                ) : null} */}
                             </Flex>
                         </SimpleGrid>
                         <Box>
@@ -165,7 +165,7 @@ const ViewOne = () => {
                         </Box>
                     </Container>
                 </Flex>
-            </Box> */}
+            </Box>
         </SideBarLayout>
     );
 };
