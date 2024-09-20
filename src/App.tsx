@@ -24,7 +24,6 @@ function App() {
             {/* <Layout> */}
             <Routes>
                 <Route element={<PrivateOutlet />}>
-                    {/* <Route path="workspaces" element={<Workspaces />} /> */}
                     {/* <Route element={<WorkspaceOutlet />}> */}
                     <Route path="workspaces/:id" element={<Workspace />} />
                     <Route path="workspaces/:id/dataCollections" element={<DataCollections />} />
@@ -39,6 +38,7 @@ function App() {
             </Routes>
             <Routes>
                 <Route path="" element={<Login />} />
+                <Route path="workspaces" element={<Login />} />
                 <Route path="login" element={<Login />} />
                 <Route path="resetPasswordRequest" element={<ResetPasswordRequest />} />
                 <Route path="passwordReset" element={<ResetPassword />} />

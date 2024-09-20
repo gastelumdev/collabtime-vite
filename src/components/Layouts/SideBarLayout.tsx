@@ -50,6 +50,11 @@ interface NavItemProps extends FlexProps {
     children: React.ReactNode;
 }
 
+// interface SubNavItemProps extends FlexProps {
+//     active?: boolean;
+//     children: React.ReactNode;
+// }
+
 interface TopNavProps extends FlexProps {
     sidebar?: boolean;
     leftContent?: any;
@@ -147,19 +152,21 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
                                     <MenuList>
                                         {data?.map((ws: any, index: number) => {
                                             return (
-                                                <MenuItem
-                                                    key={index}
-                                                    as={'a'}
-                                                    href={`/workspaces/${ws._id}`}
-                                                    onClick={() => {
-                                                        localStorage.setItem('workspaceId', ws._id);
-                                                        updateUser({ ...user, defaultWorkspaceId: ws._id });
-                                                    }}
-                                                    fontSize={'14px'}
-                                                    color={bgColor}
-                                                >
-                                                    {ws.name}
-                                                </MenuItem>
+                                                <>
+                                                    <MenuItem
+                                                        key={index}
+                                                        as={'a'}
+                                                        href={`/workspaces/${ws._id}`}
+                                                        onClick={() => {
+                                                            localStorage.setItem('workspaceId', ws._id);
+                                                            updateUser({ ...user, defaultWorkspaceId: ws._id });
+                                                        }}
+                                                        fontSize={'14px'}
+                                                        color={bgColor}
+                                                    >
+                                                        {ws.name}
+                                                    </MenuItem>
+                                                </>
                                             );
                                         })}
                                         <MenuDivider />
@@ -185,13 +192,15 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
                             </Box>
                             {linkItems.map((link, index) => {
                                 return (
-                                    <Box key={index}>
-                                        <Link to={link.path}>
-                                            <NavItem key={link.name} icon={link.icon} active={link.active}>
-                                                {link.name}
-                                            </NavItem>
-                                        </Link>
-                                    </Box>
+                                    <>
+                                        <Box key={index}>
+                                            <Link to={link.path}>
+                                                <NavItem key={link.name} icon={link.icon} active={link.active}>
+                                                    {link.name}
+                                                </NavItem>
+                                            </Link>
+                                        </Box>
+                                    </>
                                 );
                             })}
                             <Link to={'/login'}>
@@ -225,7 +234,7 @@ const NavItem = ({ icon, active = false, children, ...rest }: NavItemProps) => {
             py="2"
             my="2"
             mx="2"
-            px="14px"
+            px={'14px'}
             borderRadius="lg"
             role="group"
             cursor="pointer"
@@ -254,6 +263,32 @@ const NavItem = ({ icon, active = false, children, ...rest }: NavItemProps) => {
         </Flex>
     );
 };
+
+// const SubNavItem = ({ active = false, children, ...rest }: SubNavItemProps) => {
+//     return (
+//         <Flex
+//             align="center"
+//             py="2"
+//             my="2"
+//             mx="2"
+//             px={'58px'}
+//             borderRadius="lg"
+//             role="group"
+//             cursor="pointer"
+//             color={active ? 'white' : color}
+//             _hover={{
+//                 bgColor: hoverBg,
+//                 color: 'white',
+//             }}
+//             bgColor={active ? hoverBg : 'inherit'}
+//             {...rest}
+//         >
+//             <Text fontSize={'14px'} fontWeight={'semibold'}>
+//                 {children}
+//             </Text>
+//         </Flex>
+//     );
+// };
 
 const TopNav = ({ sidebar = true, onOpen, leftContent, ...rest }: TopNavProps) => {
     const navigate = useNavigate();

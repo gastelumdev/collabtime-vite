@@ -15,8 +15,8 @@ const LinkItems: Array<LinkItemProps> = [
     { name: "Dashboard", icon: LiaCheckCircle, path: `/workspaces/${localStorage.getItem("workspaceId")}`, active: false },
     // {
     //     name: "Data Collections",
-    //     icon: FaTable,
-    //     path: `/workspaces/${localStorage.getItem("workspaceId")}/dataCollections`,
+    //     icon: LiaThListSolid,
+    //     path: ``,
     // },
     {
         name: "Documents",

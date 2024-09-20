@@ -18,8 +18,13 @@ import {
     Container,
     Flex,
     Spacer,
+    Tab,
     Table,
     TableContainer,
+    TabList,
+    TabPanel,
+    TabPanels,
+    Tabs,
     Tag,
     TagCloseButton,
     TagLabel,
@@ -108,21 +113,17 @@ const ViewList = ({ allowed = false }: { allowed?: boolean }) => {
 
     return (
         <Card>
-            <CardBody p={1} pt={7}>
+            <CardBody p={1} pt={7} pb={6}>
                 <Box>
                     <Flex
-                        minH={'100vh'}
-                        // justify={"center"}
-                        // bg={'#eff2f5'}
+                    // minH={'100vh'}
+                    // justify={"center"}
+                    // bg={'#eff2f5'}
                     >
                         <Container maxW={'full'} mt={{ base: 4, sm: 0 }}>
-                            {allowed ? (
+                            {/* {allowed ? (
                                 <Flex h={'50px'} mb={'10px'}>
-                                    <Box pt={'4px'}>
-                                        <Text fontSize={'18px'} fontWeight={'semibold'} className="dmsans-600">
-                                            Data Collections
-                                        </Text>
-                                    </Box>
+                                    
                                     <Spacer />
                                     <Box pb={'20px'} mr={'10px'}>
                                         <Templates />
@@ -131,79 +132,137 @@ const ViewList = ({ allowed = false }: { allowed?: boolean }) => {
                                         <Create addNewDataCollection={createDataCollection} />
                                     </Box>
                                 </Flex>
-                            ) : null}
-                            {dataCollections && dataCollections.length > 0 ? (
-                                <TableContainer>
-                                    <Table size="sm">
-                                        <Thead>
-                                            <Tr>
-                                                {allowed ? <Th></Th> : null}
-                                                <Th color={'#666666'} fontWeight={'semibold'}>
-                                                    Name
-                                                </Th>
-                                                {/* <Th>Description</Th> */}
+                            ) : null} */}
+                            <Tabs>
+                                <TabList>
+                                    <Tab>Data Collections</Tab>
+                                    <Tab>Dashboard</Tab>
+                                </TabList>
 
-                                                <Th color={'#666666'} fontWeight={'semibold'}>
-                                                    Tags
-                                                </Th>
-                                            </Tr>
-                                        </Thead>
-                                        <Tbody>
-                                            {data?.map((dataCollection: any, index: number) => {
-                                                return (
-                                                    <Tr key={index}>
-                                                        {allowed ? (
-                                                            <Td w={'120px'} p={0}>
-                                                                <Edit dataCollection={dataCollection} updateDataCollection={updateDataCollection} />
-                                                                <Delete dataCollection={dataCollection} deleteDataCollection={deleteDataCollection} />
-                                                                <TagsModal
-                                                                    tagType={'dataCollection'}
-                                                                    data={dataCollection}
-                                                                    tags={dataCollection.tags}
-                                                                    update={updateDataCollection}
-                                                                    workspaceId={workspace?._id || ''}
-                                                                />
-                                                            </Td>
-                                                        ) : null}
-                                                        <Td>
-                                                            <Link to={`/workspaces/${workspace?._id}/dataCollections/${dataCollection._id}`}>
-                                                                <Text fontSize={'13px'} color={'#666666'}>
-                                                                    {dataCollection.name}
-                                                                </Text>
-                                                            </Link>
-                                                        </Td>
-                                                        {/* <Td>
+                                <TabPanels>
+                                    <TabPanel>
+                                        <Box mt={3}>
+                                            {allowed ? (
+                                                <Flex h={'50px'} mb={'10px'}>
+                                                    <Box>
+                                                        <Text fontSize={'20px'}>Data Collections</Text>
+                                                    </Box>
+                                                    <Spacer />
+                                                    <Box pb={'20px'} mr={'10px'}>
+                                                        <Templates />
+                                                    </Box>
+                                                    <Box>
+                                                        <Create addNewDataCollection={createDataCollection} />
+                                                    </Box>
+                                                </Flex>
+                                            ) : null}
+                                            {dataCollections && dataCollections.length > 0 ? (
+                                                <TableContainer>
+                                                    <Table size="sm">
+                                                        <Thead>
+                                                            <Tr>
+                                                                {allowed ? <Th></Th> : null}
+                                                                <Th color={'#666666'} fontWeight={'semibold'}>
+                                                                    Name
+                                                                </Th>
+                                                                {/* <Th>Description</Th> */}
+
+                                                                <Th color={'#666666'} fontWeight={'semibold'}>
+                                                                    Tags
+                                                                </Th>
+                                                            </Tr>
+                                                        </Thead>
+                                                        <Tbody>
+                                                            {data?.map((dataCollection: any, index: number) => {
+                                                                return (
+                                                                    <Tr key={index}>
+                                                                        {allowed ? (
+                                                                            <Td w={'120px'} p={0}>
+                                                                                <Edit
+                                                                                    dataCollection={dataCollection}
+                                                                                    updateDataCollection={updateDataCollection}
+                                                                                />
+                                                                                <Delete
+                                                                                    dataCollection={dataCollection}
+                                                                                    deleteDataCollection={deleteDataCollection}
+                                                                                />
+                                                                                <TagsModal
+                                                                                    tagType={'dataCollection'}
+                                                                                    data={dataCollection}
+                                                                                    tags={dataCollection.tags}
+                                                                                    update={updateDataCollection}
+                                                                                    workspaceId={workspace?._id || ''}
+                                                                                />
+                                                                            </Td>
+                                                                        ) : null}
+                                                                        <Td>
+                                                                            <Link to={`/workspaces/${workspace?._id}/dataCollections/${dataCollection._id}`}>
+                                                                                <Text fontSize={'13px'} color={'#666666'}>
+                                                                                    {dataCollection.name}
+                                                                                </Text>
+                                                                            </Link>
+                                                                        </Td>
+                                                                        {/* <Td>
                                                         <Text fontSize={'13px'}>{dataCollection.description}</Text>
                                                     </Td> */}
 
-                                                        <Td w={'300px'}>
-                                                            {dataCollection.tags.map((tag: TTag, index: number) => {
-                                                                return (
-                                                                    <Tag key={index} size={'sm'} variant="subtle" colorScheme="blue" mr={'5px'} zIndex={1000}>
-                                                                        <TagLabel pb={'2px'}>{tag.name}</TagLabel>
-                                                                        {allowed ? (
-                                                                            <TagCloseButton
-                                                                                onClick={() => handleCloseTagButtonClick(dataCollection, tag)}
-                                                                                zIndex={1000}
-                                                                            />
-                                                                        ) : null}
-                                                                    </Tag>
+                                                                        <Td w={'300px'}>
+                                                                            {dataCollection.tags.map((tag: TTag, index: number) => {
+                                                                                return (
+                                                                                    <Tag
+                                                                                        key={index}
+                                                                                        size={'sm'}
+                                                                                        variant="subtle"
+                                                                                        colorScheme="blue"
+                                                                                        mr={'5px'}
+                                                                                        zIndex={1000}
+                                                                                    >
+                                                                                        <TagLabel pb={'2px'}>{tag.name}</TagLabel>
+                                                                                        {allowed ? (
+                                                                                            <TagCloseButton
+                                                                                                onClick={() => handleCloseTagButtonClick(dataCollection, tag)}
+                                                                                                zIndex={1000}
+                                                                                            />
+                                                                                        ) : null}
+                                                                                    </Tag>
+                                                                                );
+                                                                            })}
+                                                                        </Td>
+                                                                    </Tr>
                                                                 );
                                                             })}
-                                                        </Td>
-                                                    </Tr>
-                                                );
-                                            })}
-                                        </Tbody>
-                                    </Table>
-                                </TableContainer>
-                            ) : (
-                                <Box mt={'30px'}>
-                                    <Center>
-                                        <Text>Create a Data Collection to get started.</Text>
-                                    </Center>
-                                </Box>
-                            )}
+                                                        </Tbody>
+                                                    </Table>
+                                                </TableContainer>
+                                            ) : (
+                                                <Box mt={'30px'}>
+                                                    <Center>
+                                                        <Text>Create a Data Collection to get started.</Text>
+                                                    </Center>
+                                                </Box>
+                                            )}
+                                        </Box>
+                                    </TabPanel>
+                                    <TabPanel>
+                                        <Box mt={3}>
+                                            {/* <Flex mb={'10px'}>
+                                                <Box>
+                                                    <Text fontSize={'20px'}>Views</Text>
+                                                </Box>
+                                                <Spacer />
+                                                {allowed ? (
+                                                    <Box>
+                                                        <Create addNewDataCollection={createDataCollection} />
+                                                    </Box>
+                                                ) : null}
+                                            </Flex> */}
+                                            <Center>
+                                                <Text>Coming Soon.</Text>
+                                            </Center>
+                                        </Box>
+                                    </TabPanel>
+                                </TabPanels>
+                            </Tabs>
                         </Container>
                     </Flex>
                 </Box>
