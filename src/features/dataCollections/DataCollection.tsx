@@ -16,7 +16,7 @@ import { Box, Progress } from '@chakra-ui/react';
 import Table from '../../components/table/Table';
 import { TColumn } from '../../types';
 
-const DataCollection = ({ showDoneRows = false, rowsProp }: { showDoneRows?: boolean; rowsProp: any }) => {
+const DataCollection = ({ showDoneRows = false, rowsProp, dataCollectionView = null }: { showDoneRows?: boolean; rowsProp: any; dataCollectionView?: any }) => {
     const { dataCollectionId } = useParams();
 
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
@@ -84,8 +84,8 @@ const DataCollection = ({ showDoneRows = false, rowsProp }: { showDoneRows?: boo
         <Box>
             <Box h={'4px'}>{isFetching || isLoading ? <Progress size="xs" isIndeterminate /> : null}</Box>
             <Table
-                rowsData={rowsData || []}
-                columnsData={columns || []}
+                rowsData={rowsData || rowsProp || []}
+                columnsData={columns || dataCollectionView?.columns || []}
                 minCellWidth={120}
                 columnResizingOffset={windowWidthOffset}
                 createColumn={createColumn}

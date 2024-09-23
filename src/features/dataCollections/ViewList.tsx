@@ -8,6 +8,7 @@ import {
     useDeleteTagMutation,
     useTagExistsMutation,
     useUpdateWorkspaceMutation,
+    useGetDataCollectionViewsQuery,
 } from '../../app/services/api';
 
 import {
@@ -43,11 +44,14 @@ import { TDataCollection, TTag } from '../../types';
 import { Link } from 'react-router-dom';
 import Delete from './Delete';
 import Templates from './Templates';
+import CreateDataCollectionView from '../dataCollectionViews/Create';
+import View from '../dataCollectionViews/View';
 
 const ViewList = ({ allowed = false }: { allowed?: boolean }) => {
     // const [data, setData] = useState<TDataCollection[]>(dataCollections);
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
     const { data } = useGetDataCollectionsQuery(null);
+    const { data: dataCollectionViews } = useGetDataCollectionViewsQuery(null);
     const { data: workspace } = useGetOneWorkspaceQuery(localStorage.getItem('workspaceId') || '');
     const [createDataCollection] = useCreateDataCollecionMutation();
     const [updateDataCollection] = useUpdateDataCollectionMutation();
@@ -69,6 +73,10 @@ const ViewList = ({ allowed = false }: { allowed?: boolean }) => {
 
         setDataCollections(data);
     }, [user, workspace, data]);
+
+    useEffect(() => {
+        console.log(dataCollectionViews);
+    }, [dataCollectionViews]);
 
     const getPermissions = () => {
         for (const workspace of user?.workspaces || []) {
@@ -245,20 +253,27 @@ const ViewList = ({ allowed = false }: { allowed?: boolean }) => {
                                     </TabPanel>
                                     <TabPanel>
                                         <Box mt={3}>
-                                            {/* <Flex mb={'10px'}>
-                                                <Box>
+                                            <Flex mb={'10px'}>
+                                                {/* <Box>
                                                     <Text fontSize={'20px'}>Views</Text>
-                                                </Box>
+                                                </Box> */}
                                                 <Spacer />
                                                 {allowed ? (
                                                     <Box>
-                                                        <Create addNewDataCollection={createDataCollection} />
+                                                        <CreateDataCollectionView dataCollections={data!} />
                                                     </Box>
                                                 ) : null}
-                                            </Flex> */}
-                                            <Center>
+                                            </Flex>
+                                            {/* <Center>
                                                 <Text>Coming Soon.</Text>
-                                            </Center>
+                                            </Center> */}
+                                        </Box>
+                                        <Box>
+                                            {dataCollectionViews?.map((dcView: any) => {
+                                                console.log(dcView.name);
+                                                // return <DataCollection showDoneRows={true}  />>;
+                                                return <View dataCollectionView={dcView} />;
+                                            })}
                                         </Box>
                                     </TabPanel>
                                 </TabPanels>

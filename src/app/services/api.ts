@@ -12,7 +12,7 @@ export const api = createApi({
             return headers;
         }
     }),
-    tagTypes: ["auth", "Workspace", "Notification", "DataCollection", "Column", "Rows", "Documents", "Tags", "Messages"],
+    tagTypes: ["auth", "Workspace", "Notification", "DataCollection", "Column", "Rows", "Documents", "Tags", "Messages", "DataCollectionView"],
     endpoints: (builder) => ({
         login: builder.mutation<UserResponse, LoginRequest>({
             query: (credentials) => ({
@@ -195,6 +195,12 @@ export const api = createApi({
                 url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${dataCollectionId}/columns`
             }),
             providesTags: ["Column"]
+        }),
+        getWorkspaceColumns: builder.query<TColumn[], null>({
+            query: () => ({
+                url: `workspaces/${localStorage.getItem("workspaceId")}/workspaceColumns`
+            }),
+            // providesTags: ["Column"]
         }),
         createColumn: builder.mutation<TColumn, TColumn>({
             query: (column) => ({
@@ -491,6 +497,36 @@ export const api = createApi({
                 method: "POST",
             }),
             invalidatesTags: ["Messages"]
+        }),
+        getDataCollectionViews: builder.query<any, any>({
+            query: () => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/dataCollectionViews`,
+            }),
+            providesTags: ["DataCollectionView"]
+        }),
+        createDataCollectionViews: builder.mutation<any, any>({
+            query: (dataCollectionView) => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/dataCollectionViews`,
+                method: "POST",
+                body: dataCollectionView
+            }),
+            invalidatesTags: ["DataCollectionView"]
+        }),
+        updateDataCollectionView: builder.mutation<any, any>({
+            query: (dataCollectionView) => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/updateDataCollectionViews/`,
+                method: "PUT",
+                body: dataCollectionView
+            }),
+            invalidatesTags: ["DataCollectionView"]
+        }),
+        deleteDataCollectionView: builder.mutation<any, any>({
+            query: (dataColletionViewId) => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/deleteDataCollectionViews/${dataColletionViewId}`,
+                method: "DELETE",
+                body: {}
+            }),
+            invalidatesTags: ["DataCollectionView"]
         })
     })
 })
@@ -522,6 +558,7 @@ export const {
     useGetDataCollectionQuery,
     useSendFormMutation,
     useGetColumnsQuery,
+    useGetWorkspaceColumnsQuery,
     useCreateColumnMutation,
     useUpdateColumnMutation,
     useDeleteColumnMutation,
@@ -561,4 +598,8 @@ export const {
     useGetUnreadMessagesQuery,
     useCallUpdateMessagesMutation,
     useMarkAsReadMutation,
+    useGetDataCollectionViewsQuery,
+    useCreateDataCollectionViewsMutation,
+    useUpdateDataCollectionViewMutation,
+    useDeleteDataCollectionViewMutation
 } = api
