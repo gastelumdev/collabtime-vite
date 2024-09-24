@@ -188,13 +188,13 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
                                               </FormLabel>
                                           </FormControl>
                                           <Spacer />
-                                          {dataCollectionView.columns
+                                          {/* {dataCollectionView.columns
                                               .map((c: any) => {
                                                   return c._id;
                                               })
                                               .includes(col._id) ? (
                                               <Text>Something</Text>
-                                          ) : null}
+                                          ) : null} */}
                                       </Flex>
                                   </>
                               );
