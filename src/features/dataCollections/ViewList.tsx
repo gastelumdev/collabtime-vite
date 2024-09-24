@@ -264,9 +264,11 @@ const ViewList = ({ allowed = false }: { allowed?: boolean }) => {
                                                     </Box>
                                                 ) : null}
                                             </Flex>
-                                            {/* <Center>
-                                                <Text>Coming Soon.</Text>
-                                            </Center> */}
+                                            {dataCollectionViews?.length < 1 ? (
+                                                <Center>
+                                                    <Text>Click the add button to create your first view.</Text>
+                                                </Center>
+                                            ) : null}
                                         </Box>
                                         <Box>
                                             {dataCollectionViews?.map((dcView: any) => {
