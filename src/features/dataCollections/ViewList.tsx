@@ -270,7 +270,7 @@ const ViewList = ({ allowed = false }: { allowed?: boolean }) => {
                                         </Box>
                                         <Box>
                                             {dataCollectionViews?.map((dcView: any) => {
-                                                console.log(dcView.name);
+                                                console.log(dcView);
                                                 // return <DataCollection showDoneRows={true}  />>;
                                                 return <View dataCollectionView={dcView} />;
                                             })}

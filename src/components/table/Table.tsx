@@ -28,6 +28,7 @@ interface ITableProps {
     refetch?: any;
     updateRow?: any;
     updateRowIsLoading?: boolean;
+    view?: boolean;
 }
 
 const Table = ({
@@ -46,6 +47,7 @@ const Table = ({
     refetch,
     isFetching = true,
     updateRow,
+    view = false,
 }: ITableProps) => {
     const dispatch = useAppDispatch();
 
@@ -436,7 +438,7 @@ const Table = ({
     };
 
     return (
-        <div id={'data-collection-table'} className={'table'} style={{ position: 'relative' }}>
+        <div id={'data-collection-table'} className={view ? 'table-view' : 'table'} style={{ position: 'relative' }}>
             {checkedRowIds.length > 0 ? (
                 <Box
                     position={'absolute'}
@@ -531,6 +533,7 @@ const Table = ({
                 allowed={allowed}
                 columnToSortBy={columnToSortBy}
                 directionToSortBy={directionToSortBy}
+                view={view}
             />
             {/* <Box w={'100%'} h={'30px'}>
                 <Text ml={'10px'}>Add row</Text>

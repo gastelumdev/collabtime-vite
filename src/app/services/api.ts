@@ -236,11 +236,11 @@ export const api = createApi({
         }),
         getRows: builder.query<any[], any>({
             query: (options) => ({
-                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${options.dataCollectionId}/rows?limit=${options.limit}&skip=${options.skip}&sort=${options.sort}&sortBy=${options.sortBy}`
+                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${options.dataCollectionId}/rows?limit=${options.limit}&skip=${options.skip}&sort=${options.sort}&sortBy=${options.sortBy}&showEmptyRows=${options.showEmptyRows}`
             }),
             providesTags: ["Rows"],
             transformResponse: (rows: any) => {
-
+                console.log(rows)
                 return rows.map((row: any) => {
                     return { ...row, checked: false, subRowsAreOpen: false }
                 })

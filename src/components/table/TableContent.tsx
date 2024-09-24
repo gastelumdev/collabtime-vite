@@ -24,6 +24,7 @@ interface IProps {
     allowed?: boolean;
     columnToSortBy: any;
     directionToSortBy: string;
+    view?: boolean;
 }
 
 const TableContent = ({
@@ -44,6 +45,7 @@ const TableContent = ({
     allowed = false,
     columnToSortBy = null,
     directionToSortBy = 'Asc',
+    view = false,
 }: IProps) => {
     const ref = useRef<HTMLDivElement | null>(null);
     const [gridTemplateColumns, setGridTemplateColumns] = useState('');
@@ -51,6 +53,7 @@ const TableContent = ({
     const [currentRows, setCurrentRows] = useState(rows);
 
     useEffect(() => {
+        view;
         if (showDoneRows) {
             setCurrentRows(rows);
         } else {
@@ -133,132 +136,6 @@ const TableContent = ({
         event.preventDefault();
         event.stopPropagation();
     };
-
-    //****************************************************** */
-    // const handleSetDraggedId = useCallback((rowIndex: number) => {
-    //     setDraggedId(rowIndex);
-    // }, []);
-
-    // const handleSetOverId = useCallback((rowIndex: number | null) => {
-    //     setOverId(rowIndex);
-    // }, []);
-
-    // const handleSwap2 = () => {
-    //     // let position = 0;
-    //     const newRows = [...rows];
-    //     // const newRows: any = rows.map((row) => {
-    //     //     position = position + 1;
-    //     //     return { ...row, position: position };
-    //     // });
-
-    //     // Get the dragged row and the row that it was dropped on
-    //     const draggedRowData = newRows[Number(localStorage.getItem('rowDragged')) - 1];
-    //     const overRowData = newRows[Number(localStorage.getItem('rowOver')) - 1];
-
-    //     // Set the type of row that was dragged
-    //     const draggedIsCommon = !draggedRowData.isParent && draggedRowData.parentRowId === null;
-    //     const draggedIsParent = draggedRowData.isParent && draggedRowData.parentRowId === null;
-    //     const draggedIsChild = !draggedRowData.isParent && draggedRowData.parentRowId !== null;
-    //     // Set the type of row that it was dropped on
-    //     const overIsCommon = !overRowData.isParent && overRowData.parentRowId === null;
-    //     const overIsParent = overRowData.isParent && overRowData.parentRowId === null;
-    //     const overIsChild = !overRowData.isParent && overRowData.parentRowId !== null;
-
-    //     // Get the rows if the dragged row is a parent
-    //     let childRows = [];
-    //     if (draggedIsParent) {
-    //         childRows = newRows.filter((row: any) => {
-    //             return draggedIsParent && row.parentRowId === draggedRowData._id;
-    //         });
-    //     }
-
-    //     let reorderedRows;
-
-    //     if ((draggedIsParent && overIsChild) || (draggedIsParent && overIsParent)) {
-    //         setCurrentRows([...newRows]);
-    //     } else {
-    //         reorderedRows = swapItems(newRows, Number(localStorage.getItem('rowDragged')), Number(localStorage.getItem('rowOver')), childRows.length + 1);
-    //         setRows(reorderedRows);
-    //         setCurrentRows(reorderedRows);
-
-    //         const rowsToUpdate: any = {};
-
-    //         const relAdjustedRow = reorderedRows.map((row: any, index: number) => {
-    //             let rowToUpdate: any = row;
-
-    //             if (rowToUpdate.position !== index + 1) {
-    //                 console.log('Row out of order');
-    //                 rowToUpdate = { ...rowToUpdate, position: index + 1 };
-
-    //                 rowsToUpdate[rowToUpdate._id] = { ...rowToUpdate, position: index + 1 };
-    //             }
-
-    //             if (rowToUpdate.position === overRowData.position) {
-    //                 console.log(rowToUpdate);
-    //                 if (draggedIsCommon && overIsParent && draggedRowData.position < overRowData.position) {
-    //                     // The dragged row needs to update to be set as parent false and parentRowId of over row
-
-    //                     rowToUpdate = { ...rowToUpdate, isParent: false, parentRowId: overRowData._id, isVisible: overRowData.showSubrows };
-    //                     rowsToUpdate[rowToUpdate._id] = { ...rowToUpdate, isParent: false, parentRowId: overRowData._id, isVisible: overRowData.showSubrows };
-    //                     // updateRow({ ...rowToUpdate, isParent: false, parentRowId: overRowData._id, isVisible: overRowData.showSubrows });
-    //                     return { ...rowToUpdate, isParent: false, parentRowId: overRowData._id, isVisible: overRowData.showSubrows };
-    //                 }
-
-    //                 if (draggedIsCommon && overIsChild) {
-    //                     // The dragged row needs to update to be set as parent false and share the parentRowId of the over row
-
-    //                     console.log(rowToUpdate);
-    //                     rowToUpdate = { ...rowToUpdate, isParent: false, parentRowId: overRowData.parentRowId };
-    //                     rowsToUpdate[rowToUpdate._id] = { ...rowToUpdate, isParent: false, parentRowId: overRowData.parentRowId };
-    //                     // updateRow({ ...rowToUpdate, isParent: false, parentRowId: overRowData.parentRowId });
-    //                     return { ...rowToUpdate, isParent: false, parentRowId: overRowData.parentRowId };
-    //                 }
-
-    //                 if (draggedIsChild && overIsCommon) {
-    //                     // The dragged row needs to update to be set as parent false and parentRowId as null
-    //                     // console.log('Child into common');
-    //                     console.log(rowToUpdate);
-    //                     rowToUpdate = { ...rowToUpdate, isParent: false, parentRowId: null };
-    //                     rowsToUpdate[rowToUpdate._id] = { ...rowToUpdate, isParent: false, parentRowId: null };
-    //                     // updateRow({ ...rowToUpdate, isParent: false, parentRowId: null });
-    //                     return { ...rowToUpdate, isParent: false, parentRowId: null };
-    //                 }
-
-    //                 if (draggedIsChild && overIsParent) {
-    //                     if (draggedRowData.position < overRowData.position) {
-    //                         // The dragged row needs to update to be set as parent false and parentRowId of over row
-
-    //                         rowToUpdate = { ...rowToUpdate, isParent: false, parentRowId: overRowData._id };
-    //                         rowsToUpdate[rowToUpdate._id] = { ...rowToUpdate, isParent: false, parentRowId: overRowData._id };
-    //                         // updateRow({ ...rowToUpdate, isParent: false, parentRowId: overRowData._id });
-    //                         return { ...rowToUpdate, isParent: false, parentRowId: overRowData._id };
-    //                     } else {
-    //                         // The dragged row needs to update to be set as parent false and parentRowId as null
-
-    //                         rowToUpdate = { ...rowToUpdate, isParent: false, parentRowId: null };
-    //                         rowsToUpdate[rowToUpdate._id] = { ...rowToUpdate, isParent: false, parentRowId: null };
-    //                         // updateRow({ ...rowToUpdate, isParent: false, parentRowId: null });
-    //                         return { ...rowToUpdate, isParent: false, parentRowId: null };
-    //                     }
-    //                 }
-    //             }
-
-    //             return rowToUpdate;
-    //         });
-
-    //         for (const rowToUpdateId in rowsToUpdate) {
-    //             updateRow(rowsToUpdate[rowToUpdateId]);
-    //         }
-
-    //         setRows(relAdjustedRow);
-
-    //         setCurrentRows(relAdjustedRow);
-    //     }
-
-    //     // setOverId(null);
-    //     // setDraggedId(null);
-    //     localStorage.setItem('dragging', '');
-    // };
 
     const handleSwap = () => {
         console.log({ rowDragged: localStorage.getItem('rowDragged'), rowOver: localStorage.getItem('rowOver') });

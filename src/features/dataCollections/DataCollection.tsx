@@ -100,6 +100,7 @@ const DataCollection = ({ showDoneRows = false, rowsProp, dataCollectionView = n
                 deleteRow={deleteRow}
                 updateRowIsLoading={updateRowIsLoading}
                 refetch={refetch}
+                view={dataCollectionView ? true : false}
             />
         </Box>
     );

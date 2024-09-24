@@ -6,7 +6,15 @@ import { PiDotsThreeVerticalBold } from 'react-icons/pi';
 import Create from './Create';
 
 const View = ({ dataCollectionView }: { dataCollectionView: any }) => {
-    const { data: rows } = useGetRowsQuery({ dataCollectionId: dataCollectionView.dataCollection || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
+    console.log(dataCollectionView);
+    const { data: rows } = useGetRowsQuery({
+        dataCollectionId: dataCollectionView.dataCollection || '',
+        limit: 0,
+        skip: 0,
+        sort: 1,
+        sortBy: 'createdAt',
+        showEmptyRows: false,
+    });
     const [deleteDataCollectionView] = useDeleteDataCollectionViewMutation();
     const { data } = useGetDataCollectionsQuery(null);
     useEffect(() => {
@@ -15,7 +23,7 @@ const View = ({ dataCollectionView }: { dataCollectionView: any }) => {
     return (
         <Box>
             <Divider />
-            <Box py={'20px'}>
+            <Box py={'20px'} mt={'20px'}>
                 <Flex>
                     <Text fontSize={'20px'} className="dmsans-400">
                         {dataCollectionView.name}
