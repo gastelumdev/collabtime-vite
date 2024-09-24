@@ -16,7 +16,25 @@ import { Box, Progress } from '@chakra-ui/react';
 import Table from '../../components/table/Table';
 import { TColumn } from '../../types';
 
-const DataCollection = ({ showDoneRows = false, rowsProp, dataCollectionView = null }: { showDoneRows?: boolean; rowsProp: any; dataCollectionView?: any }) => {
+const DataCollection = ({
+    showDoneRows = false,
+    rowsProp,
+    dataCollectionView = null,
+    rowsAreDraggable = true,
+    hasCheckboxOptions = true,
+    hasColumnOptions = true,
+    columnsAreDraggable = true,
+    hasCreateColumn = true,
+}: {
+    showDoneRows?: boolean;
+    rowsProp: any;
+    dataCollectionView?: any;
+    rowsAreDraggable?: boolean;
+    hasCheckboxOptions?: boolean;
+    hasColumnOptions?: boolean;
+    columnsAreDraggable?: boolean;
+    hasCreateColumn?: boolean;
+}) => {
     const { dataCollectionId } = useParams();
 
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
@@ -101,6 +119,11 @@ const DataCollection = ({ showDoneRows = false, rowsProp, dataCollectionView = n
                 updateRowIsLoading={updateRowIsLoading}
                 refetch={refetch}
                 view={dataCollectionView ? true : false}
+                rowsAreDraggable={rowsAreDraggable}
+                hasCheckboxOptions={hasCheckboxOptions}
+                hasColumnOptions={hasColumnOptions}
+                hasCreateColumn={hasCreateColumn}
+                columnsAreDraggable={columnsAreDraggable}
             />
         </Box>
     );

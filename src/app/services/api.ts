@@ -279,7 +279,7 @@ export const api = createApi({
                     update.undo()
                 })
             },
-            invalidatesTags: [],
+            invalidatesTags: ["DataCollectionView"],
         }),
         updateRowNoTag: builder.mutation<TRow[], TRow>({
             query: (row) => ({

@@ -34,6 +34,7 @@ const Row = ({
     // rowCallUpdate,
     allowed = false,
     isDraggable = false,
+    hasCheckboxOptions = true,
 }: {
     row: any;
     rowIndex: number;
@@ -50,6 +51,7 @@ const Row = ({
     allowed?: boolean;
     showDoneRows?: boolean;
     isDraggable?: boolean;
+    hasCheckboxOptions?: boolean;
 }) => {
     // const rowsData = useMemo(
     //     () => [
@@ -258,7 +260,7 @@ const Row = ({
                             <div
                                 className="table-row content"
                                 style={{
-                                    gridTemplateColumns: '220px ' + gridTemplateColumns,
+                                    gridTemplateColumns: `${hasCheckboxOptions ? '220px' : '150px'} ${gridTemplateColumns}`,
                                 }}
                                 // draggable={allowed && isDraggable}
                                 onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, row.position)}
@@ -268,7 +270,7 @@ const Row = ({
                                 onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
                                 onDrop={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
                             >
-                                <span style={{ borderRight: '1px solid #edf2f7' }}>
+                                <span style={{ borderRight: '1px solid #edf2f7', width: !hasCheckboxOptions ? '150px' : '220px' }}>
                                     <Flex>
                                         {isDraggable ? (
                                             <Box
@@ -287,14 +289,16 @@ const Row = ({
                                                 style={{ backgroundColor: row.parentRowId ? '#9fdaff' : '#24a2f0' }}
                                             ></Box>
                                         ) : null}
-                                        <Box mt={'6px'} ml={'14px'}>
-                                            <Checkbox
-                                                mr={'1px'}
-                                                isChecked={checkedRowIds.includes(row._id)}
-                                                onChange={handleDeleteCheckboxChange}
-                                                disabled={!allowed}
-                                            />
-                                        </Box>
+                                        {hasCheckboxOptions ? (
+                                            <Box mt={'6px'} ml={'14px'}>
+                                                <Checkbox
+                                                    mr={'1px'}
+                                                    isChecked={checkedRowIds.includes(row._id)}
+                                                    onChange={handleDeleteCheckboxChange}
+                                                    disabled={!allowed}
+                                                />
+                                            </Box>
+                                        ) : null}
                                         <Box pt={'6px'}>
                                             <EditRow row={row} columns={columns} handleChange={editRowOnChange} allowed={allowed} />
                                         </Box>

@@ -27,6 +27,7 @@ const ColumnMenu = ({
     index,
     handleSortByColumnAsc,
     handleSortByColumnDes,
+    hasColumnOptions = true,
 }: {
     column: any;
     columns: any;
@@ -35,6 +36,7 @@ const ColumnMenu = ({
     index: number;
     handleSortByColumnAsc?: any;
     handleSortByColumnDes?: any;
+    hasColumnOptions?: boolean;
 }) => {
     const { isOpen, onToggle, onClose } = useDisclosure();
 
@@ -74,18 +76,22 @@ const ColumnMenu = ({
                                 <Box onClick={sortByColumnDes} textAlign={'left'} fontSize={'14px'} cursor={'pointer'} mb={'4px'}>
                                     Sort descending
                                 </Box>
-                                <Box>
-                                    <CreateColumn
-                                        column={column}
-                                        columns={columns}
-                                        updateColumn={updateColumn}
-                                        addNewColumnToRows={handleAddNewColumnToRows}
-                                        columnIsUpdating={columnIsUpdating as boolean}
-                                    />
-                                </Box>
-                                <Box>
-                                    <DeleteModal column={column} handleDeleteColumnClick={handleDeleteColumnClick} />
-                                </Box>
+                                {hasColumnOptions ? (
+                                    <>
+                                        <Box>
+                                            <CreateColumn
+                                                column={column}
+                                                columns={columns}
+                                                updateColumn={updateColumn}
+                                                addNewColumnToRows={handleAddNewColumnToRows}
+                                                columnIsUpdating={columnIsUpdating as boolean}
+                                            />
+                                        </Box>
+                                        <Box>
+                                            <DeleteModal column={column} handleDeleteColumnClick={handleDeleteColumnClick} />
+                                        </Box>
+                                    </>
+                                ) : null}
                             </>
                         ) : (
                             <>
@@ -95,9 +101,11 @@ const ColumnMenu = ({
                                 <Box onClick={sortByColumnDes} textAlign={'left'} fontSize={'14px'} cursor={'pointer'} mb={'4px'}>
                                     Sort descending
                                 </Box>
-                                <Box w={'100%'} textAlign={'left'} fontSize={'14px'} cursor={'default'} color="lightgray">
-                                    Delete column
-                                </Box>
+                                {hasColumnOptions ? (
+                                    <Box w={'100%'} textAlign={'left'} fontSize={'14px'} cursor={'default'} color="lightgray">
+                                        Delete column
+                                    </Box>
+                                ) : null}
                             </>
                         )}
                     </PopoverBody>

@@ -1,6 +1,7 @@
 import { Box, Button, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text, useDisclosure } from '@chakra-ui/react';
 import { getTextColor } from '../../utils/helpers';
 import { memo, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 interface ILabel {
     value: string;
@@ -101,28 +102,31 @@ const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false, 
                                 {labelValue}
                             </Button>
                         </PopoverTrigger>
-                        <PopoverContent>
-                            <PopoverArrow />
-                            <PopoverBody>
-                                {options?.map((label, index) => {
-                                    return (
-                                        <Box key={index} bgColor={label.color} mb={'3px'} cursor={'pointer'} onClick={() => handleLabelClick(label)}>
-                                            <Button
-                                                bgColor={label.color}
-                                                w={'100%'}
-                                                fontSize={'12px'}
-                                                fontWeight={'normal'}
-                                                size={'sm'}
-                                                _hover={{ bgColor: label.color }}
-                                                // onClick={() => handleLabelClick(label)}
-                                            >
-                                                <Text color={getTextColor(label.color)}>{label.label}</Text>
-                                            </Button>
-                                        </Box>
-                                    );
-                                })}
-                            </PopoverBody>
-                        </PopoverContent>
+                        {createPortal(
+                            <PopoverContent zIndex={1000000}>
+                                <PopoverArrow />
+                                <PopoverBody>
+                                    {options?.map((label, index) => {
+                                        return (
+                                            <Box key={index} bgColor={label.color} mb={'3px'} cursor={'pointer'} onClick={() => handleLabelClick(label)}>
+                                                <Button
+                                                    bgColor={label.color}
+                                                    w={'100%'}
+                                                    fontSize={'12px'}
+                                                    fontWeight={'normal'}
+                                                    size={'sm'}
+                                                    _hover={{ bgColor: label.color }}
+                                                    // onClick={() => handleLabelClick(label)}
+                                                >
+                                                    <Text color={getTextColor(label.color)}>{label.label}</Text>
+                                                </Button>
+                                            </Box>
+                                        );
+                                    })}
+                                </PopoverBody>
+                            </PopoverContent>,
+                            document.body
+                        )}
                     </Popover>
                 </div>
             ) : (

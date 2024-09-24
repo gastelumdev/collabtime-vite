@@ -24,6 +24,10 @@ interface IProps {
     isFetching?: boolean;
     handleSortByColumnAsc: any;
     handleSortByColumnDes: any;
+    hasCheckboxOptions?: boolean;
+    hasColumnOptions?: boolean;
+    columnsAreDraggable?: boolean;
+    hasCreateColumn?: boolean;
 }
 
 const TableHeader = ({
@@ -44,6 +48,10 @@ const TableHeader = ({
     allowed = false,
     handleSortByColumnAsc,
     handleSortByColumnDes,
+    hasCheckboxOptions = true,
+    hasColumnOptions = true,
+    columnsAreDraggable = true,
+    hasCreateColumn = true,
 }: IProps) => {
     const [currentColumns, setCurrentColumns] = useState(columns);
     // ******************* COLUMN REORDERING ******************************
@@ -300,7 +308,8 @@ const TableHeader = ({
             <div
                 className="table-row header"
                 style={{
-                    gridTemplateColumns: '220px ' + gridTemplateColumns + ' 100px',
+                    // gridTemplateColumns: '220px ' + gridTemplateColumns + ' 100px',
+                    gridTemplateColumns: `${hasCheckboxOptions ? '220px' : '150px'} ${gridTemplateColumns} 100px`,
                     position: 'sticky',
                     top: '0',
                     height: headerHeight,
@@ -325,7 +334,7 @@ const TableHeader = ({
                             style={{
                                 height: '39px',
                                 padding: '0px 20px',
-                                cursor: columnIndex !== 0 && allowed ? 'grab' : 'default',
+                                cursor: columnIndex !== 0 && columnsAreDraggable && allowed ? 'grab' : 'default',
                                 zIndex: `${100 - columnIndex}`,
                                 backgroundColor: draggedColumnIndex === columnIndex ? '#edf2f7' : 'unset',
                                 borderLeft:
@@ -352,9 +361,9 @@ const TableHeader = ({
                                         overflow: 'hidden',
                                         whiteSpace: 'nowrap',
                                         textOverflow: 'ellipsis',
-                                        cursor: !allowed ? 'default' : 'grab',
+                                        cursor: !allowed && columnsAreDraggable ? 'default' : 'grab',
                                     }}
-                                    draggable={columnIndex !== 0 && allowed}
+                                    draggable={columnIndex !== 0 && columnsAreDraggable && allowed}
                                     onDragStart={() => handleDragStart(columnIndex)}
                                     onDragOver={(event) => handleDragOver(event, columnIndex)}
                                     onDragEnd={() => handleDragEnd()}
@@ -371,6 +380,7 @@ const TableHeader = ({
                                             index={columnIndex}
                                             handleSortByColumnAsc={handleSortByColumnAsc}
                                             handleSortByColumnDes={handleSortByColumnDes}
+                                            hasColumnOptions={hasColumnOptions}
                                         />
                                     ) : (
                                         <Text fontSize={'14px'} fontWeight={'medium'} color={'#666666'}>{`${column.name[0].toUpperCase()}${column.name
@@ -408,6 +418,7 @@ const TableHeader = ({
                                             index={columnIndex}
                                             handleSortByColumnAsc={handleSortByColumnAsc}
                                             handleSortByColumnDes={handleSortByColumnDes}
+                                            hasColumnOptions={hasColumnOptions}
                                         />
                                     ) : (
                                         <Text fontSize={'14px'} fontWeight={'medium'} color={'#666666'}>{`${column.name[0].toUpperCase()}${column.name
@@ -438,7 +449,7 @@ const TableHeader = ({
                         padding: '0px 20px',
                     }}
                 >
-                    {allowed ? (
+                    {allowed && hasCreateColumn ? (
                         <CreateColumn
                             columns={columns}
                             createColumn={createColumn}

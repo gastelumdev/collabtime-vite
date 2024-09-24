@@ -23,7 +23,7 @@ const View = ({ dataCollectionView }: { dataCollectionView: any }) => {
     return (
         <Box>
             <Divider />
-            <Box py={'20px'} mt={'20px'}>
+            <Box pt={'25px'} pb={'4px'} mt={'20px'}>
                 <Flex>
                     <Text fontSize={'20px'} className="dmsans-400">
                         {dataCollectionView.name}
@@ -54,7 +54,16 @@ const View = ({ dataCollectionView }: { dataCollectionView: any }) => {
                     </Menu>
                 </Flex>
             </Box>
-            <DataCollection showDoneRows={true} rowsProp={rows} dataCollectionView={dataCollectionView} />
+            <DataCollection
+                showDoneRows={true}
+                rowsProp={rows}
+                dataCollectionView={dataCollectionView}
+                rowsAreDraggable={false}
+                hasCheckboxOptions={false}
+                hasColumnOptions={false}
+                columnsAreDraggable={false}
+                hasCreateColumn={false}
+            />
         </Box>
     );
 };

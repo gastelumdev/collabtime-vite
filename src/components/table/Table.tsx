@@ -29,6 +29,11 @@ interface ITableProps {
     updateRow?: any;
     updateRowIsLoading?: boolean;
     view?: boolean;
+    rowsAreDraggable?: boolean;
+    hasCheckboxOptions?: boolean;
+    hasColumnOptions?: boolean;
+    columnsAreDraggable?: boolean;
+    hasCreateColumn?: boolean;
 }
 
 const Table = ({
@@ -48,6 +53,11 @@ const Table = ({
     isFetching = true,
     updateRow,
     view = false,
+    rowsAreDraggable = true,
+    hasCheckboxOptions = true,
+    hasColumnOptions = true,
+    columnsAreDraggable = true,
+    hasCreateColumn = true,
 }: ITableProps) => {
     const dispatch = useAppDispatch();
 
@@ -513,6 +523,10 @@ const Table = ({
                 isFetching={isFetching}
                 handleSortByColumnAsc={handleSortByColumnAsc}
                 handleSortByColumnDes={handleSortByColumnDes}
+                hasCheckboxOptions={hasCheckboxOptions}
+                hasColumnOptions={hasColumnOptions}
+                columnsAreDraggable={columnsAreDraggable}
+                hasCreateColumn={hasCreateColumn}
             />
             <TableContent
                 rows={rows || []}
@@ -534,6 +548,8 @@ const Table = ({
                 columnToSortBy={columnToSortBy}
                 directionToSortBy={directionToSortBy}
                 view={view}
+                rowsAreDraggable={rowsAreDraggable}
+                hasCheckboxOptions={hasCheckboxOptions}
             />
             {/* <Box w={'100%'} h={'30px'}>
                 <Text ml={'10px'}>Add row</Text>

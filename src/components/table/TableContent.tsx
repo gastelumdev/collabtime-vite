@@ -25,6 +25,8 @@ interface IProps {
     columnToSortBy: any;
     directionToSortBy: string;
     view?: boolean;
+    rowsAreDraggable?: boolean;
+    hasCheckboxOptions?: boolean;
 }
 
 const TableContent = ({
@@ -46,6 +48,8 @@ const TableContent = ({
     columnToSortBy = null,
     directionToSortBy = 'Asc',
     view = false,
+    rowsAreDraggable = true,
+    hasCheckboxOptions = true,
 }: IProps) => {
     const ref = useRef<HTMLDivElement | null>(null);
     const [gridTemplateColumns, setGridTemplateColumns] = useState('');
@@ -407,7 +411,7 @@ const TableContent = ({
     const [show, setShow] = useState(true);
     return (
         <div
-            className="table-content scroll-container"
+            className={`table-content${view ? '-view' : ''} scroll-container`}
             ref={ref}
             onDragEnter={(event: React.DragEvent<HTMLDivElement>) => handleDragEnter(event)}
             onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
@@ -442,7 +446,8 @@ const TableContent = ({
                                             // rowCallUpdate={rowCallUpdate}
                                             allowed={allowed}
                                             showDoneRows={showDoneRows}
-                                            isDraggable={columnToSortBy === null}
+                                            isDraggable={rowsAreDraggable && columnToSortBy === null}
+                                            hasCheckboxOptions={hasCheckboxOptions}
                                         />
                                     </div>
                                     <div></div>
