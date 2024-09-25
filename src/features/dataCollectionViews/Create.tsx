@@ -25,6 +25,7 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
                   workspace: localStorage.getItem('workspaceId'),
                   dataCollection: '',
                   columns: [],
+                  viewers: [localStorage.getItem('userId')],
               }
     );
 
