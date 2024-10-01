@@ -27,7 +27,6 @@ import Edit from './Edit';
 import Delete from './Delete';
 import { bgColor } from '../../utils/colors';
 import '../../App.css';
-import PrimaryButton from '../../components/Buttons/PrimaryButton';
 import UserGroups from './UserGroups';
 
 /**
