@@ -152,21 +152,19 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
                                     <MenuList>
                                         {data?.map((ws: any, index: number) => {
                                             return (
-                                                <>
-                                                    <MenuItem
-                                                        key={index}
-                                                        as={'a'}
-                                                        href={`/workspaces/${ws._id}`}
-                                                        onClick={() => {
-                                                            localStorage.setItem('workspaceId', ws._id);
-                                                            updateUser({ ...user, defaultWorkspaceId: ws._id });
-                                                        }}
-                                                        fontSize={'14px'}
-                                                        color={bgColor}
-                                                    >
-                                                        {ws.name}
-                                                    </MenuItem>
-                                                </>
+                                                <MenuItem
+                                                    key={index}
+                                                    as={'a'}
+                                                    href={`/workspaces/${ws._id}`}
+                                                    onClick={() => {
+                                                        localStorage.setItem('workspaceId', ws._id);
+                                                        updateUser({ ...user, defaultWorkspaceId: ws._id });
+                                                    }}
+                                                    fontSize={'14px'}
+                                                    color={bgColor}
+                                                >
+                                                    {ws.name}
+                                                </MenuItem>
                                             );
                                         })}
                                         <MenuDivider />
@@ -192,15 +190,13 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
                             </Box>
                             {linkItems.map((link, index) => {
                                 return (
-                                    <>
-                                        <Box key={index}>
-                                            <Link to={link.path}>
-                                                <NavItem key={link.name} icon={link.icon} active={link.active}>
-                                                    {link.name}
-                                                </NavItem>
-                                            </Link>
-                                        </Box>
-                                    </>
+                                    <Box key={index}>
+                                        <Link to={link.path}>
+                                            <NavItem key={link.name} icon={link.icon} active={link.active}>
+                                                {link.name}
+                                            </NavItem>
+                                        </Link>
+                                    </Box>
                                 );
                             })}
                             <Link to={'/login'}>

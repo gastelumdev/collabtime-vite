@@ -37,7 +37,6 @@ const ViewRef = ({ columns, rowData, value, allowed = false }: IProps) => {
     }, []);
 
     useEffect(() => {
-        console.log(rowFetched);
         setRow(rowFetched);
     }, [rowFetched, rowData]);
 

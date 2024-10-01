@@ -41,8 +41,6 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
 
         setColumns(newColumns);
 
-        console.log(dataCollection);
-
         // const newViewColumns = view?.columns.map((col: any) => {
         //     return col._id;
         // });
@@ -156,9 +154,8 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
                 <Box mt={'20px'} mb={'20px'}>
                     {columns?.length > 0
                         ? columns?.map((col: any) => {
-                              console.log(dataCollectionView.columns);
                               return (
-                                  <>
+                                  <Box key={col.name}>
                                       <Flex>
                                           <FormControl display="flex" alignItems="center">
                                               <Switch
@@ -197,7 +194,7 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
                                               <Text>Something</Text>
                                           ) : null} */}
                                       </Flex>
-                                  </>
+                                  </Box>
                               );
                           })
                         : null}

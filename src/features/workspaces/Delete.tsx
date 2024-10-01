@@ -29,7 +29,6 @@ const Delete = ({ workspace, deleteWorkspace }: IProps) => {
             return workspace?._id !== ws._id;
         });
 
-        console.log(redirectWorkspace);
         if (redirectWorkspace !== undefined) setRedirectWorkspaceId(redirectWorkspace._id);
     }, [workspaces]);
     return (

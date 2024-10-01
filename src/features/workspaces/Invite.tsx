@@ -94,7 +94,6 @@ const Invite = ({}: InviteProps) => {
     const [workspaceUsers, setWorkspaceUsers] = useState<any>(workspaceUsersRes);
 
     useEffect(() => {
-        console.log(workspaceUsersRes);
         setWorkspaceUsers(workspaceUsersRes);
     }, [workspaceUsersRes]);
 
@@ -127,7 +126,6 @@ const Invite = ({}: InviteProps) => {
     };
 
     const handleSelectChange = async (newValue: MultiValue<{ value: string; label: string }>, actionMeta: ActionMeta<any>) => {
-        console.log(workspace);
         setSelectedOptions(newValue);
         let inviteesCopy = invitees;
 

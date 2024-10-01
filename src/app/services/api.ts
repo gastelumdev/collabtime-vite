@@ -12,7 +12,7 @@ export const api = createApi({
             return headers;
         }
     }),
-    tagTypes: ["auth", "Workspace", "Notification", "DataCollection", "Column", "Rows", "Documents", "Tags", "Messages", "DataCollectionView"],
+    tagTypes: ["auth", "Workspace", "Notification", "DataCollection", "Column", "Rows", "Documents", "Tags", "Messages", "DataCollectionView", "UserGroup"],
     endpoints: (builder) => ({
         login: builder.mutation<UserResponse, LoginRequest>({
             query: (credentials) => ({
@@ -240,7 +240,6 @@ export const api = createApi({
             }),
             providesTags: ["Rows"],
             transformResponse: (rows: any) => {
-                console.log(rows)
                 return rows.map((row: any) => {
                     return { ...row, checked: false, subRowsAreOpen: false }
                 })
@@ -527,6 +526,36 @@ export const api = createApi({
                 body: {}
             }),
             invalidatesTags: ["DataCollectionView"]
+        }),
+        getUserGroups: builder.query<any, any>({
+            query: () => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/userGroups`,
+            }),
+            providesTags: ["UserGroup"]
+        }),
+        createUserGroup: builder.mutation<any, any>({
+            query: (userGroup) => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/userGroups`,
+                method: "POST",
+                body: userGroup
+            }),
+            invalidatesTags: ["UserGroup"]
+        }),
+        updateUserGroup: builder.mutation<any, any>({
+            query: (userGroup) => ({
+                url: `workspaces/${localStorage.getItem("workspaceId")}/userGroups/${userGroup._id}`,
+                method: "PUT",
+                body: userGroup
+            }),
+            invalidatesTags: ["UserGroup"]
+        }),
+        deleteUserGroup: builder.mutation<any, any>({
+            query: (userGroupId) => ({
+                url: `workspaces/${localStorage.getItem("workspaceId")}/userGroups/${userGroupId}`,
+                method: "DELETE",
+                body: {}
+            }),
+            invalidatesTags: ["UserGroup"]
         })
     })
 })
@@ -601,5 +630,9 @@ export const {
     useGetDataCollectionViewsQuery,
     useCreateDataCollectionViewsMutation,
     useUpdateDataCollectionViewMutation,
-    useDeleteDataCollectionViewMutation
+    useDeleteDataCollectionViewMutation,
+    useGetUserGroupsQuery,
+    useCreateUserGroupMutation,
+    useUpdateUserGroupMutation,
+    useDeleteUserGroupMutation,
 } = api

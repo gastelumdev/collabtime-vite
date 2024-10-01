@@ -28,6 +28,7 @@ import Delete from './Delete';
 import { bgColor } from '../../utils/colors';
 import '../../App.css';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
+import UserGroups from './UserGroups';
 
 /**
  * This funcion renders a workspace when selected from the workspaces page
@@ -38,7 +39,6 @@ import PrimaryButton from '../../components/Buttons/PrimaryButton';
  */
 const ViewOne = () => {
     const { id } = useParams();
-    console.log(id);
     const { data: workspaces } = useGetWorkspacesQuery(null);
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
     const { data: workspace, isError, error } = useGetOneWorkspaceQuery(id as string);
@@ -141,18 +141,19 @@ const ViewOne = () => {
                                         <Box mt={'22px'}>
                                             <Invite />
                                         </Box>
-                                        <Box mt={'22px'} ml={'6px'}>
+                                        <Box mt={'20px'} ml={'6px'}>
                                             <Menu>
-                                                <MenuButton>
-                                                    <PrimaryButton size="sm">
-                                                        <Text fontSize={'16px'}>
-                                                            <IoSettingsOutline />
-                                                        </Text>
-                                                    </PrimaryButton>
+                                                <MenuButton pt={'8px'} ml={'5px'}>
+                                                    {/* <PrimaryButton size="sm"> */}
+                                                    <Text fontSize={'20px'}>
+                                                        <IoSettingsOutline />
+                                                    </Text>
+                                                    {/* </PrimaryButton> */}
                                                 </MenuButton>
                                                 <MenuList fontSize={'13px'}>
                                                     <Edit workspace={workspace!} updateWorkspace={updateWorkspace} workspaces={workspaces} />
                                                     <Delete workspace={workspace!} deleteWorkspace={deleteWorkspace} />
+                                                    <UserGroups />
                                                 </MenuList>
                                             </Menu>
                                         </Box>

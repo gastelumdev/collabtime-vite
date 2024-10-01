@@ -70,7 +70,6 @@ const TableContent = ({
     }, [showDoneRows, rows]);
 
     useEffect(() => {
-        console.log(columnToSortBy);
         if (columnToSortBy !== null) {
             const rowsCopy: TRow[] = [...rows];
 

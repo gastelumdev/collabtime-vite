@@ -66,17 +66,13 @@ const ViewList = ({ allowed = false }: { allowed?: boolean }) => {
     const [dataCollections, setDataCollections] = useState(data);
 
     useEffect(() => {
-        console.log(workspace);
-        console.log(data);
         permissions;
         getPermissions();
 
         setDataCollections(data);
     }, [user, workspace, data]);
 
-    useEffect(() => {
-        console.log(dataCollectionViews);
-    }, [dataCollectionViews]);
+    useEffect(() => {}, [dataCollectionViews]);
 
     const getPermissions = () => {
         for (const workspace of user?.workspaces || []) {
@@ -272,9 +268,8 @@ const ViewList = ({ allowed = false }: { allowed?: boolean }) => {
                                         </Box>
                                         <Box>
                                             {dataCollectionViews?.map((dcView: any) => {
-                                                console.log(dcView);
                                                 // return <DataCollection showDoneRows={true}  />>;
-                                                return <View dataCollectionView={dcView} />;
+                                                return <View key={dcView.name} dataCollectionView={dcView} />;
                                             })}
                                         </Box>
                                     </TabPanel>

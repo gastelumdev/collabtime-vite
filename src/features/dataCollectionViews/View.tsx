@@ -6,7 +6,6 @@ import { PiDotsThreeVerticalBold } from 'react-icons/pi';
 import Create from './Create';
 
 const View = ({ dataCollectionView }: { dataCollectionView: any }) => {
-    console.log(dataCollectionView);
     const { data: rows } = useGetRowsQuery({
         dataCollectionId: dataCollectionView.dataCollection || '',
         limit: 0,
@@ -18,7 +17,7 @@ const View = ({ dataCollectionView }: { dataCollectionView: any }) => {
     const [deleteDataCollectionView] = useDeleteDataCollectionViewMutation();
     const { data } = useGetDataCollectionsQuery(null);
     useEffect(() => {
-        console.log(rows);
+        // console.log(rows);
     }, [rows]);
     return (
         <Box>
