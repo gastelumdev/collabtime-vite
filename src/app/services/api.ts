@@ -26,6 +26,11 @@ export const api = createApi({
                 url: `user/${userId}`,
             })
         }),
+        getAllWorkspaceUsers: builder.query<any, any>({
+            query: () => ({
+                url: `workspace/${localStorage.getItem("workspaceId")}/users`
+            })
+        }),
         updateUser: builder.mutation<TUser, any>({
             query: (user) => ({
                 url: `user/${user._id}/update`,
@@ -563,6 +568,7 @@ export const api = createApi({
 export const {
     useLoginMutation,
     useGetUserQuery,
+    useGetAllWorkspaceUsersQuery,
     useUpdateUserMutation,
     useResetPasswordRequestMutation,
     useResetPasswordMutation,

@@ -17,13 +17,21 @@ import {
     Select,
     Spacer,
     Stack,
+    Table,
+    TableContainer,
+    Tbody,
+    Td,
     Text,
+    Th,
+    Thead,
+    Tr,
     useDisclosure,
 } from '@chakra-ui/react';
 import PrimaryDrawer from '../../components/PrimaryDrawer';
 import {
     useCreateUserGroupMutation,
     useDeleteUserGroupMutation,
+    useGetAllWorkspaceUsersQuery,
     useGetDataCollectionsQuery,
     useGetDataCollectionViewsQuery,
     useGetUserGroupsQuery,
@@ -471,6 +479,9 @@ const UserGroups = () => {
                                 );
                             })}
                         </Box>
+                        <Box>
+                            <Users />
+                        </Box>
                     </DrawerColumn>
                     <Flex>
                         <Box>
@@ -816,233 +827,235 @@ const UserGroups = () => {
                              *************************************************************************************************************
                              ********************* VIEWS
                              */}
-                            <DrawerColumn w={w} title="Views">
-                                <Text fontSize={'18px'} mb={'20px'}>
-                                    Views
-                                </Text>
-
-                                <Box w={'300px'} mb={'20px'}>
-                                    <Select
-                                        onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
-                                            console.log(currentPermissions);
-                                            const viewPermissions: any = currentPermissions?.views.find((v: any) => {
-                                                console.log(v.name, event.target.value);
-                                                return v.name === event.target.value;
-                                            });
-                                            console.log(viewPermissions);
-                                            setCurrentViewPermissions(viewPermissions);
-                                            setCurrentViewColumnPermissions(viewPermissions.permissions.columns[0]);
-                                            setViewColumns(viewPermissions.permissions.columns);
-                                        }}
-                                    >
-                                        {activeButtonName === 'Create'
-                                            ? views?.map((view: any) => {
-                                                  return (
-                                                      <option key={view.name} value={view.name}>
-                                                          {view.name}
-                                                      </option>
-                                                  );
-                                              })
-                                            : currentPermissions?.views.map((view: any) => {
-                                                  return (
-                                                      <option key={view.name} value={view.name}>
-                                                          {view.name}
-                                                      </option>
-                                                  );
-                                              })}
-                                    </Select>
-                                </Box>
-                                <Flex>
-                                    <Box mr={'60px'}>
-                                        <Text fontSize={'18px'} mb={'20px'}>
-                                            View
-                                        </Text>
-                                        <Stack mt={1} spacing={1}>
-                                            {Object.keys(currentViewPermissions.permissions.view).map((permissionName: string) => {
-                                                // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
-                                                const value: any =
-                                                    currentViewPermissions.permissions.view[
-                                                        permissionName as keyof typeof currentViewPermissions.permissions.view
-                                                    ];
-                                                return (
-                                                    <CheckboxOption
-                                                        key={permissionName}
-                                                        text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
-                                                        isChecked={value}
-                                                        onChange={() => handleViewCheck(currentViewPermissions.view, 'view', permissionName, value)}
-                                                    />
-                                                );
-                                            })}
-                                        </Stack>
-                                    </Box>
-                                    <Box mr={'60px'}>
-                                        <Text fontSize={'18px'} mb={'20px'}>
-                                            Rows
-                                        </Text>
-                                        <Stack mt={1} spacing={1}>
-                                            {Object.keys(currentViewPermissions.permissions.rows).map((permissionName: string) => {
-                                                // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
-                                                const value: any =
-                                                    currentViewPermissions.permissions.rows[
-                                                        permissionName as keyof typeof currentViewPermissions.permissions.rows
-                                                    ];
-                                                return (
-                                                    <CheckboxOption
-                                                        key={permissionName}
-                                                        text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
-                                                        isChecked={value}
-                                                        onChange={() => handleViewCheck(currentViewPermissions.view, 'rows', permissionName, value)}
-                                                    />
-                                                );
-                                            })}
-                                        </Stack>
-                                    </Box>
-                                    <Box mr={'60px'}>
-                                        <Text fontSize={'18px'} mb={'20px'}>
-                                            Notes
-                                        </Text>
-                                        <Stack mt={1} spacing={1}>
-                                            {Object.keys(currentViewPermissions.permissions.notes).map((permissionName: string) => {
-                                                // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
-                                                const value: any =
-                                                    currentViewPermissions.permissions.notes[
-                                                        permissionName as keyof typeof currentViewPermissions.permissions.notes
-                                                    ];
-                                                return (
-                                                    <CheckboxOption
-                                                        key={permissionName}
-                                                        text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
-                                                        isChecked={value}
-                                                        onChange={() => handleViewCheck(currentViewPermissions.view, 'notes', permissionName, value)}
-                                                    />
-                                                );
-                                            })}
-                                        </Stack>
-                                    </Box>
-                                    <Box mr={'60px'}>
-                                        <Text fontSize={'18px'} mb={'20px'}>
-                                            Reminders
-                                        </Text>
-                                        <Stack mt={1} spacing={1}>
-                                            {Object.keys(currentViewPermissions.permissions.reminders).map((permissionName: string) => {
-                                                // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
-                                                const value: any =
-                                                    currentViewPermissions.permissions.reminders[
-                                                        permissionName as keyof typeof currentViewPermissions.permissions.reminders
-                                                    ];
-                                                return (
-                                                    <CheckboxOption
-                                                        key={permissionName}
-                                                        text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
-                                                        isChecked={value}
-                                                        onChange={() => handleViewCheck(currentViewPermissions.view, 'reminders', permissionName, value)}
-                                                    />
-                                                );
-                                            })}
-                                        </Stack>
-                                    </Box>
-                                    <Box mr={'60px'}>
-                                        <Text fontSize={'18px'} mb={'20px'}>
-                                            Upload
-                                        </Text>
-                                        <Stack mt={1} spacing={1}>
-                                            {Object.keys(currentViewPermissions.permissions.docs).map((permissionName: string) => {
-                                                // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
-                                                const value: any =
-                                                    currentViewPermissions.permissions.docs[
-                                                        permissionName as keyof typeof currentViewPermissions.permissions.docs
-                                                    ];
-                                                return (
-                                                    <CheckboxOption
-                                                        key={permissionName}
-                                                        text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
-                                                        isChecked={value}
-                                                        onChange={() => handleViewCheck(currentViewPermissions.view, 'docs', permissionName, value)}
-                                                    />
-                                                );
-                                            })}
-                                        </Stack>
-                                    </Box>
-                                </Flex>
-                                <Box w={'300px'} mb={'20px'} mt={'30px'}>
+                            {currentPermissions?.views.length > 0 ? (
+                                <DrawerColumn w={w} title="Views">
                                     <Text fontSize={'18px'} mb={'20px'}>
-                                        Columns
+                                        Views
                                     </Text>
-                                    <Select
-                                        onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
-                                            const columnPermissions: any = currentViewPermissions?.permissions.columns.find((col: any) => {
-                                                return col.name === event.target.value;
-                                            });
-                                            setCurrentViewColumnPermissions(columnPermissions);
-                                        }}
-                                        value={currentViewColumnPermissions.name}
-                                    >
-                                        {activeButtonName === 'Create'
-                                            ? viewColumns?.map((column: any) => {
-                                                  return (
-                                                      <option key={column.name} value={column.name}>
-                                                          {`${column.name[0].toUpperCase()}${column.name.slice(1)}`.split('_').join(' ')}
-                                                      </option>
-                                                  );
-                                              })
-                                            : currentViewPermissions?.permissions.columns.map((column: any) => {
-                                                  return (
-                                                      <option key={column.name} value={column.name}>
-                                                          {`${column.name[0].toUpperCase()}${column.name.slice(1)}`.split('_').join(' ')}
-                                                      </option>
-                                                  );
-                                              })}
-                                    </Select>
-                                </Box>
-                                <Flex>
-                                    <Box mr={'60px'}>
+
+                                    <Box w={'300px'} mb={'20px'}>
+                                        <Select
+                                            onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
+                                                console.log(currentPermissions);
+                                                const viewPermissions: any = currentPermissions?.views.find((v: any) => {
+                                                    console.log(v.name, event.target.value);
+                                                    return v.name === event.target.value;
+                                                });
+                                                console.log(viewPermissions);
+                                                setCurrentViewPermissions(viewPermissions);
+                                                setCurrentViewColumnPermissions(viewPermissions.permissions.columns[0]);
+                                                setViewColumns(viewPermissions.permissions.columns);
+                                            }}
+                                        >
+                                            {activeButtonName === 'Create'
+                                                ? views?.map((view: any) => {
+                                                      return (
+                                                          <option key={view.name} value={view.name}>
+                                                              {view.name}
+                                                          </option>
+                                                      );
+                                                  })
+                                                : currentPermissions?.views.map((view: any) => {
+                                                      return (
+                                                          <option key={view.name} value={view.name}>
+                                                              {view.name}
+                                                          </option>
+                                                      );
+                                                  })}
+                                        </Select>
+                                    </Box>
+                                    <Flex>
+                                        <Box mr={'60px'}>
+                                            <Text fontSize={'18px'} mb={'20px'}>
+                                                View
+                                            </Text>
+                                            <Stack mt={1} spacing={1}>
+                                                {Object.keys(currentViewPermissions.permissions.view).map((permissionName: string) => {
+                                                    // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
+                                                    const value: any =
+                                                        currentViewPermissions.permissions.view[
+                                                            permissionName as keyof typeof currentViewPermissions.permissions.view
+                                                        ];
+                                                    return (
+                                                        <CheckboxOption
+                                                            key={permissionName}
+                                                            text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
+                                                            isChecked={value}
+                                                            onChange={() => handleViewCheck(currentViewPermissions.view, 'view', permissionName, value)}
+                                                        />
+                                                    );
+                                                })}
+                                            </Stack>
+                                        </Box>
+                                        <Box mr={'60px'}>
+                                            <Text fontSize={'18px'} mb={'20px'}>
+                                                Rows
+                                            </Text>
+                                            <Stack mt={1} spacing={1}>
+                                                {Object.keys(currentViewPermissions.permissions.rows).map((permissionName: string) => {
+                                                    // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
+                                                    const value: any =
+                                                        currentViewPermissions.permissions.rows[
+                                                            permissionName as keyof typeof currentViewPermissions.permissions.rows
+                                                        ];
+                                                    return (
+                                                        <CheckboxOption
+                                                            key={permissionName}
+                                                            text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
+                                                            isChecked={value}
+                                                            onChange={() => handleViewCheck(currentViewPermissions.view, 'rows', permissionName, value)}
+                                                        />
+                                                    );
+                                                })}
+                                            </Stack>
+                                        </Box>
+                                        <Box mr={'60px'}>
+                                            <Text fontSize={'18px'} mb={'20px'}>
+                                                Notes
+                                            </Text>
+                                            <Stack mt={1} spacing={1}>
+                                                {Object.keys(currentViewPermissions.permissions.notes).map((permissionName: string) => {
+                                                    // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
+                                                    const value: any =
+                                                        currentViewPermissions.permissions.notes[
+                                                            permissionName as keyof typeof currentViewPermissions.permissions.notes
+                                                        ];
+                                                    return (
+                                                        <CheckboxOption
+                                                            key={permissionName}
+                                                            text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
+                                                            isChecked={value}
+                                                            onChange={() => handleViewCheck(currentViewPermissions.view, 'notes', permissionName, value)}
+                                                        />
+                                                    );
+                                                })}
+                                            </Stack>
+                                        </Box>
+                                        <Box mr={'60px'}>
+                                            <Text fontSize={'18px'} mb={'20px'}>
+                                                Reminders
+                                            </Text>
+                                            <Stack mt={1} spacing={1}>
+                                                {Object.keys(currentViewPermissions.permissions.reminders).map((permissionName: string) => {
+                                                    // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
+                                                    const value: any =
+                                                        currentViewPermissions.permissions.reminders[
+                                                            permissionName as keyof typeof currentViewPermissions.permissions.reminders
+                                                        ];
+                                                    return (
+                                                        <CheckboxOption
+                                                            key={permissionName}
+                                                            text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
+                                                            isChecked={value}
+                                                            onChange={() => handleViewCheck(currentViewPermissions.view, 'reminders', permissionName, value)}
+                                                        />
+                                                    );
+                                                })}
+                                            </Stack>
+                                        </Box>
+                                        <Box mr={'60px'}>
+                                            <Text fontSize={'18px'} mb={'20px'}>
+                                                Upload
+                                            </Text>
+                                            <Stack mt={1} spacing={1}>
+                                                {Object.keys(currentViewPermissions.permissions.docs).map((permissionName: string) => {
+                                                    // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
+                                                    const value: any =
+                                                        currentViewPermissions.permissions.docs[
+                                                            permissionName as keyof typeof currentViewPermissions.permissions.docs
+                                                        ];
+                                                    return (
+                                                        <CheckboxOption
+                                                            key={permissionName}
+                                                            text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
+                                                            isChecked={value}
+                                                            onChange={() => handleViewCheck(currentViewPermissions.view, 'docs', permissionName, value)}
+                                                        />
+                                                    );
+                                                })}
+                                            </Stack>
+                                        </Box>
+                                    </Flex>
+                                    <Box w={'300px'} mb={'20px'} mt={'30px'}>
                                         <Text fontSize={'18px'} mb={'20px'}>
                                             Columns
                                         </Text>
+                                        <Select
+                                            onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
+                                                const columnPermissions: any = currentViewPermissions?.permissions.columns.find((col: any) => {
+                                                    return col.name === event.target.value;
+                                                });
+                                                setCurrentViewColumnPermissions(columnPermissions);
+                                            }}
+                                            value={currentViewColumnPermissions.name}
+                                        >
+                                            {activeButtonName === 'Create'
+                                                ? viewColumns?.map((column: any) => {
+                                                      return (
+                                                          <option key={column.name} value={column.name}>
+                                                              {`${column.name[0].toUpperCase()}${column.name.slice(1)}`.split('_').join(' ')}
+                                                          </option>
+                                                      );
+                                                  })
+                                                : currentViewPermissions?.permissions.columns.map((column: any) => {
+                                                      return (
+                                                          <option key={column.name} value={column.name}>
+                                                              {`${column.name[0].toUpperCase()}${column.name.slice(1)}`.split('_').join(' ')}
+                                                          </option>
+                                                      );
+                                                  })}
+                                        </Select>
+                                    </Box>
+                                    <Flex>
+                                        <Box mr={'60px'}>
+                                            <Text fontSize={'18px'} mb={'20px'}>
+                                                Columns
+                                            </Text>
 
-                                        <Stack mt={1} spacing={1}>
-                                            {Object.keys(currentViewColumnPermissions.permissions.column || {}).map((permissionName: string) => {
-                                                // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
-                                                const value: any =
-                                                    currentViewColumnPermissions.permissions.column[
-                                                        permissionName as keyof typeof currentViewColumnPermissions.permissions.column
-                                                    ];
-                                                return (
-                                                    <CheckboxOption
-                                                        key={permissionName}
-                                                        text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
-                                                        isChecked={value}
-                                                        onChange={() => handleViewColumnRowsCheck(permissionName, value)}
-                                                    />
-                                                );
-                                            })}
-                                        </Stack>
-                                    </Box>
-                                </Flex>
-                                <Flex mt={'20px'}>
-                                    <Spacer />
-                                    <Box>
-                                        {activeButtonName === 'Create' ? (
-                                            <PrimaryButton
-                                                onClick={() => {
-                                                    document.getElementById('scroller')?.scroll(0, 0);
-                                                    createUserGroup({
-                                                        name: newUserGroupName,
-                                                        workspace: localStorage.getItem('workspaceId'),
-                                                        permissions: currentPermissions,
-                                                        users: [],
-                                                    });
-                                                    resetPermissions();
-                                                }}
-                                            >
-                                                Save
-                                            </PrimaryButton>
-                                        ) : (
-                                            <PrimaryButton>Update</PrimaryButton>
-                                        )}
-                                    </Box>
-                                </Flex>
-                            </DrawerColumn>
+                                            <Stack mt={1} spacing={1}>
+                                                {Object.keys(currentViewColumnPermissions.permissions.column || {}).map((permissionName: string) => {
+                                                    // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
+                                                    const value: any =
+                                                        currentViewColumnPermissions.permissions.column[
+                                                            permissionName as keyof typeof currentViewColumnPermissions.permissions.column
+                                                        ];
+                                                    return (
+                                                        <CheckboxOption
+                                                            key={permissionName}
+                                                            text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
+                                                            isChecked={value}
+                                                            onChange={() => handleViewColumnRowsCheck(permissionName, value)}
+                                                        />
+                                                    );
+                                                })}
+                                            </Stack>
+                                        </Box>
+                                    </Flex>
+                                    <Flex mt={'20px'}>
+                                        <Spacer />
+                                        <Box>
+                                            {activeButtonName === 'Create' ? (
+                                                <PrimaryButton
+                                                    onClick={() => {
+                                                        document.getElementById('scroller')?.scroll(0, 0);
+                                                        createUserGroup({
+                                                            name: newUserGroupName,
+                                                            workspace: localStorage.getItem('workspaceId'),
+                                                            permissions: currentPermissions,
+                                                            users: [],
+                                                        });
+                                                        resetPermissions();
+                                                    }}
+                                                >
+                                                    Save
+                                                </PrimaryButton>
+                                            ) : (
+                                                <PrimaryButton>Update</PrimaryButton>
+                                            )}
+                                        </Box>
+                                    </Flex>
+                                </DrawerColumn>
+                            ) : null}
                         </Box>
                     </Flex>
                 </Flex>
@@ -1110,6 +1123,97 @@ const DeleteModal = ({ userGroup, resetPermissions }: { userGroup: any; resetPer
                 </ModalContent>
             </Modal>
         </>
+    );
+};
+
+const Users = () => {
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const { data: users } = useGetAllWorkspaceUsersQuery(null);
+    const { data: userGroups } = useGetUserGroupsQuery(null);
+    const [updateUserGroup] = useUpdateUserGroupMutation();
+
+    const handleOnChange = (event: React.ChangeEvent<HTMLSelectElement>, user: any) => {
+        const userGroupId = event.target.value;
+
+        const selectedUserGroup = userGroups.find((item: any) => {
+            return item._id === userGroupId;
+        });
+
+        if (selectedUserGroup !== undefined) {
+            const newSelectedUserGroup = { ...selectedUserGroup, users: [...selectedUserGroup.users, user._id] };
+
+            updateUserGroup(newSelectedUserGroup);
+        }
+
+        const originalUserGroup = userGroups.find((item: any) => {
+            return item.users.includes(user._id);
+        });
+
+        if (originalUserGroup !== undefined) {
+            const newOriginalUserGroup = {
+                ...originalUserGroup,
+                users: originalUserGroup.users.filter((item: any) => {
+                    console.log(item);
+                    return item !== user._id;
+                }),
+            };
+
+            updateUserGroup(newOriginalUserGroup);
+        }
+    };
+    return (
+        <Box>
+            <Button w={'160px'} size={'xs'} mb={'5px'} colorScheme="blue" mt={'20px'} onClick={onOpen}>
+                Users
+            </Button>
+            <PrimaryDrawer onClose={onClose} isOpen={isOpen} title={'Users'} size="full">
+                <TableContainer>
+                    <Table variant={'simple'} size={'sm'}>
+                        <Thead>
+                            <Tr>
+                                <Th>First name</Th>
+                                <Th>Last name</Th>
+                                <Th>User Group</Th>
+                            </Tr>
+                        </Thead>
+                        <Tbody>
+                            {users?.map((user: any) => {
+                                let defaultUserGroupId = '';
+                                const defaultUserGroup = userGroups.find((item: any) => {
+                                    return item.users.includes(user._id);
+                                });
+
+                                if (defaultUserGroup !== undefined) {
+                                    defaultUserGroupId = defaultUserGroup._id;
+                                }
+                                return (
+                                    <Tr key={user.email}>
+                                        <Td>{user.firstname}</Td>
+                                        <Td>{user.lastname}</Td>
+                                        <Td>
+                                            <Select
+                                                size={'xs'}
+                                                placeholder="No Group"
+                                                value={defaultUserGroupId}
+                                                onChange={(event: React.ChangeEvent<HTMLSelectElement>) => handleOnChange(event, user)}
+                                            >
+                                                {userGroups.map((userGroup: any) => {
+                                                    return (
+                                                        <option key={userGroup.name} value={userGroup._id}>
+                                                            {userGroup.name}
+                                                        </option>
+                                                    );
+                                                })}
+                                            </Select>
+                                        </Td>
+                                    </Tr>
+                                );
+                            })}
+                        </Tbody>
+                    </Table>
+                </TableContainer>
+            </PrimaryDrawer>
+        </Box>
     );
 };
 
