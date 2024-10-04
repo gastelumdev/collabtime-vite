@@ -112,7 +112,7 @@ const ViewRef = ({ columns, rowData, value, allowed = false }: IProps) => {
                             getDocs={getDocs}
                             getUpdatedDoc={getUpdatedDoc}
                             removeDoc={removeDoc}
-                            allowed={allowed}
+                            // allowed={allowed}
                         />
                     </Box>
                     <Spacer />

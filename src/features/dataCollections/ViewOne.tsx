@@ -144,7 +144,7 @@ const ViewOne = () => {
         return state.table.showDoneRows;
     });
 
-    const [permissions, setPermissions] = useState<number>();
+    const [_permissions, setPermissions] = useState<number>();
 
     useEffect(() => {
         getPermissions();
