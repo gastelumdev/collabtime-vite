@@ -25,7 +25,8 @@ const DataCollection = ({
     hasColumnOptions = true,
     columnsAreDraggable = true,
     hasCreateColumn = true,
-}: {
+}: // userGroup,
+{
     showDoneRows?: boolean;
     rowsProp: any;
     dataCollectionView?: any;
@@ -34,6 +35,7 @@ const DataCollection = ({
     hasColumnOptions?: boolean;
     columnsAreDraggable?: boolean;
     hasCreateColumn?: boolean;
+    // userGroup?: any;
 }) => {
     const { dataCollectionId } = useParams();
 
@@ -124,6 +126,7 @@ const DataCollection = ({
                 hasColumnOptions={hasColumnOptions}
                 hasCreateColumn={hasCreateColumn}
                 columnsAreDraggable={columnsAreDraggable}
+                dataCollectionView={dataCollectionView}
             />
         </Box>
     );

@@ -68,12 +68,12 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
         onClose();
     };
 
-    const createData = () => {
+    const createData = async () => {
         if (view) {
             console.log('Call update');
             updateDataCollectionView(dataCollectionView);
         } else {
-            createDataCollectionView(dataCollectionView);
+            await createDataCollectionView(dataCollectionView);
         }
         onClose();
         setDataCollectionView({

@@ -7,6 +7,7 @@ import {
     useGetDataCollectionsQuery,
     useGetOneWorkspaceQuery,
     useGetRowsQuery,
+    useGetUserGroupsQuery,
     useGetUserQuery,
     useSendFormMutation,
     useUpdateColumnMutation,
@@ -20,6 +21,7 @@ import {
     Card,
     CardBody,
     CardHeader,
+    Center,
     Checkbox,
     Container,
     Divider,
@@ -60,6 +62,7 @@ import { CSVLink } from 'react-csv';
 import { useTypedSelector, useAppDispatch } from '../../hooks/store';
 import { toggleShowDoneRows } from '../../components/table/tableSlice';
 import ImportDrawer from '../../components/table/ImportDrawer';
+import { emptyDataCollectionPermissions, emptyPermissions } from '../workspaces/UserGroups';
 
 const ViewOne = () => {
     const { id, dataCollectionId } = useParams();
@@ -104,6 +107,28 @@ const ViewOne = () => {
     const [recipientValue, setRecipientValue] = useState<string>('');
 
     const [valuesForExport, setValuesForExport] = useState<any>('');
+
+    const { data: userGroups } = useGetUserGroupsQuery(null);
+    const [_userGroup, setUserGroup] = useState({ name: '', workspace: '', permissions: emptyPermissions });
+    const [dataCollectionPermissions, setDataCollectionPermissions] = useState(emptyDataCollectionPermissions);
+
+    useEffect(() => {
+        if (userGroups !== undefined) {
+            console.log(userGroups);
+            const ug = userGroups?.find((item: any) => {
+                return item.users.includes(localStorage.getItem('userId'));
+            });
+
+            const dcPermissions = ug.permissions.dataCollections.find((item: any) => {
+                return item.dataCollection === localStorage.getItem('dataCollectionId');
+            });
+
+            console.log(dcPermissions);
+
+            setUserGroup(ug);
+            setDataCollectionPermissions(dcPermissions.permissions);
+        }
+    }, [userGroups]);
 
     // Checkboxes for selecting columns for form
     const [checkBoxes, setCheckBoxes] = useState<any>(
@@ -365,7 +390,7 @@ const ViewOne = () => {
                                         Options dropdown
                                     */}
                                     <Box>
-                                        {(permissions || 0) > 1 ? (
+                                        {dataCollectionPermissions.dataCollection.view ? (
                                             <Menu>
                                                 <MenuButton
                                                     as={Button}
@@ -416,7 +441,15 @@ const ViewOne = () => {
                                 The actual data collection table
                             */}
                             <CardBody p={'0'}>
-                                <DataCollection showDoneRows={showDoneRows} rowsProp={rowsData} />
+                                {dataCollectionPermissions.dataCollection.view ? (
+                                    <DataCollection showDoneRows={showDoneRows} rowsProp={rowsData} />
+                                ) : (
+                                    <Box mb={'20px'}>
+                                        <Center>
+                                            <Text>No access to this data collection.</Text>
+                                        </Center>
+                                    </Box>
+                                )}
                             </CardBody>
                         </Card>{' '}
                         {/* This is the end of the card that contains the data collection */}

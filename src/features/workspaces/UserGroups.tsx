@@ -40,34 +40,40 @@ import {
 import { useEffect, useState } from 'react';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
 
-const w = '75vw';
-const allPrivileges = {
+const w = '80vw';
+export const allPrivileges = {
     workspace: { view: true, create: true, update: true, delete: true, invite: true, tag: true, userGroups: true },
+    dataCollectionActions: { view: true, create: true, update: true, delete: true, tag: true },
+    viewActions: { view: true, create: true, update: true, delete: true },
     dataCollections: [],
     views: [],
     docs: { view: true, create: true, update: true, delete: true, tag: true },
     chat: { view: true, create: true },
 };
-const emptyPermissions = {
-    workspace: { view: false, create: false, update: false, delete: false, invite: false, tag: false, userGroups: false },
+export const emptyPermissions = {
+    workspace: { view: true, create: false, update: false, delete: false, invite: false, tag: false, userGroups: false },
+    dataCollectionActions: { view: false, create: false, update: false, delete: false, tag: false },
+    viewActions: { view: false, create: false, update: false, delete: false },
     dataCollections: [],
     views: [],
     docs: { view: false, create: false, update: false, delete: false, tag: false },
     chat: { view: false, create: false },
 };
 
-const emptyDataCollectionPermissions = {
+export const emptyDataCollectionPermissions = {
     dataCollection: { view: false, update: false, delete: false, tag: false },
     rows: { reorder: false, create: false, delete: false, subrows: false },
+    columnActions: { reorder: false, create: false, update: false, delete: false, resize: false },
     notes: { view: false, create: false },
     reminders: { view: false },
     docs: { view: false, create: false, update: false, delete: false },
     columns: [],
 };
 
-const emptyViewPermissions = {
+export const emptyViewPermissions = {
     view: { view: false, update: false, delete: false },
     rows: { reorder: false, create: false, delete: false, subrows: false },
+    columnActions: { reorder: false, create: false, update: false, delete: false, resize: false },
     notes: { view: false, create: false },
     reminders: { view: false },
     docs: { view: false, create: false, update: false, delete: false },
@@ -103,6 +109,8 @@ const UserGroups = () => {
     const [currentViewColumnPermissions, setCurrentViewColumnPermissions] = useState({ column: '', name: '', permissions: emptyColumnPermissions });
     const [allWorkspaceChecked, setAllWorkspaceChecked] = useState(false);
     const [newUserGroupName, setNewUserGroupName] = useState('');
+    const [formError, setFormError] = useState(true);
+    const [nameError, setNameError] = useState(false);
 
     useEffect(() => {
         console.log({ userGroups });
@@ -197,6 +205,14 @@ const UserGroups = () => {
         }
     }, [userGroups, activeButtonName]);
 
+    useEffect(() => {
+        if (currentPermissions.workspace.view && activeButtonName !== '') {
+            setFormError(false);
+        } else {
+            setFormError(true);
+        }
+    }, [formError, activeButtonName, currentPermissions]);
+
     const handleCheckAll = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
             setCurrentPermissions((prev) => ({
@@ -223,6 +239,24 @@ const UserGroups = () => {
         }));
 
         handleUpdateUserGroup({ ...currentPermissions, workspace: { ...currentPermissions.workspace, [permissionName]: !value } });
+    };
+
+    const handleDataCollectionActionsCheck = (permissionName: string, value: string) => {
+        setCurrentPermissions((prev) => ({
+            ...prev,
+            dataCollectionActions: { ...prev.dataCollectionActions, [permissionName]: !value },
+        }));
+
+        handleUpdateUserGroup({ ...currentPermissions, dataCollectionActions: { ...currentPermissions.dataCollectionActions, [permissionName]: !value } });
+    };
+
+    const handleviewActionsCheck = (permissionName: string, value: string) => {
+        setCurrentPermissions((prev) => ({
+            ...prev,
+            viewActions: { ...prev.viewActions, [permissionName]: !value },
+        }));
+
+        handleUpdateUserGroup({ ...currentPermissions, viewActions: { ...currentPermissions.viewActions, [permissionName]: !value } });
     };
 
     const handleDocsCheck = (permissionName: string, value: string) => {
@@ -414,7 +448,6 @@ const UserGroups = () => {
                                 {activeButtonName === 'Create' ? (
                                     <PrimaryButton
                                         onClick={() => {
-                                            document.getElementById('scroller')?.scroll(0, 0);
                                             createUserGroup({
                                                 name: newUserGroupName,
                                                 workspace: localStorage.getItem('workspaceId'),
@@ -424,6 +457,7 @@ const UserGroups = () => {
                                             resetPermissions();
                                         }}
                                         size="sm"
+                                        isDisabled={formError || nameError}
                                     >
                                         Save
                                     </PrimaryButton>
@@ -488,29 +522,48 @@ const UserGroups = () => {
                             <DrawerColumn w={w} title={'User Group Name'}>
                                 <Flex>
                                     <Box>
-                                        <Text mb={'6px'}>{activeButtonName}</Text>
+                                        <Text>{activeButtonName === 'Create' ? 'User Group Name' : activeButtonName}</Text>
                                         {activeButtonName == 'Create' ? (
-                                            <Input
-                                                size={'sm'}
-                                                placeholder="Enter user group name"
-                                                value={newUserGroupName}
-                                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                                    setNewUserGroupName(event.target.value);
-                                                }}
-                                            />
+                                            <>
+                                                <Input
+                                                    w={'300px'}
+                                                    size={'sm'}
+                                                    placeholder="Enter user group name"
+                                                    value={newUserGroupName}
+                                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                        const userGroup = userGroups.find((item: any) => {
+                                                            return item.name === event.target.value;
+                                                        });
+
+                                                        if (userGroup !== undefined) {
+                                                            setNameError(true);
+                                                        } else {
+                                                            setNameError(false);
+                                                        }
+                                                        setNewUserGroupName(event.target.value);
+                                                    }}
+                                                    isInvalid={nameError}
+                                                    errorBorderColor="red.300"
+                                                />
+                                            </>
                                         ) : null}
+                                        <Text color="red" fontSize={'12px'} visibility={nameError ? 'visible' : 'hidden'}>
+                                            {`A user group named ${newUserGroupName} already exists.`}
+                                        </Text>
                                     </Box>
                                     <Spacer />
                                     {activeButtonName !== 'Create' ? (
                                         <Box>
-                                            <DeleteModal
-                                                userGroup={
-                                                    userGroups.find((userGroup: any) => {
-                                                        return userGroup.name === activeButtonName;
-                                                    }) || {}
-                                                }
-                                                resetPermissions={resetPermissions}
-                                            />
+                                            {!['All Privileges', 'View Only', 'No Access'].includes(activeButtonName) ? (
+                                                <DeleteModal
+                                                    userGroup={
+                                                        userGroups.find((userGroup: any) => {
+                                                            return userGroup.name === activeButtonName;
+                                                        }) || {}
+                                                    }
+                                                    resetPermissions={resetPermissions}
+                                                />
+                                            ) : null}
                                         </Box>
                                     ) : null}
                                 </Flex>
@@ -533,6 +586,46 @@ const UserGroups = () => {
                                                         text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
                                                         isChecked={value}
                                                         onChange={() => handleWorkspaceCheck(permissionName, value)}
+                                                    />
+                                                );
+                                            })}
+                                        </Stack>
+                                    </Box>
+                                    <Box mr={'60px'}>
+                                        <Text fontSize={'18px'} mb={'20px'}>
+                                            Data Collections
+                                        </Text>
+                                        <Stack mt={1} spacing={1}>
+                                            {Object.keys(currentPermissions.dataCollectionActions).map((permissionName: string) => {
+                                                const value: any =
+                                                    currentPermissions.dataCollectionActions[
+                                                        permissionName as keyof typeof currentPermissions.dataCollectionActions
+                                                    ];
+                                                return (
+                                                    <CheckboxOption
+                                                        key={permissionName}
+                                                        text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
+                                                        isChecked={value}
+                                                        onChange={() => handleDataCollectionActionsCheck(permissionName, value)}
+                                                    />
+                                                );
+                                            })}
+                                        </Stack>
+                                    </Box>
+                                    <Box mr={'60px'}>
+                                        <Text fontSize={'18px'} mb={'20px'}>
+                                            Views
+                                        </Text>
+                                        <Stack mt={1} spacing={1}>
+                                            {Object.keys(currentPermissions.viewActions).map((permissionName: string) => {
+                                                const value: any =
+                                                    currentPermissions.viewActions[permissionName as keyof typeof currentPermissions.viewActions];
+                                                return (
+                                                    <CheckboxOption
+                                                        key={permissionName}
+                                                        text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
+                                                        isChecked={value}
+                                                        onChange={() => handleviewActionsCheck(permissionName, value)}
                                                     />
                                                 );
                                             })}
@@ -584,241 +677,274 @@ const UserGroups = () => {
                              *************************************************************************************************************
                              ********************* DATA COLLECTIONS
                              */}
-                            <DrawerColumn w={w} title="Data Collections">
-                                <Text fontSize={'18px'} mb={'20px'}>
-                                    Data Collections
-                                </Text>
-
-                                <Box w={'300px'} mb={'20px'}>
-                                    <Select
-                                        onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
-                                            const dataCollectionPermissions: any = currentPermissions?.dataCollections.find((dc: any) => {
-                                                return dc.name === event.target.value;
-                                            });
-                                            setCurrentDataCollectionPermissions(dataCollectionPermissions);
-                                            setCurrentColumnPermissions(dataCollectionPermissions.permissions.columns[0]);
-                                            setColumns(dataCollectionPermissions.permissions.columns);
-                                        }}
-                                    >
-                                        {activeButtonName === 'Create'
-                                            ? dataCollections?.map((dataCollection: any) => {
-                                                  return (
-                                                      <option key={dataCollection.name} value={dataCollection.name}>
-                                                          {dataCollection.name}
-                                                      </option>
-                                                  );
-                                              })
-                                            : currentPermissions?.dataCollections.map((dataCollection: any) => {
-                                                  return (
-                                                      <option key={dataCollection.name} value={dataCollection.name}>
-                                                          {dataCollection.name}
-                                                      </option>
-                                                  );
-                                              })}
-                                    </Select>
-                                </Box>
-                                <Flex>
-                                    <Box mr={'60px'}>
-                                        <Text fontSize={'18px'} mb={'20px'}>
-                                            Data Collection
-                                        </Text>
-                                        <Stack mt={1} spacing={1}>
-                                            {Object.keys(currentDataCollectionPermissions.permissions.dataCollection).map((permissionName: string) => {
-                                                // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
-                                                const value: any =
-                                                    currentDataCollectionPermissions.permissions.dataCollection[
-                                                        permissionName as keyof typeof currentDataCollectionPermissions.permissions.dataCollection
-                                                    ];
-                                                return (
-                                                    <CheckboxOption
-                                                        key={permissionName}
-                                                        text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
-                                                        isChecked={value}
-                                                        onChange={() =>
-                                                            handleDataCollectionCheck(
-                                                                currentDataCollectionPermissions.dataCollection,
-                                                                'dataCollection',
-                                                                permissionName,
-                                                                value
-                                                            )
-                                                        }
-                                                    />
-                                                );
-                                            })}
-                                        </Stack>
-                                    </Box>
-                                    <Box mr={'60px'}>
-                                        <Text fontSize={'18px'} mb={'20px'}>
-                                            Rows
-                                        </Text>
-                                        <Stack mt={1} spacing={1}>
-                                            {Object.keys(currentDataCollectionPermissions.permissions.rows).map((permissionName: string) => {
-                                                // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
-                                                const value: any =
-                                                    currentDataCollectionPermissions.permissions.rows[
-                                                        permissionName as keyof typeof currentDataCollectionPermissions.permissions.rows
-                                                    ];
-                                                return (
-                                                    <CheckboxOption
-                                                        key={permissionName}
-                                                        text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
-                                                        isChecked={value}
-                                                        onChange={() =>
-                                                            handleDataCollectionCheck(
-                                                                currentDataCollectionPermissions.dataCollection,
-                                                                'rows',
-                                                                permissionName,
-                                                                value
-                                                            )
-                                                        }
-                                                    />
-                                                );
-                                            })}
-                                        </Stack>
-                                    </Box>
-                                    <Box mr={'60px'}>
-                                        <Text fontSize={'18px'} mb={'20px'}>
-                                            Notes
-                                        </Text>
-                                        <Stack mt={1} spacing={1}>
-                                            {Object.keys(currentDataCollectionPermissions.permissions.notes).map((permissionName: string) => {
-                                                // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
-                                                const value: any =
-                                                    currentDataCollectionPermissions.permissions.notes[
-                                                        permissionName as keyof typeof currentDataCollectionPermissions.permissions.notes
-                                                    ];
-                                                return (
-                                                    <CheckboxOption
-                                                        key={permissionName}
-                                                        text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
-                                                        isChecked={value}
-                                                        onChange={() =>
-                                                            handleDataCollectionCheck(
-                                                                currentDataCollectionPermissions.dataCollection,
-                                                                'notes',
-                                                                permissionName,
-                                                                value
-                                                            )
-                                                        }
-                                                    />
-                                                );
-                                            })}
-                                        </Stack>
-                                    </Box>
-                                    <Box mr={'60px'}>
-                                        <Text fontSize={'18px'} mb={'20px'}>
-                                            Reminders
-                                        </Text>
-                                        <Stack mt={1} spacing={1}>
-                                            {Object.keys(currentDataCollectionPermissions.permissions.reminders).map((permissionName: string) => {
-                                                // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
-                                                const value: any =
-                                                    currentDataCollectionPermissions.permissions.reminders[
-                                                        permissionName as keyof typeof currentDataCollectionPermissions.permissions.reminders
-                                                    ];
-                                                return (
-                                                    <CheckboxOption
-                                                        key={permissionName}
-                                                        text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
-                                                        isChecked={value}
-                                                        onChange={() =>
-                                                            handleDataCollectionCheck(
-                                                                currentDataCollectionPermissions.dataCollection,
-                                                                'reminders',
-                                                                permissionName,
-                                                                value
-                                                            )
-                                                        }
-                                                    />
-                                                );
-                                            })}
-                                        </Stack>
-                                    </Box>
-                                    <Box mr={'60px'}>
-                                        <Text fontSize={'18px'} mb={'20px'}>
-                                            Upload
-                                        </Text>
-                                        <Stack mt={1} spacing={1}>
-                                            {Object.keys(currentDataCollectionPermissions.permissions.docs).map((permissionName: string) => {
-                                                // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
-                                                const value: any =
-                                                    currentDataCollectionPermissions.permissions.docs[
-                                                        permissionName as keyof typeof currentDataCollectionPermissions.permissions.docs
-                                                    ];
-                                                return (
-                                                    <CheckboxOption
-                                                        key={permissionName}
-                                                        text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
-                                                        isChecked={value}
-                                                        onChange={() =>
-                                                            handleDataCollectionCheck(
-                                                                currentDataCollectionPermissions.dataCollection,
-                                                                'docs',
-                                                                permissionName,
-                                                                value
-                                                            )
-                                                        }
-                                                    />
-                                                );
-                                            })}
-                                        </Stack>
-                                    </Box>
-                                </Flex>
-                                <Box w={'300px'} mb={'20px'} mt={'30px'}>
+                            {currentPermissions?.dataCollections.length > 0 ? (
+                                <DrawerColumn w={w} title="Data Collections">
                                     <Text fontSize={'18px'} mb={'20px'}>
-                                        Columns
+                                        Data Collections
                                     </Text>
-                                    <Select
-                                        onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
-                                            const columnPermissions: any = currentDataCollectionPermissions?.permissions.columns.find((col: any) => {
-                                                return col.name === event.target.value;
-                                            });
-                                            setCurrentColumnPermissions(columnPermissions);
-                                        }}
-                                        value={currentColumnPermissions.name}
-                                    >
-                                        {activeButtonName === 'Create'
-                                            ? columns?.map((column: any) => {
-                                                  return (
-                                                      <option key={column.name} value={column.name}>
-                                                          {`${column.name[0].toUpperCase()}${column.name.slice(1)}`.split('_').join(' ')}
-                                                      </option>
-                                                  );
-                                              })
-                                            : currentDataCollectionPermissions?.permissions.columns.map((column: any) => {
-                                                  return (
-                                                      <option key={column.name} value={column.name}>
-                                                          {`${column.name[0].toUpperCase()}${column.name.slice(1)}`.split('_').join(' ')}
-                                                      </option>
-                                                  );
-                                              })}
-                                    </Select>
-                                </Box>
-                                <Flex>
-                                    <Box mr={'60px'}>
+
+                                    <Box w={'300px'} mb={'20px'}>
+                                        <Select
+                                            size={'sm'}
+                                            onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
+                                                const dataCollectionPermissions: any = currentPermissions?.dataCollections.find((dc: any) => {
+                                                    return dc.name === event.target.value;
+                                                });
+                                                setCurrentDataCollectionPermissions(dataCollectionPermissions);
+                                                setCurrentColumnPermissions(dataCollectionPermissions.permissions.columns[0]);
+                                                setColumns(dataCollectionPermissions.permissions.columns);
+                                            }}
+                                        >
+                                            {activeButtonName === 'Create'
+                                                ? dataCollections?.map((dataCollection: any) => {
+                                                      return (
+                                                          <option key={dataCollection.name} value={dataCollection.name}>
+                                                              {dataCollection.name}
+                                                          </option>
+                                                      );
+                                                  })
+                                                : currentPermissions?.dataCollections.map((dataCollection: any) => {
+                                                      return (
+                                                          <option key={dataCollection.name} value={dataCollection.name}>
+                                                              {dataCollection.name}
+                                                          </option>
+                                                      );
+                                                  })}
+                                        </Select>
+                                    </Box>
+                                    <Flex>
+                                        <Box mr={'60px'}>
+                                            <Text fontSize={'18px'} mb={'20px'}>
+                                                Data Collection
+                                            </Text>
+                                            <Stack mt={1} spacing={1}>
+                                                {Object.keys(currentDataCollectionPermissions.permissions.dataCollection).map((permissionName: string) => {
+                                                    // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
+                                                    const value: any =
+                                                        currentDataCollectionPermissions.permissions.dataCollection[
+                                                            permissionName as keyof typeof currentDataCollectionPermissions.permissions.dataCollection
+                                                        ];
+                                                    return (
+                                                        <CheckboxOption
+                                                            key={permissionName}
+                                                            text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
+                                                            isChecked={value}
+                                                            onChange={() =>
+                                                                handleDataCollectionCheck(
+                                                                    currentDataCollectionPermissions.dataCollection,
+                                                                    'dataCollection',
+                                                                    permissionName,
+                                                                    value
+                                                                )
+                                                            }
+                                                        />
+                                                    );
+                                                })}
+                                            </Stack>
+                                        </Box>
+                                        <Box mr={'60px'}>
+                                            <Text fontSize={'18px'} mb={'20px'}>
+                                                Rows
+                                            </Text>
+                                            <Stack mt={1} spacing={1}>
+                                                {Object.keys(currentDataCollectionPermissions.permissions.rows).map((permissionName: string) => {
+                                                    // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
+                                                    const value: any =
+                                                        currentDataCollectionPermissions.permissions.rows[
+                                                            permissionName as keyof typeof currentDataCollectionPermissions.permissions.rows
+                                                        ];
+                                                    return (
+                                                        <CheckboxOption
+                                                            key={permissionName}
+                                                            text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
+                                                            isChecked={value}
+                                                            onChange={() =>
+                                                                handleDataCollectionCheck(
+                                                                    currentDataCollectionPermissions.dataCollection,
+                                                                    'rows',
+                                                                    permissionName,
+                                                                    value
+                                                                )
+                                                            }
+                                                        />
+                                                    );
+                                                })}
+                                            </Stack>
+                                        </Box>
+                                        <Box mr={'60px'}>
+                                            <Text fontSize={'18px'} mb={'20px'}>
+                                                Columns
+                                            </Text>
+                                            <Stack mt={1} spacing={1}>
+                                                {Object.keys(currentDataCollectionPermissions.permissions.columnActions).map((permissionName: string) => {
+                                                    // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
+                                                    const value: any =
+                                                        currentDataCollectionPermissions.permissions.columnActions[
+                                                            permissionName as keyof typeof currentDataCollectionPermissions.permissions.columnActions
+                                                        ];
+                                                    return (
+                                                        <CheckboxOption
+                                                            key={permissionName}
+                                                            text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
+                                                            isChecked={value}
+                                                            onChange={() =>
+                                                                handleDataCollectionCheck(
+                                                                    currentDataCollectionPermissions.dataCollection,
+                                                                    'columnActions',
+                                                                    permissionName,
+                                                                    value
+                                                                )
+                                                            }
+                                                        />
+                                                    );
+                                                })}
+                                            </Stack>
+                                        </Box>
+                                        <Box mr={'60px'}>
+                                            <Text fontSize={'18px'} mb={'20px'}>
+                                                Notes
+                                            </Text>
+                                            <Stack mt={1} spacing={1}>
+                                                {Object.keys(currentDataCollectionPermissions.permissions.notes).map((permissionName: string) => {
+                                                    // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
+                                                    const value: any =
+                                                        currentDataCollectionPermissions.permissions.notes[
+                                                            permissionName as keyof typeof currentDataCollectionPermissions.permissions.notes
+                                                        ];
+                                                    return (
+                                                        <CheckboxOption
+                                                            key={permissionName}
+                                                            text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
+                                                            isChecked={value}
+                                                            onChange={() =>
+                                                                handleDataCollectionCheck(
+                                                                    currentDataCollectionPermissions.dataCollection,
+                                                                    'notes',
+                                                                    permissionName,
+                                                                    value
+                                                                )
+                                                            }
+                                                        />
+                                                    );
+                                                })}
+                                            </Stack>
+                                        </Box>
+                                        <Box mr={'60px'}>
+                                            <Text fontSize={'18px'} mb={'20px'}>
+                                                Reminders
+                                            </Text>
+                                            <Stack mt={1} spacing={1}>
+                                                {Object.keys(currentDataCollectionPermissions.permissions.reminders).map((permissionName: string) => {
+                                                    // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
+                                                    const value: any =
+                                                        currentDataCollectionPermissions.permissions.reminders[
+                                                            permissionName as keyof typeof currentDataCollectionPermissions.permissions.reminders
+                                                        ];
+                                                    return (
+                                                        <CheckboxOption
+                                                            key={permissionName}
+                                                            text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
+                                                            isChecked={value}
+                                                            onChange={() =>
+                                                                handleDataCollectionCheck(
+                                                                    currentDataCollectionPermissions.dataCollection,
+                                                                    'reminders',
+                                                                    permissionName,
+                                                                    value
+                                                                )
+                                                            }
+                                                        />
+                                                    );
+                                                })}
+                                            </Stack>
+                                        </Box>
+                                        <Box mr={'60px'}>
+                                            <Text fontSize={'18px'} mb={'20px'}>
+                                                Upload
+                                            </Text>
+                                            <Stack mt={1} spacing={1}>
+                                                {Object.keys(currentDataCollectionPermissions.permissions.docs).map((permissionName: string) => {
+                                                    // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
+                                                    const value: any =
+                                                        currentDataCollectionPermissions.permissions.docs[
+                                                            permissionName as keyof typeof currentDataCollectionPermissions.permissions.docs
+                                                        ];
+                                                    return (
+                                                        <CheckboxOption
+                                                            key={permissionName}
+                                                            text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
+                                                            isChecked={value}
+                                                            onChange={() =>
+                                                                handleDataCollectionCheck(
+                                                                    currentDataCollectionPermissions.dataCollection,
+                                                                    'docs',
+                                                                    permissionName,
+                                                                    value
+                                                                )
+                                                            }
+                                                        />
+                                                    );
+                                                })}
+                                            </Stack>
+                                        </Box>
+                                    </Flex>
+                                    <Box w={'300px'} mb={'20px'} mt={'30px'}>
                                         <Text fontSize={'18px'} mb={'20px'}>
                                             Columns
                                         </Text>
-                                        <Stack mt={1} spacing={1}>
-                                            {Object.keys(currentColumnPermissions.permissions.column).map((permissionName: string) => {
-                                                // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
-                                                const value: any =
-                                                    currentColumnPermissions.permissions.column[
-                                                        permissionName as keyof typeof currentColumnPermissions.permissions.column
-                                                    ];
-                                                return (
-                                                    <CheckboxOption
-                                                        key={permissionName}
-                                                        text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
-                                                        isChecked={value}
-                                                        onChange={() => handleColumnRowsCheck(permissionName, value)}
-                                                    />
-                                                );
-                                            })}
-                                        </Stack>
+                                        <Select
+                                            size={'sm'}
+                                            onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
+                                                const columnPermissions: any = currentDataCollectionPermissions?.permissions.columns.find((col: any) => {
+                                                    return col.name === event.target.value;
+                                                });
+                                                setCurrentColumnPermissions(columnPermissions);
+                                            }}
+                                            value={currentColumnPermissions.name}
+                                        >
+                                            {activeButtonName === 'Create'
+                                                ? columns?.map((column: any) => {
+                                                      return (
+                                                          <option key={column.name} value={column.name}>
+                                                              {`${column.name[0].toUpperCase()}${column.name.slice(1)}`.split('_').join(' ')}
+                                                          </option>
+                                                      );
+                                                  })
+                                                : currentDataCollectionPermissions?.permissions.columns.map((column: any) => {
+                                                      return (
+                                                          <option key={column.name} value={column.name}>
+                                                              {`${column.name[0].toUpperCase()}${column.name.slice(1)}`.split('_').join(' ')}
+                                                          </option>
+                                                      );
+                                                  })}
+                                        </Select>
                                     </Box>
-                                </Flex>
-                            </DrawerColumn>
+                                    <Flex>
+                                        <Box mr={'60px'}>
+                                            <Text fontSize={'18px'} mb={'20px'}>
+                                                Columns
+                                            </Text>
+                                            <Stack mt={1} spacing={1}>
+                                                {Object.keys(currentColumnPermissions.permissions.column).map((permissionName: string) => {
+                                                    // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
+                                                    const value: any =
+                                                        currentColumnPermissions.permissions.column[
+                                                            permissionName as keyof typeof currentColumnPermissions.permissions.column
+                                                        ];
+                                                    return (
+                                                        <CheckboxOption
+                                                            key={permissionName}
+                                                            text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
+                                                            isChecked={value}
+                                                            onChange={() => handleColumnRowsCheck(permissionName, value)}
+                                                        />
+                                                    );
+                                                })}
+                                            </Stack>
+                                        </Box>
+                                    </Flex>
+                                </DrawerColumn>
+                            ) : null}
                             {/* **********************************************************************************************************
                              *************************************************************************************************************
                              *************************************************************************************************************
@@ -835,6 +961,7 @@ const UserGroups = () => {
 
                                     <Box w={'300px'} mb={'20px'}>
                                         <Select
+                                            size={'sm'}
                                             onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
                                                 console.log(currentPermissions);
                                                 const viewPermissions: any = currentPermissions?.views.find((v: any) => {
@@ -904,6 +1031,30 @@ const UserGroups = () => {
                                                             text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
                                                             isChecked={value}
                                                             onChange={() => handleViewCheck(currentViewPermissions.view, 'rows', permissionName, value)}
+                                                        />
+                                                    );
+                                                })}
+                                            </Stack>
+                                        </Box>
+                                        <Box mr={'60px'}>
+                                            <Text fontSize={'18px'} mb={'20px'}>
+                                                Columns
+                                            </Text>
+                                            <Stack mt={1} spacing={1}>
+                                                {Object.keys(currentViewPermissions.permissions.columnActions).map((permissionName: string) => {
+                                                    // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
+                                                    const value: any =
+                                                        currentViewPermissions.permissions.columnActions[
+                                                            permissionName as keyof typeof currentViewPermissions.permissions.columnActions
+                                                        ];
+                                                    return (
+                                                        <CheckboxOption
+                                                            key={permissionName}
+                                                            text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
+                                                            isChecked={value}
+                                                            onChange={() =>
+                                                                handleViewCheck(currentViewPermissions.view, 'columnActions', permissionName, value)
+                                                            }
                                                         />
                                                     );
                                                 })}
@@ -981,6 +1132,7 @@ const UserGroups = () => {
                                             Columns
                                         </Text>
                                         <Select
+                                            size={'sm'}
                                             onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
                                                 const columnPermissions: any = currentViewPermissions?.permissions.columns.find((col: any) => {
                                                     return col.name === event.target.value;
@@ -1046,12 +1198,11 @@ const UserGroups = () => {
                                                         });
                                                         resetPermissions();
                                                     }}
+                                                    isDisabled={formError}
                                                 >
                                                     Save
                                                 </PrimaryButton>
-                                            ) : (
-                                                <PrimaryButton>Update</PrimaryButton>
-                                            )}
+                                            ) : null}
                                         </Box>
                                     </Flex>
                                 </DrawerColumn>
@@ -1193,7 +1344,7 @@ const Users = () => {
                                         <Td>
                                             <Select
                                                 size={'xs'}
-                                                placeholder="No Group"
+                                                // placeholder="No Group"
                                                 value={defaultUserGroupId}
                                                 onChange={(event: React.ChangeEvent<HTMLSelectElement>) => handleOnChange(event, user)}
                                             >

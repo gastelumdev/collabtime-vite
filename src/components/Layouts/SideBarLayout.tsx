@@ -1,5 +1,12 @@
 import { ReactNode, useCallback, useEffect, useState } from 'react';
-import { useCreateWorkspaceMutation, useGetOneWorkspaceQuery, useGetUserQuery, useGetWorkspacesQuery, useUpdateUserMutation } from '../../app/services/api';
+import {
+    useCreateWorkspaceMutation,
+    useGetOneWorkspaceQuery,
+    useGetUserGroupsQuery,
+    useGetUserQuery,
+    useGetWorkspacesQuery,
+    useUpdateUserMutation,
+} from '../../app/services/api';
 
 import {
     IconButton,
@@ -36,6 +43,7 @@ import Search from '../../features/search/View';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import Create from '../../features/workspaces/Create';
 import { bgColor, color, topNavBgColor, hoverBg } from '../../utils/colors';
+import { emptyPermissions } from '../../features/workspaces/UserGroups';
 
 interface LinkItemProps {
     name: string;
@@ -88,6 +96,8 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
     const [updateUser] = useUpdateUserMutation();
     const height = window.innerHeight;
     const [sidebarHeight, setSidebarHeight] = useState(height);
+    const { data: userGroups } = useGetUserGroupsQuery(null);
+    const [userGroup, setUserGroup] = useState({ name: '', workspace: '', permissions: emptyPermissions });
 
     const toast = useToast();
 
@@ -102,6 +112,18 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
             window.removeEventListener('resize', resizeSidebar);
         };
     }, []);
+
+    useEffect(() => {
+        if (userGroups !== undefined) {
+            console.log(userGroups);
+            const ug = userGroups?.find((item: any) => {
+                return item.users.includes(localStorage.getItem('userId'));
+            });
+
+            console.log(ug);
+            setUserGroup(ug);
+        }
+    }, [userGroups]);
 
     if (createWorkspaceIsError) {
         toast({
@@ -189,6 +211,15 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
                                 <NavItemSubHeader title={'Dashboards'} description="Data Collection Views" />
                             </Box>
                             {linkItems.map((link, index) => {
+                                console.log(userGroup);
+                                console.log(link.name);
+                                if (
+                                    (link.name === 'Dashboard' && !userGroup?.permissions.dataCollectionActions.view) ||
+                                    (link.name === 'Documents' && !userGroup?.permissions.docs.view) ||
+                                    (link.name === 'Message Board' && !userGroup?.permissions.chat.view)
+                                ) {
+                                    return null;
+                                }
                                 return (
                                     <Box key={index}>
                                         <Link to={link.path}>

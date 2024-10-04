@@ -1,8 +1,11 @@
-import { Box, Text } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import { memo, useCallback, useEffect, useState, useTransition } from 'react';
 import CreateColumn from '../../features/dataCollections/CreateColumn';
 import { TColumn } from '../../types';
 import ColumnMenu from './ColumnMenu';
+import { useParams } from 'react-router-dom';
+import { useGetUserGroupsQuery } from '../../app/services/api';
+import { emptyDataCollectionPermissions } from '../../features/workspaces/UserGroups';
 
 interface IProps {
     columns: any[];
@@ -28,6 +31,7 @@ interface IProps {
     hasColumnOptions?: boolean;
     columnsAreDraggable?: boolean;
     hasCreateColumn?: boolean;
+    dataCollectionView?: any;
 }
 
 const TableHeader = ({
@@ -49,9 +53,9 @@ const TableHeader = ({
     handleSortByColumnAsc,
     handleSortByColumnDes,
     hasCheckboxOptions = true,
-    hasColumnOptions = true,
     columnsAreDraggable = true,
     hasCreateColumn = true,
+    dataCollectionView = null,
 }: IProps) => {
     const [currentColumns, setCurrentColumns] = useState(columns);
     // ******************* COLUMN REORDERING ******************************
@@ -158,6 +162,39 @@ const TableHeader = ({
 
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
     const [mouseIsUp, setMouseIsUp] = useState<boolean>(false);
+    const { dataCollectionId } = useParams();
+
+    const { data: userGroups, refetch: refetchUserGroups } = useGetUserGroupsQuery(null);
+    const [dataCollectionPermissions, setDataCollectionPermissions] = useState<any>(emptyDataCollectionPermissions);
+
+    useEffect(() => {
+        const userGroup = userGroups.find((item: any) => {
+            return item.users.includes(localStorage.getItem('userId'));
+        });
+
+        if (dataCollectionView) {
+            const viewPermissions = userGroup.permissions.views.find((item: any) => {
+                return item.view === dataCollectionView._id;
+            });
+
+            if (viewPermissions !== undefined) {
+                setDataCollectionPermissions(viewPermissions.permissions);
+            } else {
+                refetchUserGroups();
+            }
+        } else {
+            console.log(userGroup);
+            const dataCollectionPermissions = userGroup.permissions.dataCollections.find((item: any) => {
+                return item.dataCollection === dataCollectionId;
+            });
+
+            if (dataCollectionPermissions !== undefined) {
+                setDataCollectionPermissions(dataCollectionPermissions.permissions);
+            } else {
+                refetchUserGroups();
+            }
+        }
+    }, [userGroups]);
 
     // const mouseEnter = useCallback(() => {
     //     setActiveIndex(null);
@@ -326,6 +363,15 @@ const TableHeader = ({
                     {/* {isFetching ? <Spinner thickness="2px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="md" mt={'10px'} /> : null} */}
                 </span>
                 {currentColumns.map((column: any, columnIndex) => {
+                    const columnsPermissions = dataCollectionPermissions.columns.find((item: any) => {
+                        return item.name === column.name;
+                    });
+
+                    console.log(columnsPermissions?.permissions);
+
+                    if (!columnsPermissions?.permissions.column.view) {
+                        return null;
+                    }
                     return (
                         <span
                             key={columnIndex}
@@ -371,7 +417,7 @@ const TableHeader = ({
                                     onDragLeave={() => handleDragLeave(columnIndex)}
                                     onClick={() => console.log('HEADER CLICKED')}
                                 >
-                                    {allowed ? (
+                                    {/* {dataCollectionPermissions.columnActions.update || dataCollectionPermissions.columnActions.delete ? (
                                         <ColumnMenu
                                             column={column}
                                             columns={columns}
@@ -381,13 +427,25 @@ const TableHeader = ({
                                             handleSortByColumnAsc={handleSortByColumnAsc}
                                             handleSortByColumnDes={handleSortByColumnDes}
                                             hasColumnOptions={hasColumnOptions}
+                                            dataCollectionPermissions={dataCollectionPermissions}
                                         />
                                     ) : (
                                         <Text fontSize={'14px'} fontWeight={'medium'} color={'#666666'}>{`${column.name[0].toUpperCase()}${column.name
                                             .slice(1, column.name.length)
                                             .split('_')
                                             .join(' ')}`}</Text>
-                                    )}
+                                    )} */}
+                                    <ColumnMenu
+                                        column={column}
+                                        columns={columns}
+                                        handleDeleteColumn={handleDeleteColumn}
+                                        handleAddNewColumnToRows={addNewColumnToRows}
+                                        index={columnIndex}
+                                        handleSortByColumnAsc={handleSortByColumnAsc}
+                                        handleSortByColumnDes={handleSortByColumnDes}
+                                        dataCollectionView={dataCollectionView}
+                                        dataCollectionPermissions={dataCollectionPermissions}
+                                    />
                                 </div>
                             ) : (
                                 <div
@@ -409,7 +467,7 @@ const TableHeader = ({
                                     // onDragLeave={() => handleDragLeave(columnIndex)}
                                     // onClick={() => console.log('HEADER CLICKED')}
                                 >
-                                    {allowed ? (
+                                    {/* {dataCollectionPermissions.columnActions.update || dataCollectionPermissions.columnActions.delete ? (
                                         <ColumnMenu
                                             column={column}
                                             columns={columns}
@@ -425,21 +483,34 @@ const TableHeader = ({
                                             .slice(1, column.name.length)
                                             .split('_')
                                             .join(' ')}`}</Text>
-                                    )}
+                                    )} */}
+                                    <ColumnMenu
+                                        column={column}
+                                        columns={columns}
+                                        handleDeleteColumn={handleDeleteColumn}
+                                        handleAddNewColumnToRows={handleAddNewColumnToRows}
+                                        index={columnIndex}
+                                        handleSortByColumnAsc={handleSortByColumnAsc}
+                                        handleSortByColumnDes={handleSortByColumnDes}
+                                        dataCollectionView={dataCollectionView}
+                                        dataCollectionPermissions={dataCollectionPermissions}
+                                    />
                                 </div>
                             )}
                             {/* Resize column box */}
-                            <Box
-                                width={'5px'}
-                                height={headerHeight}
-                                position={'absolute'}
-                                top={'0'}
-                                left={'100%'}
-                                bgColor={activeIndex === columnIndex ? '#2d82eb' : 'unset'}
-                                _hover={{ bgColor: '#2d82eb', cursor: 'col-resize' }}
-                                onMouseDown={() => setActiveIndex(columnIndex)}
-                                // onMouseEnter={() => mouseEnter()}
-                            ></Box>
+                            {dataCollectionPermissions.columnActions.resize ? (
+                                <Box
+                                    width={'5px'}
+                                    height={headerHeight}
+                                    position={'absolute'}
+                                    top={'0'}
+                                    left={'100%'}
+                                    bgColor={activeIndex === columnIndex ? '#2d82eb' : 'unset'}
+                                    _hover={{ bgColor: '#2d82eb', cursor: 'col-resize' }}
+                                    onMouseDown={() => setActiveIndex(columnIndex)}
+                                    // onMouseEnter={() => mouseEnter()}
+                                ></Box>
+                            ) : null}
                         </span>
                     );
                 })}
@@ -449,7 +520,7 @@ const TableHeader = ({
                         padding: '0px 20px',
                     }}
                 >
-                    {allowed && hasCreateColumn ? (
+                    {hasCreateColumn && dataCollectionPermissions.columnActions.create ? (
                         <CreateColumn
                             columns={columns}
                             createColumn={createColumn}

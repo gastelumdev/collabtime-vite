@@ -10,6 +10,9 @@ import { ArrowDownIcon, ArrowUpIcon, DeleteIcon } from '@chakra-ui/icons';
 // import { useParams } from 'react-router';
 import { useTypedSelector, useAppDispatch } from '../../hooks/store';
 import { clearCheckedRowIds } from '../../components/table/tableSlice';
+import { useGetUserGroupsQuery } from '../../app/services/api';
+import { useParams } from 'react-router-dom';
+import { emptyDataCollectionPermissions } from '../../features/workspaces/UserGroups';
 
 interface ITableProps {
     rowsData?: any[];
@@ -34,6 +37,7 @@ interface ITableProps {
     hasColumnOptions?: boolean;
     columnsAreDraggable?: boolean;
     hasCreateColumn?: boolean;
+    dataCollectionView?: any;
 }
 
 const Table = ({
@@ -58,8 +62,10 @@ const Table = ({
     hasColumnOptions = true,
     columnsAreDraggable = true,
     hasCreateColumn = true,
+    dataCollectionView = null,
 }: ITableProps) => {
     const dispatch = useAppDispatch();
+    const { dataCollectionId } = useParams();
 
     const checkedRowIds = useTypedSelector((state: any) => {
         return state.table.checkedRowIds;
@@ -84,6 +90,41 @@ const Table = ({
     // const [createColumn, { isLoading: columnIsUpdating }] = useCreateColumnMutation();
     // const [deleteColumn] = useDeleteColumnMutation();
     // const [rowCallUpdate] = useRowCallUpdateMutation();
+
+    const { data: userGroups, refetch: refetchUserGroups } = useGetUserGroupsQuery(null);
+    const [dataCollectionPermissions, setDataCollectionPermissions] = useState<any>(emptyDataCollectionPermissions);
+
+    useEffect(() => {
+        console.log(userGroups);
+        const userGroup = userGroups.find((item: any) => {
+            return item.users.includes(localStorage.getItem('userId'));
+        });
+
+        console.log(userGroup);
+
+        if (dataCollectionView) {
+            const viewPermissions = userGroup.permissions.views.find((item: any) => {
+                return item.view === dataCollectionView._id;
+            });
+
+            if (viewPermissions !== undefined) {
+                setDataCollectionPermissions(viewPermissions.permissions);
+            } else {
+                refetchUserGroups();
+            }
+        } else {
+            console.log(userGroup);
+            const dataCollectionPermissions = userGroup.permissions.dataCollections.find((item: any) => {
+                return item.dataCollection === dataCollectionId;
+            });
+
+            if (dataCollectionPermissions !== undefined) {
+                setDataCollectionPermissions(dataCollectionPermissions.permissions);
+            } else {
+                refetchUserGroups();
+            }
+        }
+    }, [userGroups]);
 
     useEffect(() => {
         // console.log(rowsData);
@@ -466,41 +507,47 @@ const Table = ({
                             <Text>{`${numberOfDeleteItems} Selected`}</Text>
                         </Box>
                         <Spacer />
-                        <Box pt={'30px'} pr={'30px'} onClick={setAsMainrow} cursor={'pointer'}>
-                            <Center mb={'10px'}>
-                                <Text>
-                                    <ArrowUpIcon />
-                                </Text>
-                            </Center>
-                            <Center>
-                                <Text>Main Item</Text>
-                            </Center>
-                        </Box>
+                        {dataCollectionPermissions.rows.subrows ? (
+                            <>
+                                <Box pt={'30px'} pr={'30px'} onClick={setAsMainrow} cursor={'pointer'}>
+                                    <Center mb={'10px'}>
+                                        <Text>
+                                            <ArrowUpIcon />
+                                        </Text>
+                                    </Center>
+                                    <Center>
+                                        <Text>Main Item</Text>
+                                    </Center>
+                                </Box>
 
-                        <Box pt={'30px'} pr={'30px'} onClick={setAsSubrow} cursor={'pointer'}>
-                            <Center mb={'10px'}>
-                                <Text>
-                                    <ArrowDownIcon />
-                                </Text>
-                            </Center>
-                            <Center>
-                                <Text>Sub Item</Text>
-                            </Center>
-                        </Box>
+                                <Box pt={'30px'} pr={'30px'} onClick={setAsSubrow} cursor={'pointer'}>
+                                    <Center mb={'10px'}>
+                                        <Text>
+                                            <ArrowDownIcon />
+                                        </Text>
+                                    </Center>
+                                    <Center>
+                                        <Text>Sub Item</Text>
+                                    </Center>
+                                </Box>
+                            </>
+                        ) : null}
                         {/* <Spacer /> */}
-                        <Box pt={'30px'} pr={'30px'} onClick={deleteItems} cursor={'pointer'}>
-                            {/* <Button colorScheme="red" mb={'10px'}>
+                        {dataCollectionPermissions.rows.delete ? (
+                            <Box pt={'30px'} pr={'30px'} onClick={deleteItems} cursor={'pointer'}>
+                                {/* <Button colorScheme="red" mb={'10px'}>
                                 Delete
                             </Button> */}
-                            <Center mb={'10px'}>
-                                <Text>
-                                    <DeleteIcon />
-                                </Text>
-                            </Center>
-                            <Center>
-                                <Text>Delete</Text>
-                            </Center>
-                        </Box>
+                                <Center mb={'10px'}>
+                                    <Text>
+                                        <DeleteIcon />
+                                    </Text>
+                                </Center>
+                                <Center>
+                                    <Text>Delete</Text>
+                                </Center>
+                            </Box>
+                        ) : null}
                     </Flex>
                 </Box>
             ) : null}
@@ -527,6 +574,7 @@ const Table = ({
                 hasColumnOptions={hasColumnOptions}
                 columnsAreDraggable={columnsAreDraggable}
                 hasCreateColumn={hasCreateColumn}
+                dataCollectionView={dataCollectionView}
             />
             <TableContent
                 rows={rows || []}
@@ -550,6 +598,7 @@ const Table = ({
                 view={view}
                 rowsAreDraggable={rowsAreDraggable}
                 hasCheckboxOptions={hasCheckboxOptions}
+                dataCollectionView={dataCollectionView}
             />
             {/* <Box w={'100%'} h={'30px'}>
                 <Text ml={'10px'}>Add row</Text>

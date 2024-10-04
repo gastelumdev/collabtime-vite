@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     useGetOneWorkspaceQuery,
     useGetWorkspaceUsersQuery,
@@ -19,8 +19,6 @@ import {
     PopoverContent,
     PopoverHeader,
     PopoverTrigger,
-    Radio,
-    RadioGroup,
     Spacer,
     Stack,
     Text,
@@ -80,8 +78,8 @@ const Invite = ({}: InviteProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     // const { isOpen: removeMemberIsOpen, onOpen: removeMemberOnOpen, onClose: removeMemberOnClose } = useDisclosure();
     const { id } = useParams();
-    const [permissions, setPermissions] = useState<number>(1);
-    const [invitees, setInvitees] = useState<TInvitee[]>([]);
+    const [permissions, _setPermissions] = useState<number>(1);
+    const [invitees, _setInvitees] = useState<TInvitee[]>([]);
     const { data: workspaceUsersRes } = useGetWorkspaceUsersQuery(id as string);
     const { data: workspace } = useGetOneWorkspaceQuery(id as string);
     const [inviteTeamMember] = useInviteTeamMemberMutation();
@@ -110,20 +108,20 @@ const Invite = ({}: InviteProps) => {
         };
     }, []);
 
-    const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { value } = event.target;
-        setPermissions(Number(value));
+    // const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    //     const { value } = event.target;
+    //     setPermissions(Number(value));
 
-        const inviteesCopy = invitees.map((item) => {
-            return { ...item, permissions: Number(value) };
-        });
+    //     const inviteesCopy = invitees.map((item) => {
+    //         return { ...item, permissions: Number(value) };
+    //     });
 
-        setInvitees(inviteesCopy);
+    //     setInvitees(inviteesCopy);
 
-        const newWorkspaceCopy = { ...newWorkspace };
-        newWorkspaceCopy.invitees = invitees;
-        setNewWorkspace(newWorkspaceCopy as TWorkspace);
-    };
+    //     const newWorkspaceCopy = { ...newWorkspace };
+    //     newWorkspaceCopy.invitees = invitees;
+    //     setNewWorkspace(newWorkspaceCopy as TWorkspace);
+    // };
 
     const handleSelectChange = async (newValue: MultiValue<{ value: string; label: string }>, actionMeta: ActionMeta<any>) => {
         setSelectedOptions(newValue);
@@ -200,12 +198,12 @@ const Invite = ({}: InviteProps) => {
                 <HiPlus size={'18px'} style={{ marginRight: '3px' }} /> Invite
             </PrimaryButton>
             <PrimaryDrawer isOpen={isOpen} onClose={onClose} title="Invite a team member">
-                <Box>
+                {/* <Box>
                     <Text color={'rgb(123, 128, 154)'} fontSize={'14px'}>
                         Allow the selected team members to
                     </Text>
-                </Box>
-                <RadioGroup defaultValue={String(permissions)} pt={'5px'}>
+                </Box> */}
+                {/* <RadioGroup defaultValue={String(permissions)} pt={'5px'}>
                     <Stack direction={'row'} spacing={5} mb={'5px'}>
                         <Radio colorScheme="blue" value="1" size={'sm'} onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleRadioChange(event)}>
                             <Text fontSize={'14px'} color={'rgb(123, 128, 154)'}>
@@ -218,8 +216,8 @@ const Invite = ({}: InviteProps) => {
                             </Text>
                         </Radio>
                     </Stack>
-                </RadioGroup>
-                <Text pb={'5px'} mt={'15px'} color={'rgb(123, 128, 154)'} fontSize={'14px'}>
+                </RadioGroup> */}
+                <Text pb={'5px'} color={'rgb(123, 128, 154)'} fontSize={'14px'}>
                     Team Members
                 </Text>
                 <Select options={workspaceUsers?.reactSelectOptions} isMulti name="invitees" onChange={handleSelectChange} value={selectedOptions} />

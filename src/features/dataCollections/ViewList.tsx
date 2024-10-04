@@ -9,6 +9,7 @@ import {
     useTagExistsMutation,
     useUpdateWorkspaceMutation,
     useGetDataCollectionViewsQuery,
+    useGetUserGroupsQuery,
 } from '../../app/services/api';
 
 import {
@@ -46,8 +47,9 @@ import Delete from './Delete';
 import Templates from './Templates';
 import CreateDataCollectionView from '../dataCollectionViews/Create';
 import View from '../dataCollectionViews/View';
+import { emptyPermissions } from '../workspaces/UserGroups';
 
-const ViewList = ({ allowed = false }: { allowed?: boolean }) => {
+const ViewList = ({}: { allowed?: boolean }) => {
     // const [data, setData] = useState<TDataCollection[]>(dataCollections);
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
     const { data } = useGetDataCollectionsQuery(null);
@@ -72,7 +74,24 @@ const ViewList = ({ allowed = false }: { allowed?: boolean }) => {
         setDataCollections(data);
     }, [user, workspace, data]);
 
-    useEffect(() => {}, [dataCollectionViews]);
+    // useEffect(() => {}, [dataCollectionViews]);
+
+    const { data: userGroups, refetch } = useGetUserGroupsQuery(null);
+    const [userGroup, setUserGroup] = useState({ name: '', workspace: '', permissions: emptyPermissions });
+
+    useEffect(() => {
+        if (userGroups !== undefined) {
+            console.log(userGroups);
+            const ug = userGroups?.find((item: any) => {
+                return item.users.includes(localStorage.getItem('userId'));
+            });
+
+            console.log(ug);
+            setUserGroup(ug);
+        } else {
+            refetch();
+        }
+    }, [userGroups]);
 
     const getPermissions = () => {
         for (const workspace of user?.workspaces || []) {
@@ -137,144 +156,223 @@ const ViewList = ({ allowed = false }: { allowed?: boolean }) => {
                                     </Box>
                                 </Flex>
                             ) : null} */}
-                            <Tabs>
-                                <TabList>
-                                    <Tab>Data Collections</Tab>
-                                    <Tab>Dashboard</Tab>
-                                </TabList>
+                            {userGroup.permissions.dataCollectionActions.view || userGroup.permissions.viewActions.view ? (
+                                <Tabs>
+                                    <TabList>
+                                        {userGroup.permissions.dataCollectionActions.view ? <Tab>Data Collections</Tab> : null}
+                                        {userGroup.permissions.viewActions.view ? <Tab>Dashboard</Tab> : null}
+                                    </TabList>
 
-                                <TabPanels>
-                                    <TabPanel>
-                                        <Box mt={3}>
-                                            {allowed ? (
-                                                <Flex h={'50px'} mb={'10px'}>
-                                                    <Box>
-                                                        <Text fontSize={'20px'}>Data Collections</Text>
-                                                    </Box>
-                                                    <Spacer />
-                                                    <Box pb={'20px'} mr={'10px'}>
-                                                        <Templates />
-                                                    </Box>
-                                                    <Box>
-                                                        <Create addNewDataCollection={createDataCollection} />
-                                                    </Box>
-                                                </Flex>
-                                            ) : null}
-                                            {dataCollections && dataCollections.length > 0 ? (
-                                                <TableContainer>
-                                                    <Table size="sm">
-                                                        <Thead>
-                                                            <Tr>
-                                                                {allowed ? <Th></Th> : null}
-                                                                <Th color={'#666666'} fontWeight={'semibold'}>
-                                                                    Name
-                                                                </Th>
-                                                                {/* <Th>Description</Th> */}
-
-                                                                <Th color={'#666666'} fontWeight={'semibold'}>
-                                                                    Tags
-                                                                </Th>
-                                                            </Tr>
-                                                        </Thead>
-                                                        <Tbody>
-                                                            {data?.map((dataCollection: any, index: number) => {
-                                                                return (
-                                                                    <Tr key={index}>
-                                                                        {allowed ? (
-                                                                            <Td w={'120px'} p={0}>
-                                                                                <Edit
-                                                                                    dataCollection={dataCollection}
-                                                                                    updateDataCollection={updateDataCollection}
-                                                                                />
-                                                                                <Delete
-                                                                                    dataCollection={dataCollection}
-                                                                                    deleteDataCollection={deleteDataCollection}
-                                                                                />
-                                                                                <TagsModal
-                                                                                    tagType={'dataCollection'}
-                                                                                    data={dataCollection}
-                                                                                    tags={dataCollection.tags}
-                                                                                    update={updateDataCollection}
-                                                                                    workspaceId={workspace?._id || ''}
-                                                                                />
-                                                                            </Td>
+                                    <TabPanels>
+                                        {userGroup.permissions.dataCollectionActions.view ? (
+                                            <TabPanel>
+                                                <Box mt={3}>
+                                                    <Flex h={'50px'} mb={'10px'}>
+                                                        <Box>
+                                                            <Text fontSize={'20px'}>Data Collections</Text>
+                                                        </Box>
+                                                        <Spacer />
+                                                        {userGroup.permissions.dataCollectionActions.create ? (
+                                                            <>
+                                                                <Box pb={'20px'} mr={'10px'}>
+                                                                    <Templates />
+                                                                </Box>
+                                                                <Box>
+                                                                    <Create addNewDataCollection={createDataCollection} />
+                                                                </Box>
+                                                            </>
+                                                        ) : null}
+                                                    </Flex>
+                                                    {dataCollections && dataCollections.length > 0 ? (
+                                                        <TableContainer>
+                                                            <Table size="sm">
+                                                                <Thead>
+                                                                    <Tr>
+                                                                        {userGroup.permissions.dataCollectionActions.update ||
+                                                                        userGroup.permissions.dataCollections.find((item: any) => {
+                                                                            return item.permissions.dataCollection.update;
+                                                                        }) ||
+                                                                        userGroup.permissions.dataCollectionActions.delete ||
+                                                                        userGroup.permissions.dataCollections.find((item: any) => {
+                                                                            return item.permissions.dataCollection.delete;
+                                                                        }) ||
+                                                                        userGroup.permissions.dataCollectionActions.tag ||
+                                                                        userGroup.permissions.dataCollections.find((item: any) => {
+                                                                            return item.permissions.dataCollection.tag;
+                                                                        }) ? (
+                                                                            <Th></Th>
                                                                         ) : null}
-                                                                        <Td>
-                                                                            <Link to={`/workspaces/${workspace?._id}/dataCollections/${dataCollection._id}`}>
-                                                                                <Text fontSize={'13px'} color={'#666666'}>
-                                                                                    {dataCollection.name}
-                                                                                </Text>
-                                                                            </Link>
-                                                                        </Td>
-                                                                        {/* <Td>
+                                                                        <Th color={'#666666'} fontWeight={'semibold'}>
+                                                                            Name
+                                                                        </Th>
+                                                                        {/* <Th>Description</Th> */}
+
+                                                                        {userGroup.permissions.dataCollectionActions.tag ||
+                                                                        userGroup.permissions.dataCollections.find((item: any) => {
+                                                                            return item.permissions.dataCollection.tag;
+                                                                        }) ? (
+                                                                            <Th color={'#666666'} fontWeight={'semibold'}>
+                                                                                Tags
+                                                                            </Th>
+                                                                        ) : null}
+                                                                    </Tr>
+                                                                </Thead>
+                                                                <Tbody>
+                                                                    {data?.map((dataCollection: any, index: number) => {
+                                                                        const dataCollectionPermissions: any = userGroup.permissions.dataCollections.find(
+                                                                            (item: any) => {
+                                                                                return item.dataCollection === dataCollection._id;
+                                                                            }
+                                                                        );
+
+                                                                        console.log(dataCollectionPermissions);
+
+                                                                        if (!dataCollectionPermissions?.permissions.dataCollection.view) {
+                                                                            return null;
+                                                                        }
+                                                                        return (
+                                                                            <Tr key={index}>
+                                                                                {userGroup.permissions.dataCollectionActions.update ||
+                                                                                userGroup.permissions.dataCollections.find((item: any) => {
+                                                                                    return item.permissions.dataCollection.update;
+                                                                                }) ||
+                                                                                userGroup.permissions.dataCollectionActions.delete ||
+                                                                                userGroup.permissions.dataCollections.find((item: any) => {
+                                                                                    return item.permissions.dataCollection.delete;
+                                                                                }) ||
+                                                                                userGroup.permissions.dataCollectionActions.tag ||
+                                                                                userGroup.permissions.dataCollections.find((item: any) => {
+                                                                                    return item.permissions.dataCollection.tag;
+                                                                                }) ? (
+                                                                                    <Td w={'120px'} p={0}>
+                                                                                        {userGroup.permissions.dataCollectionActions.update ||
+                                                                                        dataCollectionPermissions.permissions.dataCollection.update ? (
+                                                                                            <Edit
+                                                                                                dataCollection={dataCollection}
+                                                                                                updateDataCollection={updateDataCollection}
+                                                                                            />
+                                                                                        ) : null}
+                                                                                        {userGroup.permissions.dataCollectionActions.delete ||
+                                                                                        dataCollectionPermissions.permissions.dataCollection.delete ? (
+                                                                                            <Delete
+                                                                                                dataCollection={dataCollection}
+                                                                                                deleteDataCollection={deleteDataCollection}
+                                                                                            />
+                                                                                        ) : null}
+                                                                                        {userGroup.permissions.dataCollectionActions.tag ||
+                                                                                        dataCollectionPermissions.permissions.dataCollection.tag ? (
+                                                                                            <TagsModal
+                                                                                                tagType={'dataCollection'}
+                                                                                                data={dataCollection}
+                                                                                                tags={dataCollection.tags}
+                                                                                                update={updateDataCollection}
+                                                                                                workspaceId={workspace?._id || ''}
+                                                                                            />
+                                                                                        ) : null}
+                                                                                    </Td>
+                                                                                ) : null}
+                                                                                <Td>
+                                                                                    <Link
+                                                                                        to={`/workspaces/${workspace?._id}/dataCollections/${dataCollection._id}`}
+                                                                                    >
+                                                                                        <Text fontSize={'13px'} color={'#666666'}>
+                                                                                            {dataCollection.name}
+                                                                                        </Text>
+                                                                                    </Link>
+                                                                                </Td>
+                                                                                {/* <Td>
                                                         <Text fontSize={'13px'}>{dataCollection.description}</Text>
                                                     </Td> */}
 
-                                                                        <Td w={'300px'}>
-                                                                            {dataCollection.tags.map((tag: TTag, index: number) => {
-                                                                                return (
-                                                                                    <Tag
-                                                                                        key={index}
-                                                                                        size={'sm'}
-                                                                                        variant="subtle"
-                                                                                        colorScheme="blue"
-                                                                                        mr={'5px'}
-                                                                                        zIndex={1000}
-                                                                                    >
-                                                                                        <TagLabel pb={'2px'}>{tag.name}</TagLabel>
-                                                                                        {allowed ? (
-                                                                                            <TagCloseButton
-                                                                                                onClick={() => handleCloseTagButtonClick(dataCollection, tag)}
-                                                                                                zIndex={1000}
-                                                                                            />
-                                                                                        ) : null}
-                                                                                    </Tag>
-                                                                                );
-                                                                            })}
-                                                                        </Td>
-                                                                    </Tr>
-                                                                );
-                                                            })}
-                                                        </Tbody>
-                                                    </Table>
-                                                </TableContainer>
-                                            ) : (
-                                                <Box mt={'30px'}>
-                                                    <Center>
-                                                        <Text>Create a Data Collection to get started.</Text>
-                                                    </Center>
+                                                                                {userGroup.permissions.dataCollectionActions.tag ||
+                                                                                userGroup.permissions.dataCollections.find((item: any) => {
+                                                                                    return item.permissions.dataCollection.tag;
+                                                                                }) ? (
+                                                                                    <Td w={'300px'}>
+                                                                                        {dataCollection.tags.map((tag: TTag, index: number) => {
+                                                                                            return (
+                                                                                                <Tag
+                                                                                                    key={index}
+                                                                                                    size={'sm'}
+                                                                                                    variant="subtle"
+                                                                                                    colorScheme="blue"
+                                                                                                    mr={'5px'}
+                                                                                                    zIndex={1000}
+                                                                                                >
+                                                                                                    <TagLabel pb={'2px'}>{tag.name}</TagLabel>
+                                                                                                    {userGroup.permissions.dataCollectionActions.tag ? (
+                                                                                                        <TagCloseButton
+                                                                                                            onClick={() =>
+                                                                                                                handleCloseTagButtonClick(dataCollection, tag)
+                                                                                                            }
+                                                                                                            zIndex={1000}
+                                                                                                        />
+                                                                                                    ) : null}
+                                                                                                </Tag>
+                                                                                            );
+                                                                                        })}
+                                                                                    </Td>
+                                                                                ) : null}
+                                                                            </Tr>
+                                                                        );
+                                                                    })}
+                                                                </Tbody>
+                                                            </Table>
+                                                        </TableContainer>
+                                                    ) : (
+                                                        <Box mt={'30px'}>
+                                                            <Center>
+                                                                <Text>{'Contact your system administrator for access to the dashboard'}</Text>
+                                                            </Center>
+                                                        </Box>
+                                                    )}
                                                 </Box>
-                                            )}
-                                        </Box>
-                                    </TabPanel>
-                                    <TabPanel>
-                                        <Box mt={3}>
-                                            <Flex mb={'10px'}>
-                                                {/* <Box>
+                                            </TabPanel>
+                                        ) : null}
+                                        {userGroup.permissions.viewActions.view ? (
+                                            <TabPanel>
+                                                <Box mt={3}>
+                                                    <Flex mb={'10px'}>
+                                                        {/* <Box>
                                                     <Text fontSize={'20px'}>Views</Text>
                                                 </Box> */}
-                                                <Spacer />
-                                                {allowed ? (
-                                                    <Box>
-                                                        <CreateDataCollectionView dataCollections={data!} />
-                                                    </Box>
-                                                ) : null}
-                                            </Flex>
-                                            {dataCollectionViews?.length < 1 ? (
-                                                <Center>
-                                                    <Text>Click the add button to create your first view.</Text>
-                                                </Center>
-                                            ) : null}
-                                        </Box>
-                                        <Box>
-                                            {dataCollectionViews?.map((dcView: any) => {
-                                                // return <DataCollection showDoneRows={true}  />>;
-                                                return <View key={dcView.name} dataCollectionView={dcView} />;
-                                            })}
-                                        </Box>
-                                    </TabPanel>
-                                </TabPanels>
-                            </Tabs>
+                                                        <Spacer />
+                                                        <Box>
+                                                            {userGroup.permissions.viewActions.create ? (
+                                                                <CreateDataCollectionView dataCollections={data!} />
+                                                            ) : null}
+                                                        </Box>
+                                                    </Flex>
+                                                    {dataCollectionViews?.length < 1 ? (
+                                                        <Center>
+                                                            <Text>{'There are currently no views in your dashboard.'}</Text>
+                                                        </Center>
+                                                    ) : null}
+                                                </Box>
+                                                <Box>
+                                                    {userGroup.permissions.viewActions.view
+                                                        ? dataCollectionViews?.map((dcView: any) => {
+                                                              // return <DataCollection showDoneRows={true}  />>;
+                                                              return (
+                                                                  <View
+                                                                      key={dcView.name}
+                                                                      dataCollectionView={dcView}
+                                                                      userGroup={userGroup}
+                                                                      refetchUserGroup={refetch}
+                                                                  />
+                                                              );
+                                                          })
+                                                        : null}
+                                                </Box>
+                                            </TabPanel>
+                                        ) : null}
+                                    </TabPanels>
+                                </Tabs>
+                            ) : (
+                                <Center>
+                                    <Text>Contact your system administrator for access.</Text>
+                                </Center>
+                            )}
                         </Container>
                     </Flex>
                 </Box>

@@ -27,6 +27,7 @@ interface IProps {
     view?: boolean;
     rowsAreDraggable?: boolean;
     hasCheckboxOptions?: boolean;
+    dataCollectionView?: any;
 }
 
 const TableContent = ({
@@ -50,6 +51,7 @@ const TableContent = ({
     view = false,
     rowsAreDraggable = true,
     hasCheckboxOptions = true,
+    dataCollectionView = null,
 }: IProps) => {
     const ref = useRef<HTMLDivElement | null>(null);
     const [gridTemplateColumns, setGridTemplateColumns] = useState('');
@@ -447,6 +449,7 @@ const TableContent = ({
                                             showDoneRows={showDoneRows}
                                             isDraggable={rowsAreDraggable && columnToSortBy === null}
                                             hasCheckboxOptions={hasCheckboxOptions}
+                                            dataCollectionView={dataCollectionView}
                                         />
                                     </div>
                                     <div></div>

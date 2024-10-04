@@ -18,6 +18,9 @@ import Reference from './Reference';
 import { useTypedSelector, useAppDispatch } from '../../hooks/store';
 import { addCheckedRowId, removeCheckedRowId } from '../../components/table/tableSlice';
 import RemindersDrawer from './RemindersDrawer';
+import { useGetUserGroupsQuery } from '../../app/services/api';
+import { emptyDataCollectionPermissions } from '../../features/workspaces/UserGroups';
+import { useParams } from 'react-router-dom';
 
 const Row = ({
     row,
@@ -35,6 +38,7 @@ const Row = ({
     allowed = false,
     isDraggable = false,
     hasCheckboxOptions = true,
+    dataCollectionView = null,
 }: {
     row: any;
     rowIndex: number;
@@ -52,6 +56,7 @@ const Row = ({
     showDoneRows?: boolean;
     isDraggable?: boolean;
     hasCheckboxOptions?: boolean;
+    dataCollectionView?: any;
 }) => {
     // const rowsData = useMemo(
     //     () => [
@@ -63,6 +68,7 @@ const Row = ({
     // );
 
     // const [isPending, startTransition] = useTransition();
+    const { dataCollectionId } = useParams();
 
     const dispatch = useAppDispatch();
 
@@ -76,6 +82,38 @@ const Row = ({
     const [deleteCheckboxIsChecked, setDeleteCheckboxIsChecked] = useState(deleteBoxIsChecked);
 
     const [showRow, setShowRow] = useState(true);
+
+    const { data: userGroups, refetch: refetchUserGroups } = useGetUserGroupsQuery(null);
+    const [dataCollectionPermissions, setDataCollectionPermissions] = useState<any>(emptyDataCollectionPermissions);
+
+    useEffect(() => {
+        const userGroup = userGroups.find((item: any) => {
+            return item.users.includes(localStorage.getItem('userId'));
+        });
+
+        if (dataCollectionView) {
+            const viewPermissions = userGroup.permissions.views.find((item: any) => {
+                return item.view === dataCollectionView._id;
+            });
+
+            if (viewPermissions !== undefined) {
+                setDataCollectionPermissions(viewPermissions.permissions);
+            } else {
+                refetchUserGroups();
+            }
+        } else {
+            console.log(userGroup);
+            const dataCollectionPermissions = userGroup.permissions.dataCollections.find((item: any) => {
+                return item.dataCollection === dataCollectionId;
+            });
+
+            if (dataCollectionPermissions !== undefined) {
+                setDataCollectionPermissions(dataCollectionPermissions.permissions);
+            } else {
+                refetchUserGroups();
+            }
+        }
+    }, [userGroups]);
 
     useEffect(() => {
         setDeleteCheckboxIsChecked(deleteBoxIsChecked);
@@ -272,14 +310,14 @@ const Row = ({
                             >
                                 <span style={{ borderRight: '1px solid #edf2f7', width: !hasCheckboxOptions ? '150px' : '220px' }}>
                                     <Flex>
-                                        {isDraggable ? (
+                                        {isDraggable && dataCollectionPermissions.rows.reorder ? (
                                             <Box
                                                 id={`reorder-handle-${rowIndex}`}
                                                 w={'15px'}
                                                 h={'30px'}
                                                 bgColor={'#24a2f0'}
-                                                cursor={allowed && isDraggable ? 'move' : 'default'}
-                                                draggable={allowed && isDraggable}
+                                                cursor={allowed && isDraggable && dataCollectionPermissions.rows.reorder ? 'move' : 'default'}
+                                                draggable={allowed && isDraggable && dataCollectionPermissions.rows.reorder}
                                                 onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, row.position)}
                                                 onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, row.position)}
                                                 // onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
@@ -295,31 +333,25 @@ const Row = ({
                                                     mr={'1px'}
                                                     isChecked={checkedRowIds.includes(row._id)}
                                                     onChange={handleDeleteCheckboxChange}
-                                                    disabled={!allowed}
+                                                    disabled={!dataCollectionPermissions.rows.subrows && !dataCollectionPermissions.rows.delete}
                                                 />
                                             </Box>
                                         ) : null}
                                         <Box pt={'6px'}>
                                             <EditRow row={row} columns={columns} handleChange={editRowOnChange} allowed={allowed} />
                                         </Box>
-                                        <Box pt={'6px'}>
-                                            <NoteModal
-                                                row={row}
-                                                updateRow={editRowOnChange}
-                                                // rowCallUpdate={rowCallUpdate}
-                                                allowed={allowed}
-                                            />
-                                        </Box>
-                                        <Box
-                                            pt={'7px'}
-                                            ml={'10px'}
-                                            // onClick={allowed ? handleRemindersChange : () => {}}
-                                            cursor={allowed ? 'pointer' : 'default'}
-                                        >
-                                            {/* <Text fontSize={'15px'} color={row.reminder && allowed ? '#16b2fc' : '#cccccc'}>
-                                                <FaRegBell />
-                                            </Text> */}
-                                            <RemindersDrawer row={row} handleChange={editRowOnChange} allowed={allowed} />
+                                        {dataCollectionPermissions.notes.view ? (
+                                            <Box pt={'6px'}>
+                                                <NoteModal
+                                                    row={row}
+                                                    updateRow={editRowOnChange}
+                                                    // rowCallUpdate={rowCallUpdate}
+                                                    allowed={dataCollectionPermissions.notes.create}
+                                                />
+                                            </Box>
+                                        ) : null}
+                                        <Box pt={'7px'} ml={'10px'} cursor={dataCollectionPermissions.reminders.view ? 'pointer' : 'default'}>
+                                            <RemindersDrawer row={row} handleChange={editRowOnChange} allowed={dataCollectionPermissions.reminders.view} />
                                         </Box>
                                         <Box
                                             pt={'7px'}
@@ -337,7 +369,7 @@ const Row = ({
                                                 getDocs={getDocs}
                                                 getUpdatedDoc={getUpdatedDoc}
                                                 removeDoc={removeDoc}
-                                                allowed={allowed}
+                                                permissions={dataCollectionPermissions}
                                             />
                                         </Box>
                                         {/* {row.position} */}
@@ -359,6 +391,15 @@ const Row = ({
                                     </Flex>
                                 </span>
                                 {columns.map((column: any, columnIndex: number) => {
+                                    const columnsPermissions = dataCollectionPermissions.columns.find((item: any) => {
+                                        return item.name === column.name;
+                                    });
+
+                                    console.log(columnsPermissions?.permissions);
+
+                                    if (!columnsPermissions?.permissions.column.view) {
+                                        return null;
+                                    }
                                     return (
                                         <div
                                             key={columnIndex}

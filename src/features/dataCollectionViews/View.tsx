@@ -1,11 +1,20 @@
 import DataCollection from '../dataCollections/DataCollection';
 import { useDeleteDataCollectionViewMutation, useGetDataCollectionsQuery, useGetRowsQuery } from '../../app/services/api';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Divider, Flex, Menu, MenuButton, MenuItem, MenuList, Spacer, Text } from '@chakra-ui/react';
 import { PiDotsThreeVerticalBold } from 'react-icons/pi';
 import Create from './Create';
+import { emptyPermissions, emptyViewPermissions } from '../workspaces/UserGroups';
 
-const View = ({ dataCollectionView }: { dataCollectionView: any }) => {
+const View = ({
+    dataCollectionView,
+    userGroup = { name: '', workspace: '', users: [], permissions: emptyPermissions },
+    refetchUserGroup,
+}: {
+    dataCollectionView: any;
+    userGroup: any;
+    refetchUserGroup: any;
+}) => {
     const { data: rows } = useGetRowsQuery({
         dataCollectionId: dataCollectionView.dataCollection || '',
         limit: 0,
@@ -16,9 +25,21 @@ const View = ({ dataCollectionView }: { dataCollectionView: any }) => {
     });
     const [deleteDataCollectionView] = useDeleteDataCollectionViewMutation();
     const { data } = useGetDataCollectionsQuery(null);
+    const [viewPermissions, setViewPermissions] = useState(emptyViewPermissions);
+
     useEffect(() => {
-        // console.log(rows);
-    }, [rows]);
+        if (userGroup !== undefined) {
+            const viewPermissions = userGroup.permissions.views.find((item: any) => {
+                return item.view === dataCollectionView._id;
+            });
+
+            if (viewPermissions !== undefined) {
+                setViewPermissions(viewPermissions.permissions);
+            } else {
+                refetchUserGroup();
+            }
+        }
+    }, [userGroup, dataCollectionView]);
     return (
         <Box>
             <Divider />
@@ -28,29 +49,39 @@ const View = ({ dataCollectionView }: { dataCollectionView: any }) => {
                         {dataCollectionView.name}
                     </Text>
                     <Spacer />
-                    <Menu>
-                        <MenuButton>
-                            <Text fontSize={'24px'}>
-                                <PiDotsThreeVerticalBold />
-                            </Text>
-                        </MenuButton>
-                        <MenuList fontSize={'14px'}>
-                            <Create
-                                dataCollections={data!}
-                                view={dataCollectionView}
-                                dataCollection={data?.find((dc) => {
-                                    return dc._id == dataCollectionView.dataCollection;
-                                })}
-                            />
-                            <MenuItem
-                                onClick={() => {
-                                    deleteDataCollectionView(dataCollectionView._id);
-                                }}
-                            >
-                                <Text>Delete View</Text>
-                            </MenuItem>
-                        </MenuList>
-                    </Menu>
+
+                    {userGroup.permissions.viewActions.update ||
+                    userGroup?.permissions.viewActions.delete ||
+                    viewPermissions.view.update ||
+                    viewPermissions.view.delete ? (
+                        <Menu>
+                            <MenuButton>
+                                <Text fontSize={'24px'}>
+                                    <PiDotsThreeVerticalBold />
+                                </Text>
+                            </MenuButton>
+                            <MenuList fontSize={'14px'}>
+                                {userGroup.permissions.viewActions.update || viewPermissions.view.update ? (
+                                    <Create
+                                        dataCollections={data!}
+                                        view={dataCollectionView}
+                                        dataCollection={data?.find((dc) => {
+                                            return dc._id == dataCollectionView.dataCollection;
+                                        })}
+                                    />
+                                ) : null}
+                                {userGroup.permissions.viewActions.delete || viewPermissions.view.delete ? (
+                                    <MenuItem
+                                        onClick={() => {
+                                            deleteDataCollectionView(dataCollectionView._id);
+                                        }}
+                                    >
+                                        <Text>Delete View</Text>
+                                    </MenuItem>
+                                ) : null}
+                            </MenuList>
+                        </Menu>
+                    ) : null}
                 </Flex>
             </Box>
             <DataCollection
@@ -62,6 +93,7 @@ const View = ({ dataCollectionView }: { dataCollectionView: any }) => {
                 hasColumnOptions={false}
                 columnsAreDraggable={false}
                 hasCreateColumn={false}
+                // userGroup={userGroup}
             />
         </Box>
     );

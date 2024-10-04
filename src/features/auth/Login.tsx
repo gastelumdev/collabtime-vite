@@ -27,6 +27,7 @@ export default function Login() {
         if (formState.email !== '' && formState.password !== '') {
             try {
                 const user: any = await login(formState).unwrap();
+                console.log(user);
                 dispatch(setCredentials(user));
                 localStorage.setItem('token', user.accessToken);
                 localStorage.setItem('userId', user.user._id as string);

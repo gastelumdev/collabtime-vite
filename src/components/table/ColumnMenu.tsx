@@ -18,6 +18,8 @@ import {
 } from '@chakra-ui/react';
 import CreateColumn from '../../features/dataCollections/CreateColumn';
 import { useUpdateColumnMutation } from '../../app/services/api';
+import { emptyColumnPermissions, emptyDataCollectionPermissions } from '../../features/workspaces/UserGroups';
+import { useEffect, useState } from 'react';
 
 const ColumnMenu = ({
     column,
@@ -27,7 +29,8 @@ const ColumnMenu = ({
     index,
     handleSortByColumnAsc,
     handleSortByColumnDes,
-    hasColumnOptions = true,
+    dataCollectionView = null,
+    dataCollectionPermissions = emptyDataCollectionPermissions,
 }: {
     column: any;
     columns: any;
@@ -36,11 +39,25 @@ const ColumnMenu = ({
     index: number;
     handleSortByColumnAsc?: any;
     handleSortByColumnDes?: any;
-    hasColumnOptions?: boolean;
+    dataCollectionView?: any;
+    dataCollectionPermissions?: any;
 }) => {
     const { isOpen, onToggle, onClose } = useDisclosure();
 
     const [updateColumn, { isLoading: columnIsUpdating }] = useUpdateColumnMutation();
+    const [columnPermissions, setColumnPermissions] = useState(emptyColumnPermissions);
+
+    useEffect(() => {
+        const columnPermissions = dataCollectionPermissions.columns.find((item: any) => {
+            return item.name === column.name;
+        });
+
+        if (columnPermissions !== undefined) {
+            setColumnPermissions(columnPermissions.permissions);
+        }
+
+        console.log(columnPermissions);
+    }, [dataCollectionPermissions, column]);
 
     const handleDeleteColumnClick = () => {
         console.log(column);
@@ -68,7 +85,7 @@ const ColumnMenu = ({
                 <PopoverContent>
                     <PopoverArrow />
                     <PopoverBody>
-                        {index !== 0 ? (
+                        {/* {index !== 0 ? (
                             <>
                                 <Box onClick={sortByColumnAsc} textAlign={'left'} fontSize={'14px'} cursor={'pointer'} mb={'4px'}>
                                     Sort ascending
@@ -76,22 +93,18 @@ const ColumnMenu = ({
                                 <Box onClick={sortByColumnDes} textAlign={'left'} fontSize={'14px'} cursor={'pointer'} mb={'4px'}>
                                     Sort descending
                                 </Box>
-                                {hasColumnOptions ? (
-                                    <>
-                                        <Box>
-                                            <CreateColumn
-                                                column={column}
-                                                columns={columns}
-                                                updateColumn={updateColumn}
-                                                addNewColumnToRows={handleAddNewColumnToRows}
-                                                columnIsUpdating={columnIsUpdating as boolean}
-                                            />
-                                        </Box>
-                                        <Box>
-                                            <DeleteModal column={column} handleDeleteColumnClick={handleDeleteColumnClick} />
-                                        </Box>
-                                    </>
-                                ) : null}
+                                <Box>
+                                    <CreateColumn
+                                        column={column}
+                                        columns={columns}
+                                        updateColumn={updateColumn}
+                                        addNewColumnToRows={handleAddNewColumnToRows}
+                                        columnIsUpdating={columnIsUpdating as boolean}
+                                    />
+                                </Box>
+                                <Box>
+                                    <DeleteModal column={column} handleDeleteColumnClick={handleDeleteColumnClick} />
+                                </Box>
                             </>
                         ) : (
                             <>
@@ -107,7 +120,35 @@ const ColumnMenu = ({
                                     </Box>
                                 ) : null}
                             </>
-                        )}
+                        )} */}
+                        <>
+                            <Box onClick={sortByColumnAsc} textAlign={'left'} fontSize={'14px'} cursor={'pointer'} mb={'4px'}>
+                                Sort ascending
+                            </Box>
+                            <Box onClick={sortByColumnDes} textAlign={'left'} fontSize={'14px'} cursor={'pointer'} mb={'4px'}>
+                                Sort descending
+                            </Box>
+                            {index !== 0 &&
+                            dataCollectionView === null &&
+                            (dataCollectionPermissions.columnActions.update || columnPermissions.column.update) ? (
+                                <Box>
+                                    <CreateColumn
+                                        column={column}
+                                        columns={columns}
+                                        updateColumn={updateColumn}
+                                        addNewColumnToRows={handleAddNewColumnToRows}
+                                        columnIsUpdating={columnIsUpdating as boolean}
+                                    />
+                                </Box>
+                            ) : null}
+                            {index !== 0 &&
+                            dataCollectionView === null &&
+                            (dataCollectionPermissions.columnActions.delete || columnPermissions.column.delete) ? (
+                                <Box>
+                                    <DeleteModal column={column} handleDeleteColumnClick={handleDeleteColumnClick} />
+                                </Box>
+                            ) : null}
+                        </>
                     </PopoverBody>
                 </PopoverContent>
             </Portal>

@@ -164,7 +164,7 @@ export const api = createApi({
                 method: "POST",
                 body: dataCollection
             }),
-            invalidatesTags: ["DataCollection"]
+            invalidatesTags: ["DataCollection", "UserGroup"]
         }),
         updateDataCollection: builder.mutation<TDataCollection, TDataCollection>({
             query: (dataCollection) => ({
@@ -514,7 +514,7 @@ export const api = createApi({
                 method: "POST",
                 body: dataCollectionView
             }),
-            invalidatesTags: ["DataCollectionView"]
+            invalidatesTags: ["DataCollectionView", "UserGroup"]
         }),
         updateDataCollectionView: builder.mutation<any, any>({
             query: (dataCollectionView) => ({
@@ -522,7 +522,7 @@ export const api = createApi({
                 method: "PUT",
                 body: dataCollectionView
             }),
-            invalidatesTags: ["DataCollectionView"]
+            invalidatesTags: ["DataCollectionView", "UserGroup"]
         }),
         deleteDataCollectionView: builder.mutation<any, any>({
             query: (dataColletionViewId) => ({
@@ -530,7 +530,7 @@ export const api = createApi({
                 method: "DELETE",
                 body: {}
             }),
-            invalidatesTags: ["DataCollectionView"]
+            invalidatesTags: ["DataCollectionView", "UserGroup"]
         }),
         getUserGroups: builder.query<any, any>({
             query: () => ({
