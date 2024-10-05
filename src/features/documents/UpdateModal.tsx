@@ -12,9 +12,15 @@ interface IProps {
     document: TDocument;
     fontSize?: string;
     color?: string;
+    permissions?: any;
 }
 
-const UpdateModal = ({ document, fontSize = '13px', color = '#666' }: IProps) => {
+const UpdateModal = ({
+    document,
+    fontSize = '13px',
+    color = '#666',
+    permissions = { view: false, create: false, update: false, delete: false, tag: false },
+}: IProps) => {
     const { isOpen: updateDocIsOpen, onOpen: updateDocOnOpen, onClose: updateDocOnClose } = useDisclosure();
     const editorRef = useRef<any>(null);
 
@@ -56,7 +62,11 @@ const UpdateModal = ({ document, fontSize = '13px', color = '#666' }: IProps) =>
                     <Text mb={'5px'} color={'rgb(123, 128, 154)'}>
                         Document name
                     </Text>
-                    <Input value={createdDocName} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setCreatedDocName(event.target.value)} />
+                    <Input
+                        value={createdDocName}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => setCreatedDocName(event.target.value)}
+                        isReadOnly={!permissions.update}
+                    />
                 </Box>
                 <Text mb={'5px'} color={'rgb(123, 128, 154)'}>
                     Content
@@ -68,6 +78,7 @@ const UpdateModal = ({ document, fontSize = '13px', color = '#666' }: IProps) =>
                         editorRef.current = editor;
                         evt;
                     }}
+                    disabled={!permissions.update}
                     onEditorChange={(a) => {
                         setEditorValue(a);
                     }}
@@ -109,10 +120,12 @@ const UpdateModal = ({ document, fontSize = '13px', color = '#666' }: IProps) =>
                     }}
                 />
 
-                <Flex mt={'10px'}>
-                    <Spacer />
-                    <PrimaryButton onClick={handleDocumentClick}>SAVE</PrimaryButton>
-                </Flex>
+                {permissions.update ? (
+                    <Flex mt={'10px'}>
+                        <Spacer />
+                        <PrimaryButton onClick={handleDocumentClick}>SAVE</PrimaryButton>
+                    </Flex>
+                ) : null}
             </PrimaryDrawer>
         </>
     );

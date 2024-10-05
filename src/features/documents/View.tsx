@@ -32,6 +32,7 @@ import {
     useDeleteTagMutation,
     useGetDocumentsQuery,
     useGetOneWorkspaceQuery,
+    useGetUserGroupsQuery,
     useGetUserQuery,
     useTagExistsMutation,
     useUpdateDocumentMutation,
@@ -50,6 +51,7 @@ import UpdateFileModal from './UpdateFileModal';
 import { useEffect, useState } from 'react';
 import { bgColor } from '../../utils/colors';
 import '../../App.css';
+import { emptyPermissions } from '../workspaces/UserGroups';
 
 const View = () => {
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
@@ -63,7 +65,24 @@ const View = () => {
     const [deleteTag] = useDeleteTagMutation();
     const [tagExists] = useTagExistsMutation();
 
-    const [permissions, setPermissions] = useState<number>();
+    const [_permissions, setPermissions] = useState<number>();
+
+    const { data: userGroups, refetch } = useGetUserGroupsQuery(null);
+    const [userGroup, setUserGroup] = useState({ name: '', workspace: '', permissions: emptyPermissions });
+
+    useEffect(() => {
+        if (userGroups !== undefined) {
+            console.log(userGroups);
+            const ug = userGroups?.find((item: any) => {
+                return item.users.includes(localStorage.getItem('userId'));
+            });
+
+            console.log(ug);
+            setUserGroup(ug);
+        } else {
+            refetch();
+        }
+    }, [userGroups]);
 
     useEffect(() => {
         getPermissions();
@@ -160,7 +179,7 @@ const View = () => {
                             </Text>
                         </Box>
 
-                        {(permissions || 0) > 1 ? (
+                        {userGroup.permissions.docs.create ? (
                             <>
                                 <Spacer />
                                 <Menu>
@@ -185,117 +204,130 @@ const View = () => {
                     <Card mt={'10px'}>
                         <CardBody>
                             {documents?.length || 0 > 0 ? (
-                                <TableContainer>
-                                    <Table size={'sm'} style={{ tableLayout: 'fixed' }} gridTemplateColumns={'300px 180px 180px 100px 100px'}>
-                                        <Thead>
-                                            <Tr>
-                                                <Th width={'300px'} color={'#666666'} fontWeight={'semibold'}>
-                                                    Filename
-                                                </Th>
-                                                <Th width={'180px'} color={'#666666'} fontWeight={'semibold'}>
-                                                    Uploaded by
-                                                </Th>
-                                                <Th width={'180px'} color={'#666666'} fontWeight={'semibold'}>
-                                                    Size
-                                                </Th>
-                                                {(permissions || 0) > 1 ? (
-                                                    <Th width={'100px'} color={'#666666'} fontWeight={'semibold'}>
-                                                        Actions
-                                                    </Th>
-                                                ) : null}
-                                                <Th color={'#666666'} fontWeight={'semibold'}>
-                                                    Tags
-                                                </Th>
-                                            </Tr>
-                                        </Thead>
-                                        <Tbody>
-                                            {documents?.map((document, index) => {
-                                                return (
-                                                    <Tr key={index}>
-                                                        <Td>
-                                                            <Flex>
-                                                                <Box pt={'0px'} mr={'6px'}>
-                                                                    <IconContext.Provider value={{ color: '#7b809a' }}>
-                                                                        {getIcon(document.ext || '')}
-                                                                    </IconContext.Provider>
-                                                                </Box>
-                                                                {document.type === 'upload' ? (
-                                                                    <Text color={'#666666'} textOverflow={'ellipsis'} overflow={'hidden'} fontSize={'13px'}>
-                                                                        <a href={document.url} target="_blank">
-                                                                            {document.filename}
-                                                                        </a>
-                                                                    </Text>
-                                                                ) : (
-                                                                    <UpdateModal document={document} />
-                                                                )}
-                                                            </Flex>
-                                                        </Td>
-                                                        <Td>
-                                                            <Text
-                                                                color={'#666666'}
-                                                                fontSize={'13px'}
-                                                            >{`${document.createdBy.firstname} ${document.createdBy.lastname}`}</Text>
-                                                        </Td>
-                                                        <Td>
-                                                            <Text color={'#666666'} fontSize={'13px'}>
-                                                                {document.file ? document.file.size : ''}
-                                                            </Text>
-                                                        </Td>
-                                                        {(permissions || 0) > 1 ? (
-                                                            <Td>
-                                                                <Flex>
-                                                                    <UpdateFileModal document={document} documents={documents} />
-                                                                    <DeleteFileAlert document={document} />
-                                                                </Flex>
-                                                            </Td>
+                                <>
+                                    {userGroup.permissions.docs.view ? (
+                                        <TableContainer>
+                                            <Table size={'sm'} style={{ tableLayout: 'fixed' }} gridTemplateColumns={'300px 180px 180px 100px 100px'}>
+                                                <Thead>
+                                                    <Tr>
+                                                        <Th width={'300px'} color={'#666666'} fontWeight={'semibold'}>
+                                                            Filename
+                                                        </Th>
+                                                        <Th width={'180px'} color={'#666666'} fontWeight={'semibold'}>
+                                                            Uploaded by
+                                                        </Th>
+                                                        <Th width={'180px'} color={'#666666'} fontWeight={'semibold'}>
+                                                            Size
+                                                        </Th>
+                                                        {userGroup.permissions.docs.update || userGroup.permissions.docs.delete ? (
+                                                            <Th width={'100px'} color={'#666666'} fontWeight={'semibold'}>
+                                                                Actions
+                                                            </Th>
                                                         ) : null}
-
-                                                        <Td>
-                                                            <Box overflow={'revert'}>
-                                                                <Flex>
-                                                                    {(permissions || 0) > 1 ? (
-                                                                        <Box mr={'10px'}>
-                                                                            <TagsModal
-                                                                                tagType={'document'}
-                                                                                data={document}
-                                                                                tags={document.tags}
-                                                                                update={updateDocument}
-                                                                                workspaceId={document?.workspace || ''}
-                                                                            />
-                                                                        </Box>
-                                                                    ) : null}
-                                                                    {document.tags !== undefined
-                                                                        ? document.tags.map((tag: TTag, index: number) => {
-                                                                              return (
-                                                                                  <WrapItem key={index}>
-                                                                                      <Tag
-                                                                                          size={'sm'}
-                                                                                          variant="subtle"
-                                                                                          //   colorScheme="blue"
-                                                                                          bgColor={'#24a2f0'}
-                                                                                          color={'white'}
-                                                                                          mr={'5px'}
-                                                                                          zIndex={1000}
-                                                                                      >
-                                                                                          <TagLabel pb={'2px'}>{tag.name}</TagLabel>
-                                                                                          <TagCloseButton
-                                                                                              onClick={() => handleCloseTagButtonClick(document, tag)}
-                                                                                              zIndex={1000}
-                                                                                          />
-                                                                                      </Tag>
-                                                                                  </WrapItem>
-                                                                              );
-                                                                          })
-                                                                        : null}
-                                                                </Flex>
-                                                            </Box>
-                                                        </Td>
+                                                        <Th color={'#666666'} fontWeight={'semibold'}>
+                                                            Tags
+                                                        </Th>
                                                     </Tr>
-                                                );
-                                            })}
-                                        </Tbody>
-                                    </Table>
-                                </TableContainer>
+                                                </Thead>
+                                                <Tbody>
+                                                    {documents?.map((document, index) => {
+                                                        return (
+                                                            <Tr key={index}>
+                                                                <Td>
+                                                                    <Flex>
+                                                                        <Box pt={'0px'} mr={'6px'}>
+                                                                            <IconContext.Provider value={{ color: '#7b809a' }}>
+                                                                                {getIcon(document.ext || '')}
+                                                                            </IconContext.Provider>
+                                                                        </Box>
+                                                                        {document.type === 'upload' ? (
+                                                                            <Text
+                                                                                color={'#666666'}
+                                                                                textOverflow={'ellipsis'}
+                                                                                overflow={'hidden'}
+                                                                                fontSize={'13px'}
+                                                                            >
+                                                                                <a href={document.url} target="_blank">
+                                                                                    {document.filename}
+                                                                                </a>
+                                                                            </Text>
+                                                                        ) : (
+                                                                            <UpdateModal document={document} permissions={userGroup.permissions.docs} />
+                                                                        )}
+                                                                    </Flex>
+                                                                </Td>
+                                                                <Td>
+                                                                    <Text
+                                                                        color={'#666666'}
+                                                                        fontSize={'13px'}
+                                                                    >{`${document.createdBy.firstname} ${document.createdBy.lastname}`}</Text>
+                                                                </Td>
+                                                                <Td>
+                                                                    <Text color={'#666666'} fontSize={'13px'}>
+                                                                        {document.file ? document.file.size : ''}
+                                                                    </Text>
+                                                                </Td>
+                                                                {userGroup.permissions.docs.update || userGroup.permissions.docs.delete ? (
+                                                                    <Td>
+                                                                        <Flex>
+                                                                            {userGroup.permissions.docs.update ? (
+                                                                                <UpdateFileModal document={document} documents={documents} />
+                                                                            ) : null}
+                                                                            {userGroup.permissions.docs.delete ? <DeleteFileAlert document={document} /> : null}
+                                                                        </Flex>
+                                                                    </Td>
+                                                                ) : null}
+
+                                                                <Td>
+                                                                    <Box overflow={'revert'}>
+                                                                        <Flex>
+                                                                            {userGroup.permissions.docs.tag ? (
+                                                                                <Box mr={'10px'}>
+                                                                                    <TagsModal
+                                                                                        tagType={'document'}
+                                                                                        data={document}
+                                                                                        tags={document.tags}
+                                                                                        update={updateDocument}
+                                                                                        workspaceId={document?.workspace || ''}
+                                                                                    />
+                                                                                </Box>
+                                                                            ) : null}
+                                                                            {document.tags !== undefined
+                                                                                ? document.tags.map((tag: TTag, index: number) => {
+                                                                                      return (
+                                                                                          <WrapItem key={index}>
+                                                                                              <Tag
+                                                                                                  size={'sm'}
+                                                                                                  variant="subtle"
+                                                                                                  //   colorScheme="blue"
+                                                                                                  bgColor={'#24a2f0'}
+                                                                                                  color={'white'}
+                                                                                                  mr={'5px'}
+                                                                                                  zIndex={1000}
+                                                                                              >
+                                                                                                  <TagLabel pb={'2px'}>{tag.name}</TagLabel>
+                                                                                                  <TagCloseButton
+                                                                                                      onClick={() => handleCloseTagButtonClick(document, tag)}
+                                                                                                      zIndex={1000}
+                                                                                                  />
+                                                                                              </Tag>
+                                                                                          </WrapItem>
+                                                                                      );
+                                                                                  })
+                                                                                : null}
+                                                                        </Flex>
+                                                                    </Box>
+                                                                </Td>
+                                                            </Tr>
+                                                        );
+                                                    })}
+                                                </Tbody>
+                                            </Table>
+                                        </TableContainer>
+                                    ) : (
+                                        <Text color={'rgb(123, 128, 154)'}>You don't have access to view documents.</Text>
+                                    )}
+                                </>
                             ) : (
                                 <Text color={'rgb(123, 128, 154)'}>You currently have no uploads.</Text>
                             )}

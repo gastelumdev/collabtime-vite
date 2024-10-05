@@ -9,6 +9,7 @@ import {
     useCreateMessageMutation,
     useGetMessagesQuery,
     useGetOneWorkspaceQuery,
+    useGetUserGroupsQuery,
     useGetUserQuery,
     useMarkAsReadMutation,
     useTypingMessageMutation,
@@ -36,6 +37,24 @@ const View = () => {
     // const [usersTyping, setUsersTyping] = useState<TUser[]>([]);
     const [usersTyping, setUsersTyping] = useState<boolean>(false);
     const [userWhosTyping, setUserWhosTyping] = useState<any>(null);
+
+    const [permissions, setPermissions] = useState({ view: false, create: false });
+
+    const { data: userGroups, refetch } = useGetUserGroupsQuery(null);
+
+    useEffect(() => {
+        if (userGroups !== undefined) {
+            console.log(userGroups);
+            const ug = userGroups?.find((item: any) => {
+                return item.users.includes(localStorage.getItem('userId'));
+            });
+
+            console.log(ug);
+            setPermissions(ug.permissions.chat);
+        } else {
+            refetch();
+        }
+    }, [userGroups]);
 
     /**
      * Socket.io listening for update to refetch data
@@ -162,79 +181,85 @@ const View = () => {
                     <Box w={'100%'}>
                         <Card>
                             <CardBody>
-                                <>
-                                    {messages?.length || 0 > 0
-                                        ? messages?.map((message, index) => {
-                                              return (
-                                                  <Box key={index} mb={'10px'} width={'100%'}>
-                                                      {user?._id === message?.createdBy?._id ? (
-                                                          <>
-                                                              <Box display={'flex'} justifyContent={'flex-end'}>
+                                {permissions.view ? (
+                                    <>
+                                        {messages?.length || 0 > 0
+                                            ? messages?.map((message, index) => {
+                                                  return (
+                                                      <Box key={index} mb={'10px'} width={'100%'}>
+                                                          {user?._id === message?.createdBy?._id ? (
+                                                              <>
+                                                                  <Box display={'flex'} justifyContent={'flex-end'}>
+                                                                      <Flex minW={'300px'} w={'40%'}>
+                                                                          <Spacer />
+                                                                          <Text fontSize={'12px'} mb={'3px'}>{`${message?.createdBy?.firstname} ${
+                                                                              message?.createdBy?.lastname
+                                                                          } - ${formatTime(message?.createdAt || new Date())}`}</Text>
+                                                                      </Flex>
+                                                                  </Box>
+                                                                  <Box display={'flex'} justifyContent={'flex-end'}>
+                                                                      <Box bgColor={'#2b81eb'} p={'10px'} borderRadius={'5px'} minW={'300px'} w={'40%'}>
+                                                                          <Text color={'white'}>{message.content}</Text>
+                                                                      </Box>
+                                                                  </Box>
+                                                              </>
+                                                          ) : (
+                                                              <Box>
                                                                   <Flex minW={'300px'} w={'40%'}>
                                                                       <Spacer />
-                                                                      <Text fontSize={'12px'} mb={'3px'}>{`${message?.createdBy?.firstname} ${
+                                                                      <Text fontSize={'12px'}>{`${message?.createdBy?.firstname} ${
                                                                           message?.createdBy?.lastname
                                                                       } - ${formatTime(message?.createdAt || new Date())}`}</Text>
                                                                   </Flex>
-                                                              </Box>
-                                                              <Box display={'flex'} justifyContent={'flex-end'}>
-                                                                  <Box bgColor={'#2b81eb'} p={'10px'} borderRadius={'5px'} minW={'300px'} w={'40%'}>
+                                                                  <Box
+                                                                      bgColor={'gray'}
+                                                                      p={'10px'}
+                                                                      borderRadius={'5px'}
+                                                                      display={'inline-block'}
+                                                                      minW={'300px'}
+                                                                      w={'40%'}
+                                                                  >
                                                                       <Text color={'white'}>{message.content}</Text>
                                                                   </Box>
                                                               </Box>
-                                                          </>
-                                                      ) : (
-                                                          <Box>
-                                                              <Flex minW={'300px'} w={'40%'}>
-                                                                  <Spacer />
-                                                                  <Text fontSize={'12px'}>{`${message?.createdBy?.firstname} ${
-                                                                      message?.createdBy?.lastname
-                                                                  } - ${formatTime(message?.createdAt || new Date())}`}</Text>
-                                                              </Flex>
-                                                              <Box
-                                                                  bgColor={'gray'}
-                                                                  p={'10px'}
-                                                                  borderRadius={'5px'}
-                                                                  display={'inline-block'}
-                                                                  minW={'300px'}
-                                                                  w={'40%'}
-                                                              >
-                                                                  <Text color={'white'}>{message.content}</Text>
-                                                              </Box>
-                                                          </Box>
-                                                      )}
-                                                  </Box>
-                                              );
-                                          })
-                                        : 'No messages'}
-                                    <Box h={'20px'}>
-                                        <Center>
-                                            {usersTyping && userWhosTyping.user._id !== user?._id ? (
-                                                <Text>{`${userWhosTyping.user.firstname} ${userWhosTyping.user.lastname} typing...`}</Text>
-                                            ) : null}
-                                        </Center>
-                                    </Box>
-                                </>
+                                                          )}
+                                                      </Box>
+                                                  );
+                                              })
+                                            : 'No messages'}
+                                        <Box h={'20px'}>
+                                            <Center>
+                                                {usersTyping && userWhosTyping.user._id !== user?._id ? (
+                                                    <Text>{`${userWhosTyping.user.firstname} ${userWhosTyping.user.lastname} typing...`}</Text>
+                                                ) : null}
+                                            </Center>
+                                        </Box>
+                                    </>
+                                ) : (
+                                    <Text>You don't have access to view the chat.</Text>
+                                )}
                             </CardBody>
                         </Card>
-                        <Box mt={'10px'} mb={'20px'}>
-                            <Box>
-                                <Card>
-                                    <CardBody>
-                                        <Flex>
-                                            <Input
-                                                mr={'10px'}
-                                                value={messageInput}
-                                                onChange={handleMessageInputChange}
-                                                onKeyDown={handleCreateMessageOnKeyDown}
-                                            />
-                                            <PrimaryButton onClick={handleCreateMessageClick}>POST</PrimaryButton>
-                                        </Flex>
-                                    </CardBody>
-                                </Card>
-                                <div ref={messagesEndRef} />
+                        {permissions.view && permissions.create ? (
+                            <Box mt={'10px'} mb={'20px'}>
+                                <Box>
+                                    <Card>
+                                        <CardBody>
+                                            <Flex>
+                                                <Input
+                                                    mr={'10px'}
+                                                    value={messageInput}
+                                                    onChange={handleMessageInputChange}
+                                                    onKeyDown={handleCreateMessageOnKeyDown}
+                                                />
+                                                <PrimaryButton onClick={handleCreateMessageClick}>POST</PrimaryButton>
+                                            </Flex>
+                                        </CardBody>
+                                    </Card>
+                                    <div ref={messagesEndRef} />
+                                </Box>
                             </Box>
-                        </Box>
+                        ) : null}
                     </Box>
                 </Container>
                 {/* </Flex> */}
