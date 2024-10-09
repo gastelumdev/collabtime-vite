@@ -125,7 +125,7 @@ const ViewOne = () => {
             let dcPermissions;
             if (ug !== undefined) {
                 dcPermissions = ug.permissions.dataCollections.find((item: any) => {
-                    return item.dataCollection === localStorage.getItem('dataCollectionId');
+                    return item.dataCollection === dataCollectionId;
                 });
 
                 if (dcPermissions !== undefined) {
