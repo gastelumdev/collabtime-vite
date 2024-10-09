@@ -113,24 +113,28 @@ const ViewOne = () => {
     const [dataCollectionPermissions, setDataCollectionPermissions] = useState(emptyDataCollectionPermissions);
 
     useEffect(() => {
-        console.log(userGroups);
-        let dcPermissions;
-        const ug = userGroups?.find((item: any) => {
-            return item.users.includes(localStorage.getItem('userId'));
-        });
+        if (userGroups !== undefined) {
+            console.log(userGroups);
 
-        console.log(ug);
-
-        if (ug !== undefined) {
-            dcPermissions = ug.permissions.dataCollections.find((item: any) => {
-                return item.dataCollection === localStorage.getItem('dataCollectionId');
+            const ug = userGroups?.find((item: any) => {
+                return item.users.includes(localStorage.getItem('userId'));
             });
-        }
 
-        console.log(dcPermissions);
-        if (userGroups !== undefined && dcPermissions !== undefined) {
-            setUserGroup(ug);
-            setDataCollectionPermissions(dcPermissions.permissions);
+            console.log(ug);
+
+            let dcPermissions;
+            if (ug !== undefined) {
+                dcPermissions = ug.permissions.dataCollections.find((item: any) => {
+                    return item.dataCollection === localStorage.getItem('dataCollectionId');
+                });
+
+                if (dcPermissions !== undefined) {
+                    console.log(dcPermissions);
+
+                    setUserGroup(ug);
+                    setDataCollectionPermissions(dcPermissions.permissions);
+                }
+            }
         } else {
             refetch();
         }
