@@ -115,12 +115,9 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
 
     useEffect(() => {
         if (userGroups !== undefined) {
-            console.log(userGroups);
             const ug = userGroups?.find((item: any) => {
                 return item.users.includes(localStorage.getItem('userId'));
             });
-
-            console.log(ug);
             setUserGroup(ug);
         }
     }, [userGroups]);
@@ -211,8 +208,6 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
                                 <NavItemSubHeader title={'Dashboards'} description="Data Collection Views" />
                             </Box>
                             {linkItems.map((link, index) => {
-                                console.log(userGroup);
-                                console.log(link.name);
                                 if (
                                     (link.name === 'Dashboard' && !userGroup?.permissions.dataCollectionActions.view) ||
                                     (link.name === 'Documents' && !userGroup?.permissions.docs.view) ||

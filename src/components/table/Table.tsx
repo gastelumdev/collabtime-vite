@@ -38,6 +38,7 @@ interface ITableProps {
     columnsAreDraggable?: boolean;
     hasCreateColumn?: boolean;
     dataCollectionView?: any;
+    refetchRows?: any;
 }
 
 const Table = ({
@@ -63,6 +64,7 @@ const Table = ({
     columnsAreDraggable = true,
     hasCreateColumn = true,
     dataCollectionView = null,
+    refetchRows,
 }: ITableProps) => {
     const dispatch = useAppDispatch();
     const { dataCollectionId } = useParams();
@@ -95,12 +97,9 @@ const Table = ({
     const [dataCollectionPermissions, setDataCollectionPermissions] = useState<any>(emptyDataCollectionPermissions);
 
     useEffect(() => {
-        console.log(userGroups);
         const userGroup = userGroups.find((item: any) => {
             return item.users.includes(localStorage.getItem('userId'));
         });
-
-        console.log(userGroup);
 
         if (dataCollectionView) {
             const viewPermissions = userGroup.permissions.views.find((item: any) => {
@@ -113,7 +112,6 @@ const Table = ({
                 refetchUserGroups();
             }
         } else {
-            console.log(userGroup);
             const dataCollectionPermissions = userGroup.permissions.dataCollections.find((item: any) => {
                 return item.dataCollection === dataCollectionId;
             });
@@ -185,16 +183,19 @@ const Table = ({
 
     const handleUpdateRowNoRender = useCallback(
         async (row: any) => {
-            // We wait for the call to return new rows if it is the last row
-            const newRows: any = await updateRow(row);
-            console.log(newRows);
-            // If it's the last row, add the new blank rows to the current rows
-            // setRows((prev: any) => prev.map((prevRow: any) => (prevRow._id === row._id ? row : prevRow)));
-            if (newRows.data.length > 0) {
-                setRows((prev: any) => {
-                    return [...prev, ...newRows.data];
-                });
-                refetch();
+            if (dataCollectionView) {
+                updateRow({ ...row, fromView: true });
+            } else {
+                // We wait for the call to return new rows if it is the last row
+                const newRows: any = await updateRow(row);
+                // If it's the last row, add the new blank rows to the current rows
+                // setRows((prev: any) => prev.map((prevRow: any) => (prevRow._id === row._id ? row : prevRow)));
+                if (newRows.data.length > 0) {
+                    setRows((prev: any) => {
+                        return [...prev, ...newRows.data];
+                    });
+                    refetch();
+                }
             }
         },
         [rows]
@@ -477,13 +478,11 @@ const Table = ({
     const [directionToSortBy, setDirectionToSortBy] = useState('Asc');
 
     const handleSortByColumnAsc = (column: any) => {
-        console.log({ direction: 'asc' });
         setColumnToSortBy(column);
         setDirectionToSortBy('Asc');
     };
 
     const handleSortByColumnDes = (column: any) => {
-        console.log({ direction: 'des' });
         setColumnToSortBy(column);
         setDirectionToSortBy('Des');
     };
@@ -599,6 +598,7 @@ const Table = ({
                 rowsAreDraggable={rowsAreDraggable}
                 hasCheckboxOptions={hasCheckboxOptions}
                 dataCollectionView={dataCollectionView}
+                refetchRows={refetchRows}
             />
             {/* <Box w={'100%'} h={'30px'}>
                 <Text ml={'10px'}>Add row</Text>

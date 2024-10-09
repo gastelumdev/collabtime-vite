@@ -57,6 +57,7 @@ const Row = ({
     isDraggable?: boolean;
     hasCheckboxOptions?: boolean;
     dataCollectionView?: any;
+    refetchRows?: any;
 }) => {
     // const rowsData = useMemo(
     //     () => [
@@ -102,7 +103,6 @@ const Row = ({
                 refetchUserGroups();
             }
         } else {
-            console.log(userGroup);
             const dataCollectionPermissions = userGroup.permissions.dataCollections.find((item: any) => {
                 return item.dataCollection === dataCollectionId;
             });
@@ -120,9 +120,7 @@ const Row = ({
     }, [deleteBoxIsChecked]);
 
     const handleDragStart = (event: React.DragEvent<HTMLDivElement>, _rowIndex: number) => {
-        console.log(row.position);
         if (isDraggable) {
-            console.log('Drag started');
             event.dataTransfer.setData('text', '');
             localStorage.setItem('rowDragged', `${row.position}`);
             localStorage.setItem('dragging', 'true');
@@ -153,7 +151,6 @@ const Row = ({
     };
 
     const handleDragOver = (event: React.DragEvent<HTMLDivElement>, _rowIndex: number) => {
-        console.log(row.position);
         if (localStorage.getItem('rowDragged') !== null) {
             event.preventDefault();
             event.stopPropagation();
@@ -175,7 +172,6 @@ const Row = ({
     );
 
     const handleDeleteCheckboxChange = () => {
-        console.log(checkedRowIds);
         if (checkedRowIds.includes(row._id)) {
             dispatch(removeCheckedRowId(row._id));
         } else {
@@ -188,13 +184,14 @@ const Row = ({
     };
 
     const onChange = (columnName: string, value: string) => {
-        console.log('On change was called');
         if (columnName === 'status' && value === 'Done') {
             setShowRow(false);
         } else {
             setShowRow(true);
         }
         handleChange({ ...row, values: { ...row.values, [columnName]: value } });
+        console.log('SHOULD REFETCH ROWS');
+        // refetchRows();
     };
 
     const onRefChange = (columnName: string, ref: any) => {
@@ -395,8 +392,6 @@ const Row = ({
                                         return item.name === column.name;
                                     });
 
-                                    console.log(columnsPermissions?.permissions);
-
                                     if (!columnsPermissions?.permissions.column.view) {
                                         return null;
                                     }
@@ -418,7 +413,7 @@ const Row = ({
                                                     columnName={column.name}
                                                     value={row.values[column.name]}
                                                     onChange={onChange}
-                                                    allowed={allowed}
+                                                    allowed={columnsPermissions?.permissions.column.update}
                                                 />
                                             ) : column.type === 'people' ? (
                                                 <PeopleMenu
@@ -427,17 +422,22 @@ const Row = ({
                                                     people={column.people}
                                                     values={row.values[column.name]}
                                                     onChange={onChange}
-                                                    allowed={allowed}
+                                                    allowed={columnsPermissions?.permissions.column.update}
                                                 />
                                             ) : column.type === 'date' ? (
-                                                <DateInput value={row.values[column.name]} columnName={column.name} onChange={onChange} allowed={allowed} />
+                                                <DateInput
+                                                    value={row.values[column.name]}
+                                                    columnName={column.name}
+                                                    onChange={onChange}
+                                                    allowed={columnsPermissions?.permissions.column.update}
+                                                />
                                             ) : column.type === 'reference' ? (
                                                 <Reference
                                                     column={column !== undefined ? column : {}}
                                                     refs={row.refs && row.refs[column.name] !== undefined ? row.refs[column.name] : []}
                                                     onRefChange={onRefChange}
                                                     onRemoveRef={onRemoveRef}
-                                                    allowed={allowed}
+                                                    allowed={columnsPermissions?.permissions.column.update}
                                                 />
                                             ) : (
                                                 <TextInput
@@ -445,7 +445,7 @@ const Row = ({
                                                     columnName={column.name}
                                                     value={row.values[column.name]}
                                                     onChange={onChange}
-                                                    allowed={allowed}
+                                                    allowed={columnsPermissions?.permissions.column.update}
                                                 />
                                             )}
                                             {/* {row.values[column.name]} */}

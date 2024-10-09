@@ -52,7 +52,7 @@ const TextInput = ({ columnName, value, type = 'tableCell', onChange, allowed = 
                     // p={val ? '0px' : type === 'tableCell' ? '14px' : '0px'}
                     onClick={() => setActive(!active)}
                     // px={type === 'tableCell' ? '20px' : '0px'}
-                    p={'2px'}
+                    // p={'2px'}
                     overflow={'hidden'}
                 >
                     <Button

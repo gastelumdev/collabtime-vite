@@ -28,6 +28,7 @@ interface IProps {
     rowsAreDraggable?: boolean;
     hasCheckboxOptions?: boolean;
     dataCollectionView?: any;
+    refetchRows?: any;
 }
 
 const TableContent = ({
@@ -52,6 +53,7 @@ const TableContent = ({
     rowsAreDraggable = true,
     hasCheckboxOptions = true,
     dataCollectionView = null,
+    refetchRows,
 }: IProps) => {
     const ref = useRef<HTMLDivElement | null>(null);
     const [gridTemplateColumns, setGridTemplateColumns] = useState('');
@@ -384,6 +386,9 @@ const TableContent = ({
         setCurrentRows((prev) => prev.map((prevRow) => (prevRow._id === row._id ? row : prevRow)));
         setRows((prev: any) => prev.map((prevRow: any) => (prevRow._id === row._id ? row : prevRow)));
         handleUpdateRowNoRender(row);
+        // if (dataCollectionView) {
+        //     refetchRows();
+        // }
     };
 
     const handleSubrowVisibility = (row: any) => {
@@ -450,6 +455,7 @@ const TableContent = ({
                                             isDraggable={rowsAreDraggable && columnToSortBy === null}
                                             hasCheckboxOptions={hasCheckboxOptions}
                                             dataCollectionView={dataCollectionView}
+                                            refetchRows={refetchRows}
                                         />
                                     </div>
                                     <div></div>

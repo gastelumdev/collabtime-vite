@@ -2,6 +2,7 @@ import { Box, Button, Checkbox, Popover, PopoverArrow, PopoverBody, PopoverConte
 import { getTextColor } from '../../utils/helpers';
 import { useEffect, useState } from 'react';
 import { TRow, TUser } from '../../types';
+import { createPortal } from 'react-dom';
 // import { useUpdateRowMutation } from '../../app/services/api';
 
 interface ILabel {
@@ -127,78 +128,81 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
                                     : 'Select'}
                             </Button>
                         </PopoverTrigger>
-                        <PopoverContent>
-                            <PopoverArrow />
-                            <PopoverBody>
-                                {options?.map((label, index) => {
-                                    const splitPerson = label.label.split(' - ');
-                                    const email = splitPerson.pop();
-                                    const name = splitPerson[0];
-                                    const itsAssigned = isAssignedTo(email as string);
-                                    // return (
-                                    //     <Box key={index} mb={'3px'} cursor={'pointer'} onClick={() => handleLabelClick(label)}>
-                                    //         <Button
-                                    //             bgColor={label.color}
-                                    //             w={'100%'}
-                                    //             fontSize={'12px'}
-                                    //             fontWeight={'normal'}
-                                    //             size={'xs'}
-                                    //             // onClick={() => handleLabelClick(label)}
-                                    //             textAlign={'left'}
-                                    //         >
-                                    //             <Text color={getTextColor(label.color)}>
-                                    //                 {name}
-                                    //                 <span style={{ color: 'gray' }}>{` ${email}`}</span>
-                                    //             </Text>
-                                    //         </Button>
-                                    //     </Box>
-                                    // );
-                                    return (
-                                        <Box
-                                            key={index}
-                                            mb={'3px'}
-                                            cursor={'pointer'}
-                                            // onClick={() => handleLabelClick(label)}
-                                        >
-                                            <Checkbox
-                                                isChecked={itsAssigned}
-                                                onChange={() => {
-                                                    let newValues: IValues[];
-
-                                                    if (isAssignedTo(email as string)) {
-                                                        newValues = labels.filter((label) => {
-                                                            return label.email !== email;
-                                                        });
-                                                        setLabels(newValues);
-                                                    } else {
-                                                        newValues = [...labels, { name, email: email as string }];
-                                                        setLabels(newValues);
-                                                    }
-
-                                                    onChange(columnName, newValues);
-                                                }}
+                        {createPortal(
+                            <PopoverContent>
+                                <PopoverArrow />
+                                <PopoverBody>
+                                    {options?.map((label, index) => {
+                                        const splitPerson = label.label.split(' - ');
+                                        const email = splitPerson.pop();
+                                        const name = splitPerson[0];
+                                        const itsAssigned = isAssignedTo(email as string);
+                                        // return (
+                                        //     <Box key={index} mb={'3px'} cursor={'pointer'} onClick={() => handleLabelClick(label)}>
+                                        //         <Button
+                                        //             bgColor={label.color}
+                                        //             w={'100%'}
+                                        //             fontSize={'12px'}
+                                        //             fontWeight={'normal'}
+                                        //             size={'xs'}
+                                        //             // onClick={() => handleLabelClick(label)}
+                                        //             textAlign={'left'}
+                                        //         >
+                                        //             <Text color={getTextColor(label.color)}>
+                                        //                 {name}
+                                        //                 <span style={{ color: 'gray' }}>{` ${email}`}</span>
+                                        //             </Text>
+                                        //         </Button>
+                                        //     </Box>
+                                        // );
+                                        return (
+                                            <Box
+                                                key={index}
+                                                mb={'3px'}
+                                                cursor={'pointer'}
+                                                // onClick={() => handleLabelClick(label)}
                                             >
-                                                <Box
-                                                    bgColor={label.color}
-                                                    w={'100%'}
-                                                    fontSize={'12px'}
-                                                    fontWeight={'normal'}
-                                                    // size={'xs'}
-                                                    // onClick={() => handleLabelClick(label)}
-                                                    textAlign={'left'}
-                                                    ml={'5px'}
+                                                <Checkbox
+                                                    isChecked={itsAssigned}
+                                                    onChange={() => {
+                                                        let newValues: IValues[];
+
+                                                        if (isAssignedTo(email as string)) {
+                                                            newValues = labels.filter((label) => {
+                                                                return label.email !== email;
+                                                            });
+                                                            setLabels(newValues);
+                                                        } else {
+                                                            newValues = [...labels, { name, email: email as string }];
+                                                            setLabels(newValues);
+                                                        }
+
+                                                        onChange(columnName, newValues);
+                                                    }}
                                                 >
-                                                    <Text color={getTextColor(label.color)}>
-                                                        {name}
-                                                        <span style={{ color: 'gray' }}>{` ${email}`}</span>
-                                                    </Text>
-                                                </Box>
-                                            </Checkbox>
-                                        </Box>
-                                    );
-                                })}
-                            </PopoverBody>
-                        </PopoverContent>
+                                                    <Box
+                                                        bgColor={label.color}
+                                                        w={'100%'}
+                                                        fontSize={'12px'}
+                                                        fontWeight={'normal'}
+                                                        // size={'xs'}
+                                                        // onClick={() => handleLabelClick(label)}
+                                                        textAlign={'left'}
+                                                        ml={'5px'}
+                                                    >
+                                                        <Text color={getTextColor(label.color)}>
+                                                            {name}
+                                                            <span style={{ color: 'gray' }}>{` ${email}`}</span>
+                                                        </Text>
+                                                    </Box>
+                                                </Checkbox>
+                                            </Box>
+                                        );
+                                    })}
+                                </PopoverBody>
+                            </PopoverContent>,
+                            document.body
+                        )}
                     </Popover>
                 </Box>
             ) : (

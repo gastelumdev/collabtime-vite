@@ -1,10 +1,34 @@
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
 import { HiPlus } from 'react-icons/hi';
 import PrimaryDrawer from '../../components/PrimaryDrawer';
-import { Box, Flex, FormControl, FormLabel, Input, MenuItem, Select, Spacer, Switch, Text, useDisclosure } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import {
+    Box,
+    Card,
+    CardBody,
+    Checkbox,
+    Flex,
+    FormControl,
+    FormLabel,
+    Input,
+    MenuItem,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
+    Select,
+    Spacer,
+    Switch,
+    Text,
+    useDisclosure,
+} from '@chakra-ui/react';
+import { useEffect, useRef, useState } from 'react';
 import { TDataCollection } from '../../types';
 import { useCreateDataCollectionViewsMutation, useGetWorkspaceColumnsQuery, useUpdateDataCollectionViewMutation } from '../../app/services/api';
+import { PiDotsThreeVerticalBold } from 'react-icons/pi';
+import { CloseIcon } from '@chakra-ui/icons';
 
 const Create = ({ dataCollections, view = null, dataCollection }: { dataCollections: TDataCollection[]; view?: any; dataCollection?: any }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -15,6 +39,8 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
     const [createDataCollectionView] = useCreateDataCollectionViewsMutation();
 
     // const { data: dataCollectionColumns } = useGetColumnsQuery(dataCollection?._id);
+    const [columns, setColumns] = useState([]);
+    const [isPublic, setIsPublic] = useState(view ? view.public : false);
 
     const [dataCollectionView, setDataCollectionView] = useState<any>(
         view
@@ -26,20 +52,39 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
                   dataCollection: '',
                   columns: [],
                   viewers: [localStorage.getItem('userId')],
+                  filters: null,
+                  public: false,
               }
     );
 
-    const [columns, setColumns] = useState([]);
-
     const [inputError, setInputError] = useState<boolean>(false);
     const [isError, setIsError] = useState(false);
+
+    useEffect(() => {
+        if (view !== null) {
+            setDataCollectionView(view);
+        } else {
+            setDataCollectionView({
+                name: '',
+                description: '',
+                workspace: localStorage.getItem('workspaceId'),
+                dataCollection: '',
+                columns: [],
+                viewers: [localStorage.getItem('userId')],
+                filters: null,
+                public: false,
+            });
+        }
+    }, []);
 
     useEffect(() => {
         const newColumns: any = workspaceColumns?.filter((workspaceColumn) => {
             return workspaceColumn.dataCollection === view?.dataCollection;
         });
 
-        setColumns(newColumns);
+        if (newColumns !== undefined) {
+            setColumns(newColumns);
+        }
 
         // const newViewColumns = view?.columns.map((col: any) => {
         //     return col._id;
@@ -48,10 +93,31 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
         // setDataCollectionView({ ...dataCollectionView, columns: newViewColumns });
     }, [view, workspaceColumns, dataCollection]);
 
+    useEffect(() => {
+        const newColumns: any = workspaceColumns?.filter((workspaceColumn) => {
+            return workspaceColumn.dataCollection === view?.dataCollection;
+        });
+
+        const filters: any = {};
+
+        if (newColumns !== undefined) {
+            for (const col of newColumns) {
+                filters[col.name] = [];
+            }
+
+            setDataCollectionView({ ...dataCollectionView, filters: filters });
+        }
+
+        // const newViewColumns = view?.columns.map((col: any) => {
+        //     return col._id;
+        // });
+
+        // setDataCollectionView({ ...dataCollectionView, columns: newViewColumns });
+    }, [workspaceColumns]);
+
     const handleOnOpen = () => {
         onOpen();
 
-        console.log(dataCollection);
         const newColumns: any = workspaceColumns?.filter((workspaceColumn) => {
             return workspaceColumn.dataCollection === view?.dataCollection;
         });
@@ -70,7 +136,6 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
 
     const createData = async () => {
         if (view) {
-            console.log('Call update');
             updateDataCollectionView(dataCollectionView);
         } else {
             await createDataCollectionView(dataCollectionView);
@@ -82,6 +147,7 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
             workspace: localStorage.getItem('workspaceId'),
             dataCollection: '',
             columns: [],
+            public: false,
         });
     };
 
@@ -107,6 +173,21 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
                         {inputError ? '* Name exceeds character limit' : ''}
                         {isError ? '* Name already exists' : ''}
                     </Text>
+                    <Spacer />
+                    <Checkbox
+                        isChecked={isPublic}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                            if (event.target.checked) {
+                                setIsPublic(true);
+                                setDataCollectionView({ ...dataCollectionView, public: true });
+                            } else {
+                                setIsPublic(false);
+                                setDataCollectionView({ ...dataCollectionView, public: false });
+                            }
+                        }}
+                    >
+                        Public
+                    </Checkbox>
                 </Flex>
                 <Input
                     name="name"
@@ -166,15 +247,12 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
                                                       })
                                                       .includes(col._id)}
                                                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                                      console.log(dataCollectionView);
                                                       if (event.target.checked) {
                                                           setDataCollectionView({ ...dataCollectionView, columns: [...dataCollectionView.columns, col] });
                                                       } else {
                                                           const filteredSelectedColumns: any = dataCollectionView.columns.filter((selectedColumn: any) => {
-                                                              console.log(selectedColumn);
                                                               return selectedColumn._id !== col._id;
                                                           });
-                                                          console.log(filteredSelectedColumns);
                                                           setDataCollectionView({ ...dataCollectionView, columns: filteredSelectedColumns });
                                                       }
                                                   }}
@@ -199,6 +277,47 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
                           })
                         : null}
                 </Box>
+                <Box mb={'10px'}>
+                    {dataCollectionView.columns.map((col: any) => {
+                        return (
+                            <Card key={col.name} mb={'5px'}>
+                                <CardBody>
+                                    <Flex>
+                                        <Text>{`${col?.name[0].toUpperCase()}${col?.name.slice(1, col?.name.length).split('_').join(' ')}`}</Text>
+                                        <Text ml={'20px'} fontSize={'10px'} mt={'6px'}>
+                                            {dataCollectionView.filters && Object.keys(dataCollectionView.filters).includes(col.name)
+                                                ? `Filter by: ${dataCollectionView.filters[col.name]}`
+                                                : ''}
+                                        </Text>
+                                        <Spacer />
+                                        <Box pt={'5px'}>
+                                            <FilterModal
+                                                column={col}
+                                                onChange={(newValues: any) => {
+                                                    setDataCollectionView({
+                                                        ...dataCollectionView,
+                                                        filters: {
+                                                            ...dataCollectionView.filters,
+                                                            [col.name]: newValues,
+                                                        },
+                                                    });
+                                                }}
+                                                filterValues={dataCollectionView.filters ? dataCollectionView?.filters[col.name] : []}
+                                                handleRemoveFilter={(columnName: string) => {
+                                                    let filters = dataCollectionView.filters;
+                                                    if (filters[columnName] !== undefined) {
+                                                        filters = Object.fromEntries(Object.entries(filters).filter(([key]) => key !== columnName));
+                                                        setDataCollectionView({ ...dataCollectionView, filters: filters });
+                                                    }
+                                                }}
+                                            />
+                                        </Box>
+                                    </Flex>
+                                </CardBody>
+                            </Card>
+                        );
+                    })}
+                </Box>
                 <Flex>
                     <Spacer />
                     <PrimaryButton onClick={createData} isDisabled={inputError || isError}>
@@ -211,3 +330,115 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
 };
 
 export default Create;
+
+const FilterModal = ({
+    column,
+    onChange,
+    filterValues = [],
+    handleRemoveFilter,
+}: {
+    column: any;
+    onChange: any;
+    filterValues: any;
+    handleRemoveFilter: any;
+}) => {
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const initialRef = useRef(null);
+    const finalRef = useRef(null);
+
+    const [value, setValue] = useState('');
+    const [values, setValues] = useState(filterValues);
+
+    const handleRemoveFilterClick = (v: any) => {
+        const newFilters = values.filter((val: any) => {
+            return val !== v;
+        });
+
+        setValues(newFilters);
+        onChange(newFilters);
+
+        if (newFilters.length === 0) {
+            handleRemoveFilter(column.name);
+        }
+    };
+    return (
+        <>
+            <Box cursor={'pointer'} ref={finalRef} tabIndex={-1}>
+                <Text fontSize={'20px'} onClick={onOpen}>
+                    <PiDotsThreeVerticalBold />
+                </Text>
+            </Box>
+            <Modal initialFocusRef={initialRef} finalFocusRef={finalRef} isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Add Filter</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <Text mb={'5px'}>{`Value to filter '${column?.name[0].toUpperCase()}${column?.name
+                            .slice(1, column?.name.length)
+                            .split('_')
+                            .join(' ')}' by`}</Text>
+                        <Flex>
+                            <Input
+                                ref={initialRef}
+                                value={value}
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                    setValue(event.target.value);
+                                }}
+                                mr={'6px'}
+                            />
+                            <PrimaryButton
+                                onClick={() => {
+                                    const newValues = [...values, value];
+                                    setValues(newValues);
+                                    onChange(newValues);
+                                    setValue('');
+                                }}
+                            >
+                                Add
+                            </PrimaryButton>
+                        </Flex>
+                        <Box mt={'10px'}>
+                            {values.length > 0
+                                ? values.map((val: any, index: number) => {
+                                      return (
+                                          <Card mb={'6px'} key={index}>
+                                              <CardBody p={'3px'} px={'10px'}>
+                                                  <Flex>
+                                                      <Text mt={'5px'} fontSize={'14px'}>
+                                                          {val}
+                                                      </Text>
+                                                      <Spacer />
+                                                      <Box onClick={() => handleRemoveFilterClick(val)} cursor={'pointer'}>
+                                                          <Text fontSize={'10px'} mt={'6px'}>
+                                                              <CloseIcon />
+                                                          </Text>
+                                                      </Box>
+                                                  </Flex>
+                                              </CardBody>
+                                          </Card>
+                                      );
+                                  })
+                                : null}
+                        </Box>
+                    </ModalBody>
+
+                    <ModalFooter>
+                        {/* {filterValues.length > 0 ? (
+                            <Button
+                                mr={'5px'}
+                                onClick={() => {
+                                    handleRemoveFilter(column.name);
+                                    onClose();
+                                }}
+                            >
+                                Remove Filter
+                            </Button>
+                        ) : null} */}
+                        {/* <PrimaryButton onClick={onClose}>Save</PrimaryButton> */}
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        </>
+    );
+};

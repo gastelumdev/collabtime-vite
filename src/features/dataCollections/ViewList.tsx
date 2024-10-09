@@ -81,12 +81,10 @@ const ViewList = ({}: { allowed?: boolean }) => {
 
     useEffect(() => {
         if (userGroups !== undefined) {
-            console.log(userGroups);
             const ug = userGroups?.find((item: any) => {
                 return item.users.includes(localStorage.getItem('userId'));
             });
 
-            console.log(ug);
             setUserGroup(ug);
         } else {
             refetch();
@@ -224,8 +222,6 @@ const ViewList = ({}: { allowed?: boolean }) => {
                                                                                 return item.dataCollection === dataCollection._id;
                                                                             }
                                                                         );
-
-                                                                        console.log(dataCollectionPermissions);
 
                                                                         if (!dataCollectionPermissions?.permissions.dataCollection.view) {
                                                                             return null;

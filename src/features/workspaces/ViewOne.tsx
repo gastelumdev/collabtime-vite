@@ -79,12 +79,9 @@ const ViewOne = () => {
 
     useEffect(() => {
         if (userGroups !== undefined) {
-            console.log(userGroups);
             const ug = userGroups?.find((item: any) => {
                 return item.users.includes(localStorage.getItem('userId'));
             });
-
-            console.log(ug);
             setUserGroup(ug);
         }
     }, [userGroups]);
@@ -98,7 +95,7 @@ const ViewOne = () => {
     };
 
     useEffect(() => {
-        console.log({ workspace });
+        // console.log({ workspace });
     }, [workspace]);
 
     // const findUserGroup = () => {

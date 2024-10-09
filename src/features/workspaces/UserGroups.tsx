@@ -424,11 +424,7 @@ const UserGroups = () => {
             return item.name === activeButtonName;
         });
 
-        console.log(userGroup);
-
         const newUserGroup = { ...userGroup, permissions: { ...newCurrentPermissions } };
-
-        console.log(newUserGroup);
 
         updateUserGroup(newUserGroup);
     };
@@ -492,7 +488,6 @@ const UserGroups = () => {
                                             colorScheme="blue"
                                             isActive={activeButtonName === userGroup.name}
                                             onClick={() => {
-                                                console.log(userGroup.name);
                                                 setActiveButtonName(userGroup.name);
                                                 setCurrentPermissions(userGroup.permissions);
                                                 setCurrentDataCollectionPermissions(userGroup.permissions.dataCollections[0]);

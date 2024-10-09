@@ -61,8 +61,6 @@ const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false, 
         // updateRow({ ...row, values: { ...row.values, [columnName]: label.value } });
         // console.log({ ...row, values: { ...row.values, [columnName]: label.value } });
 
-        console.log('Label was changed');
-
         setLabelValue(label.value);
         setLabelColor(label.color);
         setLabelLabel(label.label);

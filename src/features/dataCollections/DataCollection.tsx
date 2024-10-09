@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
     useCreateColumnMutation,
     useDeleteColumnMutation,
@@ -25,6 +25,7 @@ const DataCollection = ({
     hasColumnOptions = true,
     columnsAreDraggable = true,
     hasCreateColumn = true,
+    refetchRows,
 }: // userGroup,
 {
     showDoneRows?: boolean;
@@ -35,6 +36,7 @@ const DataCollection = ({
     hasColumnOptions?: boolean;
     columnsAreDraggable?: boolean;
     hasCreateColumn?: boolean;
+    refetchRows?: any;
     // userGroup?: any;
 }) => {
     const { dataCollectionId } = useParams();
@@ -59,6 +61,20 @@ const DataCollection = ({
     // const [updateRow] = useUpdateRowMutation();
     const [permissions, setPermissions] = useState<number>();
     const [windowWidthOffset, setWindowWidthOffset] = useState(window.innerWidth > 990 ? 265 : 7);
+
+    // useEffect(() => {
+    //     const socket = io(import.meta.env.VITE_API_URL);
+    //     socket.connect();
+    //     socket.on('update row', (item: any) => {
+    //         console.log('UPDATE WORKSPACE', item);
+    //         console.log(dataCollectionId);
+    //         if (dataCollectionId !== undefined) refetchRows();
+    //     });
+
+    //     return () => {
+    //         socket.disconnect();
+    //     };
+    // }, []);
 
     useEffect(() => {
         refetch();
@@ -102,7 +118,7 @@ const DataCollection = ({
 
     return (
         <Box>
-            <Box h={'4px'}>{isFetching || isLoading ? <Progress size="xs" isIndeterminate /> : null}</Box>
+            {dataCollectionView === null ? <Box h={'4px'}>{isFetching || isLoading ? <Progress size="xs" isIndeterminate /> : null}</Box> : null}
             <Table
                 rowsData={rowsData || rowsProp || []}
                 columnsData={columns || dataCollectionView?.columns || []}
@@ -127,9 +143,10 @@ const DataCollection = ({
                 hasCreateColumn={hasCreateColumn}
                 columnsAreDraggable={columnsAreDraggable}
                 dataCollectionView={dataCollectionView}
+                refetchRows={refetchRows}
             />
         </Box>
     );
 };
 
-export default memo(DataCollection);
+export default DataCollection;

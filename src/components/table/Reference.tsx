@@ -18,6 +18,7 @@ import { useEffect, useState } from 'react';
 import { useGetColumnsQuery, useGetDataCollectionQuery, useGetRowsQuery } from '../../app/services/api';
 import ViewRef from './ViewRef';
 import { CloseIcon } from '@chakra-ui/icons';
+import { createPortal } from 'react-dom';
 
 const Reference = ({
     column,
@@ -125,65 +126,68 @@ const Reference = ({
                             </Button>
                         </Box>
                     </PopoverTrigger>
-                    <PopoverContent>
-                        <PopoverArrow />
-                        <PopoverCloseButton />
-                        <PopoverHeader>{dataCollection?.name}</PopoverHeader>
-                        <PopoverBody>
-                            <Box height={'150px'} overflowY={'scroll'}>
-                                {rows.map((row: any, index: number) => {
-                                    // return <Box>{row.values[rowKey]}</Box>;
-                                    return (
-                                        <Flex key={index}>
-                                            <ViewRef
-                                                columns={columns !== undefined ? columns : []}
-                                                rowData={row}
-                                                value={row.values[rowKey]}
-                                                allowed={allowed}
-                                            />
-                                            <Spacer />
-                                            {allowed ? (
-                                                <Box ml={'10px'} pt={'2px'} pr={'10px'} onClick={() => handleRemoveRef(column.name, row)}>
-                                                    <Text fontSize={'9px'} cursor={'pointer'} color={'gray'}>
-                                                        <CloseIcon />
-                                                    </Text>
-                                                </Box>
-                                            ) : null}
-                                        </Flex>
-                                    );
-                                })}
-                            </Box>
-                        </PopoverBody>
-                        {rows.length > 0 && allowed ? <Divider /> : null}
-                        {allowed ? <PopoverHeader>{`Choose ${dataCollection?.name}`}</PopoverHeader> : null}
-                        {allowed ? (
+                    {createPortal(
+                        <PopoverContent>
+                            <PopoverArrow />
+                            <PopoverCloseButton />
+                            <PopoverHeader>{dataCollection?.name}</PopoverHeader>
                             <PopoverBody>
                                 <Box height={'150px'} overflowY={'scroll'}>
-                                    {rowsList.map((row: any, index: number) => {
-                                        if (row.values[rowKey] !== '') {
-                                            return (
-                                                <Box
-                                                    key={index}
-                                                    pl={'12px'}
-                                                    pt={'2px'}
-                                                    pb={'2px'}
-                                                    cursor={'pointer'}
-                                                    onClick={() => handleAddRow(column.name, row)}
-                                                    overflow={'hidden'}
-                                                    _hover={{ backgroundColor: 'lightgray' }}
-                                                >
-                                                    <Text overflow={'hidden'} textOverflow={'ellipsis'}>
-                                                        {row.values[rowKey]}
-                                                    </Text>
-                                                </Box>
-                                            );
-                                        }
-                                        return null;
+                                    {rows.map((row: any, index: number) => {
+                                        // return <Box>{row.values[rowKey]}</Box>;
+                                        return (
+                                            <Flex key={index}>
+                                                <ViewRef
+                                                    columns={columns !== undefined ? columns : []}
+                                                    rowData={row}
+                                                    value={row.values[rowKey]}
+                                                    allowed={allowed}
+                                                />
+                                                <Spacer />
+                                                {allowed ? (
+                                                    <Box ml={'10px'} pt={'2px'} pr={'10px'} onClick={() => handleRemoveRef(column.name, row)}>
+                                                        <Text fontSize={'9px'} cursor={'pointer'} color={'gray'}>
+                                                            <CloseIcon />
+                                                        </Text>
+                                                    </Box>
+                                                ) : null}
+                                            </Flex>
+                                        );
                                     })}
                                 </Box>
                             </PopoverBody>
-                        ) : null}
-                    </PopoverContent>
+                            {rows.length > 0 && allowed ? <Divider /> : null}
+                            {allowed ? <PopoverHeader>{`Choose ${dataCollection?.name}`}</PopoverHeader> : null}
+                            {allowed ? (
+                                <PopoverBody>
+                                    <Box height={'150px'} overflowY={'scroll'}>
+                                        {rowsList.map((row: any, index: number) => {
+                                            if (row.values[rowKey] !== '') {
+                                                return (
+                                                    <Box
+                                                        key={index}
+                                                        pl={'12px'}
+                                                        pt={'2px'}
+                                                        pb={'2px'}
+                                                        cursor={'pointer'}
+                                                        onClick={() => handleAddRow(column.name, row)}
+                                                        overflow={'hidden'}
+                                                        _hover={{ backgroundColor: 'lightgray' }}
+                                                    >
+                                                        <Text overflow={'hidden'} textOverflow={'ellipsis'}>
+                                                            {row.values[rowKey]}
+                                                        </Text>
+                                                    </Box>
+                                                );
+                                            }
+                                            return null;
+                                        })}
+                                    </Box>
+                                </PopoverBody>
+                            ) : null}
+                        </PopoverContent>,
+                        document.body
+                    )}
                 </Popover>
             ) : (
                 <Text>Does not exist.</Text>

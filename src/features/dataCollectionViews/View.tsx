@@ -1,7 +1,7 @@
 import DataCollection from '../dataCollections/DataCollection';
 import { useDeleteDataCollectionViewMutation, useGetDataCollectionsQuery, useGetRowsQuery } from '../../app/services/api';
 import { useEffect, useState } from 'react';
-import { Box, Divider, Flex, Menu, MenuButton, MenuItem, MenuList, Spacer, Text } from '@chakra-ui/react';
+import { Box, Center, Divider, Flex, Menu, MenuButton, MenuItem, MenuList, Spacer, Text } from '@chakra-ui/react';
 import { PiDotsThreeVerticalBold } from 'react-icons/pi';
 import Create from './Create';
 import { emptyPermissions, emptyViewPermissions } from '../workspaces/UserGroups';
@@ -15,17 +15,22 @@ const View = ({
     userGroup: any;
     refetchUserGroup: any;
 }) => {
-    const { data: rows } = useGetRowsQuery({
+    const { data: rows, refetch: refetchRows } = useGetRowsQuery({
         dataCollectionId: dataCollectionView.dataCollection || '',
         limit: 0,
         skip: 0,
         sort: 1,
         sortBy: 'createdAt',
         showEmptyRows: false,
+        filters: JSON.stringify(dataCollectionView.filters),
     });
     const [deleteDataCollectionView] = useDeleteDataCollectionViewMutation();
     const { data } = useGetDataCollectionsQuery(null);
     const [viewPermissions, setViewPermissions] = useState(emptyViewPermissions);
+
+    useEffect(() => {
+        refetchRows();
+    }, []);
 
     useEffect(() => {
         if (userGroup !== undefined) {
@@ -84,17 +89,26 @@ const View = ({
                     ) : null}
                 </Flex>
             </Box>
-            <DataCollection
-                showDoneRows={true}
-                rowsProp={rows}
-                dataCollectionView={dataCollectionView}
-                rowsAreDraggable={false}
-                hasCheckboxOptions={false}
-                hasColumnOptions={false}
-                columnsAreDraggable={false}
-                hasCreateColumn={false}
-                // userGroup={userGroup}
-            />
+            {rows && rows?.length > 0 ? (
+                <DataCollection
+                    showDoneRows={true}
+                    rowsProp={rows}
+                    dataCollectionView={dataCollectionView}
+                    rowsAreDraggable={false}
+                    hasCheckboxOptions={false}
+                    hasColumnOptions={false}
+                    columnsAreDraggable={false}
+                    hasCreateColumn={false}
+                    refetchRows={refetchRows}
+                    // userGroup={userGroup}
+                />
+            ) : (
+                <Box p={'20px'} bgColor={'#F5FAFF'}>
+                    <Center>
+                        <Text fontSize={'14px'}>This view is empty.</Text>
+                    </Center>
+                </Box>
+            )}
         </Box>
     );
 };

@@ -121,6 +121,7 @@ export type TRow = {
     parentRowId?: string;
     isVisible?: boolean;
     isParent?: boolean;
+    fromView?: boolean;
 };
 
 export type TCell = {

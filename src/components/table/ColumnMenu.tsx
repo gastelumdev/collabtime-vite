@@ -55,12 +55,9 @@ const ColumnMenu = ({
         if (columnPermissions !== undefined) {
             setColumnPermissions(columnPermissions.permissions);
         }
-
-        console.log(columnPermissions);
     }, [dataCollectionPermissions, column]);
 
     const handleDeleteColumnClick = () => {
-        console.log(column);
         handleDeleteColumn(column);
         onClose();
     };

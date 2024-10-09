@@ -143,7 +143,6 @@ const TableHeader = ({
 
                 handleGridTemplateColumns(columnWidths.join(' '));
                 // API call needed persist column order
-                console.log(newColumns);
                 updateBackendColumns(newColumns);
             }
 
@@ -171,27 +170,28 @@ const TableHeader = ({
         const userGroup = userGroups.find((item: any) => {
             return item.users.includes(localStorage.getItem('userId'));
         });
+        if (userGroup !== undefined) {
+            if (dataCollectionView) {
+                const viewPermissions = userGroup.permissions.views.find((item: any) => {
+                    return item.view === dataCollectionView._id;
+                });
 
-        if (dataCollectionView) {
-            const viewPermissions = userGroup.permissions.views.find((item: any) => {
-                return item.view === dataCollectionView._id;
-            });
-
-            if (viewPermissions !== undefined) {
-                setDataCollectionPermissions(viewPermissions.permissions);
+                if (viewPermissions !== undefined) {
+                    setDataCollectionPermissions(viewPermissions.permissions);
+                } else {
+                    refetchUserGroups();
+                }
             } else {
-                refetchUserGroups();
-            }
-        } else {
-            console.log(userGroup);
-            const dataCollectionPermissions = userGroup.permissions.dataCollections.find((item: any) => {
-                return item.dataCollection === dataCollectionId;
-            });
+                const dataCollectionPermissions = userGroup.permissions.dataCollections.find((item: any) => {
+                    return item.dataCollection === dataCollectionId;
+                });
 
-            if (dataCollectionPermissions !== undefined) {
-                setDataCollectionPermissions(dataCollectionPermissions.permissions);
-            } else {
-                refetchUserGroups();
+                if (dataCollectionPermissions !== undefined) {
+                    console.log(dataCollectionPermissions);
+                    setDataCollectionPermissions(dataCollectionPermissions.permissions);
+                } else {
+                    refetchUserGroups();
+                }
             }
         }
     }, [userGroups]);
@@ -205,19 +205,12 @@ const TableHeader = ({
     const mouseMove = useCallback(
         (e: any) => {
             // On mouse move, change the opacity of the resize handle so that it is visible
-            console.log(activeIndex);
             const th: any = document.getElementById(String(activeIndex));
-            console.log(th);
 
             // set the width by getting the new position of the resize handle on the page minus the width of the sidebar
             // and additional left padding
             const table: any = document.getElementById('data-collection-table');
-            console.log(table);
-            console.log({ windowScrollX: table.scrollLeft });
             const width = e.clientX - columnResizingOffset - th.offsetLeft + Math.floor(table.scrollLeft);
-            console.log(e.clientX - columnResizingOffset);
-            console.log({ clientX: e.clientX, columnResizingOffset, offsetLeft: th.offsetLeft, width });
-            console.log({ width });
 
             // If the width is greater than minumum allowed header width, resize based on the width calculation
             // else set it to the minumum header width
@@ -243,8 +236,6 @@ const TableHeader = ({
                 return `${th.offsetWidth}px`;
             });
 
-            console.log({ gridColumns });
-
             setResizedWidth(gridColumns[activeIndex as number]);
 
             // Add the gridTemplateColumns string to state
@@ -263,7 +254,6 @@ const TableHeader = ({
     };
 
     const mouseUp = useCallback(() => {
-        console.log(resizedWidth);
         if (resizedWidth !== null) {
             // Set the column widths
             const tableRows: any = document.getElementsByClassName('table-row');
@@ -324,7 +314,6 @@ const TableHeader = ({
 
     const handleAddNewColumnToRows = useCallback(
         (column: TColumn) => {
-            console.log(column);
             setCurrentColumns([...currentColumns, column]);
             addNewColumnToRows(column);
         },
@@ -366,8 +355,6 @@ const TableHeader = ({
                     const columnsPermissions = dataCollectionPermissions.columns.find((item: any) => {
                         return item.name === column.name;
                     });
-
-                    console.log(columnsPermissions?.permissions);
 
                     if (!columnsPermissions?.permissions.column.view) {
                         return null;
