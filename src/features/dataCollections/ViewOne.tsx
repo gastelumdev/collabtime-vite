@@ -133,7 +133,11 @@ const ViewOne = () => {
 
                     setUserGroup(ug);
                     setDataCollectionPermissions(dcPermissions.permissions);
+                } else {
+                    refetch();
                 }
+            } else {
+                refetch();
             }
         } else {
             refetch();
