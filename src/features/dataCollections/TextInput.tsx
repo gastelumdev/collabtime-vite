@@ -69,7 +69,7 @@ const TextInput = ({ columnName, value, type = 'tableCell', onChange, allowed = 
                         w={'100%'}
                         h={'29px'}
                         textAlign={'left'}
-                        cursor={'text'}
+                        cursor={'default'}
                         size={'xs'}
                     >
                         {val}

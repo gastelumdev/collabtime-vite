@@ -4,7 +4,7 @@ import {
     useGetBlankRowsMutation,
     useGetColumnsQuery,
     useGetDataCollectionQuery,
-    useGetDataCollectionsQuery,
+    // useGetDataCollectionsQuery,
     useGetOneWorkspaceQuery,
     useGetRowsQuery,
     useGetUserGroupsQuery,
@@ -32,13 +32,13 @@ import {
     MenuButton,
     MenuItem,
     MenuList,
-    Modal,
-    ModalBody,
-    ModalCloseButton,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
-    ModalOverlay,
+    // Modal,
+    // ModalBody,
+    // ModalCloseButton,
+    // ModalContent,
+    // ModalFooter,
+    // ModalHeader,
+    // ModalOverlay,
     Spacer,
     Text,
     useDisclosure,
@@ -70,7 +70,7 @@ const ViewOne = () => {
     const { pathname } = useLocation(); // Pathname is used to append /form the current pathname
     const dispatch = useAppDispatch();
 
-    const { onClose, onOpen, isOpen } = useDisclosure(); // For template modal
+    // const { onClose, onOpen, isOpen } = useDisclosure(); // For template modal
     const { onClose: onCloseFormDrawer, onOpen: onOpenFormDrawer, isOpen: isOpenFormDrawer } = useDisclosure(); // For form modal
     const toast = useToast();
 
@@ -85,7 +85,7 @@ const ViewOne = () => {
         isLoading: rowsAreLoading,
     } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
 
-    const { data: dataCollections } = useGetDataCollectionsQuery(null);
+    // const { data: dataCollections } = useGetDataCollectionsQuery(null);
     const { data: columnsData } = useGetColumnsQuery(localStorage.getItem('dataCollectionId') || '');
     const [updateColumn] = useUpdateColumnMutation();
     const [updateRow] = useUpdateRowMutation();
@@ -99,10 +99,10 @@ const ViewOne = () => {
 
     const [acknowledgeRow] = useAcknowledgeRowMutation();
 
-    const [templateNameValue, setTemplateNameValue] = useState<string>('');
+    // const [templateNameValue, setTemplateNameValue] = useState<string>('');
 
-    const [existingTemplateNames, setExistingTemplateNames] = useState<string[]>([]);
-    const [templateExists, setTemplateExists] = useState<boolean>(false);
+    // const [existingTemplateNames, setExistingTemplateNames] = useState<string[]>([]);
+    // const [templateExists, setTemplateExists] = useState<boolean>(false);
 
     const [recipientValue, setRecipientValue] = useState<string>('');
 
@@ -208,15 +208,15 @@ const ViewOne = () => {
     /**
      * Get all the data collection template names to avoid creating duplicates
      */
-    useEffect(() => {
-        const templateNames = [];
-        for (const dataCollection of dataCollections || []) {
-            if (dataCollection.asTemplate !== undefined && dataCollection.asTemplate.active) {
-                templateNames.push(dataCollection.asTemplate.name.toLowerCase());
-            }
-        }
-        setExistingTemplateNames(templateNames);
-    }, [dataCollections]);
+    // useEffect(() => {
+    //     const templateNames = [];
+    //     for (const dataCollection of dataCollections || []) {
+    //         if (dataCollection.asTemplate !== undefined && dataCollection.asTemplate.active) {
+    //             templateNames.push(dataCollection.asTemplate.name.toLowerCase());
+    //         }
+    //     }
+    //     setExistingTemplateNames(templateNames);
+    // }, [dataCollections]);
 
     /**
      * Set the row being acknowledged through email link
@@ -277,23 +277,23 @@ const ViewOne = () => {
     /**
      * Creates template based on the current data collection
      */
-    const handleAddAsTemplateClick = () => {
-        if (templateNameValue === '') return;
-        const dataCollectionCopy: any = dataCollection;
-        updateDataCollection({
-            ...dataCollectionCopy,
-            asTemplate: { active: true, name: templateNameValue },
-        });
-        onClose();
+    // const handleAddAsTemplateClick = () => {
+    //     if (templateNameValue === '') return;
+    //     const dataCollectionCopy: any = dataCollection;
+    //     updateDataCollection({
+    //         ...dataCollectionCopy,
+    //         asTemplate: { active: true, name: templateNameValue },
+    //     });
+    //     // onClose();
 
-        toast({
-            title: `Your template has been created.`,
-            description: `Click "NEW COLLECTION" in the Data Collections page and select "${templateNameValue}" in the template dropdown to use this template.`,
-            status: 'info',
-            duration: 9000,
-            isClosable: true,
-        });
-    };
+    //     toast({
+    //         title: `Your template has been created.`,
+    //         description: `Click "NEW COLLECTION" in the Data Collections page and select "${templateNameValue}" in the template dropdown to use this template.`,
+    //         status: 'info',
+    //         duration: 9000,
+    //         isClosable: true,
+    //     });
+    // };
 
     /**
      * Sends form invite via email
@@ -431,9 +431,9 @@ const ViewOne = () => {
                                                     <MenuItem fontSize={'14px'} onClick={onOpenFormDrawer}>
                                                         Form
                                                     </MenuItem>
-                                                    <MenuItem fontSize={'14px'} onClick={onOpen}>
+                                                    {/* <MenuItem fontSize={'14px'} onClick={onOpen}>
                                                         Template
-                                                    </MenuItem>
+                                                    </MenuItem> */}
                                                     <MenuItem fontSize={'14px'}>
                                                         <CSVLink data={valuesForExport}>Export</CSVLink>
                                                     </MenuItem>
@@ -471,7 +471,7 @@ const ViewOne = () => {
                 </Box>
 
                 {/* ***************** TEMPLATE MODAL ******************** */}
-                <Modal isOpen={isOpen} onClose={onClose} size={'2xl'}>
+                {/* <Modal isOpen={isOpen} onClose={onClose} size={'2xl'}>
                     <ModalOverlay />
                     <ModalContent>
                         <ModalHeader>Create template</ModalHeader>
@@ -502,7 +502,7 @@ const ViewOne = () => {
                             </PrimaryButton>
                         </ModalFooter>
                     </ModalContent>
-                </Modal>
+                </Modal> */}
 
                 {/* ******************* FORM DRAWER *************************** */}
                 <PrimaryDrawer title={`${dataCollection?.name} Form`} isOpen={isOpenFormDrawer} onClose={onCloseFormDrawer} size="full">

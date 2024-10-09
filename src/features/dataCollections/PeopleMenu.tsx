@@ -206,43 +206,45 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
                     </Popover>
                 </Box>
             ) : (
-                <Button
-                    variant={'unstyled'}
-                    borderRadius={'none'}
-                    w={'100%'}
-                    h={'29px'}
-                    fontSize={'12px'}
-                    fontWeight={'normal'}
-                    onMouseDown={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
-                        event;
-                        setActive(true);
-                    }}
-                    onKeyDown={(event: React.KeyboardEvent<HTMLButtonElement>) => {
-                        if (event.key === 'Enter') {
-                            setActive(true);
-                        }
-                    }}
-                >
-                    <Text
-                        // backgroundColor={labelColor}
-                        color={getTextColor(labelColor)}
+                <Box cursor={allowed ? 'pointer' : 'default'}>
+                    <Button
+                        variant={'unstyled'}
+                        borderRadius={'none'}
+                        w={'100%'}
                         h={'29px'}
-                        textAlign={'center'}
-                        paddingY={'4px'}
-                        cursor={'pointer'}
+                        fontSize={'12px'}
+                        fontWeight={'normal'}
                         onMouseDown={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
                             event;
                             setActive(true);
                         }}
+                        onKeyDown={(event: React.KeyboardEvent<HTMLButtonElement>) => {
+                            if (event.key === 'Enter') {
+                                setActive(true);
+                            }
+                        }}
                     >
-                        {/* {labelLabel ? labelLabel : 'Select'} */}
-                        {Array.isArray(labels) && labels.length > 0
-                            ? labels.map((label, index) => {
-                                  return `${label.name}${labels.length > 1 ? (index < labels.length - 1 ? ', ' : '') : ''}`;
-                              })
-                            : 'Select'}
-                    </Text>
-                </Button>
+                        <Text
+                            // backgroundColor={labelColor}
+                            color={getTextColor(labelColor)}
+                            h={'29px'}
+                            textAlign={'center'}
+                            paddingY={'4px'}
+                            cursor={allowed ? 'pointer' : 'default'}
+                            onMouseDown={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+                                event;
+                                setActive(true);
+                            }}
+                        >
+                            {/* {labelLabel ? labelLabel : 'Select'} */}
+                            {Array.isArray(labels) && labels.length > 0
+                                ? labels.map((label, index) => {
+                                      return `${label.name}${labels.length > 1 ? (index < labels.length - 1 ? ', ' : '') : ''}`;
+                                  })
+                                : 'Select'}
+                        </Text>
+                    </Button>
+                </Box>
             )}
         </Box>
     );

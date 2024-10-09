@@ -44,7 +44,7 @@ import TagsModal from '../tags/TagsModal';
 import { TDataCollection, TTag } from '../../types';
 import { Link } from 'react-router-dom';
 import Delete from './Delete';
-import Templates from './Templates';
+// import Templates from './Templates';
 import CreateDataCollectionView from '../dataCollectionViews/Create';
 import View from '../dataCollectionViews/View';
 import { emptyPermissions } from '../workspaces/UserGroups';
@@ -172,9 +172,9 @@ const ViewList = ({}: { allowed?: boolean }) => {
                                                         <Spacer />
                                                         {userGroup.permissions.dataCollectionActions.create ? (
                                                             <>
-                                                                <Box pb={'20px'} mr={'10px'}>
+                                                                {/* <Box pb={'20px'} mr={'10px'}>
                                                                     <Templates />
-                                                                </Box>
+                                                                </Box> */}
                                                                 <Box>
                                                                     <Create addNewDataCollection={createDataCollection} />
                                                                 </Box>

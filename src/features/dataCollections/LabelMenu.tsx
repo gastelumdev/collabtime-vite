@@ -135,6 +135,7 @@ const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false, 
                     h={'29px'}
                     fontSize={'12px'}
                     fontWeight={'normal'}
+                    cursor={allowed ? 'cursor' : 'default'}
                     onMouseDown={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
                         event;
                         setActive(true);
@@ -153,7 +154,7 @@ const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false, 
                         h={'29px'}
                         textAlign={'center'}
                         paddingY={'4px'}
-                        cursor={'pointer'}
+                        // cursor={'pointer'}
                         onMouseDown={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
                             event;
                             setActive(true);

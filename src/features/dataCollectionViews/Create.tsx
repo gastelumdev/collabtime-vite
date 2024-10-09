@@ -29,6 +29,7 @@ import { TDataCollection } from '../../types';
 import { useCreateDataCollectionViewsMutation, useGetWorkspaceColumnsQuery, useUpdateDataCollectionViewMutation } from '../../app/services/api';
 import { PiDotsThreeVerticalBold } from 'react-icons/pi';
 import { CloseIcon } from '@chakra-ui/icons';
+// import { FaLess } from 'react-icons/fa6';
 
 const Create = ({ dataCollections, view = null, dataCollection }: { dataCollections: TDataCollection[]; view?: any; dataCollection?: any }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -286,7 +287,9 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
                                         <Text>{`${col?.name[0].toUpperCase()}${col?.name.slice(1, col?.name.length).split('_').join(' ')}`}</Text>
                                         <Text ml={'20px'} fontSize={'10px'} mt={'6px'}>
                                             {dataCollectionView.filters && Object.keys(dataCollectionView.filters).includes(col.name)
-                                                ? `Filter by: ${dataCollectionView.filters[col.name]}`
+                                                ? `Filter by: ${
+                                                      dataCollectionView.filters[col.name].includes('__user__') ? 'User' : dataCollectionView.filters[col.name]
+                                                  }`
                                                 : ''}
                                         </Text>
                                         <Spacer />
@@ -348,6 +351,11 @@ const FilterModal = ({
 
     const [value, setValue] = useState('');
     const [values, setValues] = useState(filterValues);
+    const [userCheck, setUserCheck] = useState(false);
+
+    useEffect(() => {
+        setUserCheck(filterValues.includes('__user__'));
+    }, [filterValues]);
 
     const handleRemoveFilterClick = (v: any) => {
         const newFilters = values.filter((val: any) => {
@@ -374,53 +382,102 @@ const FilterModal = ({
                     <ModalHeader>Add Filter</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        <Text mb={'5px'}>{`Value to filter '${column?.name[0].toUpperCase()}${column?.name
-                            .slice(1, column?.name.length)
-                            .split('_')
-                            .join(' ')}' by`}</Text>
-                        <Flex>
-                            <Input
-                                ref={initialRef}
-                                value={value}
-                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                    setValue(event.target.value);
-                                }}
-                                mr={'6px'}
-                            />
-                            <PrimaryButton
-                                onClick={() => {
-                                    const newValues = [...values, value];
-                                    setValues(newValues);
-                                    onChange(newValues);
-                                    setValue('');
-                                }}
-                            >
-                                Add
-                            </PrimaryButton>
+                        <Flex mb={'12px'}>
+                            <Text mb={'5px'}>{`Value to filter '${column?.name[0].toUpperCase()}${column?.name
+                                .slice(1, column?.name.length)
+                                .split('_')
+                                .join(' ')}' by`}</Text>
+                            <Spacer />
+                            {column.type === 'people' ? (
+                                <Checkbox
+                                    size={'sm'}
+                                    isChecked={userCheck}
+                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                        if (event.target.checked) {
+                                            setUserCheck(true);
+                                            setValues(['__user__']);
+                                            onChange(['__user__']);
+                                        } else {
+                                            setUserCheck(false);
+                                            setValues([]);
+                                            onChange([]);
+                                            setValue('');
+                                        }
+                                    }}
+                                >
+                                    <Text fontSize={'12px'}>Set for logged in user</Text>
+                                </Checkbox>
+                            ) : null}
                         </Flex>
-                        <Box mt={'10px'}>
-                            {values.length > 0
-                                ? values.map((val: any, index: number) => {
-                                      return (
-                                          <Card mb={'6px'} key={index}>
-                                              <CardBody p={'3px'} px={'10px'}>
-                                                  <Flex>
-                                                      <Text mt={'5px'} fontSize={'14px'}>
-                                                          {val}
-                                                      </Text>
-                                                      <Spacer />
-                                                      <Box onClick={() => handleRemoveFilterClick(val)} cursor={'pointer'}>
-                                                          <Text fontSize={'10px'} mt={'6px'}>
-                                                              <CloseIcon />
-                                                          </Text>
-                                                      </Box>
-                                                  </Flex>
-                                              </CardBody>
-                                          </Card>
-                                      );
-                                  })
-                                : null}
-                        </Box>
+                        {!userCheck ? (
+                            <>
+                                <Flex>
+                                    <Input
+                                        ref={initialRef}
+                                        value={value}
+                                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                            setValue(event.target.value);
+                                        }}
+                                        mr={'6px'}
+                                    />
+                                    <PrimaryButton
+                                        onClick={() => {
+                                            const newValues = [...values, value];
+                                            setValues(newValues);
+                                            onChange(newValues);
+                                            setValue('');
+                                        }}
+                                    >
+                                        Add
+                                    </PrimaryButton>
+                                </Flex>
+                                <Box mt={'30px'}>
+                                    {values.length > 0
+                                        ? values.map((val: any, index: number) => {
+                                              return (
+                                                  <Card mb={'6px'} key={index}>
+                                                      <CardBody p={'3px'} px={'10px'}>
+                                                          <Flex>
+                                                              <Text mt={'5px'} fontSize={'14px'}>
+                                                                  {val}
+                                                              </Text>
+                                                              <Spacer />
+                                                              <Box onClick={() => handleRemoveFilterClick(val)} cursor={'pointer'}>
+                                                                  <Text fontSize={'10px'} mt={'6px'}>
+                                                                      <CloseIcon />
+                                                                  </Text>
+                                                              </Box>
+                                                          </Flex>
+                                                      </CardBody>
+                                                  </Card>
+                                              );
+                                          })
+                                        : null}
+                                </Box>
+                            </>
+                        ) : (
+                            <Flex>
+                                {/* <Input
+                                    ref={initialRef}
+                                    value={value}
+                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                        setValue(event.target.value);
+                                    }}
+                                    mr={'6px'}
+                                /> */}
+                                <Spacer />
+                                <PrimaryButton
+                                    onClick={() => {
+                                        const newValues = [...values, value];
+                                        setValues(newValues);
+                                        onChange(newValues);
+                                        setValue('');
+                                    }}
+                                >
+                                    Add
+                                </PrimaryButton>
+                            </Flex>
+                        )}
                     </ModalBody>
 
                     <ModalFooter>

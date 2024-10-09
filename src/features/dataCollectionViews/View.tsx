@@ -51,7 +51,16 @@ const View = ({
             <Box pt={'25px'} pb={'4px'} mt={'20px'}>
                 <Flex>
                     <Text fontSize={'20px'} className="dmsans-400">
-                        {dataCollectionView.name}
+                        <span>{dataCollectionView.name}</span>
+                        <span style={{ marginLeft: '20px', fontSize: '12px', color: '#2B6CB0', fontWeight: 'bold' }}>
+                            {dataCollectionView.public &&
+                            (userGroup.permissions.viewActions.update ||
+                                userGroup?.permissions.viewActions.delete ||
+                                viewPermissions.view.update ||
+                                viewPermissions.view.delete)
+                                ? 'Public'
+                                : ''}
+                        </span>
                     </Text>
                     <Spacer />
 
@@ -90,18 +99,20 @@ const View = ({
                 </Flex>
             </Box>
             {rows && rows?.length > 0 ? (
-                <DataCollection
-                    showDoneRows={true}
-                    rowsProp={rows}
-                    dataCollectionView={dataCollectionView}
-                    rowsAreDraggable={false}
-                    hasCheckboxOptions={false}
-                    hasColumnOptions={false}
-                    columnsAreDraggable={false}
-                    hasCreateColumn={false}
-                    refetchRows={refetchRows}
-                    // userGroup={userGroup}
-                />
+                <Box borderBottom={'1px solid #EDF2F7'}>
+                    <DataCollection
+                        showDoneRows={true}
+                        rowsProp={rows}
+                        dataCollectionView={dataCollectionView}
+                        rowsAreDraggable={false}
+                        hasCheckboxOptions={false}
+                        hasColumnOptions={false}
+                        columnsAreDraggable={false}
+                        hasCreateColumn={false}
+                        refetchRows={refetchRows}
+                        // userGroup={userGroup}
+                    />
+                </Box>
             ) : (
                 <Box p={'20px'} bgColor={'#F5FAFF'}>
                     <Center>
