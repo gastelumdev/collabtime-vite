@@ -392,7 +392,7 @@ const Row = ({
                                         return item.name === column.name;
                                     });
 
-                                    if (dataCollectionView && !columnsPermissions?.permissions.column.view) {
+                                    if (!columnsPermissions?.permissions.column.view) {
                                         return null;
                                     }
 
