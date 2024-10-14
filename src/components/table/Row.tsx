@@ -395,6 +395,10 @@ const Row = ({
                                     if (!columnsPermissions?.permissions.column.view) {
                                         return null;
                                     }
+
+                                    const labels = column.labels.filter((label: any) => {
+                                        return columnsPermissions.permissions.labels.includes(label.title);
+                                    });
                                     return (
                                         <div
                                             key={columnIndex}
@@ -409,7 +413,7 @@ const Row = ({
                                             {column.type === 'label' || column.type === 'priority' || column.type === 'status' ? (
                                                 <LabelMenu
                                                     id={rowIndex}
-                                                    labels={column.labels}
+                                                    labels={labels}
                                                     columnName={column.name}
                                                     value={row.values[column.name]}
                                                     onChange={onChange}

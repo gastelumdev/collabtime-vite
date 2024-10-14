@@ -82,6 +82,7 @@ export const emptyViewPermissions = {
 
 export const emptyColumnPermissions = {
     column: { view: false, update: false, delete: false, reorder: false, resize: false },
+    labels: [],
 };
 
 const UserGroups = () => {
@@ -112,6 +113,10 @@ const UserGroups = () => {
     const [formError, setFormError] = useState(true);
     const [nameError, setNameError] = useState(false);
 
+    const [allViewsColumns, setAllViewsColumns] = useState([]);
+    const [labels, setLabels] = useState([]);
+    // const [chosenLabels, setChosenLabels] = useState([]);
+
     useEffect(() => {
         console.log({ userGroups });
         console.log({ currentPermissions });
@@ -133,12 +138,42 @@ const UserGroups = () => {
     ]);
 
     useEffect(() => {
+        if (views !== undefined) {
+            let viewsColumns: any = [];
+
+            for (const view of views) {
+                for (const col of view.columns) {
+                    viewsColumns.push(col);
+                }
+            }
+
+            console.log(viewsColumns);
+            setAllViewsColumns(viewsColumns);
+        }
+    }, [views]);
+
+    useEffect(() => {
+        const column: any = allViewsColumns.find((item: any) => {
+            return item._id === currentViewColumnPermissions.column;
+        });
+        if (column !== undefined) {
+            if (['label', 'status'].includes(column.type)) {
+                setLabels(column.labels);
+            } else {
+                setLabels([]);
+            }
+        }
+    }, [currentViewColumnPermissions]);
+
+    useEffect(() => {
         if (activeButtonName === 'Create' && userGroups !== undefined) {
+            // Find the first user group
             const userGroup: any = userGroups?.find((_ug: any) => {
                 return true;
             });
+            // Get the different data collection permissions
             const dataCollections = userGroup?.permissions.dataCollections;
-
+            // Set up data collection permissions
             const emptyDataCollections = dataCollections?.map((dc: any) => {
                 const columns = dc.permissions.columns;
 
@@ -338,7 +373,10 @@ const UserGroups = () => {
     const handleColumnRowsCheck = (permissionName: string, value: string) => {
         const newCurrentColumnsPermissions = {
             ...currentColumnPermissions,
-            permissions: { column: { ...currentColumnPermissions.permissions.column, [permissionName]: !value } },
+            permissions: {
+                column: { ...currentColumnPermissions.permissions.column, [permissionName]: !value },
+                labels: [...currentColumnPermissions.permissions.labels],
+            },
         };
 
         setCurrentColumnPermissions(newCurrentColumnsPermissions);
@@ -373,7 +411,10 @@ const UserGroups = () => {
     const handleViewColumnRowsCheck = (permissionName: string, value: string) => {
         const newCurrentViewColumnsPermissions = {
             ...currentViewColumnPermissions,
-            permissions: { column: { ...currentViewColumnPermissions.permissions.column, [permissionName]: !value } },
+            permissions: {
+                column: { ...currentViewColumnPermissions.permissions.column, [permissionName]: !value },
+                labels: [...currentViewColumnPermissions.permissions.labels],
+            },
         };
 
         setCurrentViewColumnPermissions(newCurrentViewColumnsPermissions);
@@ -381,6 +422,59 @@ const UserGroups = () => {
         const newColumns = currentViewPermissions.permissions.columns.map((col: any) => {
             if (col.column === currentViewColumnPermissions.column) {
                 return newCurrentViewColumnsPermissions;
+            }
+            return col;
+        });
+
+        const newCurrentViewPermissions: any = {
+            ...currentViewPermissions,
+            permissions: { ...currentViewPermissions.permissions, columns: newColumns },
+        };
+
+        setCurrentViewPermissions(newCurrentViewPermissions);
+
+        const newCurrentViews: any = currentPermissions.views.map((v: any) => {
+            if (v.view === newCurrentViewPermissions.view) {
+                return newCurrentViewPermissions;
+            }
+            return v;
+        });
+
+        const newCurrentPermissions = { ...currentPermissions, views: newCurrentViews };
+        setCurrentPermissions(newCurrentPermissions);
+
+        handleUpdateUserGroup(newCurrentPermissions);
+    };
+
+    const handleViewColumnLabelsCheck = (labelTitle: never, permissionLabels: any) => {
+        let newPermissions;
+        if (permissionLabels.includes(labelTitle as never)) {
+            const filteredLabels: never[] = permissionLabels.filter((item: any) => {
+                return item !== labelTitle;
+            });
+
+            newPermissions = {
+                ...currentViewColumnPermissions,
+                permissions: {
+                    ...currentViewColumnPermissions.permissions,
+                    labels: [...filteredLabels],
+                },
+            };
+            setCurrentViewColumnPermissions(newPermissions);
+        } else {
+            newPermissions = {
+                ...currentViewColumnPermissions,
+                permissions: {
+                    ...currentViewColumnPermissions.permissions,
+                    labels: [...(currentViewColumnPermissions.permissions.labels as never), labelTitle as never],
+                },
+            };
+            setCurrentViewColumnPermissions(newPermissions);
+        }
+
+        const newColumns = currentViewPermissions.permissions.columns.map((col: any) => {
+            if (col.column === currentViewColumnPermissions.column) {
+                return newPermissions;
             }
             return col;
         });
@@ -1175,6 +1269,45 @@ const UserGroups = () => {
                                                         />
                                                     );
                                                 })}
+                                            </Stack>
+                                        </Box>
+                                        <Box mr={'60px'}>
+                                            {labels.length > 0 ? (
+                                                <Text fontSize={'18px'} mb={'20px'}>
+                                                    Columns
+                                                </Text>
+                                            ) : null}
+
+                                            <Stack mt={1} spacing={1}>
+                                                {labels.length > 0
+                                                    ? labels.map((label: any) => {
+                                                          const labelTitle: string = label.title;
+                                                          const permissionLabels: never[] = currentViewColumnPermissions.permissions.labels;
+                                                          return (
+                                                              <CheckboxOption
+                                                                  key={label.title}
+                                                                  text={label.title}
+                                                                  isChecked={permissionLabels.includes(labelTitle as never)}
+                                                                  onChange={() => handleViewColumnLabelsCheck(labelTitle as never, permissionLabels)}
+                                                              />
+                                                          );
+                                                      })
+                                                    : null}
+                                                {/* {Object.keys(currentViewColumnPermissions.permissions.column || {}).map((permissionName: string) => {
+                                                    // const value: any = currentPermissions.chat[permissionName as keyof typeof currentPermissions.chat];
+                                                    const value: any =
+                                                        currentViewColumnPermissions.permissions.column[
+                                                            permissionName as keyof typeof currentViewColumnPermissions.permissions.column
+                                                        ];
+                                                    return (
+                                                        <CheckboxOption
+                                                            key={permissionName}
+                                                            text={`${permissionName[0].toUpperCase()}${permissionName.slice(1)}`}
+                                                            isChecked={value}
+                                                            onChange={() => handleViewColumnRowsCheck(permissionName, value)}
+                                                        />
+                                                    );
+                                                })} */}
                                             </Stack>
                                         </Box>
                                     </Flex>
