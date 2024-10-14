@@ -447,7 +447,7 @@ const UserGroups = () => {
     };
 
     const handleViewColumnLabelsCheck = (labelTitle: never, permissionLabels: any) => {
-        let newPermissions;
+        let newPermissions: any;
         if (permissionLabels.includes(labelTitle as never)) {
             const filteredLabels: never[] = permissionLabels.filter((item: any) => {
                 return item !== labelTitle;
