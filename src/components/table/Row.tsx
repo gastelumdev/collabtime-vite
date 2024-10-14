@@ -392,13 +392,17 @@ const Row = ({
                                         return item.name === column.name;
                                     });
 
-                                    if (!columnsPermissions?.permissions.column.view) {
+                                    if (dataCollectionView && !columnsPermissions?.permissions.column.view) {
                                         return null;
                                     }
 
-                                    const labels = column.labels.filter((label: any) => {
+                                    let labels = column.labels.filter((label: any) => {
                                         return columnsPermissions.permissions.labels.includes(label.title);
                                     });
+
+                                    // if (labels.length === 0) {
+                                    //     labels = column.labels;
+                                    // }
                                     return (
                                         <div
                                             key={columnIndex}
