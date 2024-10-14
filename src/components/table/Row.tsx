@@ -400,9 +400,9 @@ const Row = ({
                                         return columnsPermissions.permissions.labels.includes(label.title);
                                     });
 
-                                    // if (labels.length === 0) {
-                                    //     labels = column.labels;
-                                    // }
+                                    if (labels.length === 0) {
+                                        labels = column.labels;
+                                    }
                                     return (
                                         <div
                                             key={columnIndex}

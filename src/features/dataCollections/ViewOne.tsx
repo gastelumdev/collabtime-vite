@@ -59,8 +59,8 @@ import LinksMenu from './LinksMenu';
 import { MdContentCopy } from 'react-icons/md';
 import { ChevronDownIcon, CloseIcon } from '@chakra-ui/icons';
 import { CSVLink } from 'react-csv';
-import { useTypedSelector, useAppDispatch } from '../../hooks/store';
-import { toggleShowDoneRows } from '../../components/table/tableSlice';
+import { useTypedSelector } from '../../hooks/store';
+// import { toggleShowDoneRows } from '../../components/table/tableSlice';
 import ImportDrawer from '../../components/table/ImportDrawer';
 import { emptyDataCollectionPermissions, emptyPermissions } from '../workspaces/UserGroups';
 
@@ -68,7 +68,7 @@ const ViewOne = () => {
     const { id, dataCollectionId } = useParams();
     const [queryParameters] = useSearchParams();
     const { pathname } = useLocation(); // Pathname is used to append /form the current pathname
-    const dispatch = useAppDispatch();
+    // const dispatch = useAppDispatch();
 
     // const { onClose, onOpen, isOpen } = useDisclosure(); // For template modal
     const { onClose: onCloseFormDrawer, onOpen: onOpenFormDrawer, isOpen: isOpenFormDrawer } = useDisclosure(); // For form modal
@@ -422,12 +422,12 @@ const ViewOne = () => {
                                                     Options
                                                 </MenuButton>
                                                 <MenuList>
-                                                    <MenuItem
+                                                    {/* <MenuItem
                                                         fontSize={'14px'}
                                                         onClick={() => {
                                                             dispatch(toggleShowDoneRows());
                                                         }}
-                                                    >{`${showDoneRows ? 'Hide' : 'Show'} Done`}</MenuItem>
+                                                    >{`${showDoneRows ? 'Hide' : 'Show'} Done`}</MenuItem> */}
                                                     <MenuItem fontSize={'14px'} onClick={onOpenFormDrawer}>
                                                         Form
                                                     </MenuItem>
