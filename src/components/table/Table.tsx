@@ -310,9 +310,10 @@ const Table = ({
     );
 
     const handleDeleteColumn = useCallback(
-        (column: any) => {
+        async (column: any) => {
             setColumns((prev) => prev.filter((prevColumn) => prevColumn.name !== column.name));
-            deleteColumn(column);
+            await deleteColumn(column);
+            refetchUserGroups();
             // deleteValues(column);
         },
         [columns]
