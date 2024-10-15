@@ -5,6 +5,7 @@ import { Box, Center, Divider, Flex, Menu, MenuButton, MenuItem, MenuList, Space
 import { PiDotsThreeVerticalBold } from 'react-icons/pi';
 import Create from './Create';
 import { emptyPermissions, emptyViewPermissions } from '../workspaces/UserGroups';
+import { io } from 'socket.io-client';
 
 const View = ({
     dataCollectionView,
@@ -30,6 +31,19 @@ const View = ({
 
     useEffect(() => {
         refetchRows();
+    }, []);
+
+    useEffect(() => {
+        const socket = io(import.meta.env.VITE_API_URL);
+        socket.connect();
+        socket.on('update views', () => {
+            console.log('UPDATE VIEWS');
+            refetchRows();
+        });
+
+        return () => {
+            socket.disconnect();
+        };
     }, []);
 
     useEffect(() => {

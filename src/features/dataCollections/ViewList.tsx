@@ -48,12 +48,13 @@ import Delete from './Delete';
 import CreateDataCollectionView from '../dataCollectionViews/Create';
 import View from '../dataCollectionViews/View';
 import { emptyPermissions } from '../workspaces/UserGroups';
+import { io } from 'socket.io-client';
 
 const ViewList = ({}: { allowed?: boolean }) => {
     // const [data, setData] = useState<TDataCollection[]>(dataCollections);
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
     const { data } = useGetDataCollectionsQuery(null);
-    const { data: dataCollectionViews } = useGetDataCollectionViewsQuery(null);
+    const { data: dataCollectionViews, refetch: refetchViews } = useGetDataCollectionViewsQuery(null);
     const { data: workspace } = useGetOneWorkspaceQuery(localStorage.getItem('workspaceId') || '');
     const [createDataCollection] = useCreateDataCollecionMutation();
     const [updateDataCollection] = useUpdateDataCollectionMutation();
@@ -76,7 +77,7 @@ const ViewList = ({}: { allowed?: boolean }) => {
 
     // useEffect(() => {}, [dataCollectionViews]);
 
-    const { data: userGroups, refetch } = useGetUserGroupsQuery(null);
+    const { data: userGroups, refetch: refetchUserGroups } = useGetUserGroupsQuery(null);
     const [userGroup, setUserGroup] = useState({ name: '', workspace: '', permissions: emptyPermissions });
 
     useEffect(() => {
@@ -85,9 +86,11 @@ const ViewList = ({}: { allowed?: boolean }) => {
                 return item.users.includes(localStorage.getItem('userId'));
             });
 
+            console.log(ug);
+
             setUserGroup(ug);
         } else {
-            refetch();
+            refetchUserGroups();
         }
     }, [userGroups]);
 
@@ -98,6 +101,19 @@ const ViewList = ({}: { allowed?: boolean }) => {
             }
         }
     };
+
+    useEffect(() => {
+        const socket = io(import.meta.env.VITE_API_URL);
+        socket.connect();
+        socket.on('update views', () => {
+            console.log('UPDATE VIEWS');
+            refetchViews();
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
 
     const handleCloseTagButtonClick = async (dataCollection: TDataCollection, tag: TTag) => {
         const { tags } = dataCollection;
@@ -348,13 +364,26 @@ const ViewList = ({}: { allowed?: boolean }) => {
                                                 <Box>
                                                     {userGroup.permissions.viewActions.view
                                                         ? dataCollectionViews?.map((dcView: any) => {
-                                                              // return <DataCollection showDoneRows={true}  />>;
+                                                              console.log(dcView);
+                                                              console.log(userGroups);
+                                                              console.log(userGroup.permissions.viewActions.view);
+
+                                                              const viewPermissions: any = userGroup.permissions.views.find((item: any) => {
+                                                                  return item.view === dcView._id;
+                                                              });
+
+                                                              if (viewPermissions !== undefined) {
+                                                                  if (!viewPermissions.permissions.view.view) {
+                                                                      return null;
+                                                                  }
+                                                              }
+
                                                               return (
                                                                   <View
                                                                       key={dcView.name}
                                                                       dataCollectionView={dcView}
                                                                       userGroup={userGroup}
-                                                                      refetchUserGroup={refetch}
+                                                                      refetchUserGroup={refetchUserGroups}
                                                                   />
                                                               );
                                                           })
