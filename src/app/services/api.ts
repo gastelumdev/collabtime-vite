@@ -213,7 +213,7 @@ export const api = createApi({
                 method: "POST",
                 body: column
             }),
-            invalidatesTags: ["Column"]
+            invalidatesTags: ["Column", "UserGroup"]
         }),
         updateColumn: builder.mutation<TColumn, TColumn>({
             query: (column) => ({

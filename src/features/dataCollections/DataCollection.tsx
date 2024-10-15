@@ -43,7 +43,7 @@ const DataCollection = ({
 
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
 
-    const { data: columns } = useGetColumnsQuery(dataCollectionId || '');
+    const { data: columns, isFetching: columnsAreFetching } = useGetColumnsQuery(dataCollectionId || '');
     const [updateColumn] = useUpdateColumnMutation();
     const [reorderColumns] = useReorderColumnsMutation();
 
@@ -65,16 +65,18 @@ const DataCollection = ({
     // useEffect(() => {
     //     const socket = io(import.meta.env.VITE_API_URL);
     //     socket.connect();
-    //     socket.on('update row', (item: any) => {
-    //         console.log('UPDATE WORKSPACE', item);
-    //         console.log(dataCollectionId);
-    //         if (dataCollectionId !== undefined) refetchRows();
+    //     socket.on('update column', () => {
+    //         refetchColumns();
     //     });
 
     //     return () => {
     //         socket.disconnect();
     //     };
     // }, []);
+
+    // useEffect(() => {
+    //     console.log(columns);
+    // }, columns);
 
     useEffect(() => {
         refetch();
@@ -129,6 +131,7 @@ const DataCollection = ({
                 deleteColumn={deleteColumn}
                 updateColumn={handleColumnUpdate}
                 reorderColumns={handleReorderColumns}
+                columnsAreFetching={columnsAreFetching}
                 showDoneRows={showDoneRows}
                 allowed={(permissions || 0) > 1}
                 isFetching={isFetching}

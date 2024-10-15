@@ -22,9 +22,20 @@ interface TProps {
     createColumn?: any;
     columnIsUpdating: boolean;
     addNewColumnToRows: any;
+    handleSetColumns?: any;
+    columnsAreFetching?: boolean;
 }
 
-const CreateColumn = ({ column = null, columns, updateColumn, createColumn, columnIsUpdating = false, addNewColumnToRows }: TProps) => {
+const CreateColumn = ({
+    column = null,
+    columns,
+    updateColumn,
+    createColumn,
+    columnIsUpdating = false,
+    addNewColumnToRows,
+    handleSetColumns,
+    columnsAreFetching = false,
+}: TProps) => {
     const { dataCollectionId } = useParams();
     const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -95,11 +106,17 @@ const CreateColumn = ({ column = null, columns, updateColumn, createColumn, colu
             // Set column name to a database friendly underscore naming
             newColumn.name = newColumn.name.toLowerCase().split(' ').join('_');
 
+            handleSetColumns(newColumn);
+            // const createdColumn = await createColumn(newColumn);
+            // console.log(createdColumn.data);
+
             await createColumn(newColumn);
             addNewColumnToRows(newColumn);
             setShowLabelForm(false);
             setShowReferenceForm(false);
-            closeDrawer();
+            if (!columnsAreFetching) {
+                closeDrawer();
+            }
         }
     };
 

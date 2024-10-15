@@ -18,6 +18,8 @@ interface IProps {
     rearangeColumns: any;
     headerHeight?: string;
     updateBackendColumns: any;
+    handleSetColumns: any;
+    columnsAreFetching?: boolean;
     updateBackendColumnWidth: any;
     handleGridTemplateColumns: any;
     addNewColumnToRows: any;
@@ -44,6 +46,8 @@ const TableHeader = ({
     rearangeColumns,
     headerHeight = '40px',
     updateBackendColumns,
+    handleSetColumns,
+    columnsAreFetching = false,
     updateBackendColumnWidth,
     handleGridTemplateColumns,
     addNewColumnToRows,
@@ -513,6 +517,8 @@ const TableHeader = ({
                             createColumn={createColumn}
                             addNewColumnToRows={handleAddNewColumnToRows}
                             columnIsUpdating={columnIsUpdating as boolean}
+                            handleSetColumns={handleSetColumns}
+                            columnsAreFetching={columnsAreFetching}
                         />
                     ) : null}
                 </span>

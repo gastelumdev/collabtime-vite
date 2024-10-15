@@ -25,6 +25,7 @@ interface ITableProps {
     deleteColumn: any;
     deleteRow: any;
     reorderColumns: any;
+    columnsAreFetching?: boolean;
     showDoneRows?: boolean;
     allowed?: boolean;
     isFetching?: boolean;
@@ -52,6 +53,7 @@ const Table = ({
     deleteColumn,
     deleteRow,
     reorderColumns,
+    columnsAreFetching = false,
     showDoneRows = false,
     allowed = false,
     refetch,
@@ -297,6 +299,15 @@ const Table = ({
             })
         );
     };
+
+    const handleSetColumns = useCallback(
+        (column: any) => {
+            console.log(column);
+            setColumns((prev) => [...prev, column]);
+            // createColumn(column);
+        },
+        [columns]
+    );
 
     const handleDeleteColumn = useCallback(
         (column: any) => {
@@ -560,11 +571,13 @@ const Table = ({
                 setGridTemplateColumns={handleSetGridTemplateColumns}
                 rearangeColumns={rearangeColumns}
                 updateBackendColumns={updateBackendColumns}
+                handleSetColumns={handleSetColumns}
                 updateBackendColumnWidth={updateBackendColumnWidth}
                 handleGridTemplateColumns={handleSetGridTemplateColumns}
                 addNewColumnToRows={handleAddNewColumnToRows}
                 handleRemoveColumnFormRows={handleRemoveColumnFromRows}
                 deleteColumn={handleDeleteColumn}
+                columnsAreFetching={columnsAreFetching}
                 allowed={allowed}
                 isFetching={isFetching}
                 handleSortByColumnAsc={handleSortByColumnAsc}
