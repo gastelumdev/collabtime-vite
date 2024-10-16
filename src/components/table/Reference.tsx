@@ -56,9 +56,10 @@ const Reference = ({
     useEffect(() => {
         let rowKey;
 
-        columns?.map((column: any) => {
-            if (column.position === 1) {
-                rowKey = column.name;
+        columns?.map((col: any) => {
+            console.log({ colName: col.name, column: column.dataCollectionRefLabel });
+            if (col.name === column.dataCollectionRefLabel) {
+                rowKey = col.name;
             }
         });
 
@@ -70,16 +71,16 @@ const Reference = ({
     }, [refs]);
 
     useEffect(() => {
-        const rowIds: any = refs.map((row: any) => {
-            return row._id;
-        });
+        // const rowIds: any = refs.map((row: any) => {
+        //     return row._id;
+        // });
 
         if (rowsData === undefined) {
             setRowsList([]);
         } else {
             setRowsList(
                 rowsData?.filter((row: any) => {
-                    return !rowIds.includes(row._id);
+                    return !row.isEmpty;
                 })
             );
         }
@@ -107,9 +108,15 @@ const Reference = ({
             })
         );
 
+        console.log(ref);
         setRowsList((prev: any) => {
+            console.log(prev);
             return [...prev, ref];
         });
+
+        // const rowToReinsert = rowsData?.find((row: any) => {
+        //     return row.
+        // })
     };
     return (
         <Center px={'10px'}>
@@ -121,9 +128,16 @@ const Reference = ({
                                 <Button size={'xs'} variant={'ghost'} color={rows.length < 1 ? 'lightgray' : 'gray'} overflow={'hidden'}>
                                     {rows.length < 1
                                         ? `Choose ${dataCollection?.name}`
-                                        : `${rows.map((row: any, index: number) => {
-                                              return row.values[rowKey] !== undefined ? `${row.values[rowKey]}${index === rows.length - 1 ? '' : ','} ` : '';
-                                          })}`}
+                                        : rows.map((row: any, index: number) => {
+                                              //   console.log(row.values[rowKey]);
+                                              console.log(
+                                                  row.values[rowKey] !== undefined ? `${row.values[rowKey]}${index === rows.length - 1 ? '' : ','} ` : null
+                                              );
+
+                                              if (row.values[rowKey] === undefined) return null;
+                                              return index === rows.length - 1 ? row.values[rowKey] : `${row.values[rowKey]}, `;
+                                              //   return `${row.values[rowKey]} `;
+                                          })}
                                 </Button>
                             </Box>
                         </PopoverTrigger>
@@ -131,9 +145,14 @@ const Reference = ({
                         <Text mt={'5px'}>
                             {rows.length < 1
                                 ? `Choose ${dataCollection?.name}`
-                                : `${rows.map((row: any, index: number) => {
-                                      return row.values[rowKey] !== undefined ? `${row.values[rowKey]}${index === rows.length - 1 ? '' : ','} ` : '';
-                                  })}`}
+                                : rows.map((row: any, index: number) => {
+                                      //   console.log(row.values[rowKey]);
+                                      console.log(row.values[rowKey] !== undefined ? `${row.values[rowKey]}${index === rows.length - 1 ? '' : ','} ` : null);
+
+                                      if (row.values[rowKey] === undefined) return null;
+                                      return index === rows.length - 1 ? row.values[rowKey] : `${row.values[rowKey]}, `;
+                                      //   return `${row.values[rowKey]} `;
+                                  })}
                         </Text>
                     )}
                     {createPortal(

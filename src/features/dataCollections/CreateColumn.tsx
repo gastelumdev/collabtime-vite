@@ -13,7 +13,7 @@ import { getTextColor } from '../../utils/helpers';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
 import { BsPlusCircle } from 'react-icons/bs';
 import { useParams } from 'react-router-dom';
-import { useGetDataCollectionsQuery } from '../../app/services/api';
+import { useGetColumnsQuery, useGetDataCollectionsQuery } from '../../app/services/api';
 
 interface TProps {
     column?: TColumn | null;
@@ -47,9 +47,11 @@ const CreateColumn = ({
     const [columnName, setColumnName] = useState<string>('');
     const [columnType, setColumnType] = useState<string>('text');
     const [columnRef, setColumnRef] = useState<any>(null);
+    const [columnRefLabel, setColumnRefLabel] = useState(null);
     const [columnNameError, setColumnNameError] = useState<boolean>(false);
     const [showLabelForm, setShowLabelForm] = useState(false);
     const [showReferenceForm, setShowReferenceForm] = useState(false);
+    const [showColumnNameSelection, setShowColumnNameSelection] = useState(false);
     const [labelOptions, setLabelOptions] = useState<TLabel>({
         title: '',
         color: '#015796',
@@ -96,6 +98,7 @@ const CreateColumn = ({
                 permanent: false,
                 labels: labels,
                 dataCollectionRef: columnRef,
+                dataCollectionRefLabel: columnRefLabel,
                 people: [],
                 includeInForm: true,
                 includeInExport: true,
@@ -224,6 +227,11 @@ const CreateColumn = ({
     const handleSelectDataCollection = (selectedOption: any) => {
         console.log(selectedOption);
         setColumnRef(selectedOption.value);
+        setShowColumnNameSelection(true);
+    };
+
+    const handleSelectColumn = (selectedOption: any) => {
+        setColumnRefLabel(selectedOption.value);
     };
 
     const handleLabelOptionsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -427,27 +435,30 @@ const CreateColumn = ({
                         </>
                     ) : null}
                     {showReferenceForm ? (
-                        <ReactSelect
-                            id="dataCollections"
-                            name="dataCollections"
-                            placeholder="Please select the data collection that will be referenced"
-                            onChange={(selectedOption: any) => handleSelectDataCollection(selectedOption)}
-                            options={dataCollections
-                                ?.map((dataCollection: any) => {
-                                    return { value: dataCollection._id, label: dataCollection.name };
-                                })
-                                .filter((dataCollection: any) => {
-                                    console.log(dataCollection.value, dataCollectionId);
-                                    return dataCollection.value !== dataCollectionId;
-                                })}
-                            styles={
-                                {
-                                    control: (styles: any) => {
-                                        return { ...styles, borderColor: '#e2e8f0' };
-                                    },
-                                } as any
-                            }
-                        />
+                        <>
+                            <ReactSelect
+                                id="dataCollections"
+                                name="dataCollections"
+                                placeholder="Please select the data collection that will be referenced"
+                                onChange={(selectedOption: any) => handleSelectDataCollection(selectedOption)}
+                                options={dataCollections
+                                    ?.map((dataCollection: any) => {
+                                        return { value: dataCollection._id, label: dataCollection.name };
+                                    })
+                                    .filter((dataCollection: any) => {
+                                        console.log(dataCollection.value, dataCollectionId);
+                                        return dataCollection.value !== dataCollectionId;
+                                    })}
+                                styles={
+                                    {
+                                        control: (styles: any) => {
+                                            return { ...styles, borderColor: '#e2e8f0' };
+                                        },
+                                    } as any
+                                }
+                            />
+                            {showColumnNameSelection ? <ColumnSelection dataCollectionId={columnRef} handleSelectedColumn={handleSelectColumn} /> : null}
+                        </>
                     ) : null}
                 </Stack>
                 <Flex mt={'20px'}>
@@ -463,6 +474,36 @@ const CreateColumn = ({
                     )}
                 </Flex>
             </PrimaryDrawer>
+        </>
+    );
+};
+
+const ColumnSelection = ({ dataCollectionId, handleSelectedColumn }: { dataCollectionId: string; handleSelectedColumn: any }) => {
+    const { data: columns } = useGetColumnsQuery(dataCollectionId);
+    return (
+        <>
+            <ReactSelect
+                id="dataCollections"
+                name="dataCollections"
+                placeholder="Please select the data collection that will be referenced"
+                onChange={(selectedOption: any) => handleSelectedColumn(selectedOption)}
+                options={
+                    columns?.map((column: any) => {
+                        return { value: column.name, label: column.name };
+                    })
+                    // .filter((dataCollection: any) => {
+                    //     console.log(dataCollection.value, dataCollectionId);
+                    //     return dataCollection.value !== dataCollectionId;
+                    // })
+                }
+                styles={
+                    {
+                        control: (styles: any) => {
+                            return { ...styles, borderColor: '#e2e8f0' };
+                        },
+                    } as any
+                }
+            />
         </>
     );
 };

@@ -291,11 +291,25 @@ const Table = ({
         setRows((prev: any) =>
             prev.map((row: any) => {
                 let refs = row.refs;
+                let newRefs = {};
+
                 if (refs !== undefined) {
-                    delete refs[column.name];
+                    // delete refs[column.name];
+                    console.log({ refs, columnName: column.name });
+
+                    const refsKeys = Object.keys(refs);
+
+                    for (const key of refsKeys) {
+                        if (key !== column.name) {
+                            const columnName: any = column.name;
+                            newRefs = { ...newRefs, [columnName]: refs[columnName] };
+                        }
+                    }
                 }
 
-                return { ...row, refs: refs };
+                console.log({ newRefs });
+
+                return { ...row, refs: newRefs };
             })
         );
     };

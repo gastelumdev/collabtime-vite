@@ -12,6 +12,7 @@ let defaultValues: TDataCollection = {
     description: '',
     workspace: '',
     template: 'default',
+    primaryColumnName: '',
     form: {
         active: false,
         type: 'null',
@@ -61,6 +62,8 @@ const Create = ({ addNewDataCollection }: IProps) => {
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value, name } = event.target;
+
+        console.log(data);
 
         const dataCollectionNames = dataCollections?.map((dataCollection) => {
             return dataCollection.name;
@@ -116,6 +119,15 @@ const Create = ({ addNewDataCollection }: IProps) => {
                     name="name"
                     placeholder="Please enter data collection name"
                     value={data.name}
+                    required={true}
+                    onChange={handleChange}
+                    style={{ marginBottom: '15px' }}
+                />
+                <Text pb={'5px'}>Primary Column Name</Text>
+                <Input
+                    name="primaryColumnName"
+                    placeholder="Please enter primary column name"
+                    value={data.primaryColumnName}
                     required={true}
                     onChange={handleChange}
                     style={{ marginBottom: '15px' }}

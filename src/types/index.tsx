@@ -74,6 +74,7 @@ export type TDataCollection = {
     template: string;
     form: TForm;
     columns: string[];
+    primaryColumnName?: string;
     rows: string[];
     tags: TTag[];
     asTemplate?: { active: boolean; name: string };
@@ -89,6 +90,7 @@ export type TColumn = {
     people?: TUser[];
     labels?: TLabel[];
     dataCollectionRef: any;
+    dataCollectionRefLabel?: any;
     includeInForm: boolean;
     includeInExport: boolean;
     position: number;
