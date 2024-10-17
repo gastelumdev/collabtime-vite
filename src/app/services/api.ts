@@ -179,7 +179,7 @@ export const api = createApi({
                 url: `/workspaces/${localStorage.getItem("workspaceId")}/deleteDataCollections/${dataCollectionId}`,
                 method: "POST"
             }),
-            invalidatesTags: ["DataCollection"]
+            invalidatesTags: ["DataCollection", "DataCollectionView"]
         }),
         getDataCollection: builder.query<TDataCollection, string>({
             query: (dataCollectionId) => ({
@@ -508,6 +508,12 @@ export const api = createApi({
             }),
             providesTags: ["DataCollectionView"]
         }),
+        getDataCollectionViewsByRowId: builder.query<any, any>({
+            query: (rowId) => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/dataCollectionViews/row/${rowId}`,
+            }),
+            providesTags: ["DataCollectionView"]
+        }),
         createDataCollectionViews: builder.mutation<any, any>({
             query: (dataCollectionView) => ({
                 url: `/workspaces/${localStorage.getItem("workspaceId")}/dataCollectionViews`,
@@ -634,6 +640,7 @@ export const {
     useCallUpdateMessagesMutation,
     useMarkAsReadMutation,
     useGetDataCollectionViewsQuery,
+    useGetDataCollectionViewsByRowIdQuery,
     useCreateDataCollectionViewsMutation,
     useUpdateDataCollectionViewMutation,
     useDeleteDataCollectionViewMutation,

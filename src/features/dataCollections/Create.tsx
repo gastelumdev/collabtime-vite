@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Input, Text, Flex, Spacer } from '@chakra-ui/react';
+import { Input, Text, Flex, Spacer, Checkbox } from '@chakra-ui/react';
 import Select from 'react-select';
 import { TDataCollection } from '../../types';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
@@ -34,6 +34,7 @@ const Create = ({ addNewDataCollection }: IProps) => {
     const [inputError, setInputError] = useState<boolean>(false);
     const [selectFormattedDataCollections, setSelectFormattedDataCollections] = useState<any[]>([]);
     const [isError, setIsError] = useState(false);
+    const [autoIncrementCheckboxChecked, setAutoIncrementCheckboxChecked] = useState(false);
 
     useEffect(() => {
         const formattedDC = [];
@@ -123,7 +124,24 @@ const Create = ({ addNewDataCollection }: IProps) => {
                     onChange={handleChange}
                     style={{ marginBottom: '15px' }}
                 />
-                <Text pb={'5px'}>Primary Column Name</Text>
+                <Flex>
+                    <Text pb={'5px'}>Primary Column Name</Text>
+                    <Spacer />
+                    <Checkbox
+                        isChecked={autoIncrementCheckboxChecked}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                            if (event.target.checked) {
+                                setAutoIncrementCheckboxChecked(true);
+                                setData({ ...data, autoIncremented: true });
+                            } else {
+                                setAutoIncrementCheckboxChecked(false);
+                                setData({ ...data, autoIncremented: false });
+                            }
+                        }}
+                    >
+                        Auto Increment
+                    </Checkbox>
+                </Flex>
                 <Input
                     name="primaryColumnName"
                     placeholder="Please enter primary column name"
@@ -132,6 +150,21 @@ const Create = ({ addNewDataCollection }: IProps) => {
                     onChange={handleChange}
                     style={{ marginBottom: '15px' }}
                 />
+                <>
+                    {autoIncrementCheckboxChecked ? (
+                        <>
+                            <Text pb={'5px'}>Auto Generated Value Prefix</Text>
+                            <Input
+                                name="autoIncrementPrefix"
+                                placeholder="Please enter a prefix"
+                                value={data.autoIncrementPrefix}
+                                // required={true}
+                                onChange={handleChange}
+                                style={{ marginBottom: '15px' }}
+                            />
+                        </>
+                    ) : null}
+                </>
                 <Text pb={'5px'}>Template</Text>
                 <Select
                     id="columnType"

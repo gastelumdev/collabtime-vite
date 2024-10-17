@@ -454,6 +454,7 @@ const Row = ({
                                                     value={row.values[column.name]}
                                                     onChange={onChange}
                                                     allowed={columnsPermissions?.permissions.column.update}
+                                                    isCustomLink={true}
                                                 />
                                             )}
                                             {/* {row.values[column.name]} */}

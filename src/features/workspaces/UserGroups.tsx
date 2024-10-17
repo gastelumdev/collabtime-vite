@@ -118,6 +118,7 @@ const UserGroups = () => {
     // const [chosenLabels, setChosenLabels] = useState([]);
 
     useEffect(() => {
+        console.log({ views });
         console.log({ userGroups });
         console.log({ currentPermissions });
         console.log({ currentDataCollectionPermissions });
@@ -220,6 +221,8 @@ const UserGroups = () => {
                 return true;
             });
 
+            console.log(v);
+
             setCurrentViewPermissions(emptyViews[0]);
 
             const firstViewColumn = v?.permissions.columns.find((_col: any) => {
@@ -227,7 +230,6 @@ const UserGroups = () => {
             });
 
             const newCurrentViewColumn = { ...firstViewColumn, permissions: emptyColumnPermissions };
-
             setCurrentViewColumnPermissions(newCurrentViewColumn);
 
             setViewColumns(

@@ -101,7 +101,7 @@ const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false, 
                             </Button>
                         </PopoverTrigger>
                         {createPortal(
-                            <PopoverContent zIndex={1000000}>
+                            <PopoverContent>
                                 <PopoverArrow />
                                 <PopoverBody>
                                     {options?.map((label, index) => {

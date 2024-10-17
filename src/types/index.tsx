@@ -71,6 +71,7 @@ export type TDataCollection = {
     name: string;
     description: string;
     workspace: string;
+    row?: string;
     template: string;
     form: TForm;
     columns: string[];
@@ -79,6 +80,8 @@ export type TDataCollection = {
     tags: TTag[];
     asTemplate?: { active: boolean; name: string };
     formRecipients?: { sent: true; email: string }[];
+    autoIncremented?: boolean;
+    autoIncrementPrefix?: string;
 };
 
 export type TColumn = {
@@ -95,6 +98,8 @@ export type TColumn = {
     includeInExport: boolean;
     position: number;
     width?: string;
+    autoIncremented?: boolean;
+    autoIncrementPrefix?: string;
 };
 
 export interface INote {

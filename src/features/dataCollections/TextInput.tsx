@@ -1,5 +1,23 @@
-import { Box, Button, Input, Textarea } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    // ChakraProvider,
+    Drawer,
+    DrawerBody,
+    DrawerCloseButton,
+    DrawerContent,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerOverlay,
+    Input,
+    // Text,
+    Textarea,
+    useDisclosure,
+} from '@chakra-ui/react';
 import { memo, useEffect, useState } from 'react';
+// import { useGetDataCollectionViewsByRowIdQuery, useGetUserGroupsQuery } from '../../app/services/api';
+// import View from '../dataCollectionViews/View';
+// import { emptyPermissions } from '../workspaces/UserGroups';
 
 // interface IProps {
 //     row: TRow;
@@ -19,9 +37,10 @@ interface ITextInputProps {
     onChange: any;
     allowed?: boolean;
     isTextarea?: boolean;
+    isCustomLink?: boolean;
 }
 
-const TextInput = ({ columnName, value, type = 'tableCell', onChange, allowed = false, isTextarea = true }: ITextInputProps) => {
+const TextInput = ({ id, columnName, value, type = 'tableCell', onChange, allowed = false, isTextarea = true, isCustomLink = false }: ITextInputProps) => {
     const [active, setActive] = useState<boolean>(false);
     const [val, setVal] = useState<string>(value);
 
@@ -55,25 +74,29 @@ const TextInput = ({ columnName, value, type = 'tableCell', onChange, allowed = 
                     // p={'2px'}
                     overflow={'hidden'}
                 >
-                    <Button
-                        variant={'unstyled'}
-                        border={type === 'tableCell' ? 'none' : '1px solid #edf2f7'}
-                        borderRadius={'none'}
-                        fontSize={'12px'}
-                        fontWeight={'normal'}
-                        padding={0}
-                        // pl={type === 'tableCell' ? '0px' : '12px'}
-                        pl={'12px'}
-                        overflow={'hidden'}
-                        textOverflow={'ellipsis'}
-                        w={'100%'}
-                        h={'29px'}
-                        textAlign={'left'}
-                        cursor={'default'}
-                        size={'xs'}
-                    >
-                        {val}
-                    </Button>
+                    {!isCustomLink ? (
+                        <Button
+                            variant={'unstyled'}
+                            border={type === 'tableCell' ? 'none' : '1px solid #edf2f7'}
+                            borderRadius={'none'}
+                            fontSize={'12px'}
+                            fontWeight={'normal'}
+                            padding={0}
+                            // pl={type === 'tableCell' ? '0px' : '12px'}
+                            pl={'12px'}
+                            overflow={'hidden'}
+                            textOverflow={'ellipsis'}
+                            w={'100%'}
+                            h={'29px'}
+                            textAlign={'left'}
+                            cursor={'default'}
+                            size={'xs'}
+                        >
+                            {val}
+                        </Button>
+                    ) : (
+                        <ProjectManagerApp val={val} type={type} rowId={id} />
+                    )}
                 </Box>
             ) : (
                 <Box pos={'relative'}>
@@ -118,6 +141,74 @@ const TextInput = ({ columnName, value, type = 'tableCell', onChange, allowed = 
                 </Box>
             )}
         </>
+    );
+};
+
+const ProjectManagerApp = ({ rowId, val, type }: { rowId: string; val: string; type: string }) => {
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    // const { data: dataCollectionViews } = useGetDataCollectionViewsByRowIdQuery(rowId);
+    // const { data: userGroups, refetch: refetchUserGroups } = useGetUserGroupsQuery(null);
+    // const [userGroup, setUserGroup] = useState({ name: '', workspace: '', permissions: emptyPermissions });
+
+    // useEffect(() => {
+    //     if (userGroups !== undefined) {
+    //         const ug = userGroups?.find((item: any) => {
+    //             return item.users.includes(localStorage.getItem('userId'));
+    //         });
+
+    //         console.log(ug);
+
+    //         setUserGroup(ug);
+    //     } else {
+    //         refetchUserGroups();
+    //     }
+    // }, [userGroups]);
+    return (
+        <div>
+            <Button
+                variant={'unstyled'}
+                border={type === 'tableCell' ? 'none' : '1px solid #edf2f7'}
+                borderRadius={'none'}
+                fontSize={'12px'}
+                fontWeight={'normal'}
+                padding={0}
+                // pl={type === 'tableCell' ? '0px' : '12px'}
+                pl={'12px'}
+                overflow={'hidden'}
+                textOverflow={'ellipsis'}
+                w={'100%'}
+                h={'29px'}
+                textAlign={'left'}
+                cursor={'pointer'}
+                size={'xs'}
+                onClick={onOpen}
+            >
+                {val}
+            </Button>
+            <Drawer isOpen={isOpen} placement="right" onClose={onClose} size={'sm'}>
+                <DrawerOverlay />
+                <DrawerContent>
+                    <DrawerCloseButton />
+                    <DrawerHeader>{val}</DrawerHeader>
+
+                    <DrawerBody>
+                        {/* {dataCollectionViews !== undefined
+                            ? dataCollectionViews.map((dcView: any) => {
+                                  return <View key={dcView.name} dataCollectionView={dcView} userGroup={userGroup} refetchUserGroup={refetchUserGroups} />;
+                              })
+                            : null} */}
+                        {rowId}
+                    </DrawerBody>
+
+                    <DrawerFooter>
+                        <Button variant="outline" mr={3} onClick={onClose}>
+                            Cancel
+                        </Button>
+                        <Button colorScheme="blue">Save</Button>
+                    </DrawerFooter>
+                </DrawerContent>
+            </Drawer>
+        </div>
     );
 };
 

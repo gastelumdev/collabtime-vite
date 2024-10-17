@@ -192,10 +192,12 @@ const Table = ({
                 const newRows: any = await updateRow(row);
                 // If it's the last row, add the new blank rows to the current rows
                 // setRows((prev: any) => prev.map((prevRow: any) => (prevRow._id === row._id ? row : prevRow)));
+                console.log({ newRows });
                 if (newRows.data.length > 0) {
                     setRows((prev: any) => {
                         return [...prev, ...newRows.data];
                     });
+
                     refetch();
                 }
             }
