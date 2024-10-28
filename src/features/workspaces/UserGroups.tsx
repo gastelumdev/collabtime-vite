@@ -788,6 +788,9 @@ const UserGroups = () => {
                                         >
                                             {activeButtonName === 'Create'
                                                 ? dataCollections?.map((dataCollection: any) => {
+                                                      if (!dataCollection.main) {
+                                                          return null;
+                                                      }
                                                       return (
                                                           <option key={dataCollection.name} value={dataCollection.name}>
                                                               {dataCollection.name}

@@ -21,6 +21,11 @@ let defaultValues: TDataCollection = {
     columns: [],
     rows: [],
     tags: [],
+    appModel: null,
+    main: true,
+    belongsToAppModel: false,
+    inParentToDisplay: null,
+    appType: null,
 };
 
 interface IProps {
@@ -35,6 +40,9 @@ const Create = ({ addNewDataCollection }: IProps) => {
     const [selectFormattedDataCollections, setSelectFormattedDataCollections] = useState<any[]>([]);
     const [isError, setIsError] = useState(false);
     const [autoIncrementCheckboxChecked, setAutoIncrementCheckboxChecked] = useState(false);
+    const [appModelChecked, setAppModelChecked] = useState(false);
+    const [inParentToDisplaySelection, setInParentToDisplaySelection] = useState<string | null>(null);
+    const [appType, setAppType] = useState<string | null>(null);
 
     useEffect(() => {
         const formattedDC = [];
@@ -56,7 +64,7 @@ const Create = ({ addNewDataCollection }: IProps) => {
 
     const createData = async () => {
         const newDataCollection = data;
-        addNewDataCollection(newDataCollection);
+        addNewDataCollection({ ...newDataCollection, inParentToDisplay: inParentToDisplaySelection, appType: appType });
         setData(defaultValues);
         onClose();
     };
@@ -67,6 +75,9 @@ const Create = ({ addNewDataCollection }: IProps) => {
         console.log(data);
 
         const dataCollectionNames = dataCollections?.map((dataCollection) => {
+            if (!dataCollection.main) {
+                return '';
+            }
             return dataCollection.name;
         });
 
@@ -75,6 +86,8 @@ const Create = ({ addNewDataCollection }: IProps) => {
         } else {
             setInputError(false);
         }
+
+        console.log(dataCollectionNames, value);
 
         if (dataCollectionNames?.includes(value)) {
             setIsError(true);
@@ -165,7 +178,9 @@ const Create = ({ addNewDataCollection }: IProps) => {
                         </>
                     ) : null}
                 </>
-                <Text pb={'5px'}>Template</Text>
+                <Flex>
+                    <Text pb={'5px'}>Template</Text>
+                </Flex>
                 <Select
                     id="columnType"
                     name="columnType"
@@ -175,6 +190,68 @@ const Create = ({ addNewDataCollection }: IProps) => {
                         { value: 'default', label: 'Default' },
                         { value: 'tasks', label: 'Task List' },
                     ].concat(selectFormattedDataCollections)}
+                    styles={
+                        {
+                            control: (styles: any) => {
+                                return { ...styles, borderColor: '#e2e8f0', marginBottom: '20px' };
+                            },
+                        } as any
+                    }
+                />
+                <Flex>
+                    <Text pb={'5px'}>Row App</Text>
+                    <Spacer />
+                    <Checkbox
+                        isChecked={appModelChecked}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                            if (event.target.checked) {
+                                setAppModelChecked(true);
+                                setAppType('planner');
+                            } else {
+                                setAppModelChecked(false);
+                                setInParentToDisplaySelection(null);
+                                setAppType(null);
+                            }
+                        }}
+                    >
+                        For row interface
+                    </Checkbox>
+                </Flex>
+                <Select
+                    id={'appModelDataCollection'}
+                    name={'appModelDataCollection'}
+                    placeholder={'Please select data collection'}
+                    isDisabled={!appModelChecked}
+                    onChange={(selectedOption: any) => {
+                        console.log(selectedOption.value);
+                        setInParentToDisplaySelection(selectedOption.value);
+                    }}
+                    options={dataCollections
+                        ?.filter((dc: any) => {
+                            console.log(dc.main === true);
+                            return dc.main === true;
+                        })
+                        .map((dc: any) => {
+                            return { value: dc._id, label: dc.name };
+                        })}
+                    styles={
+                        {
+                            control: (styles: any) => {
+                                return { ...styles, borderColor: '#e2e8f0', marginBottom: '20px' };
+                            },
+                        } as any
+                    }
+                />
+                <Select
+                    id={'appType'}
+                    name={'appType'}
+                    placeholder={'Please select type of row app'}
+                    isDisabled={!appModelChecked}
+                    onChange={(selectedOption: any) => {
+                        console.log(selectedOption.value);
+                        setAppType(selectedOption.value);
+                    }}
+                    options={[{ value: 'planner', label: 'Planner' }]}
                     styles={
                         {
                             control: (styles: any) => {

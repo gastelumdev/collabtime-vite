@@ -50,19 +50,14 @@ const EditRow = ({ columns, row, handleChange, allowed = false }: IProps) => {
     };
 
     const onRefChange = (columnName: string, ref: any) => {
-        console.log(ref);
         const refs: any = [];
         if (rowState !== null && rowState.refs === undefined) {
-            console.log(rowState.refs);
             refs.push(ref);
-            console.log({ ...rowState, refs: { [columnName]: refs } });
             handleChange({ ...rowState, refs: { [columnName]: refs } });
         } else {
             if (rowState !== null && rowState.refs[columnName] === undefined) {
-                console.log({ ...rowState, refs: { ...rowState.refs, [columnName]: [ref] } });
                 handleChange({ ...rowState, refs: { ...rowState.refs, [columnName]: [ref] } });
             } else {
-                console.log({ ...rowState, refs: { ...rowState.refs, [columnName]: [...rowState.refs[columnName], ref] } });
                 handleChange({ ...rowState, refs: { ...rowState.refs, [columnName]: [...rowState.refs[columnName], ref] } });
             }
         }
@@ -115,7 +110,6 @@ const EditRow = ({ columns, row, handleChange, allowed = false }: IProps) => {
 
     const onChange = useCallback(
         (columnName: string, value: string) => {
-            console.log(value);
             handleChange({ ...rowState, values: { ...rowState.values, [columnName]: value } });
         },
         [rowState]
@@ -149,7 +143,7 @@ const EditRow = ({ columns, row, handleChange, allowed = false }: IProps) => {
                                         id={0}
                                         labels={column.labels}
                                         columnName={column.name}
-                                        value={rowState.values[column.name]}
+                                        value={rowState.values !== undefined ? rowState.values[column.name] : null}
                                         onChange={onChange}
                                         allowed={allowed}
                                     />
@@ -158,12 +152,17 @@ const EditRow = ({ columns, row, handleChange, allowed = false }: IProps) => {
                                         row={rowState}
                                         columnName={column.name}
                                         people={column.people}
-                                        values={rowState.values[column.name]}
+                                        values={rowState.values !== undefined ? rowState.values[column.name] : null}
                                         onChange={onChange}
                                         allowed={allowed}
                                     />
                                 ) : column.type === 'date' ? (
-                                    <DateInput value={rowState.values[column.name]} columnName={column.name} onChange={onChange} allowed={allowed} />
+                                    <DateInput
+                                        value={rowState.values !== undefined ? rowState.values[column.name] : null}
+                                        columnName={column.name}
+                                        onChange={onChange}
+                                        allowed={allowed}
+                                    />
                                 ) : column.type === 'reference' ? (
                                     <Reference
                                         column={column !== undefined ? column : {}}
@@ -176,7 +175,7 @@ const EditRow = ({ columns, row, handleChange, allowed = false }: IProps) => {
                                     <TextInput
                                         id={rowState._id}
                                         columnName={column.name}
-                                        value={rowState.values[column.name]}
+                                        value={rowState.values !== undefined ? rowState.values[column.name] : null}
                                         type="form"
                                         onChange={onChange}
                                         allowed={allowed}

@@ -69,7 +69,6 @@ const CreateColumn = ({
             setColumnName(column.name);
 
             if (column.type === 'label') {
-                console.log('THIS IS A LABEL COLUMN');
                 setShowLabelForm(true);
                 setColumnType(column.type);
             }

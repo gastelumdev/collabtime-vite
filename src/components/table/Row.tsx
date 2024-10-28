@@ -39,6 +39,7 @@ const Row = ({
     isDraggable = false,
     hasCheckboxOptions = true,
     dataCollectionView = null,
+    appModel = null,
 }: {
     row: any;
     rowIndex: number;
@@ -58,6 +59,7 @@ const Row = ({
     hasCheckboxOptions?: boolean;
     dataCollectionView?: any;
     refetchRows?: any;
+    appModel?: string | null;
 }) => {
     // const rowsData = useMemo(
     //     () => [
@@ -87,6 +89,10 @@ const Row = ({
     const { data: userGroups, refetch: refetchUserGroups } = useGetUserGroupsQuery(null);
     const [dataCollectionPermissions, setDataCollectionPermissions] = useState<any>(emptyDataCollectionPermissions);
 
+    // useEffect(() => {
+    //     console.log(row);
+    // }, []);
+
     useEffect(() => {
         const userGroup = userGroups.find((item: any) => {
             return item.users.includes(localStorage.getItem('userId'));
@@ -103,8 +109,12 @@ const Row = ({
                 refetchUserGroups();
             }
         } else {
+            let dcId = '';
+            if (row) {
+                dcId = row.dataCollection;
+            }
             const dataCollectionPermissions = userGroup.permissions.dataCollections.find((item: any) => {
-                return item.dataCollection === dataCollectionId;
+                return item.dataCollection === dataCollectionId || item.dataCollection === dcId || item.dataCollection === appModel;
             });
 
             if (dataCollectionPermissions !== undefined) {
@@ -184,11 +194,12 @@ const Row = ({
     };
 
     const onChange = (columnName: string, value: string) => {
-        if (columnName === 'status' && value === 'Done') {
-            setShowRow(false);
-        } else {
-            setShowRow(true);
-        }
+        // if (columnName === 'status' && value === 'Done') {
+        //     setShowRow(false);
+        // } else {
+        //     setShowRow(true);
+        // }
+        console.log(row);
         handleChange({ ...row, values: { ...row.values, [columnName]: value } });
         console.log('SHOULD REFETCH ROWS');
         // refetchRows();
@@ -307,7 +318,7 @@ const Row = ({
                             >
                                 <span style={{ borderRight: '1px solid #edf2f7', width: !hasCheckboxOptions ? '150px' : '220px' }}>
                                     <Flex>
-                                        {isDraggable && dataCollectionPermissions.rows.reorder ? (
+                                        {isDraggable && dataCollectionPermissions.rows.reorder && appModel === null ? (
                                             <Box
                                                 id={`reorder-handle-${rowIndex}`}
                                                 w={'15px'}
@@ -324,7 +335,7 @@ const Row = ({
                                                 style={{ backgroundColor: row.parentRowId ? '#9fdaff' : '#24a2f0' }}
                                             ></Box>
                                         ) : null}
-                                        {hasCheckboxOptions ? (
+                                        {hasCheckboxOptions && appModel === null ? (
                                             <Box mt={'6px'} ml={'14px'}>
                                                 <Checkbox
                                                     mr={'1px'}
@@ -403,6 +414,31 @@ const Row = ({
                                     if (labels.length === 0) {
                                         labels = column.labels;
                                     }
+
+                                    // console.log({
+                                    //     allowed: columnsPermissions?.permissions.column.update,
+                                    //     isSub: appModel !== null,
+                                    //     primaryColumn: column.primary === undefined || !column.primary,
+                                    // });
+
+                                    let editable = false;
+
+                                    if (columnsPermissions?.permissions.column.update && appModel === null) {
+                                        editable = true;
+                                    } else if (appModel !== null && (column.primary === undefined || !column.primary)) {
+                                        editable = true;
+                                    }
+                                    if (column.autoIncremented) {
+                                        editable = false;
+                                    }
+                                    // console.log({
+                                    //     columnName: column.name,
+                                    //     columnIsPrimary: column.primary,
+                                    //     dataCollectionView,
+                                    //     autoIncremented: column.autoIncremented,
+                                    //     isCustomLink: column.primary !== undefined ? (column.primary && dataCollectionView) || column.autoIncremented : false,
+                                    // });
+                                    // console.log(column.primary !== undefined ? (column.primary && dataCollectionView) || column.autoIncremented : false);
                                     return (
                                         <div
                                             key={columnIndex}
@@ -419,7 +455,7 @@ const Row = ({
                                                     id={rowIndex}
                                                     labels={labels}
                                                     columnName={column.name}
-                                                    value={row.values[column.name]}
+                                                    value={row.values !== undefined ? row.values[column.name] : null}
                                                     onChange={onChange}
                                                     allowed={columnsPermissions?.permissions.column.update}
                                                 />
@@ -428,13 +464,13 @@ const Row = ({
                                                     row={row}
                                                     columnName={column.name}
                                                     people={column.people}
-                                                    values={row.values[column.name]}
+                                                    values={row.values !== undefined ? row.values[column.name] : null}
                                                     onChange={onChange}
                                                     allowed={columnsPermissions?.permissions.column.update}
                                                 />
                                             ) : column.type === 'date' ? (
                                                 <DateInput
-                                                    value={row.values[column.name]}
+                                                    value={row.values !== undefined ? row.values[column.name] : null}
                                                     columnName={column.name}
                                                     onChange={onChange}
                                                     allowed={columnsPermissions?.permissions.column.update}
@@ -451,10 +487,10 @@ const Row = ({
                                                 <TextInput
                                                     id={row._id}
                                                     columnName={column.name}
-                                                    value={row.values[column.name]}
+                                                    value={row.values !== undefined ? row.values[column.name] : null}
                                                     onChange={onChange}
-                                                    allowed={columnsPermissions?.permissions.column.update}
-                                                    isCustomLink={true}
+                                                    allowed={editable || !column.autoIncremented}
+                                                    isCustomLink={column.primary !== undefined ? column.primary && dataCollectionView : false}
                                                 />
                                             )}
                                             {/* {row.values[column.name]} */}

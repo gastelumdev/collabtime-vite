@@ -31,6 +31,7 @@ const ColumnMenu = ({
     handleSortByColumnDes,
     dataCollectionView = null,
     dataCollectionPermissions = emptyDataCollectionPermissions,
+    appModel = null,
 }: {
     column: any;
     columns: any;
@@ -41,11 +42,16 @@ const ColumnMenu = ({
     handleSortByColumnDes?: any;
     dataCollectionView?: any;
     dataCollectionPermissions?: any;
+    appModel?: string | null;
 }) => {
     const { isOpen, onToggle, onClose } = useDisclosure();
 
     const [updateColumn, { isLoading: columnIsUpdating }] = useUpdateColumnMutation();
     const [columnPermissions, setColumnPermissions] = useState(emptyColumnPermissions);
+
+    // useEffect(() => {
+    //     console.log({ columnName: column.name, appModel, appModelIsNull: appModel === null });
+    // }, [appModel]);
 
     useEffect(() => {
         const columnPermissions = dataCollectionPermissions.columns.find((item: any) => {
@@ -118,6 +124,7 @@ const ColumnMenu = ({
                                 ) : null}
                             </>
                         )} */}
+
                         <>
                             <Box onClick={sortByColumnAsc} textAlign={'left'} fontSize={'14px'} cursor={'pointer'} mb={'4px'}>
                                 Sort ascending
@@ -127,7 +134,8 @@ const ColumnMenu = ({
                             </Box>
                             {index !== 0 &&
                             dataCollectionView === null &&
-                            (dataCollectionPermissions.columnActions.update || columnPermissions.column.update) ? (
+                            (dataCollectionPermissions.columnActions.update || columnPermissions.column.update) &&
+                            appModel === null ? (
                                 <Box>
                                     <CreateColumn
                                         column={column}
@@ -140,7 +148,8 @@ const ColumnMenu = ({
                             ) : null}
                             {index !== 0 &&
                             dataCollectionView === null &&
-                            (dataCollectionPermissions.columnActions.delete || columnPermissions.column.delete) ? (
+                            (dataCollectionPermissions.columnActions.delete || columnPermissions.column.delete) &&
+                            appModel === null ? (
                                 <Box>
                                     <DeleteModal column={column} handleDeleteColumnClick={handleDeleteColumnClick} />
                                 </Box>

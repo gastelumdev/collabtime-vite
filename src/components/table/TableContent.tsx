@@ -29,6 +29,8 @@ interface IProps {
     hasCheckboxOptions?: boolean;
     dataCollectionView?: any;
     refetchRows?: any;
+    hideEmptyRows?: boolean;
+    appModel?: string | null;
 }
 
 const TableContent = ({
@@ -45,7 +47,7 @@ const TableContent = ({
     updateRow,
     handleDeleteBoxChange,
     // rowCallUpdate,
-    showDoneRows = false,
+    showDoneRows = true,
     allowed = false,
     columnToSortBy = null,
     directionToSortBy = 'Asc',
@@ -54,6 +56,7 @@ const TableContent = ({
     hasCheckboxOptions = true,
     dataCollectionView = null,
     refetchRows,
+    appModel = null,
 }: IProps) => {
     const ref = useRef<HTMLDivElement | null>(null);
     const [gridTemplateColumns, setGridTemplateColumns] = useState('');
@@ -62,16 +65,9 @@ const TableContent = ({
 
     useEffect(() => {
         view;
-        if (showDoneRows) {
-            setCurrentRows(rows);
-        } else {
-            setCurrentRows(
-                rows?.filter((row) => {
-                    return !row.complete;
-                })
-            );
-        }
-    }, [showDoneRows, rows]);
+        console.log(rows);
+        setCurrentRows(rows);
+    }, [rows]);
 
     useEffect(() => {
         if (columnToSortBy !== null) {
@@ -84,8 +80,6 @@ const TableContent = ({
 
                 return { ...row, sortKey: rowValue };
             });
-
-            console.log(rowsWithSortKey);
 
             if (directionToSortBy === 'Asc') {
                 rowsWithSortKey.sort((a: any, b: any) => {
@@ -145,7 +139,7 @@ const TableContent = ({
     };
 
     const handleSwap = () => {
-        console.log({ rowDragged: localStorage.getItem('rowDragged'), rowOver: localStorage.getItem('rowOver') });
+        // console.log({ rowDragged: localStorage.getItem('rowDragged'), rowOver: localStorage.getItem('rowOver') });
         const rowsCopy = [...rows];
         const rowDragged = Number(localStorage.getItem('rowDragged'));
         const rowOver = Number(localStorage.getItem('rowOver'));
@@ -213,11 +207,11 @@ const TableContent = ({
                     return 0;
                 });
 
-                console.log({ draggedRow, overRow, rowBeforeOver });
+                // console.log({ draggedRow, overRow, rowBeforeOver });
             } else {
                 let newDraggedRows: any = [];
 
-                console.log({ draggedRow, overRow, rowBeforeOver });
+                // console.log({ draggedRow, overRow, rowBeforeOver });
 
                 if ((draggedIsParent && overIsParent) || (draggedIsParent && overIsCommon)) {
                     const draggedRows = rowsCopy.filter((row) => {
@@ -255,7 +249,7 @@ const TableContent = ({
                     return 0;
                 });
 
-                console.log(orderedRows);
+                // console.log(orderedRows);
             }
 
             // setRows(orderedRows);
@@ -304,7 +298,7 @@ const TableContent = ({
                     return 0;
                 });
 
-                console.log({ draggedRow, overRow, rowAfterOver });
+                // console.log({ draggedRow, overRow, rowAfterOver });
 
                 // setRows(orderedRows);
                 // setCurrentRows(orderedRows);
@@ -315,7 +309,7 @@ const TableContent = ({
                     return row.parentRowId === overRow.parentRowId;
                 });
 
-                console.log(overRowSiblings);
+                // console.log(overRowSiblings);
 
                 if ((draggedIsParent && overIsCommon) || overRow._id === overRowSiblings[overRowSiblings.length - 1]._id) {
                     const draggedRows = rowsCopy.filter((row) => {
@@ -353,10 +347,10 @@ const TableContent = ({
                     return 0;
                 });
 
-                console.log(orderedRows);
+                // console.log(orderedRows);
             }
 
-            console.log({ draggedRow, overRow, rowAfterOver });
+            // console.log({ draggedRow, overRow, rowAfterOver });
 
             // setRows(orderedRows);
             // setCurrentRows(orderedRows);
@@ -385,6 +379,7 @@ const TableContent = ({
     const handleChange = (row: any) => {
         setCurrentRows((prev) => prev.map((prevRow) => (prevRow._id === row._id ? row : prevRow)));
         setRows((prev: any) => prev.map((prevRow: any) => (prevRow._id === row._id ? row : prevRow)));
+        console.log(row);
         handleUpdateRowNoRender(row);
         // if (dataCollectionView) {
         //     refetchRows();
@@ -434,33 +429,32 @@ const TableContent = ({
                 {(row, rowIndex) => {
                     return (
                         <Box key={row._id}>
-                            {!row.complete || showDoneRows ? (
-                                <div key={row._id} className="item">
-                                    <div key={row._id}>
-                                        <Row
-                                            row={row}
-                                            rowIndex={rowIndex}
-                                            columns={columns}
-                                            gridTemplateColumns={gridTemplateColumns}
-                                            // handleSetDraggedId={handleSetDraggedId}
-                                            // handleSetOverId={handleSetOverId}
-                                            handleSwap={handleSwap}
-                                            handleChange={handleChange}
-                                            deleteBoxIsChecked={row.checked}
-                                            handleDeleteBoxChange={handleDeleteBoxChangeForRow}
-                                            handleSubrowVisibility={handleSubrowVisibility}
-                                            // rowCallUpdate={rowCallUpdate}
-                                            allowed={allowed}
-                                            showDoneRows={showDoneRows}
-                                            isDraggable={rowsAreDraggable && columnToSortBy === null}
-                                            hasCheckboxOptions={hasCheckboxOptions}
-                                            dataCollectionView={dataCollectionView}
-                                            refetchRows={refetchRows}
-                                        />
-                                    </div>
-                                    <div></div>
+                            <div className="item">
+                                <div>
+                                    <Row
+                                        row={row}
+                                        rowIndex={rowIndex}
+                                        columns={columns}
+                                        gridTemplateColumns={gridTemplateColumns}
+                                        // handleSetDraggedId={handleSetDraggedId}
+                                        // handleSetOverId={handleSetOverId}
+                                        handleSwap={handleSwap}
+                                        handleChange={handleChange}
+                                        deleteBoxIsChecked={row.checked}
+                                        handleDeleteBoxChange={handleDeleteBoxChangeForRow}
+                                        handleSubrowVisibility={handleSubrowVisibility}
+                                        // rowCallUpdate={rowCallUpdate}
+                                        allowed={allowed}
+                                        showDoneRows={showDoneRows}
+                                        isDraggable={rowsAreDraggable && columnToSortBy === null}
+                                        hasCheckboxOptions={hasCheckboxOptions}
+                                        dataCollectionView={dataCollectionView}
+                                        refetchRows={refetchRows}
+                                        appModel={appModel}
+                                    />
                                 </div>
-                            ) : null}
+                                <div></div>
+                            </div>
                         </Box>
                     );
                 }}

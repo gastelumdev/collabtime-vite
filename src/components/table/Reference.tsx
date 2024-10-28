@@ -57,7 +57,7 @@ const Reference = ({
         let rowKey;
 
         columns?.map((col: any) => {
-            console.log({ colName: col.name, column: column.dataCollectionRefLabel });
+            console.log({ colName: col.name, refLabel: column.dataCollectionRefLabel });
             if (col.name === column.dataCollectionRefLabel) {
                 rowKey = col.name;
             }
@@ -130,9 +130,11 @@ const Reference = ({
                                         ? `Choose ${dataCollection?.name}`
                                         : rows.map((row: any, index: number) => {
                                               //   console.log(row.values[rowKey]);
-                                              console.log(
-                                                  row.values[rowKey] !== undefined ? `${row.values[rowKey]}${index === rows.length - 1 ? '' : ','} ` : null
-                                              );
+                                              //   console.log(
+                                              //       row.values[rowKey] !== undefined ? `${row.values[rowKey]}${index === rows.length - 1 ? '' : ','} ` : null
+                                              //   );
+                                              console.log(rowKey);
+                                              console.log(row.values);
 
                                               if (row.values[rowKey] === undefined) return null;
                                               return index === rows.length - 1 ? row.values[rowKey] : `${row.values[rowKey]}, `;

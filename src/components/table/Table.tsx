@@ -40,6 +40,8 @@ interface ITableProps {
     hasCreateColumn?: boolean;
     dataCollectionView?: any;
     refetchRows?: any;
+    hideEmptyRows?: boolean;
+    appModel?: string | null;
 }
 
 const Table = ({
@@ -54,7 +56,7 @@ const Table = ({
     deleteRow,
     reorderColumns,
     columnsAreFetching = false,
-    showDoneRows = false,
+    showDoneRows = true,
     allowed = false,
     refetch,
     isFetching = true,
@@ -67,6 +69,8 @@ const Table = ({
     hasCreateColumn = true,
     dataCollectionView = null,
     refetchRows,
+    hideEmptyRows = false,
+    appModel = null,
 }: ITableProps) => {
     const dispatch = useAppDispatch();
     const { dataCollectionId } = useParams();
@@ -114,20 +118,31 @@ const Table = ({
                 refetchUserGroups();
             }
         } else {
+            let firstRow = null;
+            let dcId = '';
+            if (rowsData !== undefined && rowsData.length > 0) {
+                firstRow = rowsData?.find(() => {
+                    return true;
+                });
+            }
+
+            if (firstRow !== null) {
+                dcId = firstRow.dataCollection;
+            }
+
             const dataCollectionPermissions = userGroup.permissions.dataCollections.find((item: any) => {
-                return item.dataCollection === dataCollectionId;
+                return item.dataCollection === dataCollectionId || item.dataCollection === dcId || item.dataCollection === appModel;
             });
 
             if (dataCollectionPermissions !== undefined) {
                 setDataCollectionPermissions(dataCollectionPermissions.permissions);
             } else {
-                refetchUserGroups();
+                // refetchUserGroups();
             }
         }
     }, [userGroups]);
 
     useEffect(() => {
-        // console.log(rowsData);
         // setRows(
         //     rowsData?.map((row) => {
         //         return { ...row, checked: false, subRowsAreOpen: false };
@@ -192,8 +207,7 @@ const Table = ({
                 const newRows: any = await updateRow(row);
                 // If it's the last row, add the new blank rows to the current rows
                 // setRows((prev: any) => prev.map((prevRow: any) => (prevRow._id === row._id ? row : prevRow)));
-                console.log({ newRows });
-                if (newRows.data.length > 0) {
+                if (newRows.data && newRows.data.length > 0) {
                     setRows((prev: any) => {
                         return [...prev, ...newRows.data];
                     });
@@ -297,7 +311,6 @@ const Table = ({
 
                 if (refs !== undefined) {
                     // delete refs[column.name];
-                    console.log({ refs, columnName: column.name });
 
                     const refsKeys = Object.keys(refs);
 
@@ -309,8 +322,6 @@ const Table = ({
                     }
                 }
 
-                console.log({ newRefs });
-
                 return { ...row, refs: newRefs };
             })
         );
@@ -318,7 +329,6 @@ const Table = ({
 
     const handleSetColumns = useCallback(
         (column: any) => {
-            console.log(column);
             setColumns((prev) => [...prev, column]);
             // createColumn(column);
         },
@@ -516,7 +526,7 @@ const Table = ({
     };
 
     return (
-        <div id={'data-collection-table'} className={view ? 'table-view' : 'table'} style={{ position: 'relative' }}>
+        <div id={'data-collection-table'} className={view || appModel ? 'table-view' : 'table'} style={{ position: 'relative' }}>
             {checkedRowIds.length > 0 ? (
                 <Box
                     position={'absolute'}
@@ -604,6 +614,7 @@ const Table = ({
                 columnsAreDraggable={columnsAreDraggable}
                 hasCreateColumn={hasCreateColumn}
                 dataCollectionView={dataCollectionView}
+                appModel={appModel}
             />
             <TableContent
                 rows={rows || []}
@@ -629,6 +640,8 @@ const Table = ({
                 hasCheckboxOptions={hasCheckboxOptions}
                 dataCollectionView={dataCollectionView}
                 refetchRows={refetchRows}
+                hideEmptyRows={hideEmptyRows}
+                appModel={appModel}
             />
             {/* <Box w={'100%'} h={'30px'}>
                 <Text ml={'10px'}>Add row</Text>

@@ -2,19 +2,12 @@ import {
     Box,
     Button,
     // ChakraProvider,
-    Drawer,
-    DrawerBody,
-    DrawerCloseButton,
-    DrawerContent,
-    DrawerFooter,
-    DrawerHeader,
-    DrawerOverlay,
     Input,
     // Text,
     Textarea,
-    useDisclosure,
 } from '@chakra-ui/react';
 import { memo, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 // import { useGetDataCollectionViewsByRowIdQuery, useGetUserGroupsQuery } from '../../app/services/api';
 // import View from '../dataCollectionViews/View';
 // import { emptyPermissions } from '../workspaces/UserGroups';
@@ -43,6 +36,7 @@ interface ITextInputProps {
 const TextInput = ({ id, columnName, value, type = 'tableCell', onChange, allowed = false, isTextarea = true, isCustomLink = false }: ITextInputProps) => {
     const [active, setActive] = useState<boolean>(false);
     const [val, setVal] = useState<string>(value);
+    const navigate = useNavigate();
 
     useEffect(() => {
         setVal(value);
@@ -69,7 +63,12 @@ const TextInput = ({ id, columnName, value, type = 'tableCell', onChange, allowe
                 <Box
                     w={'100%'}
                     // p={val ? '0px' : type === 'tableCell' ? '14px' : '0px'}
-                    onClick={() => setActive(!active)}
+                    onClick={() => {
+                        console.log({ allowed });
+                        if (!isCustomLink) {
+                            setActive(!active);
+                        }
+                    }}
                     // px={type === 'tableCell' ? '20px' : '0px'}
                     // p={'2px'}
                     overflow={'hidden'}
@@ -89,13 +88,36 @@ const TextInput = ({ id, columnName, value, type = 'tableCell', onChange, allowe
                             w={'100%'}
                             h={'29px'}
                             textAlign={'left'}
-                            cursor={'default'}
+                            cursor={'text'}
                             size={'xs'}
                         >
                             {val}
                         </Button>
                     ) : (
-                        <ProjectManagerApp val={val} type={type} rowId={id} />
+                        // <ProjectManagerApp val={val} type={type} rowId={id} />
+                        <Button
+                            variant={'unstyled'}
+                            border={type === 'tableCell' ? 'none' : '1px solid #edf2f7'}
+                            borderRadius={'none'}
+                            fontSize={'12px'}
+                            fontWeight={'normal'}
+                            padding={0}
+                            // pl={type === 'tableCell' ? '0px' : '12px'}
+                            pl={'12px'}
+                            overflow={'hidden'}
+                            textOverflow={'ellipsis'}
+                            w={'100%'}
+                            h={'29px'}
+                            textAlign={'left'}
+                            cursor={'pointer'}
+                            size={'xs'}
+                            onClick={() => {
+                                console.log('Link clicked');
+                                navigate(`/workspaces/${localStorage.getItem('workspaceId')}/viewRow/${id}`);
+                            }}
+                        >
+                            {val}
+                        </Button>
                     )}
                 </Box>
             ) : (
@@ -144,72 +166,72 @@ const TextInput = ({ id, columnName, value, type = 'tableCell', onChange, allowe
     );
 };
 
-const ProjectManagerApp = ({ rowId, val, type }: { rowId: string; val: string; type: string }) => {
-    const { isOpen, onOpen, onClose } = useDisclosure();
-    // const { data: dataCollectionViews } = useGetDataCollectionViewsByRowIdQuery(rowId);
-    // const { data: userGroups, refetch: refetchUserGroups } = useGetUserGroupsQuery(null);
-    // const [userGroup, setUserGroup] = useState({ name: '', workspace: '', permissions: emptyPermissions });
+// const ProjectManagerApp = ({ rowId, val, type }: { rowId: string; val: string; type: string }) => {
+//     const { isOpen, onOpen, onClose } = useDisclosure();
+//     // const { data: dataCollectionViews } = useGetDataCollectionViewsByRowIdQuery(rowId);
+//     // const { data: userGroups, refetch: refetchUserGroups } = useGetUserGroupsQuery(null);
+//     // const [userGroup, setUserGroup] = useState({ name: '', workspace: '', permissions: emptyPermissions });
 
-    // useEffect(() => {
-    //     if (userGroups !== undefined) {
-    //         const ug = userGroups?.find((item: any) => {
-    //             return item.users.includes(localStorage.getItem('userId'));
-    //         });
+//     // useEffect(() => {
+//     //     if (userGroups !== undefined) {
+//     //         const ug = userGroups?.find((item: any) => {
+//     //             return item.users.includes(localStorage.getItem('userId'));
+//     //         });
 
-    //         console.log(ug);
+//     //         console.log(ug);
 
-    //         setUserGroup(ug);
-    //     } else {
-    //         refetchUserGroups();
-    //     }
-    // }, [userGroups]);
-    return (
-        <div>
-            <Button
-                variant={'unstyled'}
-                border={type === 'tableCell' ? 'none' : '1px solid #edf2f7'}
-                borderRadius={'none'}
-                fontSize={'12px'}
-                fontWeight={'normal'}
-                padding={0}
-                // pl={type === 'tableCell' ? '0px' : '12px'}
-                pl={'12px'}
-                overflow={'hidden'}
-                textOverflow={'ellipsis'}
-                w={'100%'}
-                h={'29px'}
-                textAlign={'left'}
-                cursor={'pointer'}
-                size={'xs'}
-                onClick={onOpen}
-            >
-                {val}
-            </Button>
-            <Drawer isOpen={isOpen} placement="right" onClose={onClose} size={'sm'}>
-                <DrawerOverlay />
-                <DrawerContent>
-                    <DrawerCloseButton />
-                    <DrawerHeader>{val}</DrawerHeader>
+//     //         setUserGroup(ug);
+//     //     } else {
+//     //         refetchUserGroups();
+//     //     }
+//     // }, [userGroups]);
+//     return (
+//         <div>
+//             <Button
+//                 variant={'unstyled'}
+//                 border={type === 'tableCell' ? 'none' : '1px solid #edf2f7'}
+//                 borderRadius={'none'}
+//                 fontSize={'12px'}
+//                 fontWeight={'normal'}
+//                 padding={0}
+//                 // pl={type === 'tableCell' ? '0px' : '12px'}
+//                 pl={'12px'}
+//                 overflow={'hidden'}
+//                 textOverflow={'ellipsis'}
+//                 w={'100%'}
+//                 h={'29px'}
+//                 textAlign={'left'}
+//                 cursor={'pointer'}
+//                 size={'xs'}
+//                 onClick={onOpen}
+//             >
+//                 {val}
+//             </Button>
+//             <Drawer isOpen={isOpen} placement="right" onClose={onClose} size={'sm'}>
+//                 <DrawerOverlay />
+//                 <DrawerContent>
+//                     <DrawerCloseButton />
+//                     <DrawerHeader>{val}</DrawerHeader>
 
-                    <DrawerBody>
-                        {/* {dataCollectionViews !== undefined
-                            ? dataCollectionViews.map((dcView: any) => {
-                                  return <View key={dcView.name} dataCollectionView={dcView} userGroup={userGroup} refetchUserGroup={refetchUserGroups} />;
-                              })
-                            : null} */}
-                        {rowId}
-                    </DrawerBody>
+//                     <DrawerBody>
+//                         {dataCollectionViews !== undefined
+//                             ? dataCollectionViews.map((dcView: any) => {
+//                                   return <View key={dcView.name} dataCollectionView={dcView} userGroup={userGroup} refetchUserGroup={refetchUserGroups} />;
+//                               })
+//                             : null}
+//                         {rowId}
+//                     </DrawerBody>
 
-                    <DrawerFooter>
-                        <Button variant="outline" mr={3} onClick={onClose}>
-                            Cancel
-                        </Button>
-                        <Button colorScheme="blue">Save</Button>
-                    </DrawerFooter>
-                </DrawerContent>
-            </Drawer>
-        </div>
-    );
-};
+//                     <DrawerFooter>
+//                         <Button variant="outline" mr={3} onClick={onClose}>
+//                             Cancel
+//                         </Button>
+//                         <Button colorScheme="blue">Save</Button>
+//                     </DrawerFooter>
+//                 </DrawerContent>
+//             </Drawer>
+//         </div>
+//     );
+// };
 
 export default memo(TextInput);

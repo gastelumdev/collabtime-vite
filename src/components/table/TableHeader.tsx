@@ -34,6 +34,7 @@ interface IProps {
     columnsAreDraggable?: boolean;
     hasCreateColumn?: boolean;
     dataCollectionView?: any;
+    appModel?: string | null;
 }
 
 const TableHeader = ({
@@ -60,6 +61,7 @@ const TableHeader = ({
     columnsAreDraggable = true,
     hasCreateColumn = true,
     dataCollectionView = null,
+    appModel = null,
 }: IProps) => {
     const [currentColumns, setCurrentColumns] = useState(columns);
     // ******************* COLUMN REORDERING ******************************
@@ -186,12 +188,23 @@ const TableHeader = ({
                     refetchUserGroups();
                 }
             } else {
+                let firstColumn = null;
+                let dcId = '';
+
+                if (columns.length > 0) {
+                    firstColumn = columns.find(() => {
+                        return true;
+                    });
+                }
+
+                if (firstColumn !== null) {
+                    dcId = firstColumn.dataCollection;
+                }
                 const dataCollectionPermissions = userGroup.permissions.dataCollections.find((item: any) => {
-                    return item.dataCollection === dataCollectionId;
+                    return item.dataCollection === dataCollectionId || item.dataCollection === dcId;
                 });
 
                 if (dataCollectionPermissions !== undefined) {
-                    console.log(dataCollectionPermissions);
                     setDataCollectionPermissions(dataCollectionPermissions.permissions);
                 } else {
                     refetchUserGroups();
@@ -360,6 +373,8 @@ const TableHeader = ({
                         return item.name === column.name;
                     });
 
+                    // console.log(columnsPermissions);
+
                     if (!columnsPermissions?.permissions.column.view) {
                         return null;
                     }
@@ -371,7 +386,7 @@ const TableHeader = ({
                             style={{
                                 height: '39px',
                                 padding: '0px 20px',
-                                cursor: columnIndex !== 0 && columnsAreDraggable && allowed ? 'grab' : 'default',
+                                cursor: columnIndex !== 0 && columnsAreDraggable && appModel === null ? 'grab' : 'default',
                                 zIndex: `${100 - columnIndex}`,
                                 backgroundColor: draggedColumnIndex === columnIndex ? '#edf2f7' : 'unset',
                                 borderLeft:
@@ -398,15 +413,15 @@ const TableHeader = ({
                                         overflow: 'hidden',
                                         whiteSpace: 'nowrap',
                                         textOverflow: 'ellipsis',
-                                        cursor: !allowed && columnsAreDraggable ? 'default' : 'grab',
+                                        cursor: columnsAreDraggable && appModel !== null ? 'default' : 'grab',
                                     }}
-                                    draggable={columnIndex !== 0 && columnsAreDraggable && allowed}
+                                    draggable={columnIndex !== 0 && columnsAreDraggable && allowed && appModel === null}
                                     onDragStart={() => handleDragStart(columnIndex)}
                                     onDragOver={(event) => handleDragOver(event, columnIndex)}
                                     onDragEnd={() => handleDragEnd()}
                                     onDrop={(event) => handleDrop(event, columnIndex)}
                                     onDragLeave={() => handleDragLeave(columnIndex)}
-                                    onClick={() => console.log('HEADER CLICKED')}
+                                    // onClick={() => console.log('HEADER CLICKED')}
                                 >
                                     {/* {dataCollectionPermissions.columnActions.update || dataCollectionPermissions.columnActions.delete ? (
                                         <ColumnMenu
@@ -436,6 +451,7 @@ const TableHeader = ({
                                         handleSortByColumnDes={handleSortByColumnDes}
                                         dataCollectionView={dataCollectionView}
                                         dataCollectionPermissions={dataCollectionPermissions}
+                                        appModel={appModel}
                                     />
                                 </div>
                             ) : (
@@ -485,6 +501,7 @@ const TableHeader = ({
                                         handleSortByColumnDes={handleSortByColumnDes}
                                         dataCollectionView={dataCollectionView}
                                         dataCollectionPermissions={dataCollectionPermissions}
+                                        appModel={appModel}
                                     />
                                 </div>
                             )}
@@ -511,7 +528,7 @@ const TableHeader = ({
                         padding: '0px 20px',
                     }}
                 >
-                    {hasCreateColumn && dataCollectionPermissions.columnActions.create ? (
+                    {hasCreateColumn && dataCollectionPermissions.columnActions.create && appModel == null ? (
                         <CreateColumn
                             columns={columns}
                             createColumn={createColumn}

@@ -242,6 +242,10 @@ const ViewList = ({}: { allowed?: boolean }) => {
                                                                         if (!dataCollectionPermissions?.permissions.dataCollection.view) {
                                                                             return null;
                                                                         }
+
+                                                                        if (!dataCollection.main) {
+                                                                            return null;
+                                                                        }
                                                                         return (
                                                                             <Tr key={index}>
                                                                                 {userGroup.permissions.dataCollectionActions.update ||

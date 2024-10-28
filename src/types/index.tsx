@@ -82,6 +82,13 @@ export type TDataCollection = {
     formRecipients?: { sent: true; email: string }[];
     autoIncremented?: boolean;
     autoIncrementPrefix?: string;
+    belongsToAppModel?: boolean;
+    main?: boolean;
+    appModel?: string | null;
+    inParentToDisplay?: string | null;
+    filters?: any;
+    appType?: string | null;
+    userGroupAccess?: string[];
 };
 
 export type TColumn = {

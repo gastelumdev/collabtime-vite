@@ -374,7 +374,7 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
 
 export default Create;
 
-const FilterModal = ({
+export const FilterModal = ({
     column,
     onChange,
     filterValues = [],
@@ -507,6 +507,7 @@ const FilterModal = ({
                                 /> */}
                                 <Spacer />
                                 <PrimaryButton
+                                    isDisabled={userCheck}
                                     onClick={() => {
                                         const newValues = [...values, value];
                                         setValues(newValues);

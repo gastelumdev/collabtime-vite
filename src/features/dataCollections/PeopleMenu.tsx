@@ -54,13 +54,13 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
         });
 
         // const v: any = value;
-        const firstItem: any = values[0] !== undefined ? values[0].name : '';
+        const firstItem: any = values !== null && values[0] !== undefined ? values[0].name : '';
 
         // const splitValue = v[0].split(' - ');
         // splitValue.pop();
         // const label = splitValue.join(' ');
 
-        setLabelValue(values.length > 0 ? (values as any)[0] : '');
+        setLabelValue(values && values.length > 0 ? (values as any)[0] : '');
         setLabelLabel(firstItem);
         setLabels(values);
         setLabelColor('#ffffff');

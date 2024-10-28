@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Input, Text, useDisclosure, Flex, Spacer } from '@chakra-ui/react';
+import { Button, Input, Text, useDisclosure, Flex, Spacer, Card, CardBody, Box, Checkbox, Stack } from '@chakra-ui/react';
 import { TDataCollection } from '../../types';
 import { AiOutlineEdit } from 'react-icons/ai';
 import PrimaryDrawer from '../../components/PrimaryDrawer';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
-import { useGetDataCollectionsQuery } from '../../app/services/api';
+import { useGetColumnsQuery, useGetDataCollectionsQuery, useGetUserGroupsQuery } from '../../app/services/api';
+import { FilterModal } from '../dataCollectionViews/Create';
 
 interface IProps {
     dataCollection: TDataCollection;
@@ -18,12 +19,21 @@ const Edit = ({ dataCollection, updateDataCollection }: IProps) => {
     const [inputError, setInputError] = useState<boolean>(false);
     const [isError, setIsError] = useState(false);
 
+    const { data: columns } = useGetColumnsQuery(dataCollection._id as string);
+    const [userGroupAccess, setUserGroupAccess] = useState(dataCollection.userGroupAccess as []);
+
+    const { data: userGroups } = useGetUserGroupsQuery(null);
+
     useEffect(() => {
         setData(dataCollection);
+        if (dataCollection.userGroupAccess !== undefined) {
+            setUserGroupAccess(dataCollection.userGroupAccess as []);
+        }
     }, [dataCollection]);
 
     const editData = async () => {
-        updateDataCollection(data);
+        console.log(data);
+        updateDataCollection({ ...data, userGroupAccess });
         onClose();
     };
 
@@ -36,12 +46,15 @@ const Edit = ({ dataCollection, updateDataCollection }: IProps) => {
         }
 
         const dataCollectionNames = dataCollections?.map((dc) => {
+            if (!dc.main) return null;
             if (dataCollection.name !== dc.name) {
                 return dc.name;
             } else {
                 return null;
             }
         });
+
+        console.log(dataCollectionNames);
 
         if (dataCollectionNames?.includes(value)) {
             setIsError(true);
@@ -81,6 +94,77 @@ const Edit = ({ dataCollection, updateDataCollection }: IProps) => {
                     onChange={handleChange}
                     style={{ marginBottom: '15px' }}
                 />
+                {dataCollection.inParentToDisplay ? (
+                    <>
+                        <Text>User Groups with full access</Text>
+                        <Box my={'10px'} mb={'20px'}>
+                            <Stack>
+                                {userGroups.map((ug: any) => {
+                                    return (
+                                        <Checkbox
+                                            key={ug.name}
+                                            isChecked={userGroupAccess.includes(ug.name as never)}
+                                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                if (event.target.checked) {
+                                                    setUserGroupAccess((prev) => {
+                                                        return [...prev, ug.name] as any;
+                                                    });
+                                                    console.log(userGroupAccess);
+                                                } else {
+                                                    const filteredUserGroupAccess: any = userGroupAccess.filter((item: any) => {
+                                                        return item !== ug.name;
+                                                    });
+                                                    setUserGroupAccess(filteredUserGroupAccess);
+                                                    console.log(userGroupAccess);
+                                                }
+                                            }}
+                                        >
+                                            {ug.name}
+                                        </Checkbox>
+                                    );
+                                })}
+                            </Stack>
+                        </Box>
+                        <Text>Filters</Text>
+                        {columns?.map((col: any) => {
+                            return (
+                                <Card key={col.name} mb={'5px'}>
+                                    <CardBody>
+                                        <Flex>
+                                            <Text>{`${col?.name[0].toUpperCase()}${col?.name.slice(1, col?.name.length).split('_').join(' ')}`}</Text>
+                                            <Text ml={'20px'} fontSize={'10px'} mt={'6px'}>
+                                                {data.filters && Object.keys(data.filters).includes(col.name)
+                                                    ? `Filter by: ${data.filters[col.name].includes('__user__') ? 'User' : data.filters[col.name]}`
+                                                    : ''}
+                                            </Text>
+                                            <Spacer />
+                                            <FilterModal
+                                                column={col}
+                                                onChange={(newValues: any) => {
+                                                    setData({
+                                                        ...data,
+                                                        filters: {
+                                                            ...data.filters,
+                                                            [col.name]: newValues,
+                                                        },
+                                                    });
+                                                }}
+                                                filterValues={data.filters ? data?.filters[col.name] : []}
+                                                handleRemoveFilter={(columnName: string) => {
+                                                    let filters = data.filters;
+                                                    if (filters[columnName] !== undefined) {
+                                                        filters = Object.fromEntries(Object.entries(filters).filter(([key]) => key !== columnName));
+                                                        setData({ ...data, filters: filters });
+                                                    }
+                                                }}
+                                            />
+                                        </Flex>
+                                    </CardBody>
+                                </Card>
+                            );
+                        })}
+                    </>
+                ) : null}
                 <Flex mt={'10px'} width={'full'}>
                     <Spacer />
                     <PrimaryButton onClick={editData} isDisabled={inputError || isError}>

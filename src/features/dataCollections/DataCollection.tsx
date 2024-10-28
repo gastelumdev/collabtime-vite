@@ -17,7 +17,7 @@ import Table from '../../components/table/Table';
 import { TColumn } from '../../types';
 
 const DataCollection = ({
-    showDoneRows = false,
+    showDoneRows = true,
     rowsProp,
     dataCollectionView = null,
     rowsAreDraggable = true,
@@ -26,6 +26,9 @@ const DataCollection = ({
     columnsAreDraggable = true,
     hasCreateColumn = true,
     refetchRows,
+    hideEmptyRows = false,
+    dcId = null,
+    appModel = null,
 }: // userGroup,
 {
     showDoneRows?: boolean;
@@ -37,13 +40,16 @@ const DataCollection = ({
     columnsAreDraggable?: boolean;
     hasCreateColumn?: boolean;
     refetchRows?: any;
+    hideEmptyRows?: boolean;
+    dcId?: string | null;
+    appModel?: string | null;
     // userGroup?: any;
 }) => {
     const { dataCollectionId } = useParams();
 
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
 
-    const { data: columns, isFetching: columnsAreFetching } = useGetColumnsQuery(dataCollectionId || '');
+    const { data: columns, isFetching: columnsAreFetching } = useGetColumnsQuery(dataCollectionId || appModel || '');
     const [updateColumn] = useUpdateColumnMutation();
     const [reorderColumns] = useReorderColumnsMutation();
 
@@ -57,7 +63,7 @@ const DataCollection = ({
         refetch,
         isFetching,
         isLoading,
-    } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
+    } = useGetRowsQuery({ dataCollectionId: dataCollectionId || dcId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
     // const [updateRow] = useUpdateRowMutation();
     const [permissions, setPermissions] = useState<number>();
     const [windowWidthOffset, setWindowWidthOffset] = useState(window.innerWidth > 990 ? 265 : 7);
@@ -75,12 +81,13 @@ const DataCollection = ({
     // }, []);
 
     // useEffect(() => {
+    //     console.log(appModel);
     //     console.log(columns);
-    // }, columns);
+    // }, [columns]);
 
-    useEffect(() => {
-        refetch();
-    }, [showDoneRows]);
+    // useEffect(() => {
+    //     refetch();
+    // }, [showDoneRows]);
 
     useEffect(() => {
         refetch();
@@ -147,6 +154,8 @@ const DataCollection = ({
                 columnsAreDraggable={columnsAreDraggable}
                 dataCollectionView={dataCollectionView}
                 refetchRows={refetchRows}
+                hideEmptyRows={hideEmptyRows}
+                appModel={appModel}
             />
         </Box>
     );
