@@ -84,7 +84,7 @@ const Row = ({
 
     const [deleteCheckboxIsChecked, setDeleteCheckboxIsChecked] = useState(deleteBoxIsChecked);
 
-    const [showRow, setShowRow] = useState(true);
+    const [showRow, _setShowRow] = useState(true);
 
     const { data: userGroups, refetch: refetchUserGroups } = useGetUserGroupsQuery(null);
     const [dataCollectionPermissions, setDataCollectionPermissions] = useState<any>(emptyDataCollectionPermissions);
