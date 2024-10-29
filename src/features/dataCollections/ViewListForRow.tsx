@@ -185,6 +185,7 @@ const ViewListForRow = ({}: { allowed?: boolean }) => {
                                                                   }
                                                                   return dataCollection !== null && viewDC ? (
                                                                       <Box mt={index === 0 ? '0' : '40px'} key={dataCollection.name}>
+                                                                          <Text fontSize={'xl'}>{`${dataCollection.name} ${dataCollection.appType}`}</Text>
                                                                           <OneDataCollection
                                                                               dataCollection={dataCollection}
                                                                               dataCollectionId={dataCollection._id as string}

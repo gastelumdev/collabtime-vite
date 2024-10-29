@@ -422,15 +422,20 @@ const Row = ({
                                     // });
 
                                     let editable = false;
-
+                                    console.log({ columnName: column.name });
+                                    console.log({ ableToUpdate: columnsPermissions?.permissions.column.update, appModel });
+                                    console.log({ primaryColumn: column.primary });
                                     if (columnsPermissions?.permissions.column.update && appModel === null) {
+                                        console.log('Able to update due to permissions and because its an app');
                                         editable = true;
                                     } else if (appModel !== null && (column.primary === undefined || !column.primary)) {
+                                        console.log('Able to update due to it being an app and it not being a primary column');
                                         editable = true;
                                     }
                                     if (column.autoIncremented) {
                                         editable = false;
                                     }
+                                    console.log({ editable, autoInc: column.autoIncremented });
                                     // console.log({
                                     //     columnName: column.name,
                                     //     columnIsPrimary: column.primary,
@@ -489,7 +494,7 @@ const Row = ({
                                                     columnName={column.name}
                                                     value={row.values !== undefined ? row.values[column.name] : null}
                                                     onChange={onChange}
-                                                    allowed={editable || !column.autoIncremented}
+                                                    allowed={editable || (column.autoIncremented !== undefined && !column.autoIncremented)}
                                                     isCustomLink={column.primary !== undefined ? column.primary && dataCollectionView : false}
                                                 />
                                             )}

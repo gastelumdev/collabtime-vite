@@ -15,7 +15,6 @@ import {
     ModalBody,
     ModalCloseButton,
     ModalContent,
-    ModalFooter,
     ModalHeader,
     ModalOverlay,
     Select,
@@ -457,10 +456,12 @@ export const FilterModal = ({
                                         value={value}
                                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                                             setValue(event.target.value);
+                                            console.log(value);
                                         }}
                                         mr={'6px'}
                                     />
                                     <PrimaryButton
+                                        isDisabled={!value || userCheck}
                                         onClick={() => {
                                             const newValues = [...values, value];
                                             setValues(newValues);
@@ -507,7 +508,7 @@ export const FilterModal = ({
                                 /> */}
                                 <Spacer />
                                 <PrimaryButton
-                                    isDisabled={userCheck}
+                                    isDisabled={!value || userCheck}
                                     onClick={() => {
                                         const newValues = [...values, value];
                                         setValues(newValues);
@@ -520,21 +521,6 @@ export const FilterModal = ({
                             </Flex>
                         )}
                     </ModalBody>
-
-                    <ModalFooter>
-                        {/* {filterValues.length > 0 ? (
-                            <Button
-                                mr={'5px'}
-                                onClick={() => {
-                                    handleRemoveFilter(column.name);
-                                    onClose();
-                                }}
-                            >
-                                Remove Filter
-                            </Button>
-                        ) : null} */}
-                        {/* <PrimaryButton onClick={onClose}>Save</PrimaryButton> */}
-                    </ModalFooter>
                 </ModalContent>
             </Modal>
         </>

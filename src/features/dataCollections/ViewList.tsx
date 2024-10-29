@@ -173,11 +173,61 @@ const ViewList = ({}: { allowed?: boolean }) => {
                             {userGroup.permissions.dataCollectionActions.view || userGroup.permissions.viewActions.view ? (
                                 <Tabs>
                                     <TabList>
-                                        {userGroup.permissions.dataCollectionActions.view ? <Tab>Data Collections</Tab> : null}
                                         {userGroup.permissions.viewActions.view ? <Tab>Dashboard</Tab> : null}
+                                        {userGroup.permissions.dataCollectionActions.view ? <Tab>Data Collections</Tab> : null}
                                     </TabList>
 
                                     <TabPanels>
+                                        {userGroup.permissions.viewActions.view ? (
+                                            <TabPanel>
+                                                <Box mt={3}>
+                                                    <Flex mb={'10px'}>
+                                                        {/* <Box>
+                                                    <Text fontSize={'20px'}>Views</Text>
+                                                </Box> */}
+                                                        <Spacer />
+                                                        <Box>
+                                                            {userGroup.permissions.viewActions.create ? (
+                                                                <CreateDataCollectionView dataCollections={data!} />
+                                                            ) : null}
+                                                        </Box>
+                                                    </Flex>
+                                                    {dataCollectionViews?.length < 1 ? (
+                                                        <Center>
+                                                            <Text>{'There are currently no views in your dashboard.'}</Text>
+                                                        </Center>
+                                                    ) : null}
+                                                </Box>
+                                                <Box>
+                                                    {userGroup.permissions.viewActions.view
+                                                        ? dataCollectionViews?.map((dcView: any) => {
+                                                              console.log(dcView);
+                                                              console.log(userGroups);
+                                                              console.log(userGroup.permissions.viewActions.view);
+
+                                                              const viewPermissions: any = userGroup.permissions.views.find((item: any) => {
+                                                                  return item.view === dcView._id;
+                                                              });
+
+                                                              if (viewPermissions !== undefined) {
+                                                                  if (!viewPermissions.permissions.view.view) {
+                                                                      return null;
+                                                                  }
+                                                              }
+
+                                                              return (
+                                                                  <View
+                                                                      key={dcView.name}
+                                                                      dataCollectionView={dcView}
+                                                                      userGroup={userGroup}
+                                                                      refetchUserGroup={refetchUserGroups}
+                                                                  />
+                                                              );
+                                                          })
+                                                        : null}
+                                                </Box>
+                                            </TabPanel>
+                                        ) : null}
                                         {userGroup.permissions.dataCollectionActions.view ? (
                                             <TabPanel>
                                                 <Box mt={3}>
@@ -342,56 +392,6 @@ const ViewList = ({}: { allowed?: boolean }) => {
                                                             </Center>
                                                         </Box>
                                                     )}
-                                                </Box>
-                                            </TabPanel>
-                                        ) : null}
-                                        {userGroup.permissions.viewActions.view ? (
-                                            <TabPanel>
-                                                <Box mt={3}>
-                                                    <Flex mb={'10px'}>
-                                                        {/* <Box>
-                                                    <Text fontSize={'20px'}>Views</Text>
-                                                </Box> */}
-                                                        <Spacer />
-                                                        <Box>
-                                                            {userGroup.permissions.viewActions.create ? (
-                                                                <CreateDataCollectionView dataCollections={data!} />
-                                                            ) : null}
-                                                        </Box>
-                                                    </Flex>
-                                                    {dataCollectionViews?.length < 1 ? (
-                                                        <Center>
-                                                            <Text>{'There are currently no views in your dashboard.'}</Text>
-                                                        </Center>
-                                                    ) : null}
-                                                </Box>
-                                                <Box>
-                                                    {userGroup.permissions.viewActions.view
-                                                        ? dataCollectionViews?.map((dcView: any) => {
-                                                              console.log(dcView);
-                                                              console.log(userGroups);
-                                                              console.log(userGroup.permissions.viewActions.view);
-
-                                                              const viewPermissions: any = userGroup.permissions.views.find((item: any) => {
-                                                                  return item.view === dcView._id;
-                                                              });
-
-                                                              if (viewPermissions !== undefined) {
-                                                                  if (!viewPermissions.permissions.view.view) {
-                                                                      return null;
-                                                                  }
-                                                              }
-
-                                                              return (
-                                                                  <View
-                                                                      key={dcView.name}
-                                                                      dataCollectionView={dcView}
-                                                                      userGroup={userGroup}
-                                                                      refetchUserGroup={refetchUserGroups}
-                                                                  />
-                                                              );
-                                                          })
-                                                        : null}
                                                 </Box>
                                             </TabPanel>
                                         ) : null}
