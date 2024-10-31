@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Input, Text, useDisclosure, Flex, Spacer, Card, CardBody, Box, Checkbox, Stack } from '@chakra-ui/react';
+import { Input, Text, useDisclosure, Flex, Spacer, Card, CardBody, Box, Checkbox, Stack } from '@chakra-ui/react';
 import { TDataCollection } from '../../types';
-import { AiOutlineEdit } from 'react-icons/ai';
 import PrimaryDrawer from '../../components/PrimaryDrawer';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
 import { useGetColumnsQuery, useGetDataCollectionsQuery, useGetUserGroupsQuery } from '../../app/services/api';
 import { FilterModal } from '../dataCollectionViews/Create';
+import { GoPencil } from 'react-icons/go';
 
 interface IProps {
     dataCollection: TDataCollection;
@@ -77,7 +77,12 @@ const Edit = ({ dataCollection, updateDataCollection }: IProps) => {
 
     return (
         <>
-            <Button flex="1" variant="unstyled" h={'10px'} w={'5px'} leftIcon={<AiOutlineEdit />} color={'#b3b8cf'} onClick={onOpen} zIndex={10}></Button>
+            {/* <Button flex="1" variant="unstyled" h={'10px'} w={'5px'} leftIcon={<AiOutlineEdit />} color={'#b3b8cf'} onClick={onOpen} zIndex={10}></Button> */}
+            <Box onClick={onOpen}>
+                <Text color={'#b3b8cf'} fontSize={'md'}>
+                    <GoPencil />
+                </Text>
+            </Box>
             <PrimaryDrawer onClose={handleOnClose} isOpen={isOpen} title={'Create a new workspace'}>
                 <Flex>
                     <Text pb={'5px'}>Name</Text>
