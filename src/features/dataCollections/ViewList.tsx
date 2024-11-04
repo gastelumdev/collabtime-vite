@@ -266,10 +266,12 @@ const ViewList = ({}: { allowed?: boolean }) => {
                                                                         }) ? (
                                                                             <Th pb={'35px'}></Th>
                                                                         ) : null}
-                                                                        <Th color={'#666666'} fontWeight={'semibold'}>
+                                                                        <Th color={'#666666'} fontWeight={'semibold'} fontSize={'sm'}>
                                                                             Name
                                                                         </Th>
-                                                                        {/* <Th>Description</Th> */}
+                                                                        <Th color={'#666666'} fontWeight={'semibold'} fontSize={'sm'}>
+                                                                            Description
+                                                                        </Th>
 
                                                                         {(userGroup.permissions.dataCollectionActions.tag ||
                                                                             userGroup.permissions.dataCollections.find((item: any) => {
@@ -278,7 +280,7 @@ const ViewList = ({}: { allowed?: boolean }) => {
                                                                         data?.find((item: any) => {
                                                                             return item.tags.length > 0 && item.inParentToDisplay === null;
                                                                         }) !== undefined ? (
-                                                                            <Th color={'#666666'} fontWeight={'semibold'}>
+                                                                            <Th color={'#666666'} fontWeight={'semibold'} fontSize={'sm'}>
                                                                                 Tags
                                                                             </Th>
                                                                         ) : null}
@@ -353,14 +355,16 @@ const ViewList = ({}: { allowed?: boolean }) => {
                                                                                     <Link
                                                                                         to={`/workspaces/${workspace?._id}/dataCollections/${dataCollection._id}`}
                                                                                     >
-                                                                                        <Text fontSize={'13px'} color={'#666666'}>
+                                                                                        <Text fontSize={'sm'} color={'#666666'} fontWeight={'semibold'}>
                                                                                             {dataCollection.name}
                                                                                         </Text>
                                                                                     </Link>
                                                                                 </Td>
-                                                                                {/* <Td>
-                                                        <Text fontSize={'13px'}>{dataCollection.description}</Text>
-                                                    </Td> */}
+                                                                                <Td>
+                                                                                    <Text fontSize={'sm'} color={'#666666'}>
+                                                                                        {dataCollection.description}
+                                                                                    </Text>
+                                                                                </Td>
 
                                                                                 {userGroup.permissions.dataCollectionActions.tag ||
                                                                                 userGroup.permissions.dataCollections.find((item: any) => {
@@ -400,7 +404,7 @@ const ViewList = ({}: { allowed?: boolean }) => {
                                                     ) : (
                                                         <Box mt={'30px'}>
                                                             <Center>
-                                                                <Text>{'Contact your system administrator for access to the dashboard'}</Text>
+                                                                <Text>{'There are currently no data collections in your dashboard.'}</Text>
                                                             </Center>
                                                         </Box>
                                                     )}
@@ -434,16 +438,16 @@ const ViewList = ({}: { allowed?: boolean }) => {
                                                                             }) ? (
                                                                                 <Th pb={'35px'}></Th>
                                                                             ) : null}
-                                                                            <Th color={'#666666'} fontWeight={'semibold'}>
+                                                                            <Th color={'#666666'} fontWeight={'semibold'} fontSize={'sm'}>
                                                                                 Name
                                                                             </Th>
-                                                                            <Th color={'#666666'} fontWeight={'semibold'}>
+                                                                            <Th color={'#666666'} fontWeight={'semibold'} fontSize={'sm'}>
                                                                                 Description
                                                                             </Th>
-                                                                            <Th color={'#666666'} fontWeight={'semibold'}>
+                                                                            <Th color={'#666666'} fontWeight={'semibold'} fontSize={'sm'}>
                                                                                 App Type
                                                                             </Th>
-                                                                            <Th color={'#666666'} fontWeight={'semibold'}>
+                                                                            <Th color={'#666666'} fontWeight={'semibold'} fontSize={'sm'}>
                                                                                 Data Collection
                                                                             </Th>
 
@@ -534,23 +538,27 @@ const ViewList = ({}: { allowed?: boolean }) => {
                                                                                         <Link
                                                                                             to={`/workspaces/${workspace?._id}/dataCollections/${dataCollection._id}`}
                                                                                         >
-                                                                                            <Text fontSize={'13px'} color={'#666666'}>
+                                                                                            <Text color={'#666666'} fontSize={'sm'} fontWeight={'semibold'}>
                                                                                                 {dataCollection.name}
                                                                                             </Text>
                                                                                         </Link>
                                                                                     </Td>
                                                                                     <Td>
-                                                                                        <Text fontSize={'13px'}>{dataCollection.description}</Text>
+                                                                                        <Text color={'#666666'} fontSize={'sm'}>
+                                                                                            {dataCollection.description}
+                                                                                        </Text>
                                                                                     </Td>
                                                                                     <Td>
-                                                                                        <Text fontSize={'13px'}>
+                                                                                        <Text color={'#666666'} fontSize={'sm'}>
                                                                                             {`${dataCollection.appType
                                                                                                 .slice(0, 1)
                                                                                                 .toUpperCase()}${dataCollection.appType.slice(1)}`}
                                                                                         </Text>
                                                                                     </Td>
                                                                                     <Td>
-                                                                                        <Text fontSize={'13px'}>{appModelName}</Text>
+                                                                                        <Text color={'#666666'} fontSize={'sm'}>
+                                                                                            {appModelName}
+                                                                                        </Text>
                                                                                     </Td>
 
                                                                                     {userGroup.permissions.dataCollectionActions.tag ||
@@ -594,7 +602,7 @@ const ViewList = ({}: { allowed?: boolean }) => {
                                                         ) : (
                                                             <Box mt={'30px'}>
                                                                 <Center>
-                                                                    <Text>{'Contact your system administrator for access to the dashboard'}</Text>
+                                                                    <Text>{'There are currently no views in your dashboard.'}</Text>
                                                                 </Center>
                                                             </Box>
                                                         )}

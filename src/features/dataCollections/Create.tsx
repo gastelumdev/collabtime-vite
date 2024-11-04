@@ -81,7 +81,13 @@ const Create = ({ addNewDataCollection }: IProps) => {
             return dataCollection.name;
         });
 
-        if (value.length > 30) {
+        if (name === 'name' && value.length > 30) {
+            setInputError(true);
+        } else {
+            setInputError(false);
+        }
+
+        if (name === 'description' && value.length > 100) {
             setInputError(true);
         } else {
             setInputError(false);
@@ -113,6 +119,10 @@ const Create = ({ addNewDataCollection }: IProps) => {
         setData(defaultValues);
         setIsError(false);
         setInputError(false);
+        setAppModelChecked(false);
+        setAutoIncrementCheckboxChecked(false);
+        setAppType(null);
+        setInParentToDisplaySelection(null);
         onClose();
     };
 
@@ -134,6 +144,15 @@ const Create = ({ addNewDataCollection }: IProps) => {
                     placeholder="Please enter data collection name"
                     value={data.name}
                     required={true}
+                    onChange={handleChange}
+                    style={{ marginBottom: '15px' }}
+                />
+                <Text pb={'5px'}>Description</Text>
+                <Input
+                    name="description"
+                    placeholder="Please enter a description"
+                    value={data.description}
+                    required={false}
                     onChange={handleChange}
                     style={{ marginBottom: '15px' }}
                 />

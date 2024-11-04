@@ -99,6 +99,15 @@ const Edit = ({ dataCollection, updateDataCollection }: IProps) => {
                     onChange={handleChange}
                     style={{ marginBottom: '15px' }}
                 />
+                <Text pb={'5px'}>Description</Text>
+                <Input
+                    name="description"
+                    value={data.description}
+                    placeholder="Please enter description"
+                    required={true}
+                    onChange={handleChange}
+                    style={{ marginBottom: '15px' }}
+                />
                 {dataCollection.inParentToDisplay ? (
                     <>
                         <Text>User Groups with full access</Text>

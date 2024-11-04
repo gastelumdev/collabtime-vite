@@ -395,7 +395,7 @@ const ViewOne = () => {
                                         <Heading size={'sm'} mt={'5px'} mb={'4px'} color={'#666666'} fontWeight={'semibold'}>
                                             {!workspaceIsFetching ? `${workspace?.name} - ${dataCollection?.name}` : null}
                                         </Heading>
-                                        <Text fontSize={'md'} color={'rgb(123, 128, 154)'}>
+                                        <Text fontSize={'sm'} color={'rgb(123, 128, 154)'}>
                                             {dataCollection?.description}
                                         </Text>
                                     </Box>
