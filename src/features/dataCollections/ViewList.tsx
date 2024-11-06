@@ -410,7 +410,6 @@ const ViewList = ({}: { allowed?: boolean }) => {
                                                     )}
                                                 </Box>
                                                 {data?.find((item: any) => {
-                                                    console.log(item.inParentToDisplay);
                                                     return item.inParentToDisplay !== null;
                                                 }) !== undefined ? (
                                                     <Box mt={12}>

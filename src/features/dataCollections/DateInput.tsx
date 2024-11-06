@@ -11,7 +11,7 @@ interface IProps {
 
 const DateInput = ({ value, columnName, onChange, allowed = false, border = null }: IProps) => {
     // const [updateCell] = useUpdateCellMutation();
-    const [inputValue, setInputValue] = useState<string>(value);
+    const [inputValue, setInputValue] = useState<string>('');
 
     useEffect(() => {
         if (value !== 'Invalid Date') {
@@ -47,7 +47,7 @@ const DateInput = ({ value, columnName, onChange, allowed = false, border = null
                 textOverflow={'ellipsis'}
                 fontSize={'12px'}
                 color={inputValue !== '' || inputValue === undefined ? '#1a202c' : 'lightgray'}
-                placeholder="2000-01-01T12:00"
+                // placeholder="2000-01-01T12:00"
             />
         </Box>
     );
