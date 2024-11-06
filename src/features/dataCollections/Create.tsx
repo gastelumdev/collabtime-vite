@@ -242,12 +242,10 @@ const Create = ({ addNewDataCollection }: IProps) => {
                     placeholder={'Please select data collection'}
                     isDisabled={!appModelChecked}
                     onChange={(selectedOption: any) => {
-                        console.log(selectedOption.value);
                         setInParentToDisplaySelection(selectedOption.value);
                     }}
                     options={dataCollections
                         ?.filter((dc: any) => {
-                            console.log(dc.main === true);
                             return dc.main === true;
                         })
                         .map((dc: any) => {

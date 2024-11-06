@@ -10,7 +10,6 @@ import { ArrowDownIcon, ArrowUpIcon, DeleteIcon } from '@chakra-ui/icons';
 // import { useParams } from 'react-router';
 import { useTypedSelector, useAppDispatch } from '../../hooks/store';
 import { clearCheckedRowIds } from '../../components/table/tableSlice';
-import { useGetUserGroupsQuery } from '../../app/services/api';
 // import { useParams } from 'react-router-dom';
 import { emptyDataCollectionPermissions } from '../../features/workspaces/UserGroups';
 
@@ -103,53 +102,19 @@ const Table = ({
     // const [deleteColumn] = useDeleteColumnMutation();
     // const [rowCallUpdate] = useRowCallUpdateMutation();
 
-    const { data: userGroups, refetch: refetchUserGroups } = useGetUserGroupsQuery(null);
+    // const { data: userGroups, refetch: refetchUserGroups } = useGetUserGroupsQuery(null);
     // const [_dataCollectionPermissions, setDataCollectionPermissions] = useState<any>(emptyDataCollectionPermissions);
     const [permissions, setPermissions] = useState<any>(emptyDataCollectionPermissions);
 
     useEffect(() => {
-        // const userGroup = userGroups.find((item: any) => {
-        //     return item.users.includes(localStorage.getItem('userId'));
-        // });
-
         if (dataCollectionView && viewPermissions !== null) {
-            // const viewPermissions = userGroup.permissions.views.find((item: any) => {
-            //     return item.view === dataCollectionView._id;
-            // });
-
             setPermissions(viewPermissions);
         } else {
             setPermissions(dataCollectionPermissions);
-            // let firstRow = null;
-            // let dcId = '';
-            // if (rowsData !== undefined && rowsData.length > 0) {
-            //     firstRow = rowsData?.find(() => {
-            //         return true;
-            //     });
-            // }
-
-            // if (firstRow !== null) {
-            //     dcId = firstRow.dataCollection;
-            // }
-
-            // const dataCollectionPermissions = userGroup.permissions.dataCollections.find((item: any) => {
-            //     return item.dataCollection === dataCollectionId || item.dataCollection === dcId || item.dataCollection === appModel;
-            // });
-
-            // if (dataCollectionPermissions !== undefined) {
-            //     setDataCollectionPermissions(dataCollectionPermissions.permissions);
-            // } else {
-            //     refetchUserGroups();
-            // }
         }
-    }, [userGroups]);
+    }, [permissions]);
 
     useEffect(() => {
-        // setRows(
-        //     rowsData?.map((row) => {
-        //         return { ...row, checked: false, subRowsAreOpen: false };
-        //     })
-        // );
         setRows(rowsData);
         setColumns(columnsData);
 
@@ -341,7 +306,7 @@ const Table = ({
         async (column: any) => {
             setColumns((prev) => prev.filter((prevColumn) => prevColumn.name !== column.name));
             await deleteColumn(column);
-            refetchUserGroups();
+            // refetchUserGroups();
             // deleteValues(column);
         },
         [columns]

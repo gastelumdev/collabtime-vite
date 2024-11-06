@@ -5,7 +5,6 @@ import Row from './Row';
 // import { useUpdateRowMutation } from '../../app/services/api';
 import { Box } from '@chakra-ui/react';
 import { TRow } from '../../types';
-import { emptyDataCollectionPermissions } from '../../features/workspaces/UserGroups';
 
 interface IProps {
     rows: any[];
@@ -59,7 +58,7 @@ const TableContent = ({
     dataCollectionView = null,
     refetchRows,
     appModel = null,
-    permissions = emptyDataCollectionPermissions,
+    permissions = null,
 }: IProps) => {
     const ref = useRef<HTMLDivElement | null>(null);
     const [gridTemplateColumns, setGridTemplateColumns] = useState('');
@@ -68,7 +67,6 @@ const TableContent = ({
 
     useEffect(() => {
         view;
-        console.log(rows);
         setCurrentRows(rows);
     }, [rows]);
 

@@ -40,7 +40,7 @@ const Row = ({
     hasCheckboxOptions = true,
     dataCollectionView = null,
     appModel = null,
-    permissions = emptyDataCollectionPermissions,
+    permissions = null,
 }: {
     row: any;
     rowIndex: number;
@@ -92,7 +92,10 @@ const Row = ({
     const [dataCollectionPermissions, setDataCollectionPermissions] = useState<any>(emptyDataCollectionPermissions);
 
     useEffect(() => {
-        setDataCollectionPermissions(permissions);
+        console.log(permissions);
+        if (permissions !== null) {
+            setDataCollectionPermissions(permissions);
+        }
     }, [permissions]);
 
     // useEffect(() => {
@@ -424,28 +427,16 @@ const Row = ({
                                     // });
 
                                     let editable = false;
-                                    console.log({ columnName: column.name });
-                                    console.log({ ableToUpdate: columnsPermissions?.permissions.column.update, appModel });
-                                    console.log({ primaryColumn: column.primary });
                                     if (columnsPermissions?.permissions.column.update && appModel === null) {
-                                        console.log('Able to update due to permissions and because its an app');
                                         editable = true;
                                     } else if (appModel !== null && (column.primary === undefined || !column.primary)) {
-                                        console.log('Able to update due to it being an app and it not being a primary column');
                                         editable = true;
                                     }
                                     if (column.autoIncremented) {
                                         editable = false;
                                     }
-                                    console.log({ editable, autoInc: column.autoIncremented });
-                                    // console.log({
-                                    //     columnName: column.name,
-                                    //     columnIsPrimary: column.primary,
-                                    //     dataCollectionView,
-                                    //     autoIncremented: column.autoIncremented,
-                                    //     isCustomLink: column.primary !== undefined ? (column.primary && dataCollectionView) || column.autoIncremented : false,
-                                    // });
-                                    // console.log(column.primary !== undefined ? (column.primary && dataCollectionView) || column.autoIncremented : false);
+
+                                    console.log(columnsPermissions);
                                     return (
                                         <div
                                             key={columnIndex}
