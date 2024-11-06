@@ -18,9 +18,9 @@ import Reference from './Reference';
 import { useTypedSelector, useAppDispatch } from '../../hooks/store';
 import { addCheckedRowId, removeCheckedRowId } from '../../components/table/tableSlice';
 import RemindersDrawer from './RemindersDrawer';
-import { useGetUserGroupsQuery } from '../../app/services/api';
+// import { useGetUserGroupsQuery } from '../../app/services/api';
 import { emptyDataCollectionPermissions } from '../../features/workspaces/UserGroups';
-import { useParams } from 'react-router-dom';
+// import { useParams } from 'react-router-dom';
 
 const Row = ({
     row,
@@ -40,6 +40,7 @@ const Row = ({
     hasCheckboxOptions = true,
     dataCollectionView = null,
     appModel = null,
+    permissions = emptyDataCollectionPermissions,
 }: {
     row: any;
     rowIndex: number;
@@ -60,6 +61,7 @@ const Row = ({
     dataCollectionView?: any;
     refetchRows?: any;
     appModel?: string | null;
+    permissions?: any;
 }) => {
     // const rowsData = useMemo(
     //     () => [
@@ -71,7 +73,7 @@ const Row = ({
     // );
 
     // const [isPending, startTransition] = useTransition();
-    const { dataCollectionId } = useParams();
+    // const { dataCollectionId } = useParams();
 
     const dispatch = useAppDispatch();
 
@@ -86,44 +88,44 @@ const Row = ({
 
     const [showRow, _setShowRow] = useState(true);
 
-    const { data: userGroups, refetch: refetchUserGroups } = useGetUserGroupsQuery(null);
+    // const { data: userGroups, refetch: refetchUserGroups } = useGetUserGroupsQuery(null);
     const [dataCollectionPermissions, setDataCollectionPermissions] = useState<any>(emptyDataCollectionPermissions);
 
-    // useEffect(() => {
-    //     console.log(row);
-    // }, []);
-
     useEffect(() => {
-        const userGroup = userGroups.find((item: any) => {
-            return item.users.includes(localStorage.getItem('userId'));
-        });
+        setDataCollectionPermissions(permissions);
+    }, [permissions]);
 
-        if (dataCollectionView) {
-            const viewPermissions = userGroup.permissions.views.find((item: any) => {
-                return item.view === dataCollectionView._id;
-            });
+    // useEffect(() => {
+    //     const userGroup = userGroups.find((item: any) => {
+    //         return item.users.includes(localStorage.getItem('userId'));
+    //     });
 
-            if (viewPermissions !== undefined) {
-                setDataCollectionPermissions(viewPermissions.permissions);
-            } else {
-                refetchUserGroups();
-            }
-        } else {
-            let dcId = '';
-            if (row) {
-                dcId = row.dataCollection;
-            }
-            const dataCollectionPermissions = userGroup.permissions.dataCollections.find((item: any) => {
-                return item.dataCollection === dataCollectionId || item.dataCollection === dcId || item.dataCollection === appModel;
-            });
+    //     if (dataCollectionView) {
+    //         const viewPermissions = userGroup.permissions.views.find((item: any) => {
+    //             return item.view === dataCollectionView._id;
+    //         });
 
-            if (dataCollectionPermissions !== undefined) {
-                setDataCollectionPermissions(dataCollectionPermissions.permissions);
-            } else {
-                refetchUserGroups();
-            }
-        }
-    }, [userGroups]);
+    //         if (viewPermissions !== undefined) {
+    //             setDataCollectionPermissions(viewPermissions.permissions);
+    //         } else {
+    //             refetchUserGroups();
+    //         }
+    //     } else {
+    //         let dcId = '';
+    //         if (row) {
+    //             dcId = row.dataCollection;
+    //         }
+    //         const dataCollectionPermissions = userGroup.permissions.dataCollections.find((item: any) => {
+    //             return item.dataCollection === dataCollectionId || item.dataCollection === dcId || item.dataCollection === appModel;
+    //         });
+
+    //         if (dataCollectionPermissions !== undefined) {
+    //             setDataCollectionPermissions(dataCollectionPermissions.permissions);
+    //         } else {
+    //             refetchUserGroups();
+    //         }
+    //     }
+    // }, [userGroups]);
 
     useEffect(() => {
         setDeleteCheckboxIsChecked(deleteBoxIsChecked);

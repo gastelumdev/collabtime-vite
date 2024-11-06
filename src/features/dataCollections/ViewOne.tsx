@@ -116,6 +116,7 @@ const ViewOne = () => {
         if (userGroups !== undefined) {
             console.log(userGroups);
 
+            // Find the user group that the current user is in
             const ug = userGroups?.find((item: any) => {
                 return item.users.includes(localStorage.getItem('userId'));
             });
@@ -124,6 +125,7 @@ const ViewOne = () => {
 
             let dcPermissions;
             if (ug !== undefined) {
+                // Find the current data collection being viewed
                 dcPermissions = ug.permissions.dataCollections.find((item: any) => {
                     return item.dataCollection === dataCollectionId;
                 });
@@ -131,6 +133,7 @@ const ViewOne = () => {
                 if (dcPermissions !== undefined) {
                     console.log(dcPermissions);
 
+                    // Set the user group and data collection
                     setUserGroup(ug);
                     setDataCollectionPermissions(dcPermissions.permissions);
                 } else {
@@ -456,7 +459,7 @@ const ViewOne = () => {
                             */}
                             <CardBody p={'0'}>
                                 {dataCollectionPermissions.dataCollection.view ? (
-                                    <DataCollection showDoneRows={showDoneRows} rowsProp={rowsData} />
+                                    <DataCollection showDoneRows={showDoneRows} rowsProp={rowsData} dataCollectionPermissions={dataCollectionPermissions} />
                                 ) : (
                                     <Box mb={'20px'}>
                                         <Center>

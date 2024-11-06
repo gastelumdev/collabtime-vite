@@ -47,16 +47,14 @@ const View = ({
     }, []);
 
     useEffect(() => {
-        if (userGroup !== undefined) {
-            const viewPermissions = userGroup.permissions.views.find((item: any) => {
-                return item.view === dataCollectionView._id;
-            });
+        const viewPermissions = userGroup.permissions.views.find((item: any) => {
+            return item.view === dataCollectionView._id;
+        });
 
-            if (viewPermissions !== undefined) {
-                setViewPermissions(viewPermissions.permissions);
-            } else {
-                refetchUserGroup();
-            }
+        if (viewPermissions !== undefined) {
+            setViewPermissions(viewPermissions.permissions);
+        } else {
+            refetchUserGroup();
         }
     }, [userGroup, dataCollectionView]);
     return (
@@ -124,6 +122,7 @@ const View = ({
                         columnsAreDraggable={false}
                         hasCreateColumn={false}
                         refetchRows={refetchRows}
+                        viewPermissions={viewPermissions}
                         // userGroup={userGroup}
                     />
                 </Box>

@@ -15,6 +15,7 @@ import { useParams } from 'react-router-dom';
 import { Box, Progress } from '@chakra-ui/react';
 import Table from '../../components/table/Table';
 import { TColumn } from '../../types';
+import { emptyDataCollectionPermissions, emptyViewPermissions } from '../workspaces/UserGroups';
 
 const DataCollection = ({
     showDoneRows = true,
@@ -29,6 +30,8 @@ const DataCollection = ({
     hideEmptyRows = false,
     dcId = null,
     appModel = null,
+    dataCollectionPermissions = emptyDataCollectionPermissions,
+    viewPermissions = emptyViewPermissions,
 }: // userGroup,
 {
     showDoneRows?: boolean;
@@ -43,6 +46,8 @@ const DataCollection = ({
     hideEmptyRows?: boolean;
     dcId?: string | null;
     appModel?: string | null;
+    dataCollectionPermissions?: any;
+    viewPermissions?: any;
     // userGroup?: any;
 }) => {
     const { dataCollectionId } = useParams();
@@ -156,6 +161,8 @@ const DataCollection = ({
                 refetchRows={refetchRows}
                 hideEmptyRows={hideEmptyRows}
                 appModel={appModel}
+                dataCollectionPermissions={dataCollectionPermissions}
+                viewPermissions={viewPermissions}
             />
         </Box>
     );
