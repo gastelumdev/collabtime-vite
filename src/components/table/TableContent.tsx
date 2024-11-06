@@ -5,6 +5,7 @@ import Row from './Row';
 // import { useUpdateRowMutation } from '../../app/services/api';
 import { Box } from '@chakra-ui/react';
 import { TRow } from '../../types';
+import { emptyDataCollectionPermissions } from '../../features/workspaces/UserGroups';
 
 interface IProps {
     rows: any[];
@@ -31,6 +32,7 @@ interface IProps {
     refetchRows?: any;
     hideEmptyRows?: boolean;
     appModel?: string | null;
+    permissions?: any;
 }
 
 const TableContent = ({
@@ -57,6 +59,7 @@ const TableContent = ({
     dataCollectionView = null,
     refetchRows,
     appModel = null,
+    permissions = emptyDataCollectionPermissions,
 }: IProps) => {
     const ref = useRef<HTMLDivElement | null>(null);
     const [gridTemplateColumns, setGridTemplateColumns] = useState('');
@@ -451,6 +454,7 @@ const TableContent = ({
                                         dataCollectionView={dataCollectionView}
                                         refetchRows={refetchRows}
                                         appModel={appModel}
+                                        permissions={permissions}
                                     />
                                 </div>
                                 <div></div>

@@ -3,8 +3,8 @@ import { memo, useCallback, useEffect, useState, useTransition } from 'react';
 import CreateColumn from '../../features/dataCollections/CreateColumn';
 import { TColumn } from '../../types';
 import ColumnMenu from './ColumnMenu';
-import { useParams } from 'react-router-dom';
-import { useGetUserGroupsQuery } from '../../app/services/api';
+// import { useParams } from 'react-router-dom';
+// import { useGetUserGroupsQuery } from '../../app/services/api';
 import { emptyDataCollectionPermissions } from '../../features/workspaces/UserGroups';
 
 interface IProps {
@@ -35,6 +35,7 @@ interface IProps {
     hasCreateColumn?: boolean;
     dataCollectionView?: any;
     appModel?: string | null;
+    permissions?: any;
 }
 
 const TableHeader = ({
@@ -62,6 +63,7 @@ const TableHeader = ({
     hasCreateColumn = true,
     dataCollectionView = null,
     appModel = null,
+    permissions = emptyDataCollectionPermissions,
 }: IProps) => {
     const [currentColumns, setCurrentColumns] = useState(columns);
     // ******************* COLUMN REORDERING ******************************
@@ -167,51 +169,55 @@ const TableHeader = ({
 
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
     const [mouseIsUp, setMouseIsUp] = useState<boolean>(false);
-    const { dataCollectionId } = useParams();
+    // const { dataCollectionId } = useParams();
 
-    const { data: userGroups, refetch: refetchUserGroups } = useGetUserGroupsQuery(null);
+    // const { data: userGroups, refetch: refetchUserGroups } = useGetUserGroupsQuery(null);
     const [dataCollectionPermissions, setDataCollectionPermissions] = useState<any>(emptyDataCollectionPermissions);
 
     useEffect(() => {
-        const userGroup = userGroups.find((item: any) => {
-            return item.users.includes(localStorage.getItem('userId'));
-        });
-        if (userGroup !== undefined) {
-            if (dataCollectionView) {
-                const viewPermissions = userGroup.permissions.views.find((item: any) => {
-                    return item.view === dataCollectionView._id;
-                });
+        setDataCollectionPermissions(permissions);
+    }, [permissions]);
 
-                if (viewPermissions !== undefined) {
-                    setDataCollectionPermissions(viewPermissions.permissions);
-                } else {
-                    refetchUserGroups();
-                }
-            } else {
-                let firstColumn = null;
-                let dcId = '';
+    // useEffect(() => {
+    //     const userGroup = userGroups.find((item: any) => {
+    //         return item.users.includes(localStorage.getItem('userId'));
+    //     });
+    //     if (userGroup !== undefined) {
+    //         if (dataCollectionView) {
+    //             const viewPermissions = userGroup.permissions.views.find((item: any) => {
+    //                 return item.view === dataCollectionView._id;
+    //             });
 
-                if (columns.length > 0) {
-                    firstColumn = columns.find(() => {
-                        return true;
-                    });
-                }
+    //             if (viewPermissions !== undefined) {
+    //                 setDataCollectionPermissions(viewPermissions.permissions);
+    //             } else {
+    //                 refetchUserGroups();
+    //             }
+    //         } else {
+    //             let firstColumn = null;
+    //             let dcId = '';
 
-                if (firstColumn !== null) {
-                    dcId = firstColumn.dataCollection;
-                }
-                const dataCollectionPermissions = userGroup.permissions.dataCollections.find((item: any) => {
-                    return item.dataCollection === dataCollectionId || item.dataCollection === dcId;
-                });
+    //             if (columns.length > 0) {
+    //                 firstColumn = columns.find(() => {
+    //                     return true;
+    //                 });
+    //             }
 
-                if (dataCollectionPermissions !== undefined) {
-                    setDataCollectionPermissions(dataCollectionPermissions.permissions);
-                } else {
-                    refetchUserGroups();
-                }
-            }
-        }
-    }, [userGroups]);
+    //             if (firstColumn !== null) {
+    //                 dcId = firstColumn.dataCollection;
+    //             }
+    //             const dataCollectionPermissions = userGroup.permissions.dataCollections.find((item: any) => {
+    //                 return item.dataCollection === dataCollectionId || item.dataCollection === dcId;
+    //             });
+
+    //             if (dataCollectionPermissions !== undefined) {
+    //                 setDataCollectionPermissions(dataCollectionPermissions.permissions);
+    //             } else {
+    //                 refetchUserGroups();
+    //             }
+    //         }
+    //     }
+    // }, [userGroups]);
 
     // const mouseEnter = useCallback(() => {
     //     setActiveIndex(null);

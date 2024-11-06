@@ -11,7 +11,7 @@ import { ArrowDownIcon, ArrowUpIcon, DeleteIcon } from '@chakra-ui/icons';
 import { useTypedSelector, useAppDispatch } from '../../hooks/store';
 import { clearCheckedRowIds } from '../../components/table/tableSlice';
 import { useGetUserGroupsQuery } from '../../app/services/api';
-import { useParams } from 'react-router-dom';
+// import { useParams } from 'react-router-dom';
 import { emptyDataCollectionPermissions } from '../../features/workspaces/UserGroups';
 
 interface ITableProps {
@@ -42,6 +42,8 @@ interface ITableProps {
     refetchRows?: any;
     hideEmptyRows?: boolean;
     appModel?: string | null;
+    dataCollectionPermissions?: any;
+    viewPermissions?: any;
 }
 
 const Table = ({
@@ -71,9 +73,11 @@ const Table = ({
     refetchRows,
     hideEmptyRows = false,
     appModel = null,
+    dataCollectionPermissions = emptyDataCollectionPermissions,
+    viewPermissions = null,
 }: ITableProps) => {
     const dispatch = useAppDispatch();
-    const { dataCollectionId } = useParams();
+    // const { dataCollectionId } = useParams();
 
     const checkedRowIds = useTypedSelector((state: any) => {
         return state.table.checkedRowIds;
@@ -100,45 +104,43 @@ const Table = ({
     // const [rowCallUpdate] = useRowCallUpdateMutation();
 
     const { data: userGroups, refetch: refetchUserGroups } = useGetUserGroupsQuery(null);
-    const [dataCollectionPermissions, setDataCollectionPermissions] = useState<any>(emptyDataCollectionPermissions);
+    // const [_dataCollectionPermissions, setDataCollectionPermissions] = useState<any>(emptyDataCollectionPermissions);
+    const [permissions, setPermissions] = useState<any>(emptyDataCollectionPermissions);
 
     useEffect(() => {
-        const userGroup = userGroups.find((item: any) => {
-            return item.users.includes(localStorage.getItem('userId'));
-        });
+        // const userGroup = userGroups.find((item: any) => {
+        //     return item.users.includes(localStorage.getItem('userId'));
+        // });
 
-        if (dataCollectionView) {
-            const viewPermissions = userGroup.permissions.views.find((item: any) => {
-                return item.view === dataCollectionView._id;
-            });
+        if (dataCollectionView && viewPermissions !== null) {
+            // const viewPermissions = userGroup.permissions.views.find((item: any) => {
+            //     return item.view === dataCollectionView._id;
+            // });
 
-            if (viewPermissions !== undefined) {
-                setDataCollectionPermissions(viewPermissions.permissions);
-            } else {
-                refetchUserGroups();
-            }
+            setPermissions(viewPermissions);
         } else {
-            let firstRow = null;
-            let dcId = '';
-            if (rowsData !== undefined && rowsData.length > 0) {
-                firstRow = rowsData?.find(() => {
-                    return true;
-                });
-            }
+            setPermissions(dataCollectionPermissions);
+            // let firstRow = null;
+            // let dcId = '';
+            // if (rowsData !== undefined && rowsData.length > 0) {
+            //     firstRow = rowsData?.find(() => {
+            //         return true;
+            //     });
+            // }
 
-            if (firstRow !== null) {
-                dcId = firstRow.dataCollection;
-            }
+            // if (firstRow !== null) {
+            //     dcId = firstRow.dataCollection;
+            // }
 
-            const dataCollectionPermissions = userGroup.permissions.dataCollections.find((item: any) => {
-                return item.dataCollection === dataCollectionId || item.dataCollection === dcId || item.dataCollection === appModel;
-            });
+            // const dataCollectionPermissions = userGroup.permissions.dataCollections.find((item: any) => {
+            //     return item.dataCollection === dataCollectionId || item.dataCollection === dcId || item.dataCollection === appModel;
+            // });
 
-            if (dataCollectionPermissions !== undefined) {
-                setDataCollectionPermissions(dataCollectionPermissions.permissions);
-            } else {
-                // refetchUserGroups();
-            }
+            // if (dataCollectionPermissions !== undefined) {
+            //     setDataCollectionPermissions(dataCollectionPermissions.permissions);
+            // } else {
+            //     refetchUserGroups();
+            // }
         }
     }, [userGroups]);
 
@@ -544,7 +546,7 @@ const Table = ({
                             <Text>{`${numberOfDeleteItems} Selected`}</Text>
                         </Box>
                         <Spacer />
-                        {dataCollectionPermissions.rows.subrows ? (
+                        {permissions.rows.subrows ? (
                             <>
                                 <Box pt={'30px'} pr={'30px'} onClick={setAsMainrow} cursor={'pointer'}>
                                     <Center mb={'10px'}>
@@ -570,7 +572,7 @@ const Table = ({
                             </>
                         ) : null}
                         {/* <Spacer /> */}
-                        {dataCollectionPermissions.rows.delete ? (
+                        {permissions.rows.delete ? (
                             <Box pt={'30px'} pr={'30px'} onClick={deleteItems} cursor={'pointer'}>
                                 {/* <Button colorScheme="red" mb={'10px'}>
                                 Delete
@@ -615,6 +617,7 @@ const Table = ({
                 hasCreateColumn={hasCreateColumn}
                 dataCollectionView={dataCollectionView}
                 appModel={appModel}
+                permissions={permissions}
             />
             <TableContent
                 rows={rows || []}
@@ -642,6 +645,7 @@ const Table = ({
                 refetchRows={refetchRows}
                 hideEmptyRows={hideEmptyRows}
                 appModel={appModel}
+                permissions={permissions}
             />
             {/* <Box w={'100%'} h={'30px'}>
                 <Text ml={'10px'}>Add row</Text>
