@@ -147,32 +147,15 @@ const ViewListForRow = ({}: { allowed?: boolean }) => {
                                                     <Box>
                                                         {userGroup.permissions.viewActions.view
                                                             ? dataCollections?.map((dc: any, index: number) => {
-                                                                  console.log(dc);
-                                                                  console.log(userGroups);
-                                                                  console.log(userGroup.permissions);
-
-                                                                  //   const viewPermissions: any = userGroup.permissions.views.find((item: any) => {
-                                                                  //       return item.view === dc._id;
-                                                                  //   });
-
-                                                                  //   if (viewPermissions !== undefined) {
-                                                                  //       if (!viewPermissions.permissions.view.view) {
-                                                                  //           return null;
-                                                                  //       }
-                                                                  //   }
-
-                                                                  console.log(dc);
                                                                   let viewDC = false;
                                                                   const dataCollectionPermissions: any = userGroup.permissions.dataCollections.find(
                                                                       (item: any) => {
-                                                                          console.log(item.dataCollection);
                                                                           return item.dataCollection === dc.appModel;
                                                                       }
                                                                   );
 
                                                                   if (dataCollectionPermissions !== undefined) {
                                                                       for (const permission of dataCollectionPermissions.permissions.columns) {
-                                                                          console.log(permission.permissions.column.view);
                                                                           if (permission.permissions.column.view) {
                                                                               viewDC = true;
                                                                           }
