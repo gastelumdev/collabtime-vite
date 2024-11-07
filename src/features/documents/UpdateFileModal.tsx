@@ -24,7 +24,6 @@ const UpdateFileModal = ({ document, documents }: IProps) => {
         const filteredDocuments = documents.filter((doc: any) => {
             return doc.filename !== document.filename;
         });
-        console.log(filteredDocuments);
         setDocNames(
             filteredDocuments.map((doc: any) => {
                 return doc.filename;

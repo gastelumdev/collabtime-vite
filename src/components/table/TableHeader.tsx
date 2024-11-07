@@ -375,15 +375,18 @@ const TableHeader = ({
                     {/* {isFetching ? <Spinner thickness="2px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="md" mt={'10px'} /> : null} */}
                 </span>
                 {currentColumns.map((column: any, columnIndex) => {
-                    const columnsPermissions = dataCollectionPermissions.columns.find((item: any) => {
-                        return item.name === column.name;
-                    });
+                    if (dataCollectionPermissions) {
+                        const columnsPermissions = dataCollectionPermissions.columns.find((item: any) => {
+                            return item.name === column.name;
+                        });
 
-                    // console.log(columnsPermissions);
+                        // console.log(columnsPermissions);
 
-                    if (!columnsPermissions?.permissions.column.view) {
-                        return null;
+                        if (!columnsPermissions?.permissions.column.view) {
+                            return null;
+                        }
                     }
+
                     return (
                         <span
                             key={columnIndex}
@@ -512,7 +515,7 @@ const TableHeader = ({
                                 </div>
                             )}
                             {/* Resize column box */}
-                            {dataCollectionPermissions.columnActions.resize ? (
+                            {dataCollectionPermissions && dataCollectionPermissions.columnActions.resize ? (
                                 <Box
                                     width={'5px'}
                                     height={headerHeight}
@@ -534,7 +537,7 @@ const TableHeader = ({
                         padding: '0px 20px',
                     }}
                 >
-                    {hasCreateColumn && dataCollectionPermissions.columnActions.create && appModel == null ? (
+                    {hasCreateColumn && dataCollectionPermissions && dataCollectionPermissions.columnActions.create && appModel == null ? (
                         <CreateColumn
                             columns={columns}
                             createColumn={createColumn}

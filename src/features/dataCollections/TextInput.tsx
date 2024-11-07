@@ -64,7 +64,6 @@ const TextInput = ({ id, columnName, value, type = 'tableCell', onChange, allowe
                     w={'100%'}
                     // p={val ? '0px' : type === 'tableCell' ? '14px' : '0px'}
                     onClick={() => {
-                        console.log({ allowed });
                         if (!isCustomLink) {
                             setActive(!active);
                         }
@@ -112,7 +111,6 @@ const TextInput = ({ id, columnName, value, type = 'tableCell', onChange, allowe
                             cursor={'pointer'}
                             size={'xs'}
                             onClick={() => {
-                                console.log('Link clicked');
                                 navigate(`/workspaces/${localStorage.getItem('workspaceId')}/viewRow/${id}`);
                             }}
                         >
