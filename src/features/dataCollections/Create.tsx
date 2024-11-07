@@ -181,6 +181,7 @@ const Create = ({ addNewDataCollection }: IProps) => {
                     required={true}
                     onChange={handleChange}
                     style={{ marginBottom: '15px' }}
+                    isDisabled={appType !== null}
                 />
                 <>
                     {autoIncrementCheckboxChecked ? (
@@ -199,26 +200,6 @@ const Create = ({ addNewDataCollection }: IProps) => {
                 </>
                 <Flex>
                     <Text pb={'5px'}>Template</Text>
-                </Flex>
-                <Select
-                    id="columnType"
-                    name="columnType"
-                    placeholder="Please select template"
-                    onChange={(selectedOption: any) => handleTemplateChange(selectedOption)}
-                    options={[
-                        { value: 'default', label: 'Default' },
-                        { value: 'tasks', label: 'Task List' },
-                    ].concat(selectFormattedDataCollections)}
-                    styles={
-                        {
-                            control: (styles: any) => {
-                                return { ...styles, borderColor: '#e2e8f0', marginBottom: '20px' };
-                            },
-                        } as any
-                    }
-                />
-                <Flex>
-                    <Text pb={'5px'}>Row App</Text>
                     <Spacer />
                     <Checkbox
                         isChecked={appModelChecked}
@@ -236,47 +217,72 @@ const Create = ({ addNewDataCollection }: IProps) => {
                         For row interface
                     </Checkbox>
                 </Flex>
-                <Select
-                    id={'appModelDataCollection'}
-                    name={'appModelDataCollection'}
-                    placeholder={'Please select data collection'}
-                    isDisabled={!appModelChecked}
-                    onChange={(selectedOption: any) => {
-                        setInParentToDisplaySelection(selectedOption.value);
-                    }}
-                    options={dataCollections
-                        ?.filter((dc: any) => {
-                            return dc.main === true;
-                        })
-                        .map((dc: any) => {
-                            return { value: dc._id, label: dc.name };
-                        })}
-                    styles={
-                        {
-                            control: (styles: any) => {
-                                return { ...styles, borderColor: '#e2e8f0', marginBottom: '20px' };
-                            },
-                        } as any
-                    }
-                />
-                <Select
-                    id={'appType'}
-                    name={'appType'}
-                    placeholder={'Please select type of row app'}
-                    isDisabled={!appModelChecked}
-                    onChange={(selectedOption: any) => {
-                        console.log(selectedOption.value);
-                        setAppType(selectedOption.value);
-                    }}
-                    options={[{ value: 'planner', label: 'Planner' }]}
-                    styles={
-                        {
-                            control: (styles: any) => {
-                                return { ...styles, borderColor: '#e2e8f0', marginBottom: '20px' };
-                            },
-                        } as any
-                    }
-                />
+                {!appModelChecked ? (
+                    <Select
+                        id="columnType"
+                        name="columnType"
+                        placeholder="Please select template"
+                        onChange={(selectedOption: any) => handleTemplateChange(selectedOption)}
+                        options={[
+                            { value: 'default', label: 'Default' },
+                            { value: 'tasks', label: 'Task List' },
+                        ].concat(selectFormattedDataCollections)}
+                        styles={
+                            {
+                                control: (styles: any) => {
+                                    return { ...styles, borderColor: '#e2e8f0', marginBottom: '20px' };
+                                },
+                            } as any
+                        }
+                    />
+                ) : (
+                    <>
+                        <Select
+                            id={'appModelDataCollection'}
+                            name={'appModelDataCollection'}
+                            placeholder={'Please select data collection'}
+                            isDisabled={!appModelChecked}
+                            onChange={(selectedOption: any) => {
+                                setInParentToDisplaySelection(selectedOption.value);
+                            }}
+                            options={dataCollections
+                                ?.filter((dc: any) => {
+                                    return dc.main === true;
+                                })
+                                .map((dc: any) => {
+                                    return { value: dc._id, label: dc.name };
+                                })}
+                            styles={
+                                {
+                                    control: (styles: any) => {
+                                        return { ...styles, borderColor: '#e2e8f0', marginBottom: '20px' };
+                                    },
+                                } as any
+                            }
+                        />
+                        <Select
+                            id={'appType'}
+                            name={'appType'}
+                            placeholder={'Please select type of row app'}
+                            isDisabled={!appModelChecked}
+                            onChange={(selectedOption: any) => {
+                                console.log(selectedOption.value);
+                                setAppType(selectedOption.value);
+
+                                setData({ ...data, template: selectedOption.value, primaryColumnName: 'todo' });
+                            }}
+                            options={[{ value: 'planner', label: 'Planner' }]}
+                            styles={
+                                {
+                                    control: (styles: any) => {
+                                        return { ...styles, borderColor: '#e2e8f0', marginBottom: '20px' };
+                                    },
+                                } as any
+                            }
+                        />
+                    </>
+                )}
+
                 <Flex>
                     <Spacer />
                     <PrimaryButton onClick={createData} isDisabled={inputError || isError}>
