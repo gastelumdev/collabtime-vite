@@ -435,8 +435,6 @@ const Row = ({
                                     if (column.autoIncremented) {
                                         editable = false;
                                     }
-
-                                    console.log(columnsPermissions);
                                     return (
                                         <div
                                             key={columnIndex}

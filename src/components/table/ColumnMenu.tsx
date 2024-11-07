@@ -54,12 +54,14 @@ const ColumnMenu = ({
     // }, [appModel]);
 
     useEffect(() => {
-        const columnPermissions = dataCollectionPermissions.columns.find((item: any) => {
-            return item.name === column.name;
-        });
+        if (dataCollectionPermissions) {
+            const columnPermissions = dataCollectionPermissions.columns.find((item: any) => {
+                return item.name === column.name;
+            });
 
-        if (columnPermissions !== undefined) {
-            setColumnPermissions(columnPermissions.permissions);
+            if (columnPermissions !== undefined) {
+                setColumnPermissions(columnPermissions.permissions);
+            }
         }
     }, [dataCollectionPermissions, column]);
 
@@ -134,6 +136,7 @@ const ColumnMenu = ({
                             </Box>
                             {index !== 0 &&
                             dataCollectionView === null &&
+                            dataCollectionPermissions &&
                             (dataCollectionPermissions.columnActions.update || columnPermissions.column.update) &&
                             appModel === null ? (
                                 <Box>
@@ -148,6 +151,7 @@ const ColumnMenu = ({
                             ) : null}
                             {index !== 0 &&
                             dataCollectionView === null &&
+                            dataCollectionPermissions &&
                             (dataCollectionPermissions.columnActions.delete || columnPermissions.column.delete) &&
                             appModel === null ? (
                                 <Box>

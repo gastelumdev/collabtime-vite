@@ -72,12 +72,9 @@ const View = () => {
 
     useEffect(() => {
         if (userGroups !== undefined) {
-            console.log(userGroups);
             const ug = userGroups?.find((item: any) => {
                 return item.users.includes(localStorage.getItem('userId'));
             });
-
-            console.log(ug);
             setUserGroup(ug);
         } else {
             refetch();
@@ -155,28 +152,28 @@ const View = () => {
                 <Container maxW={'full'} mt={{ base: 4, sm: 0 }}>
                     <Flex pl={'6px'}>
                         <Box mb={{ base: '15px' }} mt={'4px'}>
-                            <Text size={'sm'} mb={'12px'} color={'rgb(52, 71, 103)'}>
-                                <>
-                                    {!isFetching ? (
-                                        <>
-                                            <Link to={`/workspaces/${localStorage.getItem('workspaceId')}`}>
-                                                <Text
-                                                    display={'inline'}
-                                                    // textDecor={'underline'}
-                                                    color={bgColor}
-                                                    fontWeight={'bold'}
-                                                    fontSize={'20px'}
-                                                    className="dmsans-600"
-                                                >{`${workspace?.name}`}</Text>
-                                            </Link>
+                            {/* <Text size={'sm'} mb={'12px'} color={'rgb(52, 71, 103)'}> */}
+                            <>
+                                {!isFetching ? (
+                                    <>
+                                        <Link to={`/workspaces/${localStorage.getItem('workspaceId')}`}>
+                                            <Text
+                                                display={'inline'}
+                                                // textDecor={'underline'}
+                                                color={bgColor}
+                                                fontWeight={'bold'}
+                                                fontSize={'20px'}
+                                                className="dmsans-600"
+                                            >{`${workspace?.name}`}</Text>
+                                        </Link>
 
-                                            <Text display={'inline'} color={bgColor} fontSize={'20px'} fontWeight={'bold'} className="dmsans-600">
-                                                {' / Documents'}
-                                            </Text>
-                                        </>
-                                    ) : null}
-                                </>
-                            </Text>
+                                        <Text display={'inline'} color={bgColor} fontSize={'20px'} fontWeight={'bold'} className="dmsans-600">
+                                            {' / Documents'}
+                                        </Text>
+                                    </>
+                                ) : null}
+                            </>
+                            {/* </Text> */}
                         </Box>
 
                         {userGroup.permissions.docs.create ? (

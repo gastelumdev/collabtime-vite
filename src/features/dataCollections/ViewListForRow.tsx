@@ -173,6 +173,7 @@ const ViewListForRow = ({}: { allowed?: boolean }) => {
                                                                               dataCollection={dataCollection}
                                                                               dataCollectionId={dataCollection._id as string}
                                                                               appModel={dataCollection.appModel}
+                                                                              userGroup={userGroup}
                                                                           />
                                                                       </Box>
                                                                   ) : null;
@@ -197,7 +198,17 @@ const ViewListForRow = ({}: { allowed?: boolean }) => {
     );
 };
 
-const OneDataCollection = ({ dataCollection, dataCollectionId, appModel }: { dataCollection: any; dataCollectionId?: string; appModel: string }) => {
+const OneDataCollection = ({
+    dataCollection,
+    dataCollectionId,
+    appModel,
+    userGroup,
+}: {
+    dataCollection: any;
+    dataCollectionId?: string;
+    appModel: string;
+    userGroup: any;
+}) => {
     const {
         data: rowsData,
         // refetch,
@@ -211,8 +222,26 @@ const OneDataCollection = ({ dataCollection, dataCollectionId, appModel }: { dat
         sortBy: 'createdAt',
         filters: JSON.stringify(dataCollection.filters),
     });
-    useEffect(() => {}, [rowsData]);
-    return <DataCollection showDoneRows={true} rowsProp={rowsData} hideEmptyRows={true} dcId={dataCollectionId} appModel={appModel} />;
+
+    const [dataCollectionPermissions, setDataCollectionPermissions] = useState(null);
+
+    useEffect(() => {
+        const dcPermissions = userGroup.permissions.dataCollections.find((item: any) => {
+            return item.dataCollection === dataCollection.appModel;
+        });
+
+        setDataCollectionPermissions(dcPermissions.permissions);
+    }, [rowsData, userGroup]);
+    return (
+        <DataCollection
+            showDoneRows={true}
+            rowsProp={rowsData}
+            hideEmptyRows={true}
+            dcId={dataCollectionId}
+            appModel={appModel}
+            dataCollectionPermissions={dataCollectionPermissions}
+        />
+    );
 };
 
 export default ViewListForRow;

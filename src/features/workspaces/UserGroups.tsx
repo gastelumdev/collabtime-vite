@@ -117,26 +117,29 @@ const UserGroups = () => {
     const [labels, setLabels] = useState([]);
     // const [chosenLabels, setChosenLabels] = useState([]);
 
-    useEffect(() => {
-        console.log({ views });
-        console.log({ userGroups });
-        console.log({ currentPermissions });
-        console.log({ currentDataCollectionPermissions });
-        console.log({ currentColumnPermissions });
-        console.log({ columns });
-        console.log({ currentViewPermissions });
-        console.log({ currentViewColumnPermissions });
-        console.log({ viewColumns });
-    }, [
-        userGroups,
-        currentPermissions,
-        currentDataCollectionPermissions,
-        currentColumnPermissions,
-        columns,
-        currentViewPermissions,
-        currentViewColumnPermissions,
-        viewColumns,
-    ]);
+    useEffect(
+        () => {
+            // console.log({ views });
+            // console.log({ userGroups });
+            // console.log({ currentPermissions });
+            // console.log({ currentDataCollectionPermissions });
+            // console.log({ currentColumnPermissions });
+            // console.log({ columns });
+            // console.log({ currentViewPermissions });
+            // console.log({ currentViewColumnPermissions });
+            // console.log({ viewColumns });
+        },
+        [
+            // userGroups,
+            // currentPermissions,
+            // currentDataCollectionPermissions,
+            // currentColumnPermissions,
+            // columns,
+            // currentViewPermissions,
+            // currentViewColumnPermissions,
+            // viewColumns,
+        ]
+    );
 
     useEffect(() => {
         if (views !== undefined) {
@@ -148,7 +151,7 @@ const UserGroups = () => {
                 }
             }
 
-            console.log(viewsColumns);
+            // console.log(viewsColumns);
             setAllViewsColumns(viewsColumns);
         }
     }, [views]);
@@ -221,7 +224,7 @@ const UserGroups = () => {
                 return true;
             });
 
-            console.log(v);
+            // console.log(v);
 
             setCurrentViewPermissions(emptyViews[0]);
 

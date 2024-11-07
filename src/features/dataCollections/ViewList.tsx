@@ -86,8 +86,6 @@ const ViewList = ({}: { allowed?: boolean }) => {
                 return item.users.includes(localStorage.getItem('userId'));
             });
 
-            console.log(ug);
-
             setUserGroup(ug);
         } else {
             refetchUserGroups();
@@ -201,10 +199,6 @@ const ViewList = ({}: { allowed?: boolean }) => {
                                                 <Box>
                                                     {userGroup.permissions.viewActions.view
                                                         ? dataCollectionViews?.map((dcView: any) => {
-                                                              console.log(dcView);
-                                                              console.log(userGroups);
-                                                              console.log(userGroup.permissions.viewActions.view);
-
                                                               const viewPermissions: any = userGroup.permissions.views.find((item: any) => {
                                                                   return item.view === dcView._id;
                                                               });

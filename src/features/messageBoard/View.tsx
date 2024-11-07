@@ -17,7 +17,6 @@ import {
 import { Link, useParams } from 'react-router-dom';
 import { formatTime } from '../../utils/helpers';
 import { io } from 'socket.io-client';
-import { bgColor } from '../../utils/colors';
 import '../../App.css';
 
 const View = () => {
@@ -44,12 +43,9 @@ const View = () => {
 
     useEffect(() => {
         if (userGroups !== undefined) {
-            console.log(userGroups);
             const ug = userGroups?.find((item: any) => {
                 return item.users.includes(localStorage.getItem('userId'));
             });
-
-            console.log(ug);
             setPermissions(ug.permissions.chat);
         } else {
             refetch();
@@ -158,18 +154,16 @@ const View = () => {
                     <SimpleGrid spacing={6} columns={{ base: 1, sm: 2 }}>
                         <Flex>
                             <Box pl={'6px'}>
-                                <Text fontSize={'20px'} mb={'30px'} color={bgColor} className="dmsans-600">
-                                    {!isFetching ? (
-                                        <>
-                                            <Link to={`/workspaces/${localStorage.getItem('workspaceId')}`}>
-                                                <Text display={'inline'}>{`${workspace?.name}`}</Text>
-                                            </Link>
-                                            <Text display={'inline'} className="dmsans-600">
-                                                {' / Message Board'}
-                                            </Text>
-                                        </>
-                                    ) : null}
-                                </Text>
+                                {!isFetching ? (
+                                    <>
+                                        <Link to={`/workspaces/${localStorage.getItem('workspaceId')}`}>
+                                            <Text display={'inline'}>{`${workspace?.name}`}</Text>
+                                        </Link>
+                                        <Text display={'inline'} className="dmsans-600">
+                                            {' / Message Board'}
+                                        </Text>
+                                    </>
+                                ) : null}
                             </Box>
                         </Flex>
                         <Flex>
