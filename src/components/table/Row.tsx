@@ -92,7 +92,7 @@ const Row = ({
     const [dataCollectionPermissions, setDataCollectionPermissions] = useState<any>(emptyDataCollectionPermissions);
 
     useEffect(() => {
-        console.log(permissions);
+        // console.log(permissions);
         if (permissions !== null) {
             setDataCollectionPermissions(permissions);
         }
