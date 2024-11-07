@@ -114,14 +114,10 @@ const ViewOne = () => {
 
     useEffect(() => {
         if (userGroups !== undefined) {
-            console.log(userGroups);
-
             // Find the user group that the current user is in
             const ug = userGroups?.find((item: any) => {
                 return item.users.includes(localStorage.getItem('userId'));
             });
-
-            console.log(ug);
 
             let dcPermissions;
             if (ug !== undefined) {
@@ -131,8 +127,6 @@ const ViewOne = () => {
                 });
 
                 if (dcPermissions !== undefined) {
-                    console.log(dcPermissions);
-
                     // Set the user group and data collection
                     setUserGroup(ug);
                     setDataCollectionPermissions(dcPermissions.permissions);

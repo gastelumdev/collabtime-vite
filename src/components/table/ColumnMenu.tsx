@@ -138,7 +138,8 @@ const ColumnMenu = ({
                             dataCollectionView === null &&
                             dataCollectionPermissions &&
                             (dataCollectionPermissions.columnActions.update || columnPermissions.column.update) &&
-                            appModel === null ? (
+                            appModel === null &&
+                            !column.permanent ? (
                                 <Box>
                                     <CreateColumn
                                         column={column}
@@ -153,7 +154,8 @@ const ColumnMenu = ({
                             dataCollectionView === null &&
                             dataCollectionPermissions &&
                             (dataCollectionPermissions.columnActions.delete || columnPermissions.column.delete) &&
-                            appModel === null ? (
+                            appModel === null &&
+                            !column.permanent ? (
                                 <Box>
                                     <DeleteModal column={column} handleDeleteColumnClick={handleDeleteColumnClick} />
                                 </Box>
