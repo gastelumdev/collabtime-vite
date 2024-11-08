@@ -5,9 +5,27 @@ import {
     useGetDataCollectionViewsQuery,
     useGetUserGroupsQuery,
     useGetRowsQuery,
+    useUpdateRowMutation,
 } from '../../app/services/api';
 
-import { Box, Card, CardBody, Center, Container, Flex, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
+import {
+    Box,
+    Card,
+    CardBody,
+    CardHeader,
+    Center,
+    Checkbox,
+    Container,
+    Flex,
+    Grid,
+    GridItem,
+    Tab,
+    TabList,
+    TabPanel,
+    TabPanels,
+    Tabs,
+    Text,
+} from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { emptyPermissions } from '../workspaces/UserGroups';
@@ -71,39 +89,6 @@ const ViewListForRow = ({}: { allowed?: boolean }) => {
         };
     }, []);
 
-    // const handleCloseTagButtonClick = async (dataCollection: TDataCollection, tag: TTag) => {
-    //     const { tags } = dataCollection;
-
-    //     // Filter out the tag clicked on from the data collection tags
-    //     const filteredTags = tags.filter((item) => {
-    //         return tag.name !== item.name;
-    //     });
-
-    //     // Create a new data collection with the updated tags
-    //     const addNewDataCollection = { ...dataCollection, tags: filteredTags };
-    //     // update the data collection and get the updated data collection
-    //     await updateDataCollection(addNewDataCollection);
-    //     // const updatedDataCollection = updatedDataCollectionRes.data;
-
-    //     let workspaceTags;
-
-    //     if (workspace) {
-    //         workspaceTags = workspace.workspaceTags;
-    //     }
-
-    //     const thisTagExistsRes: any = await tagExists(tag);
-
-    //     if (!thisTagExistsRes.data.tagExists) {
-    //         const filteredWorkspaceTags = workspaceTags?.filter((item: TTag) => {
-    //             return item.name !== tag.name;
-    //         });
-    //         const newUpdatedWorkspace: any = { ...workspace, workspaceTags: filteredWorkspaceTags };
-
-    //         await updateWorkspace(newUpdatedWorkspace);
-    //         await deleteTag(tag);
-    //     }
-    // };
-
     return (
         <>
             <Box
@@ -118,72 +103,76 @@ const ViewListForRow = ({}: { allowed?: boolean }) => {
             </Box>
             <Card>
                 <CardBody p={1} pt={7} pb={6}>
-                    <Box>
-                        <Flex
-                        // minH={'100vh'}
-                        // justify={"center"}
-                        // bg={'#eff2f5'}
-                        >
+                    <Box px={'20px'}>
+                        <Flex>
                             <Container maxW={'full'} mt={{ base: 4, sm: 0 }}>
-                                {/* {allowed ? (
-                                <Flex h={'50px'} mb={'10px'}>
-                                    
-                                    <Spacer />
-                                    <Box pb={'20px'} mr={'10px'}>
-                                        <Templates />
-                                    </Box>
-                                    <Box>
-                                        <Create addNewDataCollection={createDataCollection} />
-                                    </Box>
-                                </Flex>
-                            ) : null} */}
                                 {userGroup.permissions.dataCollectionActions.view || userGroup.permissions.viewActions.view ? (
-                                    <Tabs>
-                                        <TabList>{userGroup.permissions.viewActions.view ? <Tab>Dashboard</Tab> : null}</TabList>
+                                    <>
+                                        {userGroup.permissions.viewActions.view ? (
+                                            <Box>
+                                                {userGroup.permissions.viewActions.view
+                                                    ? dataCollections?.map((dc: any) => {
+                                                          let viewDC = false;
+                                                          const dataCollectionPermissions: any = userGroup.permissions.dataCollections.find((item: any) => {
+                                                              return item.dataCollection === dc.appModel;
+                                                          });
 
-                                        <TabPanels>
-                                            {userGroup.permissions.viewActions.view ? (
-                                                <TabPanel>
-                                                    <Box>
-                                                        {userGroup.permissions.viewActions.view
-                                                            ? dataCollections?.map((dc: any, index: number) => {
-                                                                  let viewDC = false;
-                                                                  const dataCollectionPermissions: any = userGroup.permissions.dataCollections.find(
-                                                                      (item: any) => {
-                                                                          return item.dataCollection === dc.appModel;
-                                                                      }
-                                                                  );
-
-                                                                  if (dataCollectionPermissions !== undefined) {
-                                                                      for (const permission of dataCollectionPermissions.permissions.columns) {
-                                                                          if (permission.permissions.column.view) {
-                                                                              viewDC = true;
-                                                                          }
-                                                                      }
+                                                          if (dataCollectionPermissions !== undefined) {
+                                                              for (const permission of dataCollectionPermissions.permissions.columns) {
+                                                                  if (permission.permissions.column.view) {
+                                                                      viewDC = true;
                                                                   }
+                                                              }
+                                                          }
 
-                                                                  let dataCollection = null;
-                                                                  if (dc.inParentToDisplay == rowId) {
-                                                                      dataCollection = dc;
-                                                                  }
-                                                                  return dataCollection !== null && viewDC ? (
-                                                                      <Box mt={index === 0 ? '0' : '40px'} key={dataCollection.name}>
-                                                                          <Text fontSize={'xl'}>{`${dataCollection.name} ${dataCollection.appType}`}</Text>
-                                                                          <OneDataCollection
-                                                                              dataCollection={dataCollection}
-                                                                              dataCollectionId={dataCollection._id as string}
-                                                                              appModel={dataCollection.appModel}
-                                                                              userGroup={userGroup}
-                                                                          />
-                                                                      </Box>
-                                                                  ) : null;
-                                                              })
-                                                            : null}
-                                                    </Box>
-                                                </TabPanel>
-                                            ) : null}
-                                        </TabPanels>
-                                    </Tabs>
+                                                          let dataCollection = null;
+                                                          if (dc.inParentToDisplay == rowId) {
+                                                              dataCollection = dc;
+                                                          }
+                                                          return dataCollection !== null && viewDC ? (
+                                                              <Box key={dataCollection.name} mb={'30px'}>
+                                                                  <Text fontSize={'xl'}>{`${dataCollection.name} ${dataCollection.appType}`}</Text>
+                                                                  <Tabs>
+                                                                      <TabList>
+                                                                          <Tab>Grid</Tab>
+                                                                          <Tab>List</Tab>
+                                                                      </TabList>
+                                                                      {/* <TabPanels>
+                                                                          <TabPanel>
+                                                                              <Box>
+                                                                                  <PlannerBoard
+                                                                                      dataCollection={dataCollection}
+                                                                                      dataCollectionId={dataCollection._id as string}
+                                                                                      appModel={dataCollection.appModel}
+                                                                                      userGroup={userGroup}
+                                                                                  />
+                                                                              </Box>
+                                                                          </TabPanel>
+                                                                          <TabPanel>
+                                                                              <Box>
+                                                                                  <OneDataCollection
+                                                                                      dataCollection={dataCollection}
+                                                                                      dataCollectionId={dataCollection._id as string}
+                                                                                      appModel={dataCollection.appModel}
+                                                                                      userGroup={userGroup}
+                                                                                  />
+                                                                              </Box>
+                                                                          </TabPanel>
+                                                                      </TabPanels> */}
+                                                                      <PlannerApp
+                                                                          dataCollection={dataCollection}
+                                                                          dataCollectionId={dataCollection._id as string}
+                                                                          appModel={dataCollection.appModel}
+                                                                          userGroup={userGroup}
+                                                                      />
+                                                                  </Tabs>
+                                                              </Box>
+                                                          ) : null;
+                                                      })
+                                                    : null}
+                                            </Box>
+                                        ) : null}
+                                    </>
                                 ) : (
                                     <Center>
                                         <Text>Contact your system administrator for access.</Text>
@@ -198,10 +187,10 @@ const ViewListForRow = ({}: { allowed?: boolean }) => {
     );
 };
 
-const OneDataCollection = ({
+const PlannerApp = ({
     dataCollection,
     dataCollectionId,
-    appModel,
+    // appModel,
     userGroup,
 }: {
     dataCollection: any;
@@ -211,7 +200,7 @@ const OneDataCollection = ({
 }) => {
     const {
         data: rowsData,
-        // refetch,
+        refetch,
         // isFetching: rowsAreFetching,
         // isLoading: rowsAreLoading,
     } = useGetRowsQuery({
@@ -222,6 +211,183 @@ const OneDataCollection = ({
         sortBy: 'createdAt',
         filters: JSON.stringify(dataCollection.filters),
     });
+    useEffect(() => {}, [rowsData]);
+    return (
+        <TabPanels>
+            <TabPanel>
+                <Box>
+                    <PlannerBoard
+                        dataCollection={dataCollection}
+                        dataCollectionId={dataCollection._id as string}
+                        appModel={dataCollection.appModel}
+                        userGroup={userGroup}
+                        rowsData={rowsData}
+                        refetchRowsForApp={refetch}
+                    />
+                </Box>
+            </TabPanel>
+            <TabPanel>
+                <Box>
+                    <OneDataCollection
+                        dataCollection={dataCollection}
+                        dataCollectionId={dataCollection._id as string}
+                        appModel={dataCollection.appModel}
+                        userGroup={userGroup}
+                        rowsData={rowsData}
+                        refetchRowsForApp={refetch}
+                    />
+                </Box>
+            </TabPanel>
+        </TabPanels>
+    );
+};
+
+const PlannerBoard = ({
+    // dataCollection,
+    // dataCollectionId,
+    // appModel,
+    // userGroup,
+    rowsData,
+    refetchRowsForApp,
+}: {
+    dataCollection: any;
+    dataCollectionId?: string;
+    appModel: string;
+    userGroup: any;
+    rowsData: any;
+    refetchRowsForApp: any;
+}) => {
+    // const {
+    //     data: rowsData,
+    //     // refetch,
+    //     // isFetching: rowsAreFetching,
+    //     // isLoading: rowsAreLoading,
+    // } = useGetRowsQuery({
+    //     dataCollectionId: dataCollectionId || '',
+    //     limit: 0,
+    //     skip: 0,
+    //     sort: 1,
+    //     sortBy: 'createdAt',
+    //     filters: JSON.stringify(dataCollection.filters),
+    // });
+
+    const bucketNames = ['Initiation Todos', 'Engineering and Design', 'Ops', 'Job Closeout'];
+
+    const [updateRow] = useUpdateRowMutation();
+
+    const BucketGridItem = ({ bucketName }: { bucketName: string }) => {
+        return (
+            <GridItem rowSpan={1} colSpan={1} mx={'10px'}>
+                <Center>
+                    <Text mb={'20px'}>{bucketName}</Text>
+                </Center>
+
+                {rowsData?.map((row: any) => {
+                    if (row.values['bucket'] === undefined || row.values['bucket'] !== bucketName) return null;
+                    if (row.values['status'] === 'Completed') return null;
+
+                    return (
+                        <Card key={row._id} mb={'10px'} boxShadow={'rgba(0, 0, 0, 0.24) 0px 3px 8px'}>
+                            <CardHeader>
+                                <Checkbox
+                                    fontSize={'14px'}
+                                    isChecked={row.values['status'] === 'Completed'}
+                                    onChange={async (event: React.ChangeEvent<HTMLInputElement>) => {
+                                        console.log(event.target.checked);
+                                        if (event.target.checked) {
+                                            await updateRow({ ...row, values: { ...row.values, status: 'Completed' } });
+                                        } else {
+                                            await updateRow({ ...row, values: { ...row.values, status: 'In progress' } });
+                                        }
+                                        refetchRowsForApp();
+                                    }}
+                                >
+                                    {row.values['todo']}
+                                </Checkbox>
+                            </CardHeader>
+                        </Card>
+                    );
+                })}
+                {rowsData?.find((item: any) => {
+                    return item.values['status'] === 'Completed' && item.values['bucket'] === bucketName;
+                }) !== undefined ? (
+                    <Box mt={'20px'}>
+                        <Box flex="1" textAlign="left" mb={'10px'}>
+                            <Text fontSize={'16px'}>Completed</Text>
+                        </Box>
+                        <Box>
+                            {rowsData?.map((row: any) => {
+                                if (row.values['bucket'] === undefined || row.values['bucket'] !== bucketName) return null;
+                                if (row.values['status'] !== 'Completed') return null;
+
+                                return (
+                                    <Card key={row._id} mb={'10px'} boxShadow={'rgba(0, 0, 0, 0.24) 0px 3px 8px'}>
+                                        <CardHeader>
+                                            <Checkbox
+                                                fontSize={'14px'}
+                                                isChecked={row.values['status'] === 'Completed'}
+                                                onChange={async (event: React.ChangeEvent<HTMLInputElement>) => {
+                                                    console.log(event.target.checked);
+                                                    if (event.target.checked) {
+                                                        await updateRow({ ...row, values: { ...row.values, status: 'Completed' } });
+                                                    } else {
+                                                        await updateRow({ ...row, values: { ...row.values, status: 'In progress' } });
+                                                    }
+                                                    refetchRowsForApp();
+                                                }}
+                                            >
+                                                {row.values['todo']}
+                                            </Checkbox>
+                                        </CardHeader>
+                                    </Card>
+                                );
+                            })}
+                        </Box>
+                    </Box>
+                ) : null}
+            </GridItem>
+        );
+    };
+
+    return (
+        <>
+            <Grid templateRows={'repeat(1, 1fr)'} templateColumns={'repeat(4, 1fr)'}>
+                {bucketNames.map((bucketName: string) => {
+                    return <BucketGridItem key={bucketName} bucketName={bucketName} />;
+                })}
+            </Grid>
+        </>
+    );
+};
+
+const OneDataCollection = ({
+    dataCollection,
+    dataCollectionId,
+    appModel,
+    userGroup,
+    rowsData,
+    refetchRowsForApp,
+}: {
+    dataCollection: any;
+    dataCollectionId?: string;
+    appModel: string;
+    userGroup: any;
+    rowsData: any;
+    refetchRowsForApp: any;
+}) => {
+    // const {
+    //     data: rowsData,
+    //     // refetch,
+    //     // isFetching: rowsAreFetching,
+    //     // isLoading: rowsAreLoading,
+    // } = useGetRowsQuery({
+    //     dataCollectionId: dataCollectionId || '',
+    //     limit: 0,
+    //     skip: 0,
+    //     sort: 1,
+    //     sortBy: 'createdAt',
+    //     filters: JSON.stringify(dataCollection.filters),
+    // });
 
     const [dataCollectionPermissions, setDataCollectionPermissions] = useState(null);
 
@@ -240,6 +406,7 @@ const OneDataCollection = ({
             dcId={dataCollectionId}
             appModel={appModel}
             dataCollectionPermissions={dataCollectionPermissions}
+            refetchRowsForApp={refetchRowsForApp}
         />
     );
 };

@@ -32,6 +32,7 @@ const DataCollection = ({
     appModel = null,
     dataCollectionPermissions = emptyDataCollectionPermissions,
     viewPermissions = emptyViewPermissions,
+    refetchRowsForApp,
 }: // userGroup,
 {
     showDoneRows?: boolean;
@@ -48,6 +49,7 @@ const DataCollection = ({
     appModel?: string | null;
     dataCollectionPermissions?: any;
     viewPermissions?: any;
+    refetchRowsForApp?: any;
     // userGroup?: any;
 }) => {
     const { dataCollectionId } = useParams();
@@ -163,6 +165,7 @@ const DataCollection = ({
                 appModel={appModel}
                 dataCollectionPermissions={dataCollectionPermissions}
                 viewPermissions={viewPermissions}
+                refetchRowsForApp={refetchRowsForApp}
             />
         </Box>
     );
