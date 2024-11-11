@@ -61,7 +61,7 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
     const [inputError, setInputError] = useState<boolean>(false);
     const [isError, setIsError] = useState(false);
 
-    const [isRowCheckboxChecked, setIsRowCheckboxChecked] = useState(false);
+    // const [isRowCheckboxChecked, setIsRowCheckboxChecked] = useState(false);
 
     useEffect(() => {
         if (view !== null) {
@@ -232,6 +232,7 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
                     }}
                 >
                     {dataCollections?.map((dc) => {
+                        if (dc.inParentToDisplay !== null) return null;
                         return (
                             <option key={dc.name} value={dc._id}>
                                 {dc.name}
@@ -239,39 +240,7 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
                         );
                     })}
                 </Select>
-                <Flex mt={'5px'} mb={'5px'}>
-                    {/* <Spacer /> */}
-                    <Checkbox
-                        isChecked={isRowCheckboxChecked}
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                            if (event.target.checked) {
-                                setIsRowCheckboxChecked(true);
-                            } else {
-                                setIsRowCheckboxChecked(false);
-                            }
-                        }}
-                    >
-                        For row?
-                    </Checkbox>
-                </Flex>
-                {isRowCheckboxChecked ? (
-                    <Select
-                        id="rowsOfDataCollection"
-                        name="rowsOfDataCollection"
-                        placeholder={dataCollection !== undefined ? dataCollection?.name : 'Please select a data collection to associate to'}
-                        onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
-                            setDataCollectionView({ ...dataCollectionView, rowsOfDataCollection: event.target.value, belongsToRow: isRowCheckboxChecked });
-                        }}
-                    >
-                        {dataCollections?.map((dc) => {
-                            return (
-                                <option key={dc.name} value={dc._id}>
-                                    {dc.name}
-                                </option>
-                            );
-                        })}
-                    </Select>
-                ) : null}
+
                 <Box mt={'20px'} mb={'20px'}>
                     {columns?.length > 0
                         ? columns?.map((col: any) => {

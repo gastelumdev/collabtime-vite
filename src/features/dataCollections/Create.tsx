@@ -48,7 +48,9 @@ const Create = ({ addNewDataCollection }: IProps) => {
         const formattedDC = [];
         for (const dataCollection of dataCollections || []) {
             // if (dataCollection.asTemplate !== undefined && dataCollection.asTemplate.active) {
-            formattedDC.push({ value: dataCollection._id, label: dataCollection.name });
+            if (dataCollection.inParentToDisplay === null) {
+                formattedDC.push({ value: dataCollection._id, label: dataCollection.name });
+            }
             // }
         }
         setSelectFormattedDataCollections(formattedDC);
