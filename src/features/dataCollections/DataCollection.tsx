@@ -97,6 +97,7 @@ const DataCollection = ({
     // }, [showDoneRows]);
 
     useEffect(() => {
+        console.log(rowsProp);
         refetch();
     }, [rowsProp]);
 
@@ -136,7 +137,7 @@ const DataCollection = ({
         <Box>
             {dataCollectionView === null ? <Box h={'4px'}>{isFetching || isLoading ? <Progress size="xs" isIndeterminate /> : null}</Box> : null}
             <Table
-                rowsData={rowsData || rowsProp || []}
+                rowsData={rowsProp || rowsData || []}
                 columnsData={columns || dataCollectionView?.columns || []}
                 minCellWidth={120}
                 columnResizingOffset={windowWidthOffset}

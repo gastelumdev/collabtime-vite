@@ -246,6 +246,7 @@ const Create = ({ addNewDataCollection }: IProps) => {
                             isDisabled={!appModelChecked}
                             onChange={(selectedOption: any) => {
                                 setInParentToDisplaySelection(selectedOption.value);
+                                // setData({ ...data, appModel: selectedOption.value });
                             }}
                             options={dataCollections
                                 ?.filter((dc: any) => {
@@ -271,9 +272,21 @@ const Create = ({ addNewDataCollection }: IProps) => {
                                 console.log(selectedOption.value);
                                 setAppType(selectedOption.value);
 
-                                setData({ ...data, template: selectedOption.value, primaryColumnName: 'todo' });
+                                let primaryColumnName = '';
+
+                                if (selectedOption.value === 'planner') {
+                                    primaryColumnName = 'todo';
+                                }
+                                if (selectedOption.value === 'filtered') {
+                                    primaryColumnName = 'item_number';
+                                }
+
+                                setData({ ...data, template: selectedOption.value, primaryColumnName });
                             }}
-                            options={[{ value: 'planner', label: 'Planner' }]}
+                            options={[
+                                { value: 'planner', label: 'Planner' },
+                                { value: 'filtered', label: 'Filtered' },
+                            ]}
                             styles={
                                 {
                                     control: (styles: any) => {

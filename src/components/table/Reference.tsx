@@ -186,6 +186,7 @@ const Reference = ({
                                     <PopoverBody>
                                         <Box height={'150px'} overflowY={'scroll'}>
                                             {rowsList.map((row: any, index: number) => {
+                                                console.log(row.values);
                                                 if (row.values[rowKey] !== '') {
                                                     return (
                                                         <Box

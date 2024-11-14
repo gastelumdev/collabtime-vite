@@ -255,6 +255,11 @@ export const api = createApi({
                 url: `workspaces/${params.workspaceId}/dataCollections/${params.dataCollectionId}/row/${params.rowId}`,
             })
         }),
+        getRowById: builder.query<any, any>({
+            query: (rowId) => ({
+                url: `rows/${rowId}`
+            })
+        }),
         createRow: builder.mutation<TTableData, TTableData>({
             query: (row) => ({
                 url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${row.dataCollection}/rows`,
@@ -606,6 +611,7 @@ export const {
     useReorderColumnsMutation,
     useGetRowsQuery,
     useGetRowQuery,
+    useGetRowByIdQuery,
     useCreateRowMutation,
     useUpdateRowMutation,
     useUpdateRowNoTagMutation,
