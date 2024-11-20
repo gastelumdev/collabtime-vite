@@ -36,6 +36,7 @@ interface IProps {
     dataCollectionView?: any;
     appModel?: string | null;
     permissions?: any;
+    refetchPermissions?: any;
 }
 
 const TableHeader = ({
@@ -64,6 +65,7 @@ const TableHeader = ({
     dataCollectionView = null,
     appModel = null,
     permissions = emptyDataCollectionPermissions,
+    refetchPermissions,
 }: IProps) => {
     const [currentColumns, setCurrentColumns] = useState(columns);
     // ******************* COLUMN REORDERING ******************************
@@ -380,9 +382,11 @@ const TableHeader = ({
                             return item.name === column.name;
                         });
 
-                        // console.log(columnsPermissions);
+                        // if (columnsPermissions === undefined) {
+                        //     refetchPermissions();
+                        // }
 
-                        if (!columnsPermissions?.permissions.column.view) {
+                        if (columnsPermissions !== undefined && !columnsPermissions?.permissions.column.view) {
                             return null;
                         }
                     }
@@ -545,6 +549,7 @@ const TableHeader = ({
                             columnIsUpdating={columnIsUpdating as boolean}
                             handleSetColumns={handleSetColumns}
                             columnsAreFetching={columnsAreFetching}
+                            refetchPermissions={refetchPermissions}
                         />
                     ) : null}
                 </span>

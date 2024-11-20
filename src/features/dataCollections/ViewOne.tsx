@@ -108,7 +108,7 @@ const ViewOne = () => {
 
     const [valuesForExport, setValuesForExport] = useState<any>('');
 
-    const { data: userGroups } = useGetUserGroupsQuery(null);
+    const { data: userGroups, refetch: refetchUserGroups } = useGetUserGroupsQuery(null);
     const [_userGroup, setUserGroup] = useState({ name: '', workspace: '', permissions: emptyPermissions });
     const [dataCollectionPermissions, setDataCollectionPermissions] = useState(emptyDataCollectionPermissions);
 
@@ -453,7 +453,12 @@ const ViewOne = () => {
                             */}
                             <CardBody p={'0'}>
                                 {dataCollectionPermissions.dataCollection.view ? (
-                                    <DataCollection showDoneRows={showDoneRows} rowsProp={rowsData} dataCollectionPermissions={dataCollectionPermissions} />
+                                    <DataCollection
+                                        showDoneRows={showDoneRows}
+                                        rowsProp={rowsData}
+                                        dataCollectionPermissions={dataCollectionPermissions}
+                                        refetchPermissions={refetchUserGroups}
+                                    />
                                 ) : (
                                     <Box mb={'20px'}>
                                         <Center>

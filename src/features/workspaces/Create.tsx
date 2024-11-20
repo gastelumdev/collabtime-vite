@@ -5,6 +5,7 @@ import { TWorkspace } from '../../types';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
 import PrimaryDrawer from '../../components/PrimaryDrawer';
 import { AddIcon } from '@chakra-ui/icons';
+import Select from 'react-select';
 
 /**
  * Workspace default values should be deleted once RTK is implemented
@@ -24,6 +25,7 @@ let defaultValues: TWorkspace = {
     members: [],
     tags: [],
     workspaceTags: [],
+    type: 'basic',
 };
 
 interface IProps {
@@ -83,10 +85,13 @@ const Create = ({ addNewWorkspace, workspaces }: IProps) => {
      */
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value, name } = event.target;
-        if (value.length > 30) {
-            setInputError(true);
-        } else {
-            setInputError(false);
+
+        if (name === 'name') {
+            if (value.length > 30) {
+                setInputError(true);
+            } else {
+                setInputError(false);
+            }
         }
 
         const workspaceNames = workspaces.map((workspace: any) => {
@@ -167,37 +172,31 @@ const Create = ({ addNewWorkspace, workspaces }: IProps) => {
                     onChange={handleChange}
                     style={{ marginBottom: '15px' }}
                 />
-                {/* <Text pb={'5px'}>Tools</Text> */}
+                <Text pb={'5px'} color={'rgb(123, 128, 154)'}>
+                    Template
+                </Text>
+                <Select
+                    id={'appType'}
+                    name={'appType'}
+                    placeholder={'Please select type of row app'}
+                    // isDisabled={!appModelChecked}
+                    onChange={(selectedOption: any) => {
+                        console.log(selectedOption.value);
+                        setData({ ...data, type: selectedOption.value });
+                    }}
+                    options={[
+                        { value: 'basic', label: 'Basic' },
+                        { value: 'integration', label: 'Integration' },
+                    ]}
+                    styles={
+                        {
+                            control: (styles: any) => {
+                                return { ...styles, borderColor: '#e2e8f0', marginBottom: '20px' };
+                            },
+                        } as any
+                    }
+                />
                 <Stack mt={1} spacing={1}>
-                    {/* <Checkbox
-                        color={'rgb(123, 128, 154)'}
-                        isChecked={checkedItems[0]}
-                        onChange={(e) => setCheckedItems([e.target.checked, checkedItems[1], checkedItems[2], checkedItems[3]])}
-                    >
-                        <Text fontSize={'14px'}>Data Collections</Text>
-                    </Checkbox>
-                    <Checkbox
-                        color={'rgb(123, 128, 154)'}
-                        isChecked={checkedItems[1]}
-                        onChange={(e) => setCheckedItems([checkedItems[0], e.target.checked, checkedItems[2], checkedItems[3]])}
-                    >
-                        <Text fontSize={'14px'}>Tasks</Text>
-                    </Checkbox>
-                    <Checkbox
-                        color={'rgb(123, 128, 154)'}
-                        isChecked={checkedItems[2]}
-                        onChange={(e) => setCheckedItems([checkedItems[0], checkedItems[1], e.target.checked, checkedItems[3]])}
-                    >
-                        <Text fontSize={'14px'}>Docs</Text>
-                    </Checkbox>
-                    <Checkbox
-                        color={'rgb(123, 128, 154)'}
-                        isChecked={checkedItems[3]}
-                        onChange={(e) => setCheckedItems([checkedItems[0], checkedItems[1], checkedItems[2], e.target.checked])}
-                    >
-                        <Text fontSize={'14px'}>Message Board</Text>
-                    </Checkbox> */}
-                    {/* <Divider gradient="radial-gradient(#eceef1 40%, white 60%)" marginBottom="0" /> */}
                     <Flex mt={'10px'} width={'full'}>
                         <Spacer />
                         <PrimaryButton onClick={createData} isDisabled={inputError || isError}>

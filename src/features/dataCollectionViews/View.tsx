@@ -41,6 +41,11 @@ const View = ({
             refetchRows();
         });
 
+        socket.on('update swift sensor data', () => {
+            console.log('Swift sensors');
+            refetchRows();
+        });
+
         return () => {
             socket.disconnect();
         };

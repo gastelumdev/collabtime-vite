@@ -408,12 +408,14 @@ const Row = ({
                                         return item.name === column.name;
                                     });
 
-                                    if (!columnsPermissions?.permissions.column.view) {
+                                    if (columnsPermissions !== undefined && !columnsPermissions?.permissions.column.view) {
                                         return null;
                                     }
 
                                     let labels = column.labels.filter((label: any) => {
-                                        return columnsPermissions.permissions.labels.includes(label.title);
+                                        if (columnsPermissions !== undefined) {
+                                            return columnsPermissions.permissions.labels.includes(label.title);
+                                        }
                                     });
 
                                     if (labels.length === 0) {
@@ -435,6 +437,12 @@ const Row = ({
                                     if (column.autoIncremented) {
                                         editable = false;
                                     }
+
+                                    let allowed = columnsPermissions === undefined || columnsPermissions?.permissions.column.update;
+
+                                    console.log(column.name);
+                                    console.log(columnsPermissions);
+                                    console.log(allowed);
                                     return (
                                         <div
                                             key={columnIndex}
@@ -453,7 +461,7 @@ const Row = ({
                                                     columnName={column.name}
                                                     value={row.values !== undefined ? row.values[column.name] : null}
                                                     onChange={onChange}
-                                                    allowed={columnsPermissions?.permissions.column.update}
+                                                    allowed={allowed}
                                                 />
                                             ) : column.type === 'people' ? (
                                                 <PeopleMenu
@@ -462,14 +470,14 @@ const Row = ({
                                                     people={column.people}
                                                     values={row.values !== undefined ? row.values[column.name] : null}
                                                     onChange={onChange}
-                                                    allowed={columnsPermissions?.permissions.column.update}
+                                                    allowed={allowed}
                                                 />
                                             ) : column.type === 'date' ? (
                                                 <DateInput
                                                     value={row.values !== undefined ? row.values[column.name] : null}
                                                     columnName={column.name}
                                                     onChange={onChange}
-                                                    allowed={columnsPermissions?.permissions.column.update}
+                                                    allowed={allowed}
                                                 />
                                             ) : column.type === 'reference' ? (
                                                 <Reference
@@ -477,7 +485,7 @@ const Row = ({
                                                     refs={row.refs && row.refs[column.name] !== undefined ? row.refs[column.name] : []}
                                                     onRefChange={onRefChange}
                                                     onRemoveRef={onRemoveRef}
-                                                    allowed={columnsPermissions?.permissions.column.update}
+                                                    allowed={allowed}
                                                 />
                                             ) : (
                                                 <TextInput
@@ -485,7 +493,7 @@ const Row = ({
                                                     columnName={column.name}
                                                     value={row.values !== undefined ? row.values[column.name] : null}
                                                     onChange={onChange}
-                                                    allowed={editable || (column.autoIncremented !== undefined && !column.autoIncremented)}
+                                                    allowed={allowed || editable || (column.autoIncremented !== undefined && !column.autoIncremented)}
                                                     isCustomLink={column.primary !== undefined ? column.primary && dataCollectionView : false}
                                                 />
                                             )}

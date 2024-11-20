@@ -44,6 +44,7 @@ interface ITableProps {
     dataCollectionPermissions?: any;
     viewPermissions?: any;
     refetchRowsForApp?: any;
+    refetchPermissions?: any;
 }
 
 const Table = ({
@@ -76,6 +77,7 @@ const Table = ({
     dataCollectionPermissions = emptyDataCollectionPermissions,
     viewPermissions = null,
     refetchRowsForApp,
+    refetchPermissions,
 }: ITableProps) => {
     const dispatch = useAppDispatch();
     // const { dataCollectionId } = useParams();
@@ -589,6 +591,7 @@ const Table = ({
                 dataCollectionView={dataCollectionView}
                 appModel={appModel}
                 permissions={permissions}
+                refetchPermissions={refetchPermissions}
             />
             <TableContent
                 rows={rows || []}

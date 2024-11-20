@@ -33,6 +33,7 @@ export type TWorkspace = {
     owner: string;
     tags: TTag[];
     workspaceTags: TTag[];
+    type: 'basic' | 'integration';
 };
 
 export type TInvitee = {

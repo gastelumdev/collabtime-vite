@@ -33,6 +33,7 @@ const DataCollection = ({
     dataCollectionPermissions = emptyDataCollectionPermissions,
     viewPermissions = emptyViewPermissions,
     refetchRowsForApp,
+    refetchPermissions,
 }: // userGroup,
 {
     showDoneRows?: boolean;
@@ -50,6 +51,7 @@ const DataCollection = ({
     dataCollectionPermissions?: any;
     viewPermissions?: any;
     refetchRowsForApp?: any;
+    refetchPermissions?: any;
     // userGroup?: any;
 }) => {
     const { dataCollectionId } = useParams();
@@ -97,7 +99,6 @@ const DataCollection = ({
     // }, [showDoneRows]);
 
     useEffect(() => {
-        console.log(rowsProp);
         refetch();
     }, [rowsProp]);
 
@@ -167,6 +168,7 @@ const DataCollection = ({
                 dataCollectionPermissions={dataCollectionPermissions}
                 viewPermissions={viewPermissions}
                 refetchRowsForApp={refetchRowsForApp}
+                refetchPermissions={refetchPermissions}
             />
         </Box>
     );

@@ -24,6 +24,7 @@ interface TProps {
     addNewColumnToRows: any;
     handleSetColumns?: any;
     columnsAreFetching?: boolean;
+    refetchPermissions?: any;
 }
 
 const CreateColumn = ({
@@ -35,6 +36,7 @@ const CreateColumn = ({
     addNewColumnToRows,
     handleSetColumns,
     columnsAreFetching = false,
+    refetchPermissions,
 }: TProps) => {
     const { dataCollectionId } = useParams();
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -119,6 +121,8 @@ const CreateColumn = ({
             if (!columnsAreFetching) {
                 closeDrawer();
             }
+
+            refetchPermissions();
         }
     };
 
@@ -131,6 +135,8 @@ const CreateColumn = ({
             setShowLabelForm(false);
             setShowReferenceForm(false);
             closeDrawer();
+
+            refetchPermissions();
         }
     };
 
