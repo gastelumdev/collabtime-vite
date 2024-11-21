@@ -44,6 +44,7 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 import Create from '../../features/workspaces/Create';
 import { bgColor, color, topNavBgColor, hoverBg } from '../../utils/colors';
 import { emptyPermissions } from '../../features/workspaces/UserGroups';
+import logo from '../../assets/logo.png';
 
 interface LinkItemProps {
     name: string;
@@ -143,11 +144,12 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
         >
             <Box bg={'black'} h={height}>
                 <Box pt={'14px'} bgColor={bgColor} height={'full'}>
-                    <Box pb={'4px'}>
+                    <Box pb={'0px'}>
                         <Center>
-                            <Text as={'b'} fontSize={'20px'} color={'white'}>
+                            {/* <Text as={'b'} fontSize={'20px'} color={'white'}>
                                 Collabtime
-                            </Text>
+                            </Text> */}
+                            <img src={logo} width={'60px'} />
                         </Center>
                     </Box>
                     <Box>
@@ -238,7 +240,7 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
 
 const NavItemSubHeader = ({ title, description }: NavItemSubHeaderProps) => {
     return (
-        <Box mb={'10px'} mt={'50px'}>
+        <Box mb={'10px'} mt={'40px'}>
             <Text color={'#24A2F0'} fontSize={'12px'} fontWeight={'semibold'}>
                 {title.toUpperCase()}
             </Text>
