@@ -17,12 +17,13 @@ interface IProps {
     onChange: any;
     allowed?: boolean;
     border?: string | null;
+    fontWeight?: string;
     // label?: string;
     // bgColor?: string;
     // options: { value: string; label: string; color: string }[] | undefined;
 }
 
-const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false, border = null }: IProps) => {
+const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false, border = null, fontWeight = 'normal' }: IProps) => {
     const { onClose } = useDisclosure();
     // const [updateRow] = useUpdateRowMutation();
 
@@ -159,6 +160,7 @@ const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false, 
                             event;
                             setActive(true);
                         }}
+                        fontWeight={fontWeight}
                         // tabIndex={0}
                     >
                         {labelLabel}

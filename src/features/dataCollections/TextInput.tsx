@@ -1,6 +1,7 @@
 import {
     Box,
     Button,
+    Center,
     // ChakraProvider,
     Input,
     // Text,
@@ -31,12 +32,33 @@ interface ITextInputProps {
     allowed?: boolean;
     isTextarea?: boolean;
     isCustomLink?: boolean;
+    bgColor?: string;
+    textColor?: string;
+    fontWeight?: string;
+    position?: string;
 }
 
-const TextInput = ({ id, columnName, value, type = 'tableCell', onChange, allowed = false, isTextarea = true, isCustomLink = false }: ITextInputProps) => {
+const TextInput = ({
+    id,
+    columnName,
+    value,
+    type = 'tableCell',
+    onChange,
+    allowed = false,
+    isTextarea = true,
+    isCustomLink = false,
+    bgColor = 'white',
+    textColor = 'black',
+    fontWeight = 'normal',
+    position = 'left',
+}: ITextInputProps) => {
     const [active, setActive] = useState<boolean>(false);
     const [val, setVal] = useState<string>(value);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        console.log({ columnName, value, bgColor, textColor, fontWeight });
+    }, []);
 
     useEffect(() => {
         setVal(value);
@@ -62,6 +84,7 @@ const TextInput = ({ id, columnName, value, type = 'tableCell', onChange, allowe
             {!active || !allowed ? (
                 <Box
                     w={'100%'}
+                    // bgColor={'blue'}
                     // p={val ? '0px' : type === 'tableCell' ? '14px' : '0px'}
                     onClick={() => {
                         if (!isCustomLink) {
@@ -78,9 +101,10 @@ const TextInput = ({ id, columnName, value, type = 'tableCell', onChange, allowe
                             border={type === 'tableCell' ? 'none' : '1px solid #edf2f7'}
                             borderRadius={'none'}
                             fontSize={'12px'}
-                            fontWeight={'normal'}
+                            fontWeight={fontWeight}
                             padding={0}
-                            // pl={type === 'tableCell' ? '0px' : '12px'}
+                            bgColor={bgColor}
+                            color={textColor}
                             pl={'12px'}
                             overflow={'hidden'}
                             textOverflow={'ellipsis'}
@@ -90,7 +114,7 @@ const TextInput = ({ id, columnName, value, type = 'tableCell', onChange, allowe
                             cursor={'default'}
                             size={'xs'}
                         >
-                            {val}
+                            {position === 'center' ? <Center>{val}</Center> : val}
                         </Button>
                     ) : (
                         // <ProjectManagerApp val={val} type={type} rowId={id} />
@@ -99,8 +123,10 @@ const TextInput = ({ id, columnName, value, type = 'tableCell', onChange, allowe
                             border={type === 'tableCell' ? 'none' : '1px solid #edf2f7'}
                             borderRadius={'none'}
                             fontSize={'12px'}
-                            fontWeight={'normal'}
+                            fontWeight={fontWeight}
                             padding={0}
+                            bgColor={bgColor}
+                            color={textColor}
                             // pl={type === 'tableCell' ? '0px' : '12px'}
                             pl={'12px'}
                             overflow={'hidden'}
@@ -127,7 +153,8 @@ const TextInput = ({ id, columnName, value, type = 'tableCell', onChange, allowe
                             position={'absolute'}
                             zIndex={1000000}
                             onBlur={() => setActive(!active)}
-                            bgColor={'white'}
+                            bgColor={bgColor}
+                            color={textColor}
                             autoFocus={true}
                             onFocus={(event: React.FocusEvent<HTMLTextAreaElement, Element>) => {
                                 // event.target.select();
@@ -145,7 +172,8 @@ const TextInput = ({ id, columnName, value, type = 'tableCell', onChange, allowe
                             // position={'absolute'}
                             zIndex={1000000}
                             onBlur={() => setActive(!active)}
-                            bgColor={'white'}
+                            bgColor={bgColor}
+                            color={textColor}
                             size={'xs'}
                             autoFocus={true}
                             onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) => {

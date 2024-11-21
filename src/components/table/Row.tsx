@@ -20,6 +20,8 @@ import { addCheckedRowId, removeCheckedRowId } from '../../components/table/tabl
 import RemindersDrawer from './RemindersDrawer';
 // import { useGetUserGroupsQuery } from '../../app/services/api';
 import { emptyDataCollectionPermissions } from '../../features/workspaces/UserGroups';
+import { useParams } from 'react-router-dom';
+import { useGetOneWorkspaceQuery } from '../../app/services/api';
 // import { useParams } from 'react-router-dom';
 
 const Row = ({
@@ -73,13 +75,15 @@ const Row = ({
     // );
 
     // const [isPending, startTransition] = useTransition();
-    // const { dataCollectionId } = useParams();
+    const { id } = useParams();
 
     const dispatch = useAppDispatch();
 
     const checkedRowIds = useTypedSelector((state: any) => {
         return state.table.checkedRowIds;
     });
+
+    const { data: workspace } = useGetOneWorkspaceQuery(id as string);
 
     const [overId, setOverId] = useState<number | null>(null);
     const [draggedId, setDraggedId] = useState<number | null>(null);
@@ -440,9 +444,40 @@ const Row = ({
 
                                     let allowed = columnsPermissions === undefined || columnsPermissions?.permissions.column.update;
 
-                                    console.log(column.name);
-                                    console.log(columnsPermissions);
-                                    console.log(allowed);
+                                    // console.log(column.name);
+                                    // console.log(columnsPermissions);
+                                    // console.log(allowed);
+
+                                    // console.log(workspace);
+
+                                    let bgColor = 'white';
+                                    let textColor = 'black';
+                                    let fontWeight = 'normal';
+                                    let position = 'left';
+
+                                    if (workspace?.type === 'integration') {
+                                        position = 'center';
+                                        if (['temperature'].includes(column.name)) {
+                                            let value = row.values[column.name];
+                                            fontWeight = 'bold';
+                                            position = 'center';
+                                            textColor = 'white';
+                                            if (value >= 74) {
+                                                bgColor = 'red';
+                                            } else if (value < 74 && value > 60) {
+                                                bgColor = 'green';
+                                            } else {
+                                                bgColor = 'blue';
+                                            }
+                                        }
+
+                                        if (['value', 'status'].includes(column.name)) {
+                                            fontWeight = 'bold';
+                                            position = 'center';
+                                        }
+                                    }
+
+                                    // console.log({ columnName: column.name, value: row.values[column.name], bgColor, textColor, fontWeight });
                                     return (
                                         <div
                                             key={columnIndex}
@@ -462,6 +497,7 @@ const Row = ({
                                                     value={row.values !== undefined ? row.values[column.name] : null}
                                                     onChange={onChange}
                                                     allowed={allowed}
+                                                    fontWeight={fontWeight}
                                                 />
                                             ) : column.type === 'people' ? (
                                                 <PeopleMenu
@@ -495,6 +531,10 @@ const Row = ({
                                                     onChange={onChange}
                                                     allowed={allowed || editable || (column.autoIncremented !== undefined && !column.autoIncremented)}
                                                     isCustomLink={column.primary !== undefined ? column.primary && dataCollectionView : false}
+                                                    bgColor={bgColor}
+                                                    textColor={textColor}
+                                                    fontWeight={fontWeight}
+                                                    position={position}
                                                 />
                                             )}
                                             {/* {row.values[column.name]} */}

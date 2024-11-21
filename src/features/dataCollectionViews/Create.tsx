@@ -288,7 +288,6 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
                 </Box>
                 <Box mb={'10px'}>
                     {dataCollectionView.columns.map((col: any) => {
-                        console.log(col.name);
                         return (
                             <Card key={col.name} mb={'5px'}>
                                 <CardBody>
