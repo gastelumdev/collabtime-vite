@@ -174,15 +174,15 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
                                                 <MenuItem
                                                     key={index}
                                                     as={'a'}
-                                                    href={`/workspaces/${ws._id}`}
+                                                    href={`/workspaces/${ws?._id}`}
                                                     onClick={() => {
-                                                        localStorage.setItem('workspaceId', ws._id);
-                                                        updateUser({ ...user, defaultWorkspaceId: ws._id });
+                                                        localStorage.setItem('workspaceId', ws?._id);
+                                                        updateUser({ ...user, defaultWorkspaceId: ws?._id });
                                                     }}
                                                     fontSize={'14px'}
                                                     color={bgColor}
                                                 >
-                                                    {ws.name}
+                                                    {ws?.name}
                                                 </MenuItem>
                                             );
                                         })}
