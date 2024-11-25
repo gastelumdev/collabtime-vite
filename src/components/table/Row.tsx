@@ -408,6 +408,13 @@ const Row = ({
                                     </Flex>
                                 </span>
                                 {columns.map((column: any, columnIndex: number) => {
+                                    let value = row.values[column.name];
+                                    let min_warning = row.values['min_warning'];
+                                    let min_critical = row.values['min_critical'];
+                                    let max_warning = row.values['max_warning'];
+                                    let max_critical = row.values['max_critical'];
+
+                                    console.log({ min_warning, min_critical, max_warning, max_critical });
                                     const columnsPermissions = dataCollectionPermissions.columns.find((item: any) => {
                                         return item.name === column.name;
                                     });
@@ -426,12 +433,6 @@ const Row = ({
                                         labels = column.labels;
                                     }
 
-                                    // console.log({
-                                    //     allowed: columnsPermissions?.permissions.column.update,
-                                    //     isSub: appModel !== null,
-                                    //     primaryColumn: column.primary === undefined || !column.primary,
-                                    // });
-
                                     let editable = false;
                                     if (columnsPermissions?.permissions.column.update && appModel === null) {
                                         editable = true;
@@ -444,12 +445,6 @@ const Row = ({
 
                                     let allowed = columnsPermissions === undefined || columnsPermissions?.permissions.column.update;
 
-                                    // console.log(column.name);
-                                    // console.log(columnsPermissions);
-                                    // console.log(allowed);
-
-                                    // console.log(workspace);
-
                                     let bgColor = 'white';
                                     let textColor = 'black';
                                     let fontWeight = 'normal';
@@ -458,16 +453,17 @@ const Row = ({
                                     if (workspace?.type === 'integration') {
                                         position = 'center';
                                         if (['temperature'].includes(column.name)) {
-                                            let value = row.values[column.name];
                                             fontWeight = 'bold';
                                             position = 'center';
                                             textColor = 'white';
-                                            if (value >= 74) {
+                                            if (value >= max_critical) {
                                                 bgColor = 'red';
-                                            } else if (value < 74 && value > 60) {
-                                                bgColor = 'green';
+                                            } else if (value < max_warning && value > min_warning) {
+                                                bgColor = '#398c4e';
+                                            } else if (value < min_warning && value > min_critical) {
+                                                bgColor = '#0f71a4';
                                             } else {
-                                                bgColor = 'blue';
+                                                bgColor = 'red';
                                             }
                                         }
 
@@ -475,9 +471,15 @@ const Row = ({
                                             fontWeight = 'bold';
                                             position = 'center';
                                         }
+
+                                        if (['temperature', 'min_critical', 'min_warning', 'max_critical', 'max_warning'].includes(column.name)) {
+                                            if (value !== undefined) {
+                                                value = value.toFixed(2);
+                                            }
+                                        }
                                     }
 
-                                    // console.log({ columnName: column.name, value: row.values[column.name], bgColor, textColor, fontWeight });
+                                    // console.log({ columnName: column.name, value: value, bgColor, textColor, fontWeight });
                                     return (
                                         <div
                                             key={columnIndex}
@@ -494,7 +496,7 @@ const Row = ({
                                                     id={rowIndex}
                                                     labels={labels}
                                                     columnName={column.name}
-                                                    value={row.values !== undefined ? row.values[column.name] : null}
+                                                    value={row.values !== undefined ? value : null}
                                                     onChange={onChange}
                                                     allowed={allowed}
                                                     fontWeight={fontWeight}
@@ -504,13 +506,13 @@ const Row = ({
                                                     row={row}
                                                     columnName={column.name}
                                                     people={column.people}
-                                                    values={row.values !== undefined ? row.values[column.name] : null}
+                                                    values={row.values !== undefined ? value : null}
                                                     onChange={onChange}
                                                     allowed={allowed}
                                                 />
                                             ) : column.type === 'date' ? (
                                                 <DateInput
-                                                    value={row.values !== undefined ? row.values[column.name] : null}
+                                                    value={row.values !== undefined ? value : null}
                                                     columnName={column.name}
                                                     onChange={onChange}
                                                     allowed={allowed}
@@ -527,7 +529,7 @@ const Row = ({
                                                 <TextInput
                                                     id={row._id}
                                                     columnName={column.name}
-                                                    value={row.values !== undefined ? row.values[column.name] : null}
+                                                    value={row.values !== undefined ? value : null}
                                                     onChange={onChange}
                                                     allowed={allowed || editable || (column.autoIncremented !== undefined && !column.autoIncremented)}
                                                     isCustomLink={column.primary !== undefined ? column.primary && dataCollectionView : false}
@@ -537,7 +539,7 @@ const Row = ({
                                                     position={position}
                                                 />
                                             )}
-                                            {/* {row.values[column.name]} */}
+                                            {/* {value} */}
                                         </div>
                                     );
                                 })}
