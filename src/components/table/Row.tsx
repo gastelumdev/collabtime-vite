@@ -452,18 +452,17 @@ const Row = ({
 
                                     if (workspace?.type === 'integration') {
                                         position = 'center';
-                                        if (['temperature'].includes(column.name)) {
+                                        if (['temperature'].includes(column.name) && row.values['type'] === 'Temperature') {
                                             fontWeight = 'bold';
                                             position = 'center';
                                             textColor = 'white';
+                                            bgColor = 'white';
                                             if (value >= max_critical) {
                                                 bgColor = 'red';
                                             } else if (value < max_warning && value > min_warning) {
                                                 bgColor = '#398c4e';
                                             } else if (value < min_warning && value > min_critical) {
                                                 bgColor = '#0f71a4';
-                                            } else {
-                                                bgColor = 'red';
                                             }
                                         }
 
@@ -473,7 +472,7 @@ const Row = ({
                                         }
 
                                         if (['temperature', 'min_critical', 'min_warning', 'max_critical', 'max_warning'].includes(column.name)) {
-                                            if (value !== undefined) {
+                                            if (value && value !== undefined) {
                                                 value = value.toFixed(2);
                                             }
                                         }
