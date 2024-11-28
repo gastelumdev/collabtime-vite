@@ -158,7 +158,7 @@ const UserGroups = () => {
 
     useEffect(() => {
         const column: any = allViewsColumns.find((item: any) => {
-            return item._id === currentViewColumnPermissions.column;
+            return item?._id === currentViewColumnPermissions.column;
         });
         if (column !== undefined) {
             if (['label', 'status'].includes(column.type)) {
@@ -223,8 +223,6 @@ const UserGroups = () => {
             const v = views?.find((_v: any) => {
                 return true;
             });
-
-            // console.log(v);
 
             setCurrentViewPermissions(emptyViews[0]);
 

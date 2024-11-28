@@ -36,6 +36,7 @@ interface ITextInputProps {
     textColor?: string;
     fontWeight?: string;
     position?: string;
+    isDisabled?: boolean;
 }
 
 const TextInput = ({
@@ -45,27 +46,23 @@ const TextInput = ({
     type = 'tableCell',
     onChange,
     allowed = false,
-    isTextarea = true,
+    isTextarea = false,
     isCustomLink = false,
     bgColor = 'white',
     textColor = 'black',
     fontWeight = 'normal',
     position = 'left',
+    isDisabled = false,
 }: ITextInputProps) => {
     const [active, setActive] = useState<boolean>(false);
     const [val, setVal] = useState<string>(value);
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log({ columnName, value, bgColor, textColor, fontWeight });
-    }, []);
-
-    useEffect(() => {
         setVal(value);
     }, [value]);
 
     const onTextChange = (value: string) => {
-        console.log(value);
         // onChange(columnName, value);
         setVal(value);
     };
@@ -113,6 +110,7 @@ const TextInput = ({
                             textAlign={'left'}
                             cursor={'default'}
                             size={'xs'}
+                            isDisabled={isDisabled}
                         >
                             {position === 'center' ? <Center>{val}</Center> : val}
                         </Button>
@@ -139,6 +137,7 @@ const TextInput = ({
                             onClick={() => {
                                 navigate(`/workspaces/${localStorage.getItem('workspaceId')}/viewRow/${id}`);
                             }}
+                            isDisabled={isDisabled}
                         >
                             {val}
                         </Button>
@@ -153,7 +152,7 @@ const TextInput = ({
                             position={'absolute'}
                             zIndex={1000000}
                             onBlur={() => setActive(!active)}
-                            bgColor={bgColor}
+                            bgColor={'white'}
                             color={textColor}
                             autoFocus={true}
                             onFocus={(event: React.FocusEvent<HTMLTextAreaElement, Element>) => {
@@ -172,7 +171,7 @@ const TextInput = ({
                             // position={'absolute'}
                             zIndex={1000000}
                             onBlur={() => setActive(!active)}
-                            bgColor={bgColor}
+                            bgColor={'white'}
                             color={textColor}
                             size={'xs'}
                             autoFocus={true}
@@ -203,8 +202,6 @@ const TextInput = ({
 //     //         const ug = userGroups?.find((item: any) => {
 //     //             return item.users.includes(localStorage.getItem('userId'));
 //     //         });
-
-//     //         console.log(ug);
 
 //     //         setUserGroup(ug);
 //     //     } else {

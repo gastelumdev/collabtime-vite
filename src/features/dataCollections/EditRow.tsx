@@ -134,39 +134,39 @@ const EditRow = ({ columns, row, handleChange, allowed = false }: IProps) => {
                             }}
                         >
                             <Box py={'15px'} h={'80px'}>
-                                <Text mb={'8px'} fontSize={'13px'}>{`${column.name[0].toUpperCase()}${column.name
-                                    .slice(1, column.name.length)
+                                <Text mb={'8px'} fontSize={'13px'}>{`${column?.name[0].toUpperCase()}${column?.name
+                                    .slice(1, column?.name.length)
                                     .split('_')
                                     .join(' ')}`}</Text>
-                                {column.type === 'label' || column.type === 'priority' || column.type === 'status' ? (
+                                {column?.type === 'label' || column?.type === 'priority' || column?.type === 'status' ? (
                                     <LabelMenu
                                         id={0}
-                                        labels={column.labels}
-                                        columnName={column.name}
-                                        value={rowState.values !== undefined ? rowState.values[column.name] : null}
+                                        labels={column?.labels}
+                                        columnName={column?.name}
+                                        value={rowState.values !== undefined ? rowState.values[column?.name] : null}
                                         onChange={onChange}
                                         allowed={allowed}
                                     />
-                                ) : column.type === 'people' ? (
+                                ) : column?.type === 'people' ? (
                                     <PeopleMenu
                                         row={rowState}
-                                        columnName={column.name}
-                                        people={column.people}
-                                        values={rowState.values !== undefined ? rowState.values[column.name] : null}
+                                        columnName={column?.name}
+                                        people={column?.people}
+                                        values={rowState.values !== undefined ? rowState.values[column?.name] : null}
                                         onChange={onChange}
                                         allowed={allowed}
                                     />
-                                ) : column.type === 'date' ? (
+                                ) : column?.type === 'date' ? (
                                     <DateInput
-                                        value={rowState.values !== undefined ? rowState.values[column.name] : null}
-                                        columnName={column.name}
+                                        value={rowState.values !== undefined ? rowState.values[column?.name] : null}
+                                        columnName={column?.name}
                                         onChange={onChange}
                                         allowed={allowed}
                                     />
-                                ) : column.type === 'reference' ? (
+                                ) : column?.type === 'reference' ? (
                                     <Reference
                                         column={column !== undefined ? column : {}}
-                                        refs={row.refs && row.refs[column.name] !== undefined ? row.refs[column.name] : []}
+                                        refs={row.refs && row.refs[column?.name] !== undefined ? row.refs[column?.name] : []}
                                         onRefChange={onRefChange}
                                         onRemoveRef={onRemoveRef}
                                         allowed={allowed}
@@ -174,8 +174,8 @@ const EditRow = ({ columns, row, handleChange, allowed = false }: IProps) => {
                                 ) : (
                                     <TextInput
                                         id={rowState._id}
-                                        columnName={column.name}
-                                        value={rowState.values !== undefined ? rowState.values[column.name] : null}
+                                        columnName={column?.name}
+                                        value={rowState.values !== undefined ? rowState.values[column?.name] : null}
                                         type="form"
                                         onChange={onChange}
                                         allowed={allowed}

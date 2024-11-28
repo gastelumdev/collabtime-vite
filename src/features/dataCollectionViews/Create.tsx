@@ -252,7 +252,7 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
                                                   id="email-alerts"
                                                   isChecked={dataCollectionView.columns
                                                       .map((c: any) => {
-                                                          return c._id;
+                                                          return c?._id;
                                                       })
                                                       .includes(col._id)}
                                                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -289,14 +289,16 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
                 <Box mb={'10px'}>
                     {dataCollectionView.columns.map((col: any) => {
                         return (
-                            <Card key={col.name} mb={'5px'}>
+                            <Card key={col?.name} mb={'5px'}>
                                 <CardBody>
                                     <Flex>
                                         <Text>{`${col?.name[0].toUpperCase()}${col?.name.slice(1, col?.name.length).split('_').join(' ')}`}</Text>
                                         <Text ml={'20px'} fontSize={'10px'} mt={'6px'}>
-                                            {dataCollectionView.filters && Object.keys(dataCollectionView.filters).includes(col.name)
+                                            {dataCollectionView.filters && Object.keys(dataCollectionView.filters).includes(col?.name)
                                                 ? `Filter by: ${
-                                                      dataCollectionView.filters[col.name].includes('__user__') ? 'User' : dataCollectionView.filters[col.name]
+                                                      dataCollectionView.filters[col?.name].includes('__user__')
+                                                          ? 'User'
+                                                          : dataCollectionView.filters[col?.name]
                                                   }`
                                                 : ''}
                                         </Text>
@@ -313,7 +315,7 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
                                                         },
                                                     });
                                                 }}
-                                                filterValues={dataCollectionView.filters ? dataCollectionView?.filters[col.name] : []}
+                                                filterValues={dataCollectionView.filters ? dataCollectionView?.filters[col?.name] : []}
                                                 handleRemoveFilter={(columnName: string) => {
                                                     let filters = dataCollectionView.filters;
                                                     if (filters[columnName] !== undefined) {
@@ -396,7 +398,7 @@ export const FilterModal = ({
                                 .split('_')
                                 .join(' ')}' by`}</Text>
                             <Spacer />
-                            {column.type === 'people' ? (
+                            {column?.type === 'people' ? (
                                 <Checkbox
                                     size={'sm'}
                                     isChecked={userCheck}

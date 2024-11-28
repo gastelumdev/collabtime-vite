@@ -56,7 +56,7 @@ const ColumnMenu = ({
     useEffect(() => {
         if (dataCollectionPermissions) {
             const columnPermissions = dataCollectionPermissions.columns.find((item: any) => {
-                return item.name === column.name;
+                return item.name === column?.name;
             });
 
             if (columnPermissions !== undefined) {
@@ -83,7 +83,7 @@ const ColumnMenu = ({
         <Popover isOpen={isOpen} onClose={onClose}>
             <PopoverTrigger>
                 <Button variant={'unstyled'} fontSize={'14px'} fontWeight={'medium'} h={'20px'} w={'100px'} color={'#666666'} onClick={onToggle}>
-                    {`${column.name[0].toUpperCase()}${column.name.slice(1, column.name.length).split('_').join(' ')}`}
+                    {`${column?.name[0].toUpperCase()}${column?.name.slice(1, column?.name.length).split('_').join(' ')}`}
                 </Button>
             </PopoverTrigger>
             <Portal>

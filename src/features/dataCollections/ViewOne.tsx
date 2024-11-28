@@ -240,19 +240,19 @@ const ViewOne = () => {
                 let values: any = {};
 
                 for (const column of columnsCopy || []) {
-                    if (column.type === 'reference') {
-                        if (row.refs !== undefined && row.refs[column.name] !== undefined) {
-                            const refs: any = row.refs[column.name];
+                    if (column?.type === 'reference') {
+                        if (row.refs !== undefined && row.refs[column?.name] !== undefined) {
+                            const refs: any = row.refs[column?.name];
                             let refsString = '';
                             for (const ref of refs) {
                                 refsString += `${ref.values[key]} `;
                             }
-                            values[column.name] = refsString;
+                            values[column?.name] = refsString;
                         } else {
-                            values[column.name] = '';
+                            values[column?.name] = '';
                         }
                     } else {
-                        values[column.name] = row.values[column.name];
+                        values[column?.name] = row.values[column?.name];
                     }
                 }
 

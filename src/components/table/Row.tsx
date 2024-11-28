@@ -96,7 +96,6 @@ const Row = ({
     const [dataCollectionPermissions, setDataCollectionPermissions] = useState<any>(emptyDataCollectionPermissions);
 
     useEffect(() => {
-        // console.log(permissions);
         if (permissions !== null) {
             setDataCollectionPermissions(permissions);
         }
@@ -153,7 +152,6 @@ const Row = ({
     };
 
     const handleDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
-        // console.log(draggedId);
         // if (draggedId !== null) {
         event.preventDefault();
         event.stopPropagation();
@@ -208,9 +206,7 @@ const Row = ({
         // } else {
         //     setShowRow(true);
         // }
-        console.log(row);
         handleChange({ ...row, values: { ...row.values, [columnName]: value } });
-        console.log('SHOULD REFETCH ROWS');
         // refetchRows();
     };
 
@@ -285,7 +281,6 @@ const Row = ({
                         onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
                         // draggable={isDraggable}
                     >
-                        {/* <>{console.log(Boolean(localStorage.getItem('dragging')))}</> */}
                         <Box
                             id={`drop-indicator-${rowIndex}`}
                             className="drop-indicator"
@@ -301,7 +296,6 @@ const Row = ({
                         ></Box>
                     </div>
                     <Box key={rowIndex} pos={'relative'} _hover={{ bgColor: '#f1f7ff' }} backgroundColor={row.checked ? '#e1eeff' : 'unset'}>
-                        {/* <>{console.log(`ROW ${rowIndex} RENDERED`)}</> */}
                         <Box
                             key={rowIndex}
                             id={`table-row-container-${rowIndex}`}
@@ -408,77 +402,90 @@ const Row = ({
                                     </Flex>
                                 </span>
                                 {columns.map((column: any, columnIndex: number) => {
-                                    let value = row.values[column.name];
-                                    let min_warning = row.values['min_warning'];
-                                    let min_critical = row.values['min_critical'];
-                                    let max_warning = row.values['max_warning'];
-                                    let max_critical = row.values['max_critical'];
+                                    let value = row?.values[column?.name];
+                                    let min_warning = row?.values['min_warning'];
+                                    let min_critical = row?.values['min_critical'];
+                                    let max_warning = row?.values['max_warning'];
+                                    let max_critical = row?.values['max_critical'];
 
-                                    console.log({ min_warning, min_critical, max_warning, max_critical });
                                     const columnsPermissions = dataCollectionPermissions.columns.find((item: any) => {
-                                        return item.name === column.name;
+                                        return item.name === column?.name;
                                     });
 
                                     if (columnsPermissions !== undefined && !columnsPermissions?.permissions.column.view) {
                                         return null;
                                     }
 
-                                    let labels = column.labels.filter((label: any) => {
+                                    let labels = column?.labels.filter((label: any) => {
                                         if (columnsPermissions !== undefined) {
                                             return columnsPermissions.permissions.labels.includes(label.title);
                                         }
                                     });
 
-                                    if (labels.length === 0) {
-                                        labels = column.labels;
+                                    if (labels !== undefined && labels.length === 0) {
+                                        labels = column?.labels;
                                     }
 
                                     let editable = false;
                                     if (columnsPermissions?.permissions.column.update && appModel === null) {
                                         editable = true;
-                                    } else if (appModel !== null && (column.primary === undefined || !column.primary)) {
+                                    } else if (appModel !== null && (column?.primary === undefined || !column?.primary)) {
                                         editable = true;
                                     }
-                                    if (column.autoIncremented) {
+                                    if (column?.autoIncremented) {
                                         editable = false;
                                     }
 
                                     let allowed = columnsPermissions === undefined || columnsPermissions?.permissions.column.update;
 
-                                    let bgColor = 'white';
+                                    let isCustomLink = column?.primary !== undefined ? column?.primary && dataCollectionView : false;
+
+                                    let bgColor = 'default';
                                     let textColor = 'black';
                                     let fontWeight = 'normal';
                                     let position = 'left';
+                                    let isDisabled = false;
 
                                     if (workspace?.type === 'integration') {
                                         position = 'center';
-                                        if (['temperature'].includes(column.name) && row.values['type'] === 'Temperature') {
+                                        if (['temperature'].includes(column?.name) && row.values['type'] === 'Temperature') {
                                             fontWeight = 'bold';
                                             position = 'center';
                                             textColor = 'white';
-                                            bgColor = 'white';
+                                            bgColor = 'red';
                                             if (value >= max_critical) {
                                                 bgColor = 'red';
-                                            } else if (value < max_warning && value > min_warning) {
+                                            } else if (value < max_critical && value >= max_warning) {
+                                                bgColor = '#ff642a';
+                                            } else if (value < max_warning && value >= min_warning) {
+                                                // bgColor = '#0f71a4';
                                                 bgColor = '#398c4e';
                                             } else if (value < min_warning && value > min_critical) {
                                                 bgColor = '#0f71a4';
+                                            } else if (value <= min_critical) {
+                                                bgColor = 'red';
                                             }
                                         }
 
-                                        if (['value', 'status'].includes(column.name)) {
+                                        if (['value', 'status'].includes(column?.name)) {
                                             fontWeight = 'bold';
                                             position = 'center';
                                         }
 
-                                        if (['temperature', 'min_critical', 'min_warning', 'max_critical', 'max_warning'].includes(column.name)) {
+                                        if (['temperature', 'min_critical', 'min_warning', 'max_critical', 'max_warning'].includes(column?.name)) {
                                             if (value && value !== undefined) {
-                                                value = value.toFixed(2);
+                                                console.log({ type: typeof value, value });
+                                                value = Number(value);
                                             }
                                         }
-                                    }
 
-                                    // console.log({ columnName: column.name, value: value, bgColor, textColor, fontWeight });
+                                        if (row.values[column?.name] === null) {
+                                            isDisabled = true;
+                                            bgColor = 'lightgray';
+                                        }
+
+                                        isCustomLink = false;
+                                    }
                                     return (
                                         <div
                                             key={columnIndex}
@@ -490,36 +497,36 @@ const Row = ({
                                                 paddingLeft: row.parentRowId && columnIndex == 0 ? '20px' : '0px',
                                             }}
                                         >
-                                            {column.type === 'label' || column.type === 'priority' || column.type === 'status' ? (
+                                            {column?.type === 'label' || column?.type === 'priority' || column?.type === 'status' ? (
                                                 <LabelMenu
                                                     id={rowIndex}
                                                     labels={labels}
-                                                    columnName={column.name}
+                                                    columnName={column?.name}
                                                     value={row.values !== undefined ? value : null}
                                                     onChange={onChange}
                                                     allowed={allowed}
                                                     fontWeight={fontWeight}
                                                 />
-                                            ) : column.type === 'people' ? (
+                                            ) : column?.type === 'people' ? (
                                                 <PeopleMenu
                                                     row={row}
-                                                    columnName={column.name}
-                                                    people={column.people}
+                                                    columnName={column?.name}
+                                                    people={column?.people}
                                                     values={row.values !== undefined ? value : null}
                                                     onChange={onChange}
                                                     allowed={allowed}
                                                 />
-                                            ) : column.type === 'date' ? (
+                                            ) : column?.type === 'date' ? (
                                                 <DateInput
                                                     value={row.values !== undefined ? value : null}
-                                                    columnName={column.name}
+                                                    columnName={column?.name}
                                                     onChange={onChange}
                                                     allowed={allowed}
                                                 />
-                                            ) : column.type === 'reference' ? (
+                                            ) : column?.type === 'reference' ? (
                                                 <Reference
                                                     column={column !== undefined ? column : {}}
-                                                    refs={row.refs && row.refs[column.name] !== undefined ? row.refs[column.name] : []}
+                                                    refs={row.refs && row.refs[column?.name] !== undefined ? row.refs[column?.name] : []}
                                                     onRefChange={onRefChange}
                                                     onRemoveRef={onRemoveRef}
                                                     allowed={allowed}
@@ -527,15 +534,16 @@ const Row = ({
                                             ) : (
                                                 <TextInput
                                                     id={row._id}
-                                                    columnName={column.name}
+                                                    columnName={column?.name}
                                                     value={row.values !== undefined ? value : null}
                                                     onChange={onChange}
-                                                    allowed={allowed || editable || (column.autoIncremented !== undefined && !column.autoIncremented)}
-                                                    isCustomLink={column.primary !== undefined ? column.primary && dataCollectionView : false}
+                                                    allowed={allowed || editable || (column?.autoIncremented !== undefined && !column?.autoIncremented)}
+                                                    isCustomLink={isCustomLink}
                                                     bgColor={bgColor}
                                                     textColor={textColor}
                                                     fontWeight={fontWeight}
                                                     position={position}
+                                                    isDisabled={isDisabled}
                                                 />
                                             )}
                                             {/* {value} */}

@@ -125,7 +125,7 @@ const Table = ({
         setGridTemplateColumns(
             columnsData
                 .map((column) => {
-                    return column.width !== undefined ? column.width : '180px';
+                    return column?.width !== undefined ? column?.width : '180px';
                 })
                 .join(' ')
         );

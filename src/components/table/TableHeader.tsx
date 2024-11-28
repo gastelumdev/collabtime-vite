@@ -379,7 +379,7 @@ const TableHeader = ({
                 {currentColumns.map((column: any, columnIndex) => {
                     if (dataCollectionPermissions) {
                         const columnsPermissions = dataCollectionPermissions.columns.find((item: any) => {
-                            return item.name === column.name;
+                            return item.name === column?.name;
                         });
 
                         // if (columnsPermissions === undefined) {
