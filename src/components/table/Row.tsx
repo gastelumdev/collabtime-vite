@@ -452,7 +452,7 @@ const Row = ({
                                             fontWeight = 'bold';
                                             position = 'center';
                                             textColor = 'white';
-                                            bgColor = 'red';
+                                            bgColor = 'default';
                                             if (value >= max_critical) {
                                                 bgColor = 'red';
                                             } else if (value < max_critical && value >= max_warning) {
@@ -465,6 +465,11 @@ const Row = ({
                                             } else if (value <= min_critical) {
                                                 bgColor = 'red';
                                             }
+
+                                            if (max_critical === null || max_warning === null || min_critical === null || min_warning === null) {
+                                                bgColor = 'default';
+                                                textColor = 'black';
+                                            }
                                         }
 
                                         if (['value', 'status'].includes(column?.name)) {
@@ -474,8 +479,7 @@ const Row = ({
 
                                         if (['temperature', 'min_critical', 'min_warning', 'max_critical', 'max_warning'].includes(column?.name)) {
                                             if (value && value !== undefined) {
-                                                console.log({ type: typeof value, value });
-                                                value = Number(value);
+                                                value = Number(Number(value).toFixed(2));
                                             }
                                         }
 
