@@ -489,6 +489,10 @@ const Row = ({
                                         }
 
                                         isCustomLink = false;
+
+                                        if (column.name === 'threshold_name' && value === null) {
+                                            value = 'None';
+                                        }
                                     }
                                     return (
                                         <div
