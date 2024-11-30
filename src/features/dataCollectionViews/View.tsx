@@ -1,11 +1,32 @@
 import DataCollection from '../dataCollections/DataCollection';
-import { useDeleteDataCollectionViewMutation, useGetDataCollectionsQuery, useGetRowsQuery } from '../../app/services/api';
+import { useDeleteDataCollectionViewMutation, useGetDataCollectionsQuery, useGetOneWorkspaceQuery, useGetRowsQuery } from '../../app/services/api';
 import { useEffect, useState } from 'react';
-import { Box, Center, Divider, Flex, Menu, MenuButton, MenuItem, MenuList, Spacer, Text } from '@chakra-ui/react';
+import {
+    Box,
+    Center,
+    Container,
+    Divider,
+    Flex,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
+    Spacer,
+    Tab,
+    TabList,
+    TabPanel,
+    TabPanels,
+    Tabs,
+    Text,
+} from '@chakra-ui/react';
 import { PiDotsThreeVerticalBold } from 'react-icons/pi';
 import Create from './Create';
 import { emptyPermissions, emptyViewPermissions } from '../workspaces/UserGroups';
 import { io } from 'socket.io-client';
+import { useParams } from 'react-router-dom';
+import DeviceCard from '../../components/Cards/DeviceCard';
+import { LiaDoorOpenSolid, LiaMicrochipSolid, LiaTemperatureLowSolid } from 'react-icons/lia';
+import { RiRemoteControlFill } from 'react-icons/ri';
 
 const View = ({
     dataCollectionView,
@@ -16,6 +37,8 @@ const View = ({
     userGroup: any;
     refetchUserGroup: any;
 }) => {
+    const { id } = useParams();
+    const { data: workspace } = useGetOneWorkspaceQuery(id as string);
     const { data: rows, refetch: refetchRows } = useGetRowsQuery({
         dataCollectionId: dataCollectionView.dataCollection || '',
         limit: 0,
@@ -37,12 +60,10 @@ const View = ({
         const socket = io(import.meta.env.VITE_API_URL);
         socket.connect();
         socket.on('update views', () => {
-            console.log('UPDATE VIEWS');
             refetchRows();
         });
 
         socket.on('update swift sensor data', () => {
-            console.log('Swift sensors');
             refetchRows();
         });
 
@@ -116,21 +137,110 @@ const View = ({
                 </Flex>
             </Box>
             {rows && rows?.length > 0 ? (
-                <Box borderBottom={'1px solid #EDF2F7'}>
-                    <DataCollection
-                        showDoneRows={true}
-                        rowsProp={rows}
-                        dataCollectionView={dataCollectionView}
-                        rowsAreDraggable={false}
-                        hasCheckboxOptions={false}
-                        hasColumnOptions={false}
-                        columnsAreDraggable={false}
-                        hasCreateColumn={false}
-                        refetchRows={refetchRows}
-                        viewPermissions={viewPermissions}
-                        // userGroup={userGroup}
-                    />
-                </Box>
+                <>
+                    {workspace?.type === 'integration' && !['Thresholds'].includes(dataCollectionView.name) ? (
+                        <Tabs>
+                            <TabList>
+                                <Tab>Board</Tab>
+                                <Tab>List</Tab>
+                            </TabList>
+                            <TabPanels>
+                                <TabPanel>
+                                    <Container maxW={'5xl'} mt={1}>
+                                        <Flex flexWrap="wrap" gridGap={6} justify={'start'}>
+                                            {rows.map((row: any) => {
+                                                let min_warning = row?.values['min_warning'];
+                                                let min_critical = row?.values['min_critical'];
+                                                let max_warning = row?.values['max_warning'];
+                                                let max_critical = row?.values['max_critical'];
+
+                                                let bgColor = '#3d8d51';
+                                                let fontColor = 'white';
+                                                let icon = RiRemoteControlFill;
+                                                let value = row?.values.value;
+
+                                                if (row?.values.type === 'Temperature') {
+                                                    icon = LiaTemperatureLowSolid;
+                                                    value = row?.values.temperature;
+
+                                                    if (value >= max_critical || value <= min_critical) {
+                                                        bgColor = 'red';
+                                                    }
+
+                                                    if (value >= max_warning && value < max_critical) {
+                                                        bgColor = 'orange';
+                                                    }
+
+                                                    if (value <= min_warning && value > min_critical) {
+                                                        bgColor = 'orange';
+                                                    }
+
+                                                    value = row?.values.temperature.toFixed() + '\u00B0F';
+                                                }
+
+                                                if (row?.values.type === 'Door') {
+                                                    value = row?.values.status;
+                                                    icon = LiaDoorOpenSolid;
+
+                                                    if (value === 'Open') {
+                                                        bgColor = 'red';
+                                                    }
+                                                }
+
+                                                if (row?.values.type === 'Electric Potential (DC)') {
+                                                    icon = LiaMicrochipSolid;
+                                                }
+                                                return (
+                                                    <>
+                                                        <DeviceCard
+                                                            data={{ name: row?.values.name, type: row?.values.type, value }}
+                                                            bgColor={bgColor}
+                                                            fontColor={fontColor}
+                                                            Icon={icon}
+                                                        />
+                                                    </>
+                                                );
+                                            })}
+                                        </Flex>
+                                    </Container>
+                                </TabPanel>
+                                <TabPanel>
+                                    <Box borderBottom={'1px solid #EDF2F7'}>
+                                        <DataCollection
+                                            showDoneRows={true}
+                                            rowsProp={rows}
+                                            dataCollectionView={dataCollectionView}
+                                            rowsAreDraggable={false}
+                                            hasCheckboxOptions={false}
+                                            hasColumnOptions={false}
+                                            columnsAreDraggable={false}
+                                            hasCreateColumn={false}
+                                            refetchRows={refetchRows}
+                                            viewPermissions={viewPermissions}
+                                            // userGroup={userGroup}
+                                        />
+                                    </Box>
+                                </TabPanel>
+                            </TabPanels>
+                        </Tabs>
+                    ) : (
+                        <Box borderBottom={'1px solid #EDF2F7'}>
+                            <DataCollection
+                                showDoneRows={true}
+                                rowsProp={rows}
+                                dataCollectionView={dataCollectionView}
+                                rowsAreDraggable={false}
+                                hasCheckboxOptions={false}
+                                hasColumnOptions={false}
+                                columnsAreDraggable={false}
+                                hasCreateColumn={false}
+                                refetchRows={refetchRows}
+                                viewPermissions={viewPermissions}
+                                // userGroup={userGroup}
+                            />
+                        </Box>
+                    )}
+                </>
             ) : (
                 <Box p={'20px'} bgColor={'#F5FAFF'}>
                     <Center>
