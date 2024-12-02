@@ -186,7 +186,7 @@ const View = ({
                                                     icon = LiaDoorOpenSolid;
 
                                                     if (value === 'Open') {
-                                                        bgColor = 'red';
+                                                        bgColor = 'orange';
                                                     }
                                                 }
 
