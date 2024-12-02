@@ -159,6 +159,8 @@ const View = ({
                                                 let icon = RiRemoteControlFill;
                                                 let value = row?.values.value;
 
+                                                let threshold_name = null;
+
                                                 if (row?.values.type === 'Temperature') {
                                                     icon = LiaTemperatureLowSolid;
                                                     value = row?.values.temperature;
@@ -191,10 +193,16 @@ const View = ({
                                                 if (row?.values.type === 'Electric Potential (DC)') {
                                                     icon = LiaMicrochipSolid;
                                                 }
+
+                                                if (row?.values.threshold_name !== undefined) {
+                                                    threshold_name = row?.values.threshold_name;
+                                                }
+
+                                                console.log({ threshold_name });
                                                 return (
                                                     <>
                                                         <DeviceCard
-                                                            data={{ name: row?.values.name, type: row?.values.type, value }}
+                                                            data={{ name: row?.values.name, type: row?.values.type, value, threshold_name }}
                                                             bgColor={bgColor}
                                                             fontColor={fontColor}
                                                             Icon={icon}
