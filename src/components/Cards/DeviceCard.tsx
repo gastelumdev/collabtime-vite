@@ -34,12 +34,12 @@ const DeviceCard = ({ data, bgColor, fontColor, Icon }: { data: ISensorData; bgC
             {data.threshold_name ? (
                 <Box bgColor={bgColor} color={fontColor} p={3}>
                     <Center>
-                        <Text fontSize={'12px'} fontWeight={'semibold'}>
-                            Threshold Name
-                        </Text>
+                        <Text fontSize={'12px'}>Threshold Name</Text>
                     </Center>
                     <Center mt={'3px'}>
-                        <Text fontSize={'14px'}>{data.threshold_name}</Text>
+                        <Text fontSize={'14px'} fontWeight={'bold'}>
+                            {data.threshold_name}
+                        </Text>
                     </Center>
                 </Box>
             ) : null}
