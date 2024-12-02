@@ -175,7 +175,8 @@ const View = ({
                                                         bgColor = 'orange';
                                                     }
 
-                                                    value = row?.values.temperature.toFixed() + '\u00B0F';
+                                                    // value = row?.values.temperature.toFixed() + '\u00B0F';
+                                                    value = Math.floor(value) + '\u00B0F';
                                                 }
 
                                                 if (row?.values.type === 'Door') {
