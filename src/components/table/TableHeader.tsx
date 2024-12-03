@@ -37,6 +37,7 @@ interface IProps {
     appModel?: string | null;
     permissions?: any;
     refetchPermissions?: any;
+    isArchives?: boolean;
 }
 
 const TableHeader = ({
@@ -66,6 +67,7 @@ const TableHeader = ({
     appModel = null,
     permissions = emptyDataCollectionPermissions,
     refetchPermissions,
+    isArchives = false,
 }: IProps) => {
     const [currentColumns, setCurrentColumns] = useState(columns);
     // ******************* COLUMN REORDERING ******************************
@@ -426,9 +428,9 @@ const TableHeader = ({
                                         overflow: 'hidden',
                                         whiteSpace: 'nowrap',
                                         textOverflow: 'ellipsis',
-                                        cursor: columnsAreDraggable && appModel !== null ? 'default' : 'grab',
+                                        cursor: columnsAreDraggable && appModel !== null && !isArchives ? 'default' : 'grab',
                                     }}
-                                    draggable={columnIndex !== 0 && columnsAreDraggable && allowed && appModel === null}
+                                    draggable={columnIndex !== 0 && columnsAreDraggable && allowed && appModel === null && !isArchives}
                                     onDragStart={() => handleDragStart(columnIndex)}
                                     onDragOver={(event) => handleDragOver(event, columnIndex)}
                                     onDragEnd={() => handleDragEnd()}
@@ -541,7 +543,7 @@ const TableHeader = ({
                         padding: '0px 20px',
                     }}
                 >
-                    {hasCreateColumn && dataCollectionPermissions && dataCollectionPermissions.columnActions.create && appModel == null ? (
+                    {hasCreateColumn && dataCollectionPermissions && dataCollectionPermissions.columnActions.create && appModel == null && !isArchives ? (
                         <CreateColumn
                             columns={columns}
                             createColumn={createColumn}

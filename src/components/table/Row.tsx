@@ -43,6 +43,7 @@ const Row = ({
     dataCollectionView = null,
     appModel = null,
     permissions = null,
+    isArchives = false,
 }: {
     row: any;
     rowIndex: number;
@@ -64,6 +65,7 @@ const Row = ({
     refetchRows?: any;
     appModel?: string | null;
     permissions?: any;
+    isArchives?: boolean;
 }) => {
     // const rowsData = useMemo(
     //     () => [
@@ -327,8 +329,8 @@ const Row = ({
                                                 w={'15px'}
                                                 h={'30px'}
                                                 bgColor={'#24a2f0'}
-                                                cursor={allowed && isDraggable && dataCollectionPermissions.rows.reorder ? 'move' : 'default'}
-                                                draggable={allowed && isDraggable && dataCollectionPermissions.rows.reorder}
+                                                cursor={allowed && isDraggable && dataCollectionPermissions.rows.reorder && !isArchives ? 'move' : 'default'}
+                                                draggable={allowed && isDraggable && dataCollectionPermissions.rows.reorder && !isArchives}
                                                 onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, row.position)}
                                                 onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, row.position)}
                                                 // onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}

@@ -600,7 +600,7 @@ const Table = ({
                             <Text>{`${numberOfDeleteItems} Selected`}</Text>
                         </Box>
                         <Spacer />
-                        {permissions.rows.subrows ? (
+                        {permissions.rows.subrows && !isArchives ? (
                             <>
                                 <Box pt={'30px'} pr={'30px'} onClick={setAsMainrow} cursor={'pointer'}>
                                     <Center mb={'10px'}>
@@ -688,6 +688,7 @@ const Table = ({
                 appModel={appModel}
                 permissions={permissions}
                 refetchPermissions={refetchPermissions}
+                isArchives={isArchives}
             />
             <TableContent
                 rows={rows || []}
@@ -716,6 +717,7 @@ const Table = ({
                 hideEmptyRows={hideEmptyRows}
                 appModel={appModel}
                 permissions={permissions}
+                isArchives={isArchives}
             />
             {/* <Box w={'100%'} h={'30px'}>
                 <Text ml={'10px'}>Add row</Text>

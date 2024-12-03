@@ -32,6 +32,7 @@ interface IProps {
     hideEmptyRows?: boolean;
     appModel?: string | null;
     permissions?: any;
+    isArchives?: boolean;
 }
 
 const TableContent = ({
@@ -59,6 +60,7 @@ const TableContent = ({
     refetchRows,
     appModel = null,
     permissions = null,
+    isArchives = false,
 }: IProps) => {
     const ref = useRef<HTMLDivElement | null>(null);
     const [gridTemplateColumns, setGridTemplateColumns] = useState('');
@@ -453,6 +455,7 @@ const TableContent = ({
                                         refetchRows={refetchRows}
                                         appModel={appModel}
                                         permissions={permissions}
+                                        isArchives={isArchives}
                                     />
                                 </div>
                                 <div></div>
