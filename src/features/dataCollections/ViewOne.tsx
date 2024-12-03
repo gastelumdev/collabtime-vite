@@ -94,6 +94,7 @@ const ViewOne = () => {
 
     const [updateDataCollection] = useUpdateDataCollectionMutation();
     const [sendForm] = useSendFormMutation();
+    const [showArchived, setShowArchived] = useState(false);
 
     const [columns, setColumns] = useState(columnsData);
 
@@ -442,6 +443,14 @@ const ViewOne = () => {
                                                             isLoading={rowsAreLoading}
                                                         />
                                                     </MenuItem>
+                                                    <MenuItem
+                                                        fontSize={'14px'}
+                                                        onClick={() => {
+                                                            setShowArchived(!showArchived);
+                                                        }}
+                                                    >
+                                                        {showArchived ? 'Hide archived' : 'Show archived'}
+                                                    </MenuItem>
                                                 </MenuList>
                                             </Menu>
                                         ) : null}
@@ -453,12 +462,22 @@ const ViewOne = () => {
                             */}
                             <CardBody p={'0'}>
                                 {dataCollectionPermissions.dataCollection.view ? (
-                                    <DataCollection
-                                        showDoneRows={showDoneRows}
-                                        rowsProp={rowsData}
-                                        dataCollectionPermissions={dataCollectionPermissions}
-                                        refetchPermissions={refetchUserGroups}
-                                    />
+                                    <>
+                                        {!showArchived ? (
+                                            <DataCollection
+                                                showDoneRows={showDoneRows}
+                                                rowsProp={rowsData}
+                                                dataCollectionPermissions={dataCollectionPermissions}
+                                                refetchPermissions={refetchUserGroups}
+                                                refetchRows={refetch}
+                                            />
+                                        ) : (
+                                            <ArchivedDataCollection
+                                                dataCollectionPermissions={dataCollectionPermissions}
+                                                refetchUserGroups={refetchUserGroups}
+                                            />
+                                        )}
+                                    </>
                                 ) : (
                                     <Box mb={'20px'}>
                                         <Center>
@@ -703,6 +722,30 @@ const ViewOne = () => {
                 </PrimaryDrawer>
             </SideBarLayout>
         </>
+    );
+};
+
+const ArchivedDataCollection = ({ dataCollectionPermissions, refetchUserGroups }: { dataCollectionPermissions: any; refetchUserGroups: any }) => {
+    const { dataCollectionId } = useParams();
+    const {
+        data: rowsData,
+        refetch: archivedRefetch,
+        // isFetching: archivedRowsAreFetching,
+        // isLoading: archivedRowsAreLoading,
+    } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt', archived: true });
+
+    useEffect(() => {
+        archivedRefetch();
+    }, []);
+    return (
+        <DataCollection
+            showDoneRows={true}
+            rowsProp={rowsData}
+            dataCollectionPermissions={dataCollectionPermissions}
+            refetchPermissions={refetchUserGroups}
+            isArchives={true}
+            refetchRows={archivedRefetch}
+        />
     );
 };
 

@@ -34,6 +34,7 @@ const DataCollection = ({
     viewPermissions = emptyViewPermissions,
     refetchRowsForApp,
     refetchPermissions,
+    isArchives = false,
 }: // userGroup,
 {
     showDoneRows?: boolean;
@@ -53,6 +54,7 @@ const DataCollection = ({
     refetchRowsForApp?: any;
     refetchPermissions?: any;
     // userGroup?: any;
+    isArchives?: boolean;
 }) => {
     const { dataCollectionId } = useParams();
 
@@ -169,6 +171,7 @@ const DataCollection = ({
                 viewPermissions={viewPermissions}
                 refetchRowsForApp={refetchRowsForApp}
                 refetchPermissions={refetchPermissions}
+                isArchives={isArchives}
             />
         </Box>
     );

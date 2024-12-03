@@ -12,6 +12,7 @@ import { useTypedSelector, useAppDispatch } from '../../hooks/store';
 import { clearCheckedRowIds } from '../../components/table/tableSlice';
 // import { useParams } from 'react-router-dom';
 import { emptyDataCollectionPermissions } from '../../features/workspaces/UserGroups';
+import { MdArchive } from 'react-icons/md';
 
 interface ITableProps {
     rowsData?: any[];
@@ -45,6 +46,7 @@ interface ITableProps {
     viewPermissions?: any;
     refetchRowsForApp?: any;
     refetchPermissions?: any;
+    isArchives?: boolean;
 }
 
 const Table = ({
@@ -78,6 +80,7 @@ const Table = ({
     viewPermissions = null,
     refetchRowsForApp,
     refetchPermissions,
+    isArchives = false,
 }: ITableProps) => {
     const dispatch = useAppDispatch();
     // const { dataCollectionId } = useParams();
@@ -257,6 +260,84 @@ const Table = ({
         }
         setNumberOfDeleteItems(0);
         dispatch(clearCheckedRowIds());
+    };
+
+    const archiveItems = () => {
+        const rowsCopy = rows;
+        const parentIds: any = [];
+
+        rowsCopy.map((row: any) => {
+            if (checkedRowIds.includes(row._id) && row.isParent) {
+                parentIds.push(row._id);
+            }
+        });
+
+        let position = 0;
+
+        // let checkedParent: any = null;
+
+        const filterRowsChecked = rowsCopy.filter((row: any) => !checkedRowIds.includes(row._id));
+        const filterSubrows = filterRowsChecked.filter((row: any) => !parentIds.includes(row.parentRowId));
+        const newRows = filterSubrows.map((row: any) => {
+            if (!checkedRowIds.includes(row._id)) {
+                position = position + 1;
+                return { ...row, position: position };
+            }
+            return row;
+        });
+        setRows(newRows);
+
+        for (const row of rowsCopy) {
+            if (parentIds.includes(row.parentRowId)) {
+                updateRow({ ...row, archived: true });
+            }
+            if (checkedRowIds.includes(row._id)) {
+                updateRow({ ...row, archived: true });
+            }
+        }
+        setNumberOfDeleteItems(0);
+        dispatch(clearCheckedRowIds());
+
+        refetchRows();
+    };
+
+    const setArchivesToActive = () => {
+        const rowsCopy = rows;
+        const parentIds: any = [];
+
+        rowsCopy.map((row: any) => {
+            if (checkedRowIds.includes(row._id) && row.isParent) {
+                parentIds.push(row._id);
+            }
+        });
+
+        let position = 0;
+
+        // let checkedParent: any = null;
+
+        const filterRowsChecked = rowsCopy.filter((row: any) => !checkedRowIds.includes(row._id));
+        const filterSubrows = filterRowsChecked.filter((row: any) => !parentIds.includes(row.parentRowId));
+        const newRows = filterSubrows.map((row: any) => {
+            if (!checkedRowIds.includes(row._id)) {
+                position = position + 1;
+                return { ...row, position: position };
+            }
+            return row;
+        });
+        setRows(newRows);
+
+        for (const row of rowsCopy) {
+            if (parentIds.includes(row.parentRowId)) {
+                updateRow({ ...row, archived: false });
+            }
+            if (checkedRowIds.includes(row._id)) {
+                updateRow({ ...row, archived: false });
+            }
+        }
+        setNumberOfDeleteItems(0);
+        dispatch(clearCheckedRowIds());
+
+        refetchRows();
     };
 
     // const handleReorderRows = useCallback((rowIds: string[]) => {
@@ -507,7 +588,7 @@ const Table = ({
                     position={'absolute'}
                     bottom={'30px'}
                     left={'60px'}
-                    w={'450px'}
+                    w={'550px'}
                     h={'120px'}
                     background={'white'}
                     border={'1px solid lightgray'}
@@ -557,6 +638,21 @@ const Table = ({
                                 </Center>
                                 <Center>
                                     <Text>Delete</Text>
+                                </Center>
+                            </Box>
+                        ) : null}
+                        {permissions.dataCollection.update ? (
+                            <Box pt={'34px'} pr={'30px'} onClick={isArchives ? setArchivesToActive : archiveItems} cursor={'pointer'}>
+                                {/* <Button colorScheme="red" mb={'10px'}>
+                                Delete
+                            </Button> */}
+                                <Center mb={'10px'}>
+                                    <Text fontSize={'20px'}>
+                                        <MdArchive />
+                                    </Text>
+                                </Center>
+                                <Center>
+                                    <Text>{isArchives ? 'Set Active' : 'Archive'}</Text>
                                 </Center>
                             </Box>
                         ) : null}

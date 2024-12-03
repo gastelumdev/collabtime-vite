@@ -241,7 +241,7 @@ export const api = createApi({
         }),
         getRows: builder.query<any[], any>({
             query: (options) => ({
-                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${options.dataCollectionId}/rows?limit=${options.limit}&skip=${options.skip}&sort=${options.sort}&sortBy=${options.sortBy}&showEmptyRows=${options.showEmptyRows}&filters=${options.filters}`
+                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${options.dataCollectionId}/rows?limit=${options.limit}&skip=${options.skip}&sort=${options.sort}&sortBy=${options.sortBy}&showEmptyRows=${options.showEmptyRows}&archived=${options.archived}&filters=${options.filters}`
             }),
             providesTags: ["Rows"],
             transformResponse: (rows: any) => {
