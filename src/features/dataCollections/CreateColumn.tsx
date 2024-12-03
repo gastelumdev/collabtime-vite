@@ -54,15 +54,19 @@ const CreateColumn = ({
     const [showLabelForm, setShowLabelForm] = useState(false);
     const [showReferenceForm, setShowReferenceForm] = useState(false);
     const [showColumnNameSelection, setShowColumnNameSelection] = useState(false);
-    const [labelOptions, setLabelOptions] = useState<TLabel>({
+
+    const defaultLabels = [
+        { title: 'Label 1', color: '#005796', default: true },
+        // { title: 'Label 2', color: '#4FAD00' },
+        // { title: 'Label 3', color: '#ffa507' },
+    ];
+    const defaultLabel = {
         title: '',
         color: '#015796',
-    });
-    const [labels, setLabels] = useState<TLabel[]>([
-        { title: 'Label 1', color: '#005796' },
-        { title: 'Label 2', color: '#4FAD00' },
-        { title: 'Label 3', color: '#ffa507' },
-    ]);
+        default: false,
+    };
+    const [labelOptions, setLabelOptions] = useState<TLabel>(defaultLabel);
+    const [labels, setLabels] = useState<TLabel[]>(defaultLabels);
     const [labelStyles, setLabelStyles] = useState<any>({});
     const [labelTitleError, setLabelTitleError] = useState<boolean>(false);
 
@@ -174,18 +178,18 @@ const CreateColumn = ({
 
         if (selectedOption === 'priority') {
             setLabels([
-                { title: 'Low', color: '#28B542' },
-                { title: 'High', color: '#FFA500' },
-                { title: 'Critical', color: '#FF0000' },
+                { title: 'Low', color: '#28B542', default: true },
+                { title: 'High', color: '#FFA500', default: false },
+                { title: 'Critical', color: '#FF0000', default: false },
             ]);
         }
 
         if (selectedOption === 'status') {
             setLabels([
-                { title: 'Ready to start', color: '#121f82' },
-                { title: 'Working on it', color: '#146c96' },
-                { title: 'Pending review', color: '#FFA500' },
-                { title: 'Done', color: '#28B542' },
+                { title: 'Ready to start', color: '#121f82', default: true },
+                { title: 'Working on it', color: '#146c96', default: false },
+                { title: 'Pending review', color: '#FFA500', default: false },
+                { title: 'Done', color: '#28B542', default: false },
             ]);
         }
 
@@ -266,7 +270,7 @@ const CreateColumn = ({
         } else {
             const labelsCopy = [...labels, labelOptions];
             setLabels(labelsCopy);
-            setLabelOptions({ title: '', color: '#015796' });
+            setLabelOptions(defaultLabel);
         }
     };
 
@@ -275,15 +279,8 @@ const CreateColumn = ({
         setShowLabelForm(false);
         setColumnName('');
         setColumnType('');
-        setLabels([
-            { title: 'Label 1', color: '#005796' },
-            { title: 'Label 2', color: '#4FAD00' },
-            { title: 'Label 3', color: '#ffa507' },
-        ]);
-        setLabelOptions({
-            title: '',
-            color: '#015796',
-        });
+        setLabels(defaultLabels);
+        setLabelOptions(defaultLabel);
         setShowLabelForm(false);
         setShowReferenceForm(false);
     };
@@ -306,6 +303,21 @@ const CreateColumn = ({
             }
         }
         onOpen();
+    };
+
+    const setAsDefault = (label: TLabel) => {
+        console.log(labels);
+        console.log(label);
+        const newLabels = labels.map((item: TLabel) => {
+            if (item.default) {
+                return { ...item, default: false };
+            }
+            if (item.title === label.title) {
+                return { ...item, default: true };
+            }
+            return item;
+        });
+        setLabels(newLabels);
     };
     return (
         <>
@@ -429,10 +441,22 @@ const CreateColumn = ({
                                 {labels.map((label: TLabel, index: number) => {
                                     return (
                                         <Box key={index} bg={label.color} p={'5px'} m={'5px'}>
-                                            <HStack>
-                                                <AiOutlineClose color={getTextColor(label.color)} onClick={() => removeLabel(label)} />
+                                            <Flex>
+                                                <Text mt={'5px'} mr={'10px'}>
+                                                    <AiOutlineClose color={getTextColor(label.color)} onClick={() => removeLabel(label)} />
+                                                </Text>
                                                 <Text color={getTextColor(label.color)}>{label.title}</Text>
-                                            </HStack>
+                                                <Spacer />
+                                                <Box px={'10px'} color={'white'}>
+                                                    {label.default ? (
+                                                        'Default'
+                                                    ) : (
+                                                        <Button size={'xs'} onClick={() => setAsDefault(label)}>
+                                                            Set as default
+                                                        </Button>
+                                                    )}
+                                                </Box>
+                                            </Flex>
                                         </Box>
                                     );
                                 })}
