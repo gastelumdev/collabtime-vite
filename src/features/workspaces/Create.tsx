@@ -186,6 +186,7 @@ const Create = ({ addNewWorkspace, workspaces }: IProps) => {
                     }}
                     options={[
                         { value: 'basic', label: 'Basic' },
+                        { value: 'resource planning', label: 'Resource Planning' },
                         { value: 'integration', label: 'Integration' },
                     ]}
                     styles={
