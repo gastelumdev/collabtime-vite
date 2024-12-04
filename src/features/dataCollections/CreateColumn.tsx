@@ -1,5 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Flex, HStack, Input, Spacer, Spinner, Stack, Text, useDisclosure, Select } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    Flex,
+    HStack,
+    Input,
+    Spacer,
+    Spinner,
+    Stack,
+    Text,
+    useDisclosure,
+    Select,
+    Checkbox,
+    Popover,
+    PopoverTrigger,
+    PopoverContent,
+} from '@chakra-ui/react';
 import ReactSelect from 'react-select';
 
 import { AiOutlineClose } from 'react-icons/ai';
@@ -13,7 +29,8 @@ import { getTextColor } from '../../utils/helpers';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
 import { BsPlusCircle } from 'react-icons/bs';
 import { useParams } from 'react-router-dom';
-import { useGetColumnsQuery, useGetDataCollectionsQuery } from '../../app/services/api';
+import { useGetColumnsQuery, useGetDataCollectionsQuery, useGetWorkspaceUsersQuery } from '../../app/services/api';
+import { FaUserPlus } from 'react-icons/fa6';
 
 interface TProps {
     column?: TColumn | null;
@@ -38,10 +55,11 @@ const CreateColumn = ({
     columnsAreFetching = false,
     refetchPermissions,
 }: TProps) => {
-    const { dataCollectionId } = useParams();
+    const { id, dataCollectionId } = useParams();
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const { data: dataCollections } = useGetDataCollectionsQuery(null);
+    const { data: workspaceUsers } = useGetWorkspaceUsersQuery(id as string);
 
     // const { data: columns } = useGetColumnsQuery(null);
     // const [createColumn] = useCreateColumnMutation();
@@ -445,16 +463,87 @@ const CreateColumn = ({
                                                 <Text mt={'5px'} mr={'10px'}>
                                                     <AiOutlineClose color={getTextColor(label.color)} onClick={() => removeLabel(label)} />
                                                 </Text>
-                                                <Text color={getTextColor(label.color)}>{label.title}</Text>
+                                                <Text color={getTextColor(label.color)} fontWeight={'semibold'}>
+                                                    {label.title}
+                                                </Text>
+                                                {label.default ? (
+                                                    <Box pt={'4px'} ml={'16px'}>
+                                                        <Text color={'white'} fontSize={'12px'}>
+                                                            Default
+                                                        </Text>
+                                                    </Box>
+                                                ) : null}
                                                 <Spacer />
-                                                <Box px={'10px'} color={'white'}>
-                                                    {label.default ? (
-                                                        'Default'
-                                                    ) : (
-                                                        <Button size={'xs'} onClick={() => setAsDefault(label)}>
-                                                            Set as default
-                                                        </Button>
-                                                    )}
+                                                {!label.default ? (
+                                                    <Box p={'4px'}>
+                                                        <Box
+                                                            // py={'3px'}
+                                                            px={'8px'}
+                                                            _hover={{ cursor: 'pointer' }}
+                                                            onClick={() => setAsDefault(label)}
+                                                        >
+                                                            <Text fontSize={'12px'} color={'white'}>
+                                                                Set as default
+                                                            </Text>
+                                                        </Box>
+                                                    </Box>
+                                                ) : null}
+                                                <Box px={'10px'}>
+                                                    <Popover>
+                                                        <PopoverTrigger>
+                                                            <Box px={'10px'}>
+                                                                <Text fontSize={'14px'} color={'white'} mt={'5px'}>
+                                                                    <FaUserPlus />
+                                                                </Text>
+                                                            </Box>
+                                                        </PopoverTrigger>
+                                                        <PopoverContent>
+                                                            <Box p={'12px'}>
+                                                                <Text fontWeight={'semibold'} mb={'5px'}>
+                                                                    Select users to notify
+                                                                </Text>
+                                                                <Stack>
+                                                                    {workspaceUsers?.members.map((user) => {
+                                                                        return (
+                                                                            <Checkbox
+                                                                                isChecked={label.users?.includes(user.email)}
+                                                                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                                                    if (event.target.checked) {
+                                                                                        const newLabels = labels.map((item: TLabel) => {
+                                                                                            if (item.title === label.title) {
+                                                                                                console.log(item.users);
+                                                                                                if (item.users !== undefined) {
+                                                                                                    return { ...item, users: [...item?.users, user.email] };
+                                                                                                } else {
+                                                                                                    return { ...item, users: [user.email] };
+                                                                                                }
+                                                                                            }
+                                                                                            return item;
+                                                                                        });
+                                                                                        setLabels(newLabels);
+                                                                                        console.log({ newLabels });
+                                                                                    } else {
+                                                                                        const newLabels = labels.map((item: TLabel) => {
+                                                                                            if (item.title === label.title) {
+                                                                                                const newUsers = item.users?.filter((u: string) => {
+                                                                                                    return u !== user.email;
+                                                                                                });
+
+                                                                                                return { ...item, users: newUsers };
+                                                                                            }
+                                                                                            return item;
+                                                                                        });
+
+                                                                                        setLabels(newLabels);
+                                                                                    }
+                                                                                }}
+                                                                            >{`${user.firstname} ${user.lastname}`}</Checkbox>
+                                                                        );
+                                                                    })}
+                                                                </Stack>
+                                                            </Box>
+                                                        </PopoverContent>
+                                                    </Popover>
                                                 </Box>
                                             </Flex>
                                         </Box>
