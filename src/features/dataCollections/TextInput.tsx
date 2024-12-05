@@ -37,6 +37,7 @@ interface ITextInputProps {
     fontWeight?: string;
     position?: string;
     isDisabled?: boolean;
+    inputType?: string;
 }
 
 const TextInput = ({
@@ -53,6 +54,7 @@ const TextInput = ({
     fontWeight = 'normal',
     position = 'left',
     isDisabled = false,
+    inputType = 'text',
 }: ITextInputProps) => {
     const [active, setActive] = useState<boolean>(false);
     const [val, setVal] = useState<string>(value);
@@ -165,25 +167,51 @@ const TextInput = ({
                             onBlurCapture={(event: React.FocusEvent<HTMLTextAreaElement, Element>) => handleBlur(event.target.value)}
                         />
                     ) : (
-                        <Input
-                            fontSize={'12px'}
-                            value={val}
-                            // position={'absolute'}
-                            zIndex={1000000}
-                            onBlur={() => setActive(!active)}
-                            bgColor={'white'}
-                            color={textColor}
-                            size={'xs'}
-                            autoFocus={true}
-                            onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) => {
-                                // event.target.select();
-                                let v = event.target.value;
-                                event.target.value = '';
-                                event.target.value = v;
-                            }}
-                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => onTextChange(event.target.value)}
-                            onBlurCapture={(event: React.FocusEvent<HTMLInputElement, Element>) => handleBlur(event.target.value)}
-                        />
+                        <>
+                            {inputType === 'text' ? (
+                                <Input
+                                    fontSize={'12px'}
+                                    value={val}
+                                    // position={'absolute'}
+                                    zIndex={1000000}
+                                    onBlur={() => setActive(!active)}
+                                    bgColor={'white'}
+                                    color={textColor}
+                                    size={'xs'}
+                                    autoFocus={true}
+                                    onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) => {
+                                        // event.target.select();
+                                        let v = event.target.value;
+                                        event.target.value = '';
+                                        event.target.value = v;
+                                    }}
+                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => onTextChange(event.target.value)}
+                                    onBlurCapture={(event: React.FocusEvent<HTMLInputElement, Element>) => handleBlur(event.target.value)}
+                                />
+                            ) : (
+                                <Input
+                                    fontSize={'12px'}
+                                    value={val}
+                                    type={'number'}
+                                    placeholder={'0'}
+                                    // position={'absolute'}
+                                    zIndex={1000000}
+                                    onBlur={() => setActive(!active)}
+                                    bgColor={'white'}
+                                    color={textColor}
+                                    size={'xs'}
+                                    autoFocus={true}
+                                    onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) => {
+                                        // event.target.select();
+                                        let v = event.target.value;
+                                        event.target.value = '';
+                                        event.target.value = v;
+                                    }}
+                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => onTextChange(event.target.value)}
+                                    onBlurCapture={(event: React.FocusEvent<HTMLInputElement, Element>) => handleBlur(event.target.value)}
+                                />
+                            )}
+                        </>
                     )}
                 </Box>
             )}

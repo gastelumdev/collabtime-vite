@@ -397,7 +397,7 @@ const SideBarLayout = ({ linkItems, leftContent, sidebar = true, children }: Sid
             <Box mx={'6px'} ml={'6px'} h={'full'}>
                 <Drawer isOpen={isOpen} placement="left" onClose={onClose} returnFocusOnClose={false} onOverlayClick={onClose} size="xs">
                     <DrawerContent boxShadow={'none'}>
-                        <SidebarContent linkItems={linkItems} onClose={onClose} isOpen={isOpen} />
+                        <SidebarContent linkItems={linkItems} onClose={onClose} isOpen={isOpen} w={'320px'} />
                     </DrawerContent>
                 </Drawer>
             </Box>

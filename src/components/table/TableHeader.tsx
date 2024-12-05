@@ -391,7 +391,19 @@ const TableHeader = ({
                         if (columnsPermissions !== undefined && !columnsPermissions?.permissions.column.view) {
                             return null;
                         }
+
+                        console.log({ columnsPermissions });
                     }
+
+                    console.log({ columnIndexIsNotZero: columnIndex !== 0 });
+                    console.log({ columnsAreDraggable });
+                    console.log({ allowed });
+                    console.log({ appModelIsNull: appModel === null });
+                    console.log({ isNotArchives: !isArchives });
+
+                    const draggable = columnIndex !== 0 && columnsAreDraggable && appModel === null && !isArchives;
+
+                    console.log({ draggable });
 
                     return (
                         <span
@@ -401,7 +413,7 @@ const TableHeader = ({
                             style={{
                                 height: '39px',
                                 padding: '0px 20px',
-                                cursor: columnIndex !== 0 && columnsAreDraggable && appModel === null ? 'grab' : 'default',
+                                cursor: draggable ? 'grab' : 'default',
                                 zIndex: `${100 - columnIndex}`,
                                 backgroundColor: draggedColumnIndex === columnIndex ? '#edf2f7' : 'unset',
                                 borderLeft:
@@ -428,9 +440,9 @@ const TableHeader = ({
                                         overflow: 'hidden',
                                         whiteSpace: 'nowrap',
                                         textOverflow: 'ellipsis',
-                                        cursor: columnsAreDraggable && appModel !== null && !isArchives ? 'default' : 'grab',
+                                        cursor: draggable ? 'default' : 'grab',
                                     }}
-                                    draggable={columnIndex !== 0 && columnsAreDraggable && allowed && appModel === null && !isArchives}
+                                    draggable={draggable}
                                     onDragStart={() => handleDragStart(columnIndex)}
                                     onDragOver={(event) => handleDragOver(event, columnIndex)}
                                     onDragEnd={() => handleDragEnd()}

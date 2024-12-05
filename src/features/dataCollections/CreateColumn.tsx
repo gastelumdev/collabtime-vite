@@ -358,58 +358,61 @@ const CreateColumn = ({
                         <Flex>
                             <Text mb={'5px'}>Name</Text>
                             <Text ml={'8px'} pt={'2px'} fontSize={'14px'} color={'#e53e3e'}>
-                                {columnNameError ? '* Column already exists or name is empty.' : ''}
+                                {!column && columnNameError ? '* Column already exists or name is empty.' : ''}
                             </Text>
                         </Flex>
                         <Input
                             // ref={firstField}
                             id="columnName"
                             name="columnName"
-                            value={columnName}
+                            value={`${columnName.split('_').join(' ').slice(0, 1).toUpperCase()}${columnName.split('_').join(' ').slice(1)}`}
                             placeholder="Please enter column name"
                             onChange={handleColumnNameChange}
-                            isInvalid={columnNameError}
+                            isInvalid={!column && columnNameError}
                         />
                     </Box>
-                    <Box>
-                        <Text mb={'5px'}>Type</Text>
-                        <Select
-                            id="columnType"
-                            name="columnType"
-                            value={columnType}
-                            // defaultValue={columnType}
-                            placeholder="Please select column type"
-                            // onChange={(selectedOption: any) => handleSelectType(selectedOption)}
-                            onChange={handleTypeChange}
-                            // options={[
-                            //     { value: 'text', label: 'Text' },
-                            //     // { value: 'number', label: 'Number' },
-                            //     { value: 'date', label: 'Date' },
-                            //     { value: 'label', label: 'Label' },
-                            //     { value: 'people', label: 'Assign To' },
-                            //     { value: 'priority', label: 'Priority' },
-                            //     { value: 'status', label: 'Status' },
-                            //     { value: 'reference', label: 'Reference' },
-                            //     // { value: 'upload', label: 'Uploads' },
-                            //     // { value: 'link', label: 'Link' },
-                            // ]}
-                            // styles={
-                            //     {
-                            //         control: (styles: any) => {
-                            //             return { ...styles, borderColor: '#e2e8f0' };
-                            //         },
-                            //     } as any
-                            // }
-                        >
-                            <option value="text">Text</option>
-                            <option value="date">Date</option>
-                            <option value="label">Label</option>
-                            <option value="people">People</option>
-                            <option value="priority">Priority</option>
-                            <option value="status">Status</option>
-                            <option value="reference">Reference</option>
-                        </Select>
-                    </Box>
+                    {column ? null : (
+                        <Box>
+                            <Text mb={'5px'}>Type</Text>
+                            <Select
+                                id="columnType"
+                                name="columnType"
+                                value={columnType}
+                                // defaultValue={columnType}
+                                placeholder="Please select column type"
+                                // onChange={(selectedOption: any) => handleSelectType(selectedOption)}
+                                onChange={handleTypeChange}
+                                // options={[
+                                //     { value: 'text', label: 'Text' },
+                                //     // { value: 'number', label: 'Number' },
+                                //     { value: 'date', label: 'Date' },
+                                //     { value: 'label', label: 'Label' },
+                                //     { value: 'people', label: 'Assign To' },
+                                //     { value: 'priority', label: 'Priority' },
+                                //     { value: 'status', label: 'Status' },
+                                //     { value: 'reference', label: 'Reference' },
+                                //     // { value: 'upload', label: 'Uploads' },
+                                //     // { value: 'link', label: 'Link' },
+                                // ]}
+                                // styles={
+                                //     {
+                                //         control: (styles: any) => {
+                                //             return { ...styles, borderColor: '#e2e8f0' };
+                                //         },
+                                //     } as any
+                                // }
+                            >
+                                <option value="text">Text</option>
+                                <option value="number">Number</option>
+                                <option value="date">Date</option>
+                                <option value="label">Label</option>
+                                <option value="people">People</option>
+                                <option value="priority">Priority</option>
+                                <option value="status">Status</option>
+                                <option value="reference">Reference</option>
+                            </Select>
+                        </Box>
+                    )}
                     {showLabelForm ? (
                         <>
                             <Divider gradient="radial-gradient(#eceef1 40%, white 60%)" marginBottom="0" marginTop="0" />

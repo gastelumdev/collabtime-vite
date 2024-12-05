@@ -1,9 +1,7 @@
 import { Box, Button, Checkbox, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text, useDisclosure } from '@chakra-ui/react';
-import { getTextColor } from '../../utils/helpers';
 import { useEffect, useState } from 'react';
 import { TRow, TUser } from '../../types';
 import { createPortal } from 'react-dom';
-// import { useUpdateRowMutation } from '../../app/services/api';
 
 interface ILabel {
     value: string;
@@ -114,7 +112,7 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
                                 fontSize={'12px'}
                                 pb={'3px'}
                                 // bgColor={labelColor}
-                                color={labelColor == 'white' ? 'black' : getTextColor(labelColor)}
+                                color={'black'}
                                 borderRadius={'0'}
                                 fontWeight={'normal'}
                                 variant={'unstyled'}
@@ -190,7 +188,7 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
                                                         textAlign={'left'}
                                                         ml={'5px'}
                                                     >
-                                                        <Text color={getTextColor(label.color)}>
+                                                        <Text color={'black'}>
                                                             {name}
                                                             <span style={{ color: 'gray' }}>{` ${email}`}</span>
                                                         </Text>
@@ -226,7 +224,7 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
                     >
                         <Text
                             // backgroundColor={labelColor}
-                            color={getTextColor(labelColor)}
+                            color={'black'}
                             h={'29px'}
                             textAlign={'center'}
                             paddingY={'4px'}

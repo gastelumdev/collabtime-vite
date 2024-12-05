@@ -545,6 +545,7 @@ const Row = ({
                                                 <TextInput
                                                     id={row._id}
                                                     columnName={column?.name}
+                                                    inputType={column?.type}
                                                     value={row.values !== undefined ? value : null}
                                                     onChange={onChange}
                                                     allowed={allowed || editable || (column?.autoIncremented !== undefined && !column?.autoIncremented)}
