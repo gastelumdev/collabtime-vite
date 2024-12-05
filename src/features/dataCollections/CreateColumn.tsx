@@ -286,8 +286,10 @@ const CreateColumn = ({
         if (labelOptions.title === '') {
             setLabelTitleError(true);
         } else {
+            labelOptions.default = labels.length === 0 ? true : false;
             const labelsCopy = [...labels, labelOptions];
             setLabels(labelsCopy);
+
             setLabelOptions(defaultLabel);
         }
     };
@@ -511,7 +513,6 @@ const CreateColumn = ({
                                                                                     if (event.target.checked) {
                                                                                         const newLabels = labels.map((item: TLabel) => {
                                                                                             if (item.title === label.title) {
-                                                                                                console.log(item.users);
                                                                                                 if (item.users !== undefined) {
                                                                                                     return { ...item, users: [...item?.users, user.email] };
                                                                                                 } else {
@@ -521,7 +522,6 @@ const CreateColumn = ({
                                                                                             return item;
                                                                                         });
                                                                                         setLabels(newLabels);
-                                                                                        console.log({ newLabels });
                                                                                     } else {
                                                                                         const newLabels = labels.map((item: TLabel) => {
                                                                                             if (item.title === label.title) {
