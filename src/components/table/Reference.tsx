@@ -54,14 +54,21 @@ const Reference = ({
     }, []);
 
     useEffect(() => {
-        let rowKey;
-
+        let rowKey = null;
+        console.log({ columns });
         columns?.map((col: any) => {
+            console.log({ col, column });
             if (col.name === column.dataCollectionRefLabel) {
                 rowKey = col.name;
             }
         });
 
+        if (rowKey === null) {
+            const firstColumn = columns?.find((_item: any) => {
+                return true;
+            });
+            rowKey = firstColumn?.name;
+        }
         setRowKey(rowKey);
     }, [rowsData, columns]);
 
@@ -86,7 +93,6 @@ const Reference = ({
     }, [rowsData]);
 
     const handleAddRow = (columnName: any, row: any) => {
-        console.log(row);
         onRefChange(columnName, row);
         setRows((prev: any) => {
             return [...prev, row];
@@ -99,7 +105,6 @@ const Reference = ({
     };
 
     const handleRemoveRef = (columnName: any, ref: any) => {
-        console.log(ref);
         onRemoveRef(columnName, ref);
         setRows((prev: any) =>
             prev.filter((row: any) => {
@@ -107,9 +112,7 @@ const Reference = ({
             })
         );
 
-        console.log(ref);
         setRowsList((prev: any) => {
-            console.log(prev);
             return [...prev, ref];
         });
 
@@ -140,8 +143,7 @@ const Reference = ({
                             {rows.length < 1
                                 ? `Choose ${dataCollection?.name}`
                                 : rows.map((row: any, index: number) => {
-                                      //   console.log(row.values[rowKey]);
-                                      console.log(row.values[rowKey] !== undefined ? `${row.values[rowKey]}${index === rows.length - 1 ? '' : ','} ` : null);
+                                      //   console.log(row.values[rowKey] !== undefined ? `${row.values[rowKey]}${index === rows.length - 1 ? '' : ','} ` : null);
 
                                       if (row.values[rowKey] === undefined) return null;
                                       return index === rows.length - 1 ? row.values[rowKey] : `${row.values[rowKey]}, `;
