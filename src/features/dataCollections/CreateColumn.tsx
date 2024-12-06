@@ -134,7 +134,6 @@ const CreateColumn = ({
 
             handleSetColumns(newColumn);
             // const createdColumn = await createColumn(newColumn);
-            // console.log(createdColumn.data);
 
             await createColumn(newColumn);
             addNewColumnToRows(newColumn);
@@ -252,7 +251,6 @@ const CreateColumn = ({
     // };
 
     const handleSelectDataCollection = (selectedOption: any) => {
-        console.log(selectedOption);
         setColumnRef(selectedOption.value);
         setShowColumnNameSelection(true);
     };
@@ -313,10 +311,7 @@ const CreateColumn = ({
         if (column !== null) {
             setColumnName(column.name);
 
-            console.log(column);
-
             if (column.type === 'label') {
-                console.log('THIS IS A LABEL COLUMN');
                 setShowLabelForm(true);
                 setColumnType(column.type);
                 setLabels((column as any).labels);
@@ -326,8 +321,6 @@ const CreateColumn = ({
     };
 
     const setAsDefault = (label: TLabel) => {
-        console.log(labels);
-        console.log(label);
         const newLabels = labels.map((item: TLabel) => {
             if (item.default) {
                 return { ...item, default: false };
@@ -567,7 +560,6 @@ const CreateColumn = ({
                                         return { value: dataCollection._id, label: dataCollection.name };
                                     })
                                     .filter((dataCollection: any) => {
-                                        console.log(dataCollection.value, dataCollectionId);
                                         return dataCollection.value !== dataCollectionId;
                                     })}
                                 styles={
@@ -613,7 +605,6 @@ const ColumnSelection = ({ dataCollectionId, handleSelectedColumn }: { dataColle
                         return { value: column.name, label: column.name };
                     })
                     // .filter((dataCollection: any) => {
-                    //     console.log(dataCollection.value, dataCollectionId);
                     //     return dataCollection.value !== dataCollectionId;
                     // })
                 }

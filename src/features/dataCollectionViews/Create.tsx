@@ -139,7 +139,6 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
     };
 
     const createData = async () => {
-        console.log(dataCollectionView);
         if (view) {
             updateDataCollectionView(dataCollectionView);
         } else {
@@ -427,7 +426,6 @@ export const FilterModal = ({
                                         value={value}
                                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                                             setValue(event.target.value);
-                                            console.log(value);
                                         }}
                                         mr={'6px'}
                                     />
