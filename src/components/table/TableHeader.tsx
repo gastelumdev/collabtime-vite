@@ -38,6 +38,7 @@ interface IProps {
     permissions?: any;
     refetchPermissions?: any;
     isArchives?: boolean;
+    updateView?: any;
 }
 
 const TableHeader = ({
@@ -57,7 +58,7 @@ const TableHeader = ({
     addNewColumnToRows,
     handleRemoveColumnFormRows,
     deleteColumn,
-    allowed = false,
+    // allowed = false,
     handleSortByColumnAsc,
     handleSortByColumnDes,
     hasCheckboxOptions = true,
@@ -68,6 +69,7 @@ const TableHeader = ({
     permissions = emptyDataCollectionPermissions,
     refetchPermissions,
     isArchives = false,
+    updateView,
 }: IProps) => {
     const [currentColumns, setCurrentColumns] = useState(columns);
     // ******************* COLUMN REORDERING ******************************
@@ -84,6 +86,7 @@ const TableHeader = ({
         (columnIndex: number) => {
             // Store the column being dragged
             // draggedColumnIndex = columnIndex;
+            console.log(columnIndex);
             setDraggedColumnIndex(columnIndex);
         },
         [draggedColumnIndex]
@@ -101,8 +104,8 @@ const TableHeader = ({
                     const th: any = document.getElementById(String(i));
                     th.style.backgroundColor = 'white';
                 }
-                const th: any = document.getElementById(String(columnIndex));
-                th.style.backgroundColor = '#f2f2f2';
+                // const th: any = document.getElementById(String(columnIndex));
+                // th.style.backgroundColor = '#f2f2f2';
             }
         },
         [draggedColumnIndex]
@@ -144,18 +147,27 @@ const TableHeader = ({
                 setCurrentColumns(newColumns);
                 rearangeColumns(newColumns);
 
-                const row = document.getElementsByClassName('table-row')[0];
+                const row = document.getElementsByClassName(dataCollectionView ? `table-row-${dataCollectionView._id}` : 'table-row')[0];
+                console.log(row);
                 const gridTemplateColumns = getComputedStyle(row).getPropertyValue('grid-template-columns');
                 // Reorder the column widths and set the gridTemplateColumns
+                console.log({ currentColumns });
+                console.log({ gridTemplateColumns });
                 const columnWidths: any = gridTemplateColumns.split(' ');
                 columnWidths.shift();
                 const [columnWidth] = columnWidths.splice(draggedColumnIndex as number, 1);
                 // newColumns[draggedColumnIndex as number].width = columnWidth;
                 columnWidths.splice(columnIndex, 0, columnWidth);
+                const newColumnWidths = columnWidths.join(' ');
+                console.log({ newColumnWidths });
 
-                handleGridTemplateColumns(columnWidths.join(' '));
+                handleGridTemplateColumns(newColumnWidths);
                 // API call needed persist column order
-                updateBackendColumns(newColumns);
+                if (dataCollectionView) {
+                    updateView({ ...dataCollectionView, columns: newColumns });
+                } else {
+                    updateBackendColumns(newColumns);
+                }
             }
 
             setDraggedColumnIndex(null);
@@ -391,19 +403,10 @@ const TableHeader = ({
                         if (columnsPermissions !== undefined && !columnsPermissions?.permissions.column.view) {
                             return null;
                         }
-
-                        console.log({ columnsPermissions });
                     }
 
-                    console.log({ columnIndexIsNotZero: columnIndex !== 0 });
-                    console.log({ columnsAreDraggable });
-                    console.log({ allowed });
-                    console.log({ appModelIsNull: appModel === null });
-                    console.log({ isNotArchives: !isArchives });
-
                     const draggable = columnIndex !== 0 && columnsAreDraggable && appModel === null && !isArchives;
-
-                    console.log({ draggable });
+                    // const draggable = true;
 
                     return (
                         <span

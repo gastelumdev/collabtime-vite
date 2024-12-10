@@ -55,9 +55,7 @@ const Reference = ({
 
     useEffect(() => {
         let rowKey = null;
-        console.log({ columns });
         columns?.map((col: any) => {
-            console.log({ col, column });
             if (col.name === column.dataCollectionRefLabel) {
                 rowKey = col.name;
             }
@@ -143,8 +141,6 @@ const Reference = ({
                             {rows.length < 1
                                 ? `Choose ${dataCollection?.name}`
                                 : rows.map((row: any, index: number) => {
-                                      //   console.log(row.values[rowKey] !== undefined ? `${row.values[rowKey]}${index === rows.length - 1 ? '' : ','} ` : null);
-
                                       if (row.values[rowKey] === undefined) return null;
                                       return index === rows.length - 1 ? row.values[rowKey] : `${row.values[rowKey]}, `;
                                       //   return `${row.values[rowKey]} `;

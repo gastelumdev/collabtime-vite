@@ -1,5 +1,11 @@
 import DataCollection from '../dataCollections/DataCollection';
-import { useDeleteDataCollectionViewMutation, useGetDataCollectionsQuery, useGetOneWorkspaceQuery, useGetRowsQuery } from '../../app/services/api';
+import {
+    useDeleteDataCollectionViewMutation,
+    useGetDataCollectionsQuery,
+    useGetOneWorkspaceQuery,
+    useGetRowsQuery,
+    useUpdateDataCollectionViewMutation,
+} from '../../app/services/api';
 import { useEffect, useState } from 'react';
 import {
     Box,
@@ -49,6 +55,7 @@ const View = ({
         filters: JSON.stringify(dataCollectionView.filters),
     });
     const [deleteDataCollectionView] = useDeleteDataCollectionViewMutation();
+    const [updateDataCollectionView] = useUpdateDataCollectionViewMutation();
     const { data } = useGetDataCollectionsQuery(null);
     const [viewPermissions, setViewPermissions] = useState(emptyViewPermissions);
 
@@ -83,6 +90,7 @@ const View = ({
             refetchUserGroup();
         }
     }, [userGroup, dataCollectionView]);
+
     return (
         <Box>
             <Divider />
@@ -222,10 +230,11 @@ const View = ({
                                             rowsAreDraggable={false}
                                             hasCheckboxOptions={false}
                                             hasColumnOptions={false}
-                                            columnsAreDraggable={false}
+                                            columnsAreDraggable={true}
                                             hasCreateColumn={false}
                                             refetchRows={refetchRows}
                                             viewPermissions={viewPermissions}
+                                            updateView={updateDataCollectionView}
                                             // userGroup={userGroup}
                                         />
                                     </Box>
@@ -241,10 +250,11 @@ const View = ({
                                 rowsAreDraggable={false}
                                 hasCheckboxOptions={false}
                                 hasColumnOptions={false}
-                                columnsAreDraggable={false}
+                                columnsAreDraggable={true}
                                 hasCreateColumn={false}
                                 refetchRows={refetchRows}
                                 viewPermissions={viewPermissions}
+                                updateView={updateDataCollectionView}
                                 // userGroup={userGroup}
                             />
                         </Box>

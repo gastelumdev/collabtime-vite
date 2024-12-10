@@ -47,6 +47,7 @@ interface ITableProps {
     refetchRowsForApp?: any;
     refetchPermissions?: any;
     isArchives?: boolean;
+    updateView?: any;
 }
 
 const Table = ({
@@ -81,6 +82,7 @@ const Table = ({
     refetchRowsForApp,
     refetchPermissions,
     isArchives = false,
+    updateView,
 }: ITableProps) => {
     const dispatch = useAppDispatch();
     // const { dataCollectionId } = useParams();
@@ -520,8 +522,6 @@ const Table = ({
                 // const isParent = prevRow.isParent && (prevRow.parentRowId === undefined || prevRow.parentRowId === null);
                 const isChild = prevRow.parentRowId !== null && prevRow.parentRowId !== undefined;
 
-                // console.log({ isParent, isChild, currentParentId, isChecking });
-
                 if (checkedRowIds.includes(prevRow._id)) {
                     if (index !== 0) {
                         if (potentialParent !== null) {
@@ -689,6 +689,7 @@ const Table = ({
                 permissions={permissions}
                 refetchPermissions={refetchPermissions}
                 isArchives={isArchives}
+                updateView={updateView}
             />
             <TableContent
                 rows={rows || []}

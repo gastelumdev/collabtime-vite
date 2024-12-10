@@ -98,6 +98,7 @@ const Row = ({
     const [dataCollectionPermissions, setDataCollectionPermissions] = useState<any>(emptyDataCollectionPermissions);
 
     useEffect(() => {
+        console.log({ gridTemplateColumns });
         if (permissions !== null) {
             setDataCollectionPermissions(permissions);
         }
@@ -309,7 +310,7 @@ const Row = ({
                             }}
                         >
                             <div
-                                className="table-row content"
+                                className={dataCollectionView ? `table-row table-row-${dataCollectionView._id} content` : 'table-row content'}
                                 style={{
                                     gridTemplateColumns: `${hasCheckboxOptions ? '220px' : '150px'} ${gridTemplateColumns}`,
                                 }}
