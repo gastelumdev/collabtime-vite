@@ -244,11 +244,14 @@ const ViewOne = () => {
                     if (column?.type === 'reference') {
                         if (row.refs !== undefined && row.refs[column?.name] !== undefined) {
                             const refs: any = row.refs[column?.name];
+                            console.log(refs);
                             let refsString = '';
-                            for (const ref of refs) {
-                                refsString += `${ref.values[key]} `;
+                            if (refs) {
+                                for (const ref of refs) {
+                                    refsString += `${ref.values[key]} `;
+                                }
+                                values[column?.name] = refsString;
                             }
-                            values[column?.name] = refsString;
                         } else {
                             values[column?.name] = '';
                         }
