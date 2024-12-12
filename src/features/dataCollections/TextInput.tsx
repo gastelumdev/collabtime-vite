@@ -60,6 +60,8 @@ const TextInput = ({
     const [val, setVal] = useState<string>(value);
     const navigate = useNavigate();
 
+    const fontSize = '13px';
+
     useEffect(() => {
         setVal(value);
     }, [value]);
@@ -99,7 +101,7 @@ const TextInput = ({
                             variant={'unstyled'}
                             border={type === 'tableCell' ? 'none' : '1px solid #edf2f7'}
                             borderRadius={'none'}
-                            fontSize={'12px'}
+                            fontSize={fontSize}
                             fontWeight={fontWeight}
                             padding={0}
                             bgColor={bgColor}
@@ -122,7 +124,7 @@ const TextInput = ({
                             variant={'unstyled'}
                             border={type === 'tableCell' ? 'none' : '1px solid #edf2f7'}
                             borderRadius={'none'}
-                            fontSize={'12px'}
+                            fontSize={fontSize}
                             fontWeight={fontWeight}
                             padding={0}
                             bgColor={bgColor}

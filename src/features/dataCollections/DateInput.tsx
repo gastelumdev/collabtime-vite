@@ -7,11 +7,14 @@ interface IProps {
     onChange: any;
     allowed?: boolean;
     border?: string | null;
+    fontWeight?: string;
 }
 
-const DateInput = ({ value, columnName, onChange, allowed = false, border = null }: IProps) => {
+const DateInput = ({ value, columnName, onChange, allowed = false, border = null, fontWeight = 'normal' }: IProps) => {
     // const [updateCell] = useUpdateCellMutation();
     const [inputValue, setInputValue] = useState<string>('');
+
+    const fontSize = '13px';
 
     useEffect(() => {
         if (value !== 'Invalid Date') {
@@ -32,11 +35,12 @@ const DateInput = ({ value, columnName, onChange, allowed = false, border = null
     // };
 
     return (
-        <Box px={'20px'} pt={'5px'} border={border ? border : 'none'}>
+        <Box px={'20px'} pt={'3px'} border={border ? border : 'none'}>
             {/* <Box>{value !== '' || value === undefined ? '#1a202c' : 'lightgray'}</Box> */}
             {/* <Box>{value !== '' || value === undefined ? 'Nothing' : value}</Box> */}
             <Input
                 value={inputValue}
+                fontWeight={fontWeight}
                 type="datetime-local"
                 size={'sm'}
                 variant={'unstyled'}
@@ -45,7 +49,7 @@ const DateInput = ({ value, columnName, onChange, allowed = false, border = null
                 isReadOnly={!allowed}
                 cursor={allowed ? 'text' : 'default'}
                 textOverflow={'ellipsis'}
-                fontSize={'12px'}
+                fontSize={fontSize}
                 color={inputValue !== '' || inputValue === undefined ? '#1a202c' : 'lightgray'}
                 // placeholder="2000-01-01T12:00"
             />

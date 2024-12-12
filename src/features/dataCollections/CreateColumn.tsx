@@ -541,6 +541,23 @@ const CreateColumn = ({
                                                         </PopoverContent>
                                                     </Popover>
                                                 </Box>
+                                                <Box border={'2px solid lightgray'} w={'20px'} h={'20px'} mt={'2px'}>
+                                                    <input
+                                                        type={'color'}
+                                                        value={label.color}
+                                                        style={{ opacity: 0, display: 'block', width: '20px', height: '20px', border: 'none' }}
+                                                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                            const newLabels = labels.map((item: TLabel) => {
+                                                                if (item.title === label.title) {
+                                                                    return { ...item, color: event.target.value };
+                                                                }
+                                                                return item;
+                                                            });
+
+                                                            setLabels(newLabels);
+                                                        }}
+                                                    />
+                                                </Box>
                                             </Flex>
                                         </Box>
                                     );

@@ -41,24 +41,18 @@ const ImportDrawer = ({ columns, handleImportRows, isFetching, isLoading }: IPro
     const fileReader = new FileReader();
 
     const csvFileToArray = (string: string) => {
-        console.log('CSV FILE TO ARRAY');
         const csvHeader = string.slice(0, string.indexOf('\n')).split(',');
         const csvRows = string.slice(string.indexOf('\n') + 1).split('\n');
 
         const formattedCsvHeaders = csvHeader.map((header) => {
-            console.log(header);
             // return header.split('"')[1];
             return header.replace(/(\r\n|\n|\r)/gm, '');
         });
-
-        console.log(csvHeader);
-        console.log(formattedCsvHeaders);
 
         let allColumnsMatch = true;
 
         for (const column of columns) {
             if (!formattedCsvHeaders.includes(column.name)) {
-                console.log(formattedCsvHeaders.includes(column.name));
                 allColumnsMatch = false;
                 setUnmatchingColumns([...unmatchingColumns, column.name]);
             }
@@ -68,14 +62,11 @@ const ImportDrawer = ({ columns, handleImportRows, isFetching, isLoading }: IPro
             const array = csvRows.map((i) => {
                 const values = i.split(',');
                 const obj = formattedCsvHeaders.reduce((object: any, header: any, index: number) => {
-                    console.log(values[index]);
                     object[header] = values[index];
                     return object;
                 }, {});
                 return obj;
             });
-
-            console.log(array);
 
             setArray(array);
         } else {
@@ -84,7 +75,6 @@ const ImportDrawer = ({ columns, handleImportRows, isFetching, isLoading }: IPro
     };
 
     const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(event.target.files);
         let f;
         if (event.target.files) {
             // setFile(event.target.files[0]);
@@ -94,7 +84,6 @@ const ImportDrawer = ({ columns, handleImportRows, isFetching, isLoading }: IPro
         if (f) {
             fileReader.onload = function (event) {
                 const csvOutput: any = event.target?.result;
-                console.log(csvOutput);
                 csvFileToArray(csvOutput);
             };
 
@@ -153,7 +142,7 @@ const ImportDrawer = ({ columns, handleImportRows, isFetching, isLoading }: IPro
                                 </UnorderedList>
                             </Box>
                         ) : null}
-                        <TableContainer h={'100%'} mt={'30px'}>
+                        <TableContainer mt={'30px'}>
                             <Table size="sm">
                                 <Thead>
                                     <Tr>
@@ -163,13 +152,15 @@ const ImportDrawer = ({ columns, handleImportRows, isFetching, isLoading }: IPro
                                     </Tr>
                                 </Thead>
                                 <Tbody>
-                                    {array.map((item: any, itemIndex: number) => (
-                                        <Tr key={itemIndex}>
-                                            {Object.values(item).map((val: any, index) => (
-                                                <Td key={index}>{val}</Td>
-                                            ))}
-                                        </Tr>
-                                    ))}
+                                    {array.map((item: any, itemIndex: number) => {
+                                        return (
+                                            <Tr key={itemIndex}>
+                                                {Object.values(item).map((val: any, index) => (
+                                                    <Td key={index}>{val}</Td>
+                                                ))}
+                                            </Tr>
+                                        );
+                                    })}
                                 </Tbody>
                             </Table>
                         </TableContainer>

@@ -22,12 +22,13 @@ interface IProps {
     onChange: any;
     allowed?: boolean;
     border?: string | null;
+    fontWeight?: string;
     // label?: string;
     // bgColor?: string;
     // options: { value: string; label: string; color: string }[] | undefined;
 }
 
-const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = false, border = null }: IProps) => {
+const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = false, border = null, fontWeight = 'normal' }: IProps) => {
     const { onClose } = useDisclosure();
     // const [updateRow] = useUpdateRowMutation();
 
@@ -112,9 +113,9 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
                                 fontSize={'12px'}
                                 pb={'3px'}
                                 // bgColor={labelColor}
-                                color={'black'}
+                                color={labels.length > 0 ? 'black' : 'lightgray'}
                                 borderRadius={'0'}
-                                fontWeight={'normal'}
+                                fontWeight={fontWeight}
                                 variant={'unstyled'}
                                 _hover={{ bgColor: labelColor }}
                             >
@@ -182,7 +183,7 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
                                                         bgColor={label.color}
                                                         w={'100%'}
                                                         fontSize={'12px'}
-                                                        fontWeight={'normal'}
+                                                        fontWeight={fontWeight}
                                                         // size={'xs'}
                                                         // onClick={() => handleLabelClick(label)}
                                                         textAlign={'left'}
@@ -211,7 +212,7 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
                         w={'100%'}
                         h={'29px'}
                         fontSize={'12px'}
-                        fontWeight={'normal'}
+                        fontWeight={fontWeight}
                         onMouseDown={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
                             event;
                             setActive(true);
@@ -224,8 +225,9 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
                     >
                         <Text
                             // backgroundColor={labelColor}
-                            color={'black'}
+                            color={labels.length > 0 ? 'black' : 'lightgray'}
                             h={'29px'}
+                            fontWeight={fontWeight}
                             textAlign={'center'}
                             paddingY={'4px'}
                             cursor={allowed ? 'pointer' : 'default'}

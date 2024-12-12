@@ -125,7 +125,7 @@ const Reference = ({
                     {allowed ? (
                         <PopoverTrigger>
                             <Box textAlign={'left'} overflow={'hidden'}>
-                                <Button size={'xs'} variant={'ghost'} color={rows.length < 1 ? 'lightgray' : 'gray'} overflow={'hidden'}>
+                                <Button size={'xs'} variant={'ghost'} color={rows.length < 1 ? 'lightgray' : 'gray'} fontSize={'12px'} overflow={'hidden'}>
                                     {rows.length < 1
                                         ? `Choose ${dataCollection?.name}`
                                         : rows.map((row: any, index: number) => {

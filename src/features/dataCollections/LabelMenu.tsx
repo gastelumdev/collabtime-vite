@@ -18,12 +18,13 @@ interface IProps {
     allowed?: boolean;
     border?: string | null;
     fontWeight?: string;
+    fontSize?: string;
     // label?: string;
     // bgColor?: string;
     // options: { value: string; label: string; color: string }[] | undefined;
 }
 
-const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false, border = null, fontWeight = 'normal' }: IProps) => {
+const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false, border = null, fontWeight = 'normal', fontSize = '13px' }: IProps) => {
     const { onClose } = useDisclosure();
     // const [updateRow] = useUpdateRowMutation();
 
@@ -90,12 +91,12 @@ const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false, 
                             <Button
                                 w={'100%'}
                                 h={'29px'}
-                                fontSize={'12px'}
+                                fontSize={fontSize}
                                 pb={'3px'}
                                 bgColor={labelColor}
                                 color={labelColor == 'white' ? 'black' : getTextColor(labelColor)}
                                 borderRadius={'0'}
-                                fontWeight={'normal'}
+                                fontWeight={fontWeight}
                                 _hover={{ bgColor: labelColor }}
                             >
                                 {labelValue}
@@ -111,8 +112,8 @@ const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false, 
                                                 <Button
                                                     bgColor={label.color}
                                                     w={'100%'}
-                                                    fontSize={'12px'}
-                                                    fontWeight={'normal'}
+                                                    fontSize={fontSize}
+                                                    fontWeight={fontWeight}
                                                     size={'sm'}
                                                     _hover={{ bgColor: label.color }}
                                                     // onClick={() => handleLabelClick(label)}
@@ -134,8 +135,8 @@ const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false, 
                     borderRadius={'none'}
                     w={'100%'}
                     h={'29px'}
-                    fontSize={'12px'}
-                    fontWeight={'normal'}
+                    fontSize={fontSize}
+                    fontWeight={fontWeight}
                     cursor={allowed ? 'cursor' : 'default'}
                     onMouseDown={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
                         event;

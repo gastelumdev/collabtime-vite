@@ -39,7 +39,7 @@ const Edit = ({ dataCollection, updateDataCollection }: IProps) => {
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value, name } = event.target;
-        if (value.length > 30) {
+        if (name === 'name' && value.length > 30) {
             setInputError(true);
         } else {
             setInputError(false);
@@ -83,7 +83,7 @@ const Edit = ({ dataCollection, updateDataCollection }: IProps) => {
                     <GoPencil />
                 </Text>
             </Box>
-            <PrimaryDrawer onClose={handleOnClose} isOpen={isOpen} title={'Create a new workspace'}>
+            <PrimaryDrawer onClose={handleOnClose} isOpen={isOpen} title={'Create a new data colletion'}>
                 <Flex>
                     <Text pb={'5px'}>Name</Text>
                     <Text ml={'8px'} pt={'2px'} fontSize={'14px'} color={'#e53e3e'}>

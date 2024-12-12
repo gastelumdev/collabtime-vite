@@ -13,7 +13,7 @@ import {
     useUpdateColumnMutation,
     useUpdateDataCollectionMutation,
     useUpdateRowMutation,
-    useUpdateRowNoTagMutation,
+    // useUpdateRowNoTagMutation,
 } from '../../app/services/api';
 import {
     Box,
@@ -54,7 +54,7 @@ import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
 import PrimaryDrawer from '../../components/PrimaryDrawer';
 import { cellColorStyles } from './select.styles';
-import { TColumn } from '../../types';
+import { TColumn, TRow } from '../../types';
 import LinksMenu from './LinksMenu';
 import { MdContentCopy } from 'react-icons/md';
 import { ChevronDownIcon, CloseIcon } from '@chakra-ui/icons';
@@ -89,7 +89,7 @@ const ViewOne = () => {
     const { data: columnsData } = useGetColumnsQuery(localStorage.getItem('dataCollectionId') || '');
     const [updateColumn] = useUpdateColumnMutation();
     const [updateRow] = useUpdateRowMutation();
-    const [updatedRowNoTag] = useUpdateRowNoTagMutation();
+    // const [updatedRowNoTag] = useUpdateRowNoTagMutation();
     const [getBlankRows] = useGetBlankRowsMutation();
 
     const [updateDataCollection] = useUpdateDataCollectionMutation();
@@ -333,46 +333,31 @@ const ViewOne = () => {
      * @param array
      */
     const handleImportRows = async (array: any) => {
-        const blankRowsRes: any = await getBlankRows({ numberOfRowsToCreate: array.length, dataCollectionId });
-        const blankRows = blankRowsRes.data;
+        let numberOfRowsToCreate = 0;
+        if (rowsData !== undefined) {
+            if (rowsData?.length < array.length) {
+                numberOfRowsToCreate = array.length - rowsData?.length + 10;
+            }
+            const blankRowsRes: any = await getBlankRows({ numberOfRowsToCreate: numberOfRowsToCreate, dataCollectionId });
+            const blankRows = blankRowsRes.data;
 
-        let lastNonEmptyRow = 0;
+            const newRows = [...rowsData, ...blankRows];
 
-        rowsData?.map((row: any) => {
-            const values = row.values;
-
-            for (const key in values) {
-                const value = values[key];
-                const position = row.position;
-                if (value !== '') {
-                    lastNonEmptyRow = position;
+            const filledRows = newRows.map((item: TRow, index: number) => {
+                try {
+                    return { ...item, isEmpty: false, values: array[index] };
+                } catch (error) {
+                    console.log(error);
+                    return item;
                 }
-            }
-        });
+            });
 
-        const rowsDataCopy: any = rowsData;
-
-        const newRows: any = [...rowsDataCopy, ...blankRows];
-
-        let positionToUpdate = lastNonEmptyRow + 1;
-        let arrayPosition = 0;
-        const lastPositionToUpdate = lastNonEmptyRow + blankRows.length;
-
-        newRows.map(async (row: any) => {
-            if (row.position == positionToUpdate && row.position < lastPositionToUpdate) {
-                updatedRowNoTag({ ...row, values: array[arrayPosition] });
-                positionToUpdate = positionToUpdate + 1;
-                arrayPosition = arrayPosition + 1;
+            for (const row of filledRows) {
+                await updateRow(row);
             }
 
-            if (row.position == positionToUpdate && row.position == lastPositionToUpdate) {
-                await updateRow({ ...row, values: array[arrayPosition] });
-                positionToUpdate = positionToUpdate + 1;
-                arrayPosition = arrayPosition + 1;
-            }
-        });
-
-        await refetch();
+            await refetch();
+        }
     };
 
     return (

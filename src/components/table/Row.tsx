@@ -98,7 +98,6 @@ const Row = ({
     const [dataCollectionPermissions, setDataCollectionPermissions] = useState<any>(emptyDataCollectionPermissions);
 
     useEffect(() => {
-        console.log({ gridTemplateColumns });
         if (permissions !== null) {
             setDataCollectionPermissions(permissions);
         }
@@ -445,7 +444,7 @@ const Row = ({
 
                                     let bgColor = 'default';
                                     let textColor = 'black';
-                                    let fontWeight = 'normal';
+                                    let fontWeight = 'semibold';
                                     let position = 'left';
                                     let isDisabled = false;
 
@@ -497,6 +496,7 @@ const Row = ({
                                             value = 'None';
                                         }
                                     }
+                                    console.log({ column });
                                     return (
                                         <div
                                             key={columnIndex}
@@ -526,6 +526,7 @@ const Row = ({
                                                     values={row.values !== undefined ? value : null}
                                                     onChange={onChange}
                                                     allowed={allowed}
+                                                    fontWeight={fontWeight}
                                                 />
                                             ) : column?.type === 'date' ? (
                                                 <DateInput
@@ -533,6 +534,7 @@ const Row = ({
                                                     columnName={column?.name}
                                                     onChange={onChange}
                                                     allowed={allowed}
+                                                    fontWeight={fontWeight}
                                                 />
                                             ) : column?.type === 'reference' ? (
                                                 <Reference
