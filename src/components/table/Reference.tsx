@@ -124,7 +124,7 @@ const Reference = ({
         <Center px={'10px'}>
             {dataCollection?.name !== undefined ? (
                 <>
-                    <Box>
+                    <Box overflow={'hidden'}>
                         {allowed ? (
                             <Box textAlign={'left'} overflow={'hidden'}>
                                 <Button
