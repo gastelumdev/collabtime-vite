@@ -19,6 +19,7 @@ import { useEffect, useState } from 'react';
 import { useGetColumnsQuery, useGetDataCollectionQuery, useGetRowsQuery } from '../../app/services/api';
 import ViewRef from './ViewRef';
 import { CloseIcon } from '@chakra-ui/icons';
+import { TRow } from '../../types';
 
 const Reference = ({
     column,
@@ -91,6 +92,20 @@ const Reference = ({
             );
         }
     }, [rowsData]);
+
+    useEffect(() => {
+        if (refs) {
+            const existingRowIds = refs.map((item: TRow) => {
+                return item._id;
+            });
+
+            setRowsList(
+                rowsData?.filter((item: TRow) => {
+                    return !existingRowIds.includes(item._id);
+                })
+            );
+        }
+    }, []);
 
     const handleAddRow = (columnName: any, row: any) => {
         onRefChange(columnName, row);
