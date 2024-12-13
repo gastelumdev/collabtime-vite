@@ -97,7 +97,7 @@ const ViewRef = ({ columns, rowData, value, allowed = false }: IProps) => {
     return (
         <>
             <Box ml={'12px'} pb={'4px'} onClick={onOpen} cursor={'pointer'} overflow={'hidden'} textOverflow={'ellipsis'}>
-                <Text overflow={'hidden'} textOverflow={'ellipsis'} color={'blue'} _hover={{ textDecoration: 'underline' }}>
+                <Text fontSize={'13px'} overflow={'hidden'} textOverflow={'ellipsis'} color={'blue'} _hover={{ textDecoration: 'underline' }}>
                     {value}
                 </Text>
             </Box>

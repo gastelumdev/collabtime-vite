@@ -496,7 +496,6 @@ const Row = ({
                                             value = 'None';
                                         }
                                     }
-                                    console.log({ column });
                                     return (
                                         <div
                                             key={columnIndex}
