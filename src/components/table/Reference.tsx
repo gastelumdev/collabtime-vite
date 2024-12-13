@@ -94,7 +94,7 @@ const Reference = ({
     }, [rowsData]);
 
     useEffect(() => {
-        if (refs) {
+        if (refs && refs !== undefined) {
             const existingRowIds = refs.map((item: TRow) => {
                 return item._id;
             });
