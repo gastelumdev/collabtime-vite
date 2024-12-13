@@ -214,6 +214,7 @@ const Row = ({
 
     const onRefChange = (columnName: string, ref: any) => {
         const refs: any = [];
+        console.log({ row, columnName });
         if (row.refs === undefined) {
             refs.push(ref);
             handleChange({ ...row, refs: { [columnName]: refs } });

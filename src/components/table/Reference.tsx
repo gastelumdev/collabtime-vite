@@ -51,6 +51,13 @@ const Reference = ({
     const [rowKey, setRowKey] = useState<any>('');
     const [rowsList, setRowsList] = useState<any>([]);
     const [rows, setRows] = useState(refs || []);
+    const [refIds, setRefIds] = useState(
+        refs
+            ? refs.map((item: TRow) => {
+                  return item._id;
+              })
+            : []
+    );
 
     useEffect(() => {
         refetch();
@@ -75,13 +82,16 @@ const Reference = ({
 
     useEffect(() => {
         setRows(refs || []);
+        if (refs) {
+            setRefIds(
+                refs.map((item: TRow) => {
+                    return item._id;
+                })
+            );
+        }
     }, [refs]);
 
     useEffect(() => {
-        // const rowIds: any = refs.map((row: any) => {
-        //     return row._id;
-        // });
-
         if (rowsData === undefined) {
             setRowsList([]);
         } else {
@@ -93,19 +103,21 @@ const Reference = ({
         }
     }, [rowsData]);
 
-    useEffect(() => {
-        if (refs && refs !== undefined) {
-            const existingRowIds = refs.map((item: TRow) => {
-                return item._id;
-            });
+    // useEffect(() => {
+    //     if (refs && refs !== undefined) {
+    //         const existingRowIds = refs.map((item: TRow) => {
+    //             return item._id;
+    //         });
 
-            setRowsList(
-                rowsData?.filter((item: TRow) => {
-                    return !existingRowIds.includes(item._id);
-                })
-            );
-        }
-    }, []);
+    //         setRowsList(
+    //             rowsData?.filter((item: TRow) => {
+    //                 return !existingRowIds.includes(item._id);
+    //             })
+    //         );
+    //     } else {
+    //         setRowsList([]);
+    //     }
+    // }, [refs, rowsData]);
 
     const handleAddRow = (columnName: any, row: any) => {
         onRefChange(columnName, row);
@@ -189,7 +201,9 @@ const Reference = ({
                                                 <Divider />
                                                 <Box h={'570px'} w={'330px'} mt={'6px'} overflowY={'scroll'}>
                                                     {rowsList.map((row: any, index: number) => {
+                                                        if (refIds.includes(row._id)) return null;
                                                         if (row.values[rowKey] !== '') {
+                                                            // console.log({ refs });
                                                             return (
                                                                 <Box
                                                                     key={index}
