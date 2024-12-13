@@ -161,6 +161,7 @@ const Reference = ({
                                     fontSize={'12px'}
                                     overflow={'hidden'}
                                     onClick={onOpen}
+                                    pt={'6px'}
                                 >
                                     {rows.length < 1
                                         ? `Choose ${dataCollection?.name}`
