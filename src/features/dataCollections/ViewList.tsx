@@ -55,7 +55,7 @@ const ViewList = ({}: { allowed?: boolean }) => {
     // const [data, setData] = useState<TDataCollection[]>(dataCollections);
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
     const { data } = useGetDataCollectionsQuery(null);
-    const { data: dataCollectionViews, refetch: refetchViews, isFetching: isFetchingViews } = useGetDataCollectionViewsQuery(null);
+    const { data: dataCollectionViews, refetch: refetchViews } = useGetDataCollectionViewsQuery(null);
     const { data: workspace } = useGetOneWorkspaceQuery(localStorage.getItem('workspaceId') || '');
     const [createDataCollection] = useCreateDataCollecionMutation();
     const [updateDataCollection] = useUpdateDataCollectionMutation();
@@ -206,36 +206,36 @@ const ViewList = ({}: { allowed?: boolean }) => {
                                                             ) : null}
                                                         </Box>
                                                         <Box>
-                                                            {isFetchingViews ? (
+                                                            {/* {isFetchingViews ? (
                                                                 <Box>
                                                                     <Text>Is loading...</Text>
                                                                 </Box>
-                                                            ) : (
-                                                                <>
-                                                                    {userGroup.permissions.viewActions.view
-                                                                        ? dataCollectionViews?.map((dcView: any) => {
-                                                                              const viewPermissions: any = userGroup.permissions.views.find((item: any) => {
-                                                                                  return item.view === dcView._id;
-                                                                              });
+                                                            ) : ( */}
+                                                            <>
+                                                                {userGroup.permissions.viewActions.view
+                                                                    ? dataCollectionViews?.map((dcView: any) => {
+                                                                          const viewPermissions: any = userGroup.permissions.views.find((item: any) => {
+                                                                              return item.view === dcView._id;
+                                                                          });
 
-                                                                              if (viewPermissions !== undefined) {
-                                                                                  if (!viewPermissions.permissions.view.view) {
-                                                                                      return null;
-                                                                                  }
+                                                                          if (viewPermissions !== undefined) {
+                                                                              if (!viewPermissions.permissions.view.view) {
+                                                                                  return null;
                                                                               }
+                                                                          }
 
-                                                                              return (
-                                                                                  <View
-                                                                                      key={dcView.name}
-                                                                                      dataCollectionView={dcView}
-                                                                                      userGroup={userGroup}
-                                                                                      refetchUserGroup={refetchUserGroups}
-                                                                                  />
-                                                                              );
-                                                                          })
-                                                                        : null}
-                                                                </>
-                                                            )}
+                                                                          return (
+                                                                              <View
+                                                                                  key={dcView.name}
+                                                                                  dataCollectionView={dcView}
+                                                                                  userGroup={userGroup}
+                                                                                  refetchUserGroup={refetchUserGroups}
+                                                                              />
+                                                                          );
+                                                                      })
+                                                                    : null}
+                                                            </>
+                                                            {/* )} */}
                                                         </Box>
                                                     </TabPanel>
                                                 ) : null}

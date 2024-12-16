@@ -48,6 +48,7 @@ interface ITableProps {
     refetchPermissions?: any;
     isArchives?: boolean;
     updateView?: any;
+    updateViewColumns?: any;
 }
 
 const Table = ({
@@ -83,6 +84,7 @@ const Table = ({
     refetchPermissions,
     isArchives = false,
     updateView,
+    updateViewColumns,
 }: ITableProps) => {
     const dispatch = useAppDispatch();
     // const { dataCollectionId } = useParams();
@@ -169,7 +171,18 @@ const Table = ({
 
     const updateBackendColumnWidth = useCallback(
         async (column: TColumn) => {
-            updateColumn(column);
+            if (view) {
+                const viewColumns = columns.map((item: TColumn) => {
+                    if (item._id == column._id) {
+                        return column;
+                    }
+                    return item;
+                });
+
+                updateViewColumns(viewColumns);
+            } else {
+                updateColumn(column);
+            }
         },
         [updateColumn]
     );

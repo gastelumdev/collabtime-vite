@@ -36,6 +36,7 @@ const DataCollection = ({
     refetchPermissions,
     isArchives = false,
     updateView,
+    updateViewNoRefetch,
 }: // userGroup,
 {
     showDoneRows?: boolean;
@@ -57,6 +58,7 @@ const DataCollection = ({
     // userGroup?: any;
     isArchives?: boolean;
     updateView?: any;
+    updateViewNoRefetch?: any;
 }) => {
     const { dataCollectionId } = useParams();
 
@@ -79,28 +81,7 @@ const DataCollection = ({
     } = useGetRowsQuery({ dataCollectionId: dataCollectionId || dcId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
     // const [updateRow] = useUpdateRowMutation();
     const [permissions, setPermissions] = useState<number>();
-    const [windowWidthOffset, setWindowWidthOffset] = useState(window.innerWidth > 990 ? 265 : 7);
-
-    // useEffect(() => {
-    //     const socket = io(import.meta.env.VITE_API_URL);
-    //     socket.connect();
-    //     socket.on('update column', () => {
-    //         refetchColumns();
-    //     });
-
-    //     return () => {
-    //         socket.disconnect();
-    //     };
-    // }, []);
-
-    // useEffect(() => {
-    //     console.log(appModel);
-    //     console.log(columns);
-    // }, [columns]);
-
-    // useEffect(() => {
-    //     refetch();
-    // }, [showDoneRows]);
+    const [windowWidthOffset, setWindowWidthOffset] = useState((window.innerWidth > 990 ? 265 : 7) + (dataCollectionView ? 48 : 0));
 
     useEffect(() => {
         refetch();
@@ -136,6 +117,10 @@ const DataCollection = ({
 
     const handleReorderColumns = useCallback((columns: TColumn[]) => {
         reorderColumns(columns);
+    }, []);
+
+    const handleUpdateViewColumns = useCallback((columns: TColumn[]) => {
+        updateViewNoRefetch({ ...dataCollectionView, columns });
     }, []);
 
     return (
@@ -175,6 +160,7 @@ const DataCollection = ({
                 refetchPermissions={refetchPermissions}
                 isArchives={isArchives}
                 updateView={updateView}
+                updateViewColumns={handleUpdateViewColumns}
             />
         </Box>
     );

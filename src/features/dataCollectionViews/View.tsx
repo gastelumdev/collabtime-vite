@@ -5,6 +5,7 @@ import {
     useGetOneWorkspaceQuery,
     useGetRowsQuery,
     useUpdateDataCollectionViewMutation,
+    useUpdateDataCollectionViewNoRefetchMutation,
 } from '../../app/services/api';
 import { useEffect, useState } from 'react';
 import {
@@ -56,6 +57,7 @@ const View = ({
     });
     const [deleteDataCollectionView] = useDeleteDataCollectionViewMutation();
     const [updateDataCollectionView] = useUpdateDataCollectionViewMutation();
+    const [updateDataCollectionViewNoRefetch] = useUpdateDataCollectionViewNoRefetchMutation();
     const { data } = useGetDataCollectionsQuery(null);
     const [viewPermissions, setViewPermissions] = useState(emptyViewPermissions);
 
@@ -235,6 +237,7 @@ const View = ({
                                             refetchRows={refetchRows}
                                             viewPermissions={viewPermissions}
                                             updateView={updateDataCollectionView}
+                                            updateViewNoRefetch={updateDataCollectionViewNoRefetch}
                                             // userGroup={userGroup}
                                         />
                                     </Box>
@@ -255,6 +258,7 @@ const View = ({
                                 refetchRows={refetchRows}
                                 viewPermissions={viewPermissions}
                                 updateView={updateDataCollectionView}
+                                updateViewNoRefetch={updateDataCollectionViewNoRefetch}
                                 // userGroup={userGroup}
                             />
                         </Box>

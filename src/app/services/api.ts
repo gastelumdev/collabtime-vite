@@ -535,6 +535,13 @@ export const api = createApi({
             }),
             invalidatesTags: ["DataCollectionView", "UserGroup"]
         }),
+        updateDataCollectionViewNoRefetch: builder.mutation<any, any>({
+            query: (dataCollectionView) => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/updateDataCollectionViews/`,
+                method: "PUT",
+                body: dataCollectionView
+            }),
+        }),
         deleteDataCollectionView: builder.mutation<any, any>({
             query: (dataColletionViewId) => ({
                 url: `/workspaces/${localStorage.getItem("workspaceId")}/deleteDataCollectionViews/${dataColletionViewId}`,
@@ -649,6 +656,7 @@ export const {
     useGetDataCollectionViewsByRowIdQuery,
     useCreateDataCollectionViewsMutation,
     useUpdateDataCollectionViewMutation,
+    useUpdateDataCollectionViewNoRefetchMutation,
     useDeleteDataCollectionViewMutation,
     useGetUserGroupsQuery,
     useCreateUserGroupMutation,

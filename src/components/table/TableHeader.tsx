@@ -194,53 +194,6 @@ const TableHeader = ({
         setDataCollectionPermissions(permissions);
     }, [permissions]);
 
-    // useEffect(() => {
-    //     const userGroup = userGroups.find((item: any) => {
-    //         return item.users.includes(localStorage.getItem('userId'));
-    //     });
-    //     if (userGroup !== undefined) {
-    //         if (dataCollectionView) {
-    //             const viewPermissions = userGroup.permissions.views.find((item: any) => {
-    //                 return item.view === dataCollectionView._id;
-    //             });
-
-    //             if (viewPermissions !== undefined) {
-    //                 setDataCollectionPermissions(viewPermissions.permissions);
-    //             } else {
-    //                 refetchUserGroups();
-    //             }
-    //         } else {
-    //             let firstColumn = null;
-    //             let dcId = '';
-
-    //             if (columns.length > 0) {
-    //                 firstColumn = columns.find(() => {
-    //                     return true;
-    //                 });
-    //             }
-
-    //             if (firstColumn !== null) {
-    //                 dcId = firstColumn.dataCollection;
-    //             }
-    //             const dataCollectionPermissions = userGroup.permissions.dataCollections.find((item: any) => {
-    //                 return item.dataCollection === dataCollectionId || item.dataCollection === dcId;
-    //             });
-
-    //             if (dataCollectionPermissions !== undefined) {
-    //                 setDataCollectionPermissions(dataCollectionPermissions.permissions);
-    //             } else {
-    //                 refetchUserGroups();
-    //             }
-    //         }
-    //     }
-    // }, [userGroups]);
-
-    // const mouseEnter = useCallback(() => {
-    //     setActiveIndex(null);
-    //     setResizedWidth(null);
-    //     setMouseIsUp(false);
-    // }, [activeIndex, resizedWidth, mouseIsUp]);
-
     const mouseMove = useCallback(
         (e: any) => {
             // On mouse move, change the opacity of the resize handle so that it is visible

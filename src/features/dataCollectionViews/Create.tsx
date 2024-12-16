@@ -242,9 +242,9 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
 
                 <Box mt={'20px'} mb={'20px'}>
                     {columns?.length > 0
-                        ? columns?.map((col: any) => {
+                        ? columns?.map((col: any, index: number) => {
                               return (
-                                  <Box key={col.name}>
+                                  <Box key={index}>
                                       <Flex>
                                           <FormControl display="flex" alignItems="center">
                                               <Switch
@@ -286,9 +286,9 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
                         : null}
                 </Box>
                 <Box mb={'10px'}>
-                    {dataCollectionView.columns.map((col: any) => {
+                    {dataCollectionView.columns.map((col: any, index: number) => {
                         return (
-                            <Card key={col?.name} mb={'5px'}>
+                            <Card key={index} mb={'5px'}>
                                 <CardBody>
                                     <Flex>
                                         <Text>{`${col?.name[0].toUpperCase()}${col?.name.slice(1, col?.name.length).split('_').join(' ')}`}</Text>
