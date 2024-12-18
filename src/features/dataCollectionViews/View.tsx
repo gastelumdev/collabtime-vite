@@ -208,7 +208,6 @@ const View = ({
                                                     threshold_name = row?.values.threshold_name;
                                                 }
 
-                                                console.log({ threshold_name });
                                                 return (
                                                     <>
                                                         <DeviceCard

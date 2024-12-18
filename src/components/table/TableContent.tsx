@@ -142,7 +142,6 @@ const TableContent = ({
     };
 
     const handleSwap = () => {
-        // console.log({ rowDragged: localStorage.getItem('rowDragged'), rowOver: localStorage.getItem('rowOver') });
         const rowsCopy = [...rows];
         const rowDragged = Number(localStorage.getItem('rowDragged'));
         const rowOver = Number(localStorage.getItem('rowOver'));
@@ -209,12 +208,8 @@ const TableContent = ({
                     }
                     return 0;
                 });
-
-                // console.log({ draggedRow, overRow, rowBeforeOver });
             } else {
                 let newDraggedRows: any = [];
-
-                // console.log({ draggedRow, overRow, rowBeforeOver });
 
                 if ((draggedIsParent && overIsParent) || (draggedIsParent && overIsCommon)) {
                     const draggedRows = rowsCopy.filter((row) => {
@@ -251,8 +246,6 @@ const TableContent = ({
                     }
                     return 0;
                 });
-
-                // console.log(orderedRows);
             }
 
             // setRows(orderedRows);
@@ -301,8 +294,6 @@ const TableContent = ({
                     return 0;
                 });
 
-                // console.log({ draggedRow, overRow, rowAfterOver });
-
                 // setRows(orderedRows);
                 // setCurrentRows(orderedRows);
             } else {
@@ -311,8 +302,6 @@ const TableContent = ({
                 const overRowSiblings = rowsCopy.filter((row) => {
                     return row.parentRowId === overRow.parentRowId;
                 });
-
-                // console.log(overRowSiblings);
 
                 if ((draggedIsParent && overIsCommon) || overRow._id === overRowSiblings[overRowSiblings.length - 1]._id) {
                     const draggedRows = rowsCopy.filter((row) => {
@@ -349,11 +338,7 @@ const TableContent = ({
                     }
                     return 0;
                 });
-
-                // console.log(orderedRows);
             }
-
-            // console.log({ draggedRow, overRow, rowAfterOver });
 
             // setRows(orderedRows);
             // setCurrentRows(orderedRows);
@@ -382,7 +367,6 @@ const TableContent = ({
     const handleChange = (row: any) => {
         setCurrentRows((prev) => prev.map((prevRow) => (prevRow._id === row._id ? row : prevRow)));
         setRows((prev: any) => prev.map((prevRow: any) => (prevRow._id === row._id ? row : prevRow)));
-        console.log(row);
         handleUpdateRowNoRender(row);
         // if (dataCollectionView) {
         //     refetchRows();

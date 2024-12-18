@@ -86,7 +86,6 @@ const TableHeader = ({
         (columnIndex: number) => {
             // Store the column being dragged
             // draggedColumnIndex = columnIndex;
-            console.log(columnIndex);
             setDraggedColumnIndex(columnIndex);
         },
         [draggedColumnIndex]
@@ -148,18 +147,15 @@ const TableHeader = ({
                 rearangeColumns(newColumns);
 
                 const row = document.getElementsByClassName(dataCollectionView ? `table-row-${dataCollectionView._id}` : 'table-row')[0];
-                console.log(row);
+
                 const gridTemplateColumns = getComputedStyle(row).getPropertyValue('grid-template-columns');
                 // Reorder the column widths and set the gridTemplateColumns
-                console.log({ currentColumns });
-                console.log({ gridTemplateColumns });
                 const columnWidths: any = gridTemplateColumns.split(' ');
                 columnWidths.shift();
                 const [columnWidth] = columnWidths.splice(draggedColumnIndex as number, 1);
                 // newColumns[draggedColumnIndex as number].width = columnWidth;
                 columnWidths.splice(columnIndex, 0, columnWidth);
                 const newColumnWidths = columnWidths.join(' ');
-                console.log({ newColumnWidths });
 
                 handleGridTemplateColumns(newColumnWidths);
                 // API call needed persist column order
@@ -184,6 +180,7 @@ const TableHeader = ({
     const [resizedWidth, setResizedWidth] = useState<string | null>(null);
 
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
+    const [activeColumn, setActiveColumn] = useState<TColumn | null>(null);
     const [mouseIsUp, setMouseIsUp] = useState<boolean>(false);
     // const { dataCollectionId } = useParams();
 
@@ -197,7 +194,7 @@ const TableHeader = ({
     const mouseMove = useCallback(
         (e: any) => {
             // On mouse move, change the opacity of the resize handle so that it is visible
-            const th: any = document.getElementById(String(activeIndex));
+            const th: any = document.getElementById(dataCollectionView ? `${dataCollectionView._id}-${activeColumn?._id}` : (activeColumn?._id as string));
 
             // set the width by getting the new position of the resize handle on the page minus the width of the sidebar
             // and additional left padding
@@ -217,8 +214,7 @@ const TableHeader = ({
             // set the width by getting the new position of the resize handle on the page minus the width of the sidebar
             // and additional left padding, else return its current width
             const gridColumns = currentColumns.map((col, i) => {
-                col;
-                const th: any = document.getElementById(String(i));
+                const th: any = document.getElementById(dataCollectionView ? `${dataCollectionView._id}-${col?._id}` : (col?._id as string));
 
                 if (i === activeIndex) {
                     const width = e.clientX - columnResizingOffset - th.offsetLeft + Math.floor(table.scrollLeft);
@@ -248,18 +244,31 @@ const TableHeader = ({
     const mouseUp = useCallback(() => {
         if (resizedWidth !== null) {
             // Set the column widths
-            const tableRows: any = document.getElementsByClassName('table-row');
-            for (const tableRow of tableRows) {
-                tableRow.style.gridTemplateColumns = `220px ${columnWidth} 100px`;
-            }
+            if (dataCollectionView) {
+                const tableRows: any = document.getElementsByClassName(`table-row view-${dataCollectionView._id}`);
 
-            const subTableRows: any = document.getElementsByClassName('table-row subrow');
-            for (const tableRow of subTableRows) {
-                tableRow.style.gridTemplateColumns = `210px ${columnWidth} 100px`;
+                for (const tableRow of tableRows) {
+                    tableRow.style.gridTemplateColumns = `220px ${columnWidth} 100px`;
+                }
+
+                const subTableRows: any = document.getElementsByClassName('table-row subrow');
+                for (const tableRow of subTableRows) {
+                    tableRow.style.gridTemplateColumns = `210px ${columnWidth} 100px`;
+                }
+            } else {
+                const tableRows: any = document.getElementsByClassName('table-row');
+                for (const tableRow of tableRows) {
+                    tableRow.style.gridTemplateColumns = `220px ${columnWidth} 100px`;
+                }
+
+                const subTableRows: any = document.getElementsByClassName('table-row subrow');
+                for (const tableRow of subTableRows) {
+                    tableRow.style.gridTemplateColumns = `210px ${columnWidth} 100px`;
+                }
             }
 
             // Set the defaults of the handle
-            const th: any = document.getElementById(String(activeIndex));
+            const th: any = document.getElementById(dataCollectionView ? `${dataCollectionView._id}-${activeColumn?._id}` : (activeColumn?._id as string));
             th.children[1].style.left = '100%';
 
             startTransition(() => {
@@ -324,7 +333,7 @@ const TableHeader = ({
     return (
         <div className="table-header">
             <div
-                className="table-row header"
+                className={`table-row header ${dataCollectionView ? `view-${dataCollectionView._id}` : ''}`}
                 style={{
                     // gridTemplateColumns: '220px ' + gridTemplateColumns + ' 100px',
                     gridTemplateColumns: `${hasCheckboxOptions ? '220px' : '150px'} ${gridTemplateColumns} 100px`,
@@ -364,7 +373,7 @@ const TableHeader = ({
                     return (
                         <span
                             key={columnIndex}
-                            id={String(columnIndex)}
+                            id={dataCollectionView ? `${dataCollectionView._id}-${column._id}` : column._id}
                             className="resize-header"
                             style={{
                                 height: '39px',
@@ -404,7 +413,6 @@ const TableHeader = ({
                                     onDragEnd={() => handleDragEnd()}
                                     onDrop={(event) => handleDrop(event, columnIndex)}
                                     onDragLeave={() => handleDragLeave(columnIndex)}
-                                    // onClick={() => console.log('HEADER CLICKED')}
                                 >
                                     {/* {dataCollectionPermissions.columnActions.update || dataCollectionPermissions.columnActions.delete ? (
                                         <ColumnMenu
@@ -498,7 +506,10 @@ const TableHeader = ({
                                     left={'100%'}
                                     bgColor={activeIndex === columnIndex ? '#2d82eb' : 'unset'}
                                     _hover={{ bgColor: '#2d82eb', cursor: 'col-resize' }}
-                                    onMouseDown={() => setActiveIndex(columnIndex)}
+                                    onMouseDown={() => {
+                                        setActiveIndex(columnIndex);
+                                        setActiveColumn(column);
+                                    }}
                                     // onMouseEnter={() => mouseEnter()}
                                 ></Box>
                             ) : null}

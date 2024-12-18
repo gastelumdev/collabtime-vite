@@ -214,7 +214,6 @@ const Row = ({
 
     const onRefChange = (columnName: string, ref: any) => {
         const refs: any = [];
-        console.log({ row, columnName });
         if (row.refs === undefined) {
             refs.push(ref);
             handleChange({ ...row, refs: { [columnName]: refs } });
@@ -310,7 +309,11 @@ const Row = ({
                             }}
                         >
                             <div
-                                className={dataCollectionView ? `table-row table-row-${dataCollectionView._id} content` : 'table-row content'}
+                                className={
+                                    dataCollectionView
+                                        ? `table-row table-row-${dataCollectionView._id} content view-${dataCollectionView._id}`
+                                        : 'table-row content'
+                                }
                                 style={{
                                     gridTemplateColumns: `${hasCheckboxOptions ? '220px' : '150px'} ${gridTemplateColumns}`,
                                 }}
