@@ -198,12 +198,15 @@ const TableHeader = ({
 
             // set the width by getting the new position of the resize handle on the page minus the width of the sidebar
             // and additional left padding
-            const table: any = document.getElementById('data-collection-table');
+            console.log(`data-collection-table${dataCollectionView ? `-${dataCollectionView._id}` : ''}`);
+            const table: any = document.getElementById(`data-collection-table${dataCollectionView ? `-${dataCollectionView._id}` : ''}`);
             const width = e.clientX - columnResizingOffset - th.offsetLeft + Math.floor(table.scrollLeft);
 
             // If the width is greater than minumum allowed header width, resize based on the width calculation
             // else set it to the minumum header width
             th.children[1].style.position = 'absolute';
+            console.log({ table });
+            console.log({ width, clientX: e.clientX, columnResizingOffset, offsetLeft: th.offsetLeft, scrollLeft: table.scrollLeft });
             if (width > minCellWidth) {
                 th.children[1].style.left = `${width}px`;
             } else {

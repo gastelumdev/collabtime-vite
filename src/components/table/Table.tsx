@@ -595,7 +595,11 @@ const Table = ({
     };
 
     return (
-        <div id={'data-collection-table'} className={view || appModel ? 'table-view' : 'table'} style={{ position: 'relative' }}>
+        <div
+            id={`data-collection-table${dataCollectionView ? `-${dataCollectionView._id}` : ''}`}
+            className={view || appModel ? 'table-view' : 'table'}
+            style={{ position: 'relative' }}
+        >
             {checkedRowIds.length > 0 ? (
                 <Box
                     position={'absolute'}
