@@ -12,7 +12,7 @@ import {
     useGetUserGroupsQuery,
 } from '../../app/services/api';
 
-import { Avatar, AvatarGroup, Box, Container, Flex, Menu, MenuButton, MenuList, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
+import { Avatar, AvatarGroup, Box, Container, Flex, Menu, MenuButton, MenuList, SimpleGrid, Spacer, Text, useToast } from '@chakra-ui/react';
 import { IoSettingsOutline } from 'react-icons/io5';
 
 import linkItems from '../../utils/linkItems';
@@ -46,11 +46,15 @@ const ViewOne = () => {
     const [updateWorkspace] = useUpdateWorkspaceMutation();
     const [deleteWorkspace] = useDeleteWorkspaceMutation();
 
+    const toast = useToast();
+
     // const { data: unreadMessages } = useGetUnreadMessagesQuery(null);
 
     const [callUpdateMessages] = useCallUpdateMessagesMutation();
 
     const [permissions, setPermissions] = useState<number>();
+
+    const [active, setActive] = useState(true);
 
     /**
      * Socket.io listening for update to refetch data
@@ -61,6 +65,19 @@ const ViewOne = () => {
 
         socket.on('update-message', () => {
             callUpdateMessages(null);
+        });
+
+        socket.on(`integrations error ${id}`, (error) => {
+            toast({
+                title: `${error.integrationType} request failed`,
+                description: error.errorMsg,
+                duration: 10000,
+                status: 'error',
+                isClosable: true,
+                position: 'bottom-right',
+            });
+
+            setActive(false);
         });
 
         return () => {
@@ -200,7 +217,7 @@ const ViewOne = () => {
                                     </Flex>
                                 </SimpleGrid>
                                 <Box>
-                                    <ViewList allowed={(permissions || 0) > 1} />
+                                    <ViewList allowed={(permissions || 0) > 1} active={active} />
                                 </Box>
                             </Container>
                         </Flex>

@@ -49,6 +49,7 @@ interface ITableProps {
     isArchives?: boolean;
     updateView?: any;
     updateViewColumns?: any;
+    active?: boolean;
 }
 
 const Table = ({
@@ -85,6 +86,7 @@ const Table = ({
     isArchives = false,
     updateView,
     updateViewColumns,
+    active = true,
 }: ITableProps) => {
     const dispatch = useAppDispatch();
     // const { dataCollectionId } = useParams();
@@ -736,6 +738,7 @@ const Table = ({
                 appModel={appModel}
                 permissions={permissions}
                 isArchives={isArchives}
+                active={active}
             />
             {/* <Box w={'100%'} h={'30px'}>
                 <Text ml={'10px'}>Add row</Text>

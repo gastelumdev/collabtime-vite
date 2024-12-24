@@ -39,10 +39,12 @@ const View = ({
     dataCollectionView,
     userGroup = { name: '', workspace: '', users: [], permissions: emptyPermissions },
     refetchUserGroup,
+    active = true,
 }: {
     dataCollectionView: any;
     userGroup: any;
     refetchUserGroup: any;
+    active: boolean;
 }) => {
     const { id } = useParams();
     const { data: workspace } = useGetOneWorkspaceQuery(id as string);
@@ -208,6 +210,11 @@ const View = ({
                                                     threshold_name = row?.values.threshold_name;
                                                 }
 
+                                                if (!active) {
+                                                    value = '--';
+                                                    bgColor = 'gray';
+                                                }
+
                                                 return (
                                                     <>
                                                         <DeviceCard
@@ -237,6 +244,7 @@ const View = ({
                                             viewPermissions={viewPermissions}
                                             updateView={updateDataCollectionView}
                                             updateViewNoRefetch={updateDataCollectionViewNoRefetch}
+                                            active={active}
                                             // userGroup={userGroup}
                                         />
                                     </Box>
@@ -258,6 +266,7 @@ const View = ({
                                 viewPermissions={viewPermissions}
                                 updateView={updateDataCollectionView}
                                 updateViewNoRefetch={updateDataCollectionViewNoRefetch}
+                                active={active}
                                 // userGroup={userGroup}
                             />
                         </Box>

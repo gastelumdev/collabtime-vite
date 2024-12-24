@@ -44,6 +44,7 @@ const Row = ({
     appModel = null,
     permissions = null,
     isArchives = false,
+    active = true,
 }: {
     row: any;
     rowIndex: number;
@@ -66,6 +67,7 @@ const Row = ({
     appModel?: string | null;
     permissions?: any;
     isArchives?: boolean;
+    active?: boolean;
 }) => {
     // const rowsData = useMemo(
     //     () => [
@@ -498,6 +500,10 @@ const Row = ({
 
                                         if (column.name === 'threshold_name' && value === null) {
                                             value = 'None';
+                                        }
+
+                                        if (!active) {
+                                            isDisabled = true;
                                         }
                                     }
                                     return (

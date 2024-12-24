@@ -37,6 +37,7 @@ const DataCollection = ({
     isArchives = false,
     updateView,
     updateViewNoRefetch,
+    active = true,
 }: // userGroup,
 {
     showDoneRows?: boolean;
@@ -59,6 +60,7 @@ const DataCollection = ({
     isArchives?: boolean;
     updateView?: any;
     updateViewNoRefetch?: any;
+    active?: boolean;
 }) => {
     const { dataCollectionId } = useParams();
 
@@ -161,6 +163,7 @@ const DataCollection = ({
                 isArchives={isArchives}
                 updateView={updateView}
                 updateViewColumns={handleUpdateViewColumns}
+                active={active}
             />
         </Box>
     );

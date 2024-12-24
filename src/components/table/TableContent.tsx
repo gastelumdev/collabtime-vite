@@ -33,6 +33,7 @@ interface IProps {
     appModel?: string | null;
     permissions?: any;
     isArchives?: boolean;
+    active?: boolean;
 }
 
 const TableContent = ({
@@ -61,6 +62,7 @@ const TableContent = ({
     appModel = null,
     permissions = null,
     isArchives = false,
+    active = true,
 }: IProps) => {
     const ref = useRef<HTMLDivElement | null>(null);
     const [gridTemplateColumns, setGridTemplateColumns] = useState('');
@@ -440,6 +442,7 @@ const TableContent = ({
                                         appModel={appModel}
                                         permissions={permissions}
                                         isArchives={isArchives}
+                                        active={active}
                                     />
                                 </div>
                                 <div></div>

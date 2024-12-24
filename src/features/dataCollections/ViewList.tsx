@@ -51,7 +51,7 @@ import View from '../dataCollectionViews/View';
 import { emptyPermissions } from '../workspaces/UserGroups';
 import { io } from 'socket.io-client';
 
-const ViewList = ({}: { allowed?: boolean }) => {
+const ViewList = ({ active = true }: { allowed?: boolean; active: boolean }) => {
     // const [data, setData] = useState<TDataCollection[]>(dataCollections);
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
     const { data } = useGetDataCollectionsQuery(null);
@@ -226,10 +226,11 @@ const ViewList = ({}: { allowed?: boolean }) => {
 
                                                                           return (
                                                                               <View
-                                                                                  key={dcView.name}
+                                                                                  key={dcView._id}
                                                                                   dataCollectionView={dcView}
                                                                                   userGroup={userGroup}
                                                                                   refetchUserGroup={refetchUserGroups}
+                                                                                  active={active}
                                                                               />
                                                                           );
                                                                       })
