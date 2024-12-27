@@ -454,6 +454,11 @@ const Row = ({
                                     let position = 'left';
                                     let isDisabled = false;
 
+                                    console.log({ columnName: column?.name, value: row.values[column?.name] });
+                                    if (row.values[column?.name] === null || row.values[column?.name] === '') {
+                                        textColor = 'lightgray';
+                                    }
+
                                     if (workspace?.type === 'integration') {
                                         position = 'center';
                                         if (['temperature'].includes(column?.name) && row.values['type'] === 'Temperature') {
