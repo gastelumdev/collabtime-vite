@@ -26,6 +26,7 @@ let defaultValues: TWorkspace = {
     tags: [],
     workspaceTags: [],
     type: 'basic',
+    settings: null,
 };
 
 interface IProps {
