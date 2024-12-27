@@ -218,6 +218,7 @@ const View = ({
                                                 return (
                                                     <>
                                                         <DeviceCard
+                                                            key={row?.values.name}
                                                             data={{ name: row?.values.name, type: row?.values.type, value, threshold_name }}
                                                             bgColor={bgColor}
                                                             fontColor={fontColor}

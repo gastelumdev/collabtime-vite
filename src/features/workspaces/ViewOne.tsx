@@ -56,6 +56,12 @@ const ViewOne = () => {
 
     const [active, setActive] = useState(true);
 
+    useEffect(() => {
+        if (workspace?.settings?.integration.swiftSensors.active !== undefined) {
+            setActive(workspace?.settings?.integration.swiftSensors.active);
+        }
+    }, [workspace]);
+
     /**
      * Socket.io listening for update to refetch data
      */

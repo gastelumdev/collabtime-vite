@@ -33,8 +33,28 @@ export type TWorkspace = {
     owner: string;
     tags: TTag[];
     workspaceTags: TTag[];
-    type: 'basic' | 'integration';
+    type: 'basic' | 'resource planning' | 'integration';
+    settings: IWorkspaceSettings | null;
 };
+
+export interface IWorkspaceSettings {
+    integration: { swiftSensors: IIntegrationSettings };
+}
+
+export interface IIntegrationSettings {
+    type: 'Swift Sensors';
+    apiKey: string;
+    email: string;
+    password: string;
+    accessToken: string | null;
+    expiresIn: number | null;
+    tokenType: string | null;
+    refreshToken: string | null;
+    sessionId: string | null;
+    accountId: string | null;
+    dataCollectionId: string | null;
+    active: boolean;
+}
 
 export type TInvitee = {
     email: string;
