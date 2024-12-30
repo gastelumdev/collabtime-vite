@@ -22,7 +22,7 @@ import RemindersDrawer from './RemindersDrawer';
 import { emptyDataCollectionPermissions } from '../../features/workspaces/UserGroups';
 import { useParams } from 'react-router-dom';
 import { useGetOneWorkspaceQuery } from '../../app/services/api';
-import ResetRow from './resetRow';
+import ClearRow from './ClearRow';
 // import { useParams } from 'react-router-dom';
 
 const Row = ({
@@ -393,7 +393,7 @@ const Row = ({
                                             />
                                         </Box>
                                         <Box pt={'6px'} ml={'10px'} cursor={'pointer'}>
-                                            <ResetRow row={row} columns={columns} handleChange={handleChange} />
+                                            <ClearRow row={row} columns={columns} handleChange={handleChange} />
                                         </Box>
                                         {/* {row.position} */}
                                         {/* {row.isParent ? (
