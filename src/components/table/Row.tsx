@@ -22,6 +22,7 @@ import RemindersDrawer from './RemindersDrawer';
 import { emptyDataCollectionPermissions } from '../../features/workspaces/UserGroups';
 import { useParams } from 'react-router-dom';
 import { useGetOneWorkspaceQuery } from '../../app/services/api';
+import ResetRow from './resetRow';
 // import { useParams } from 'react-router-dom';
 
 const Row = ({
@@ -210,7 +211,7 @@ const Row = ({
         // } else {
         //     setShowRow(true);
         // }
-        handleChange({ ...row, values: { ...row.values, [columnName]: value } });
+        handleChange({ ...row, values: { ...row.values, [columnName]: value }, isEmpty: false });
         // refetchRows();
     };
 
@@ -317,7 +318,7 @@ const Row = ({
                                         : 'table-row content'
                                 }
                                 style={{
-                                    gridTemplateColumns: `${hasCheckboxOptions ? '220px' : '150px'} ${gridTemplateColumns}`,
+                                    gridTemplateColumns: `${hasCheckboxOptions ? '220px' : '170px'} ${gridTemplateColumns}`,
                                 }}
                                 // draggable={allowed && isDraggable}
                                 onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, row.position)}
@@ -391,6 +392,9 @@ const Row = ({
                                                 permissions={dataCollectionPermissions}
                                             />
                                         </Box>
+                                        <Box pt={'6px'} ml={'10px'} cursor={'pointer'}>
+                                            <ResetRow row={row} columns={columns} handleChange={handleChange} />
+                                        </Box>
                                         {/* {row.position} */}
                                         {/* {row.isParent ? (
                                             <Button
@@ -454,8 +458,12 @@ const Row = ({
                                     let position = 'left';
                                     let isDisabled = false;
 
-                                    console.log({ columnName: column?.name, value: row.values[column?.name] });
                                     if (row.values[column?.name] === null || row.values[column?.name] === '') {
+                                        textColor = 'lightgray';
+                                    }
+
+                                    if (column.autoIncremented && row.isEmpty) {
+                                        console.log({ column, row });
                                         textColor = 'lightgray';
                                     }
 

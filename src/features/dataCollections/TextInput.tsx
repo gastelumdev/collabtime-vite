@@ -66,13 +66,19 @@ const TextInput = ({
         setVal(value);
     }, [value]);
 
-    const onTextChange = (value: string) => {
+    const onTextChange = (v: string) => {
         // onChange(columnName, value);
-        setVal(value);
+        setVal(v);
     };
 
-    const handleBlur = (value: string) => {
-        onChange(columnName, value);
+    const handleBlur = (v: string) => {
+        if (v === '') {
+            if (value !== null && value !== '') {
+                onChange(columnName, v);
+            }
+        } else {
+            onChange(columnName, v);
+        }
     };
 
     // useEffect(() => {
@@ -178,7 +184,7 @@ const TextInput = ({
                                     zIndex={1000000}
                                     onBlur={() => setActive(!active)}
                                     bgColor={'white'}
-                                    color={textColor}
+                                    color={active ? 'black' : textColor}
                                     size={'xs'}
                                     autoFocus={true}
                                     onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) => {
@@ -200,7 +206,7 @@ const TextInput = ({
                                     zIndex={1000000}
                                     onBlur={() => setActive(!active)}
                                     bgColor={'white'}
-                                    color={textColor}
+                                    color={active ? 'black' : textColor}
                                     size={'xs'}
                                     autoFocus={true}
                                     onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) => {

@@ -338,7 +338,7 @@ const TableHeader = ({
                 className={`table-row header ${dataCollectionView ? `view-${dataCollectionView._id}` : ''}`}
                 style={{
                     // gridTemplateColumns: '220px ' + gridTemplateColumns + ' 100px',
-                    gridTemplateColumns: `${hasCheckboxOptions ? '220px' : '150px'} ${gridTemplateColumns} 100px`,
+                    gridTemplateColumns: `${hasCheckboxOptions ? '220px' : '170px'} ${gridTemplateColumns} 100px`,
                     position: 'sticky',
                     top: '0',
                     height: headerHeight,
