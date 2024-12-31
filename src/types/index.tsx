@@ -157,6 +157,7 @@ export type TRow = {
     isVisible?: boolean;
     isParent?: boolean;
     fromView?: boolean;
+    isEmpty?: boolean;
 };
 
 export type TCell = {

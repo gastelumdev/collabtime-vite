@@ -23,17 +23,10 @@ interface IProps {
     allowed?: boolean;
     border?: string | null;
     fontWeight?: string;
-    // label?: string;
-    // bgColor?: string;
-    // options: { value: string; label: string; color: string }[] | undefined;
 }
 
-const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = false, border = null, fontWeight = 'normal' }: IProps) => {
+const PeopleMenu = ({ columnName, people, values = [], onChange, allowed = false, border = null, fontWeight = 'normal' }: IProps) => {
     const { onClose } = useDisclosure();
-    // const [updateRow] = useUpdateRowMutation();
-
-    const [labelValue, setLabelValue] = useState<string>('');
-    const [labelLabel, setLabelLabel] = useState<string>('');
     const [labels, setLabels] = useState<IValues[]>(values);
     const [labelColor, setLabelColor] = useState<string>('');
     const [options, setOptions] = useState<ILabel[] | undefined>([]);
@@ -41,9 +34,6 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
     const [active, setActive] = useState<boolean>(false);
 
     useEffect(() => {
-        labelValue;
-        labelLabel;
-        row;
         const cellOptions: ILabel[] | undefined = people?.map((item) => {
             return {
                 value: item._id,
@@ -51,37 +41,10 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
                 color: '#ffffff',
             };
         });
-
-        // const v: any = value;
-        const firstItem: any = values !== null && values[0] !== undefined ? values[0].name : '';
-
-        // const splitValue = v[0].split(' - ');
-        // splitValue.pop();
-        // const label = splitValue.join(' ');
-
-        setLabelValue(values && values.length > 0 ? (values as any)[0] : '');
-        setLabelLabel(firstItem);
         setLabels(values);
         setLabelColor('#ffffff');
         setOptions(cellOptions);
-    }, [values, people]);
-
-    // const handleLabelClick = (label: ILabel) => {
-    //     // updateRow({ ...row, values: { ...row.values, [columnName]: label.label } });
-
-    //     const splitValue = label.label.split(' - ');
-    //     splitValue.pop();
-    //     const labelResult = splitValue.join(' ');
-
-    //     setLabelValue(label.value);
-    //     setLabelColor(label.color);
-    //     setLabelLabel(labelResult);
-
-    //     onClose();
-    //     setActive(false);
-
-    //     onChange(columnName, label.label);
-    // };
+    }, []);
 
     const handleClose = () => {
         onClose();
@@ -99,12 +62,7 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
     return (
         <Box border={border ? border : 'none'}>
             {active && allowed ? (
-                <Box
-
-                // onBlur={(event: React.FocusEvent<HTMLDivElement, Element>) => {
-                //     setActive(false);
-                // }}
-                >
+                <Box>
                     <Popover isOpen={active} onClose={handleClose}>
                         <PopoverTrigger>
                             <Button
@@ -119,7 +77,6 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
                                 variant={'unstyled'}
                                 _hover={{ bgColor: labelColor }}
                             >
-                                {/* {labelLabel ? labelLabel : 'Select'} */}
                                 {labels.length > 0
                                     ? labels.map((label, index) => {
                                           return `${label.name}${labels.length > 1 ? (index < labels.length - 1 ? ', ' : '') : ''}`;
@@ -136,31 +93,8 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
                                         const email = splitPerson.pop();
                                         const name = splitPerson[0];
                                         const itsAssigned = isAssignedTo(email as string);
-                                        // return (
-                                        //     <Box key={index} mb={'3px'} cursor={'pointer'} onClick={() => handleLabelClick(label)}>
-                                        //         <Button
-                                        //             bgColor={label.color}
-                                        //             w={'100%'}
-                                        //             fontSize={'12px'}
-                                        //             fontWeight={'normal'}
-                                        //             size={'xs'}
-                                        //             // onClick={() => handleLabelClick(label)}
-                                        //             textAlign={'left'}
-                                        //         >
-                                        //             <Text color={getTextColor(label.color)}>
-                                        //                 {name}
-                                        //                 <span style={{ color: 'gray' }}>{` ${email}`}</span>
-                                        //             </Text>
-                                        //         </Button>
-                                        //     </Box>
-                                        // );
                                         return (
-                                            <Box
-                                                key={index}
-                                                mb={'3px'}
-                                                cursor={'pointer'}
-                                                // onClick={() => handleLabelClick(label)}
-                                            >
+                                            <Box key={index} mb={'3px'} cursor={'pointer'}>
                                                 <Checkbox
                                                     isChecked={itsAssigned}
                                                     onChange={() => {
@@ -184,8 +118,6 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
                                                         w={'100%'}
                                                         fontSize={'12px'}
                                                         fontWeight={fontWeight}
-                                                        // size={'xs'}
-                                                        // onClick={() => handleLabelClick(label)}
                                                         textAlign={'left'}
                                                         ml={'5px'}
                                                     >
@@ -224,7 +156,6 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
                         }}
                     >
                         <Text
-                            // backgroundColor={labelColor}
                             color={labels.length > 0 ? 'black' : 'lightgray'}
                             h={'29px'}
                             fontWeight={fontWeight}
@@ -236,7 +167,6 @@ const PeopleMenu = ({ row, columnName, people, values = [], onChange, allowed = 
                                 setActive(true);
                             }}
                         >
-                            {/* {labelLabel ? labelLabel : 'Select'} */}
                             {Array.isArray(labels) && labels.length > 0
                                 ? labels.map((label, index) => {
                                       return `${label.name}${labels.length > 1 ? (index < labels.length - 1 ? ', ' : '') : ''}`;

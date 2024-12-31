@@ -613,7 +613,6 @@ const ViewOne = () => {
                                             color: '#ffffff',
                                         };
                                     });
-                                    console.log(column);
                                     let option = options[0];
 
                                     return (

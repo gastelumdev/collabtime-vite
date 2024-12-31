@@ -6,7 +6,7 @@ const ClearRow = ({ row, columns, handleChange }: { row: TRow; columns: TColumn[
     const { isOpen, onOpen, onClose } = useDisclosure();
     return (
         <Box onClick={onOpen}>
-            <Text color={'#cccccc'}>
+            <Text color={row.isEmpty ? '#cccccc' : '#16b2fc'}>
                 <RxReset />
             </Text>
             <Modal isOpen={isOpen} onClose={onClose}>

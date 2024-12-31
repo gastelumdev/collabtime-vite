@@ -458,15 +458,6 @@ const Row = ({
                                     let position = 'left';
                                     let isDisabled = false;
 
-                                    if (row.values[column?.name] === null || row.values[column?.name] === '') {
-                                        textColor = 'lightgray';
-                                    }
-
-                                    if (column.autoIncremented && row.isEmpty) {
-                                        console.log({ column, row });
-                                        textColor = 'lightgray';
-                                    }
-
                                     if (workspace?.type === 'integration') {
                                         position = 'center';
                                         if (['temperature'].includes(column?.name) && row.values['type'] === 'Temperature') {
@@ -518,6 +509,14 @@ const Row = ({
                                         if (!active) {
                                             isDisabled = true;
                                         }
+                                    }
+
+                                    if (row.values[column?.name] === null || row.values[column?.name] === '') {
+                                        textColor = 'lightgray';
+                                    }
+                                    console.log({ columnName: column.name, isEmpty: row.isEmpty });
+                                    if (column.autoIncremented && row.isEmpty) {
+                                        textColor = 'lightgray';
                                     }
                                     return (
                                         <div
