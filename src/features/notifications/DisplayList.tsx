@@ -15,8 +15,8 @@ const DisplayList = () => {
     const toast = useToast();
 
     useEffect(() => {
-        console.log(events);
-    }, [events]);
+        refetchEvents();
+    }, []);
 
     useEffect(() => {
         if (userGroups && userGroups !== undefined) {
