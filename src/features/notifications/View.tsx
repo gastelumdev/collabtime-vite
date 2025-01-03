@@ -14,7 +14,7 @@ const View = () => {
                     <LiaBell />
                 </Text>
             </MenuButton>
-            <PrimaryDrawer title="Notifications" isOpen={isOpen} onClose={onClose} size="lg">
+            <PrimaryDrawer title="Notifications" isOpen={isOpen} onClose={onClose} size="full">
                 <DisplayList />
             </PrimaryDrawer>
         </Box>

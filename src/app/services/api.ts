@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store";
 import { LoginRequest, UserResponse, ResetPasswordRequestRequest, BasicResponse } from "../../features/auth/types";
-import { TCell, TColumn, TDataCollection, TDocument, TJoinWorkspace, TMessage, TNotification, TRow, TTableData, TTag, TUser, TWorkspace, TWorkspaceUsers } from "../../types";
+import { TCell, TColumn, TDataCollection, TDocument, TEvent, TJoinWorkspace, TMessage, TNotification, TRow, TTableData, TTag, TUser, TWorkspace, TWorkspaceUsers } from "../../types";
 
 export const api = createApi({
     baseQuery: fetchBaseQuery({
@@ -579,6 +579,11 @@ export const api = createApi({
                 body: {}
             }),
             invalidatesTags: ["UserGroup"]
+        }),
+        getEvents: builder.query<TEvent[], null>({
+            query: () => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/events`,
+            })
         })
     })
 })
@@ -662,4 +667,5 @@ export const {
     useCreateUserGroupMutation,
     useUpdateUserGroupMutation,
     useDeleteUserGroupMutation,
+    useGetEventsQuery,
 } = api

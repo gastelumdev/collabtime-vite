@@ -234,3 +234,18 @@ export type TMessage = {
     createdBy?: TUser;
     read?: TUser[];
 };
+
+export type TEvent = {
+    _id: string;
+    actionBy: TUser;
+    assignee: TUser | null;
+    workspace: TWorkspace;
+    dataCollection: TDataCollection | null;
+    type: 'system' | 'info' | 'error' | 'auth' | 'data' | 'settings' | 'layout' | 'message' | 'upload';
+    priority: number;
+    acknowledged: boolean;
+    requiresAcknowledgement: boolean;
+    message: string;
+    createdAt: any;
+    associatedUserIds: string[];
+};

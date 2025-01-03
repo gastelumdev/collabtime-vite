@@ -1,28 +1,43 @@
 import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
-import { Box, Center, Flex, HStack, Spacer, Spinner, Stack, Text, useToast } from '@chakra-ui/react';
-import { useGetNotificationsQuery, useCallNotificationsUpdateMutation } from '../../app/services/api';
+import { Box, Center, Spinner, Table, TableContainer, Tbody, Td, Th, Thead, Tr, useToast } from '@chakra-ui/react';
+import { useCallNotificationsUpdateMutation, useGetEventsQuery, useGetUserGroupsQuery } from '../../app/services/api';
+import { TEvent } from '../../types';
 import { formatTime } from '../../utils/helpers';
 
 const DisplayList = () => {
-    const { data: notifications, isLoading, isError } = useGetNotificationsQuery(null);
+    const { data: events, refetch: refetchEvents, isLoading: eventsAreLoading } = useGetEventsQuery(null);
+    const { data: userGroups } = useGetUserGroupsQuery(null);
     const [callNotificationsUpdate] = useCallNotificationsUpdateMutation();
     const [priority] = useState('All');
 
-    const [data, setData] = useState<any>(notifications);
-    const [activeTab, setActiveTab] = useState(0);
+    const [userGroupName, setUserGroupName] = useState('No Access');
     const toast = useToast();
 
-    const priorityButtonWidth = '110px';
-    const priorityButtonBoxShadow = 'inner';
+    useEffect(() => {
+        console.log(events);
+    }, [events]);
 
     useEffect(() => {
-        setData(notifications);
-    }, [notifications]);
+        if (userGroups && userGroups !== undefined) {
+            for (const userGroup of userGroups) {
+                if (userGroup.users.includes(localStorage.getItem('userId'))) {
+                    setUserGroupName(userGroup.name);
+                }
+            }
+        }
+    }, [userGroups]);
 
     useEffect(() => {
         const socket = io(import.meta.env.VITE_API_URL);
         socket.connect();
+
+        socket.on('notify', (data) => {
+            if (data) {
+                refetchEvents();
+            }
+        });
+
         socket.on('update', (item) => {
             callNotificationsUpdate(priority);
 
@@ -38,172 +53,55 @@ const DisplayList = () => {
         };
     }, []);
 
-    useEffect(() => {
-        setNotificationsFilter(localStorage.getItem('notificationsFilter') as string, 0);
-    }, [priority]);
-
-    const setNotificationsFilter = (priority: string, index: number) => {
-        setActiveTab(index);
-        localStorage.setItem('notificationsFilter', priority);
-        if (priority !== 'All') {
-            setData(notifications?.filter((notification) => notification.priority === priority));
-        } else {
-            setData(notifications);
-        }
-
-        // callNotificationsUpdate(priority);
-    };
-
-    const setPriorityColor = (priority: string) => {
-        if (priority === 'All')
-            return {
-                active: '#36B2DC',
-                inactive: '#add8e6',
-            };
-        if (priority === 'Low')
-            return {
-                active: '#3BE23B',
-                inactive: 'lightgreen',
-                bg: '#F2FFF2',
-            };
-        if (priority === 'Mid')
-            return {
-                active: '#FFD30E',
-                inactive: '#FFE77A',
-            };
-        if (priority === 'High')
-            return {
-                active: '#ffa507',
-                inactive: '#FFC37A',
-            };
-        if (priority === 'Critical')
-            return {
-                active: '#ff0300',
-                inactive: '#fec0cb',
-            };
-    };
-
-    if (isError) {
-        toast({
-            title: 'Error',
-            description: 'There was an error loading notifications',
-            status: 'error',
-        });
+    if (eventsAreLoading) {
+        return (
+            <>
+                <Box pt={'200px'}>
+                    <Center>
+                        <Spinner size={'lg'} />
+                    </Center>
+                </Box>
+            </>
+        );
     }
 
     return (
         <>
-            <Box position={'relative'}>
-                <Box position={'fixed'} left={4} top={'70px'}>
-                    <HStack spacing={4}>
-                        <Box
-                            w={priorityButtonWidth}
-                            bg={activeTab === 0 ? setPriorityColor('All')?.active : setPriorityColor('All')?.inactive}
-                            borderRadius={'base'}
-                            boxShadow={activeTab === 0 ? priorityButtonBoxShadow : 'none'}
-                            p={'2px'}
-                            cursor={'pointer'}
-                            onClick={() => setNotificationsFilter('All', 0)}
-                        >
-                            <Center>
-                                <Text color={'white'}>All</Text>
-                            </Center>
-                        </Box>
-                        <Box
-                            w={priorityButtonWidth}
-                            bg={activeTab === 1 ? setPriorityColor('Critical')?.active : setPriorityColor('Critical')?.inactive}
-                            borderRadius={'base'}
-                            boxShadow={activeTab === 1 ? priorityButtonBoxShadow : 'none'}
-                            p={'2px'}
-                            cursor={'pointer'}
-                            onClick={() => setNotificationsFilter('Critical', 1)}
-                        >
-                            <Center>
-                                <Text color={'white'}>Critical</Text>
-                            </Center>
-                        </Box>
-                        <Box
-                            w={priorityButtonWidth}
-                            bg={activeTab === 2 ? setPriorityColor('High')?.active : setPriorityColor('High')?.inactive}
-                            borderRadius={'base'}
-                            boxShadow={activeTab === 2 ? priorityButtonBoxShadow : 'none'}
-                            p={'2px'}
-                            cursor={'pointer'}
-                            onClick={() => setNotificationsFilter('High', 2)}
-                        >
-                            <Center>
-                                <Text color={'white'}>High</Text>
-                            </Center>
-                        </Box>
-                        <Box
-                            w={priorityButtonWidth}
-                            bg={activeTab === 3 ? setPriorityColor('Mid')?.active : setPriorityColor('Mid')?.inactive}
-                            borderRadius={'base'}
-                            boxShadow={activeTab === 3 ? priorityButtonBoxShadow : 'none'}
-                            p={'2px'}
-                            cursor={'pointer'}
-                            onClick={() => setNotificationsFilter('Mid', 3)}
-                        >
-                            <Center>
-                                <Text color={'white'}>Mid</Text>
-                            </Center>
-                        </Box>
-                        <Box
-                            w={priorityButtonWidth}
-                            bg={activeTab === 4 ? setPriorityColor('Low')?.active : setPriorityColor('Low')?.inactive}
-                            borderRadius={'base'}
-                            boxShadow={activeTab === 4 ? priorityButtonBoxShadow : 'none'}
-                            p={'2px'}
-                            cursor={'pointer'}
-                            onClick={() => setNotificationsFilter('Low', 4)}
-                        >
-                            <Center>
-                                <Text color={'white'}>Low</Text>
-                            </Center>
-                        </Box>
-                    </HStack>
-                </Box>
-            </Box>
+            <Box>
+                <TableContainer>
+                    <Table size="sm">
+                        <Thead>
+                            <Tr>
+                                <Th>Date</Th>
+                                <Th>Type</Th>
+                                <Th>Data Collection</Th>
+                                <Th>Event</Th>
+                                <Th>Action by</Th>
+                            </Tr>
+                        </Thead>
+                        <Tbody>
+                            {events?.map((event: TEvent) => {
+                                if (!event.associatedUserIds.includes(localStorage.getItem('userId') || '') && userGroupName !== 'All Privileges') {
+                                    return null;
+                                }
+                                const date = new Date(event.createdAt);
+                                // const formattedDate = date.toString().split('GMT')[0];
+                                const formattedDate = formatTime(date);
 
-            <Stack mt={'30px'}>
-                {isLoading ? (
-                    <Stack mt={'30px'}>
-                        <Box w={'100%'} mt={'100px'}>
-                            <Center>
-                                <Spinner />
-                            </Center>
-                        </Box>
-                    </Stack>
-                ) : (
-                    data?.map((item: any, index: number) => {
-                        return (
-                            <Box key={index}>
-                                <Box
-                                    p={'10px'}
-                                    pb={'40px'}
-                                    mb={'8px'}
-                                    // bg={setPriorityColor(item.priority)?.bg}
-                                    borderTop={'1px'}
-                                    borderTopColor={'#edf2f7'}
-                                    borderBottom={'1px'}
-                                    borderBottomColor={setPriorityColor(item.priority)?.active}
-                                    boxShadow={'md'}
-                                >
-                                    <Flex>
-                                        <Text color={'#7b809a'} fontSize={'14px'} w={'400px'}>
-                                            {item.message}
-                                        </Text>
-                                        <Spacer />
-                                        <Text fontSize={'12px'} color={'#7b809a'}>
-                                            {formatTime(item.createdAt)}
-                                        </Text>
-                                    </Flex>
-                                </Box>
-                            </Box>
-                        );
-                    })
-                )}
-            </Stack>
+                                return (
+                                    <Tr key={event._id}>
+                                        <Td>{formattedDate}</Td>
+                                        <Td>{`${event.type.slice(0, 1).toUpperCase()}${event.type.slice(1)}`}</Td>
+                                        <Td>{event.dataCollection?.name}</Td>
+                                        <Td>{event.message}</Td>
+                                        <Td>{`${event.actionBy.firstname} ${event.actionBy.lastname}`}</Td>
+                                    </Tr>
+                                );
+                            })}
+                        </Tbody>
+                    </Table>
+                </TableContainer>
+            </Box>
         </>
     );
 };

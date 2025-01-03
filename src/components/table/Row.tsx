@@ -514,7 +514,6 @@ const Row = ({
                                     if (row.values[column?.name] === null || row.values[column?.name] === '') {
                                         textColor = 'lightgray';
                                     }
-                                    console.log({ columnName: column.name, isEmpty: row.isEmpty });
                                     if (column.autoIncremented && row.isEmpty) {
                                         textColor = 'lightgray';
                                     }

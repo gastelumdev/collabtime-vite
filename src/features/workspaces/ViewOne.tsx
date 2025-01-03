@@ -69,6 +69,24 @@ const ViewOne = () => {
         const socket = io(import.meta.env.VITE_API_URL);
         socket.connect();
 
+        socket.on('notify', (data) => {
+            console.log({ eventActionBy: data.event.actionBy._id, userId: localStorage.getItem('userId') });
+            console.log({ eventWorkspace: data.event.workspace, workspaceId: localStorage.getItem('workspaceId') });
+            console.log(data.allAssigneeIds);
+            if (data.allAssigneeIds.includes(localStorage.getItem('userId'))) {
+                if (data.event.actionBy._id !== localStorage.getItem('userId') && data.event.workspace === localStorage.getItem('workspaceId')) {
+                    toast({
+                        title: `Update`,
+                        description: data.event.message,
+                        duration: 10000,
+                        status: 'info',
+                        isClosable: true,
+                        position: 'bottom-right',
+                    });
+                }
+            }
+        });
+
         socket.on('update-message', () => {
             callUpdateMessages(null);
         });

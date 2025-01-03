@@ -63,6 +63,7 @@ import { useTypedSelector } from '../../hooks/store';
 // import { toggleShowDoneRows } from '../../components/table/tableSlice';
 import ImportDrawer from '../../components/table/ImportDrawer';
 import { emptyDataCollectionPermissions, emptyPermissions } from '../workspaces/UserGroups';
+import { io } from 'socket.io-client';
 
 const ViewOne = () => {
     const { id, dataCollectionId } = useParams();
@@ -108,6 +109,36 @@ const ViewOne = () => {
     const [recipientValue, setRecipientValue] = useState<string>('');
 
     const [valuesForExport, setValuesForExport] = useState<any>('');
+
+    /**
+     * Socket.io listening for update to refetch data
+     */
+    useEffect(() => {
+        const socket = io(import.meta.env.VITE_API_URL);
+        socket.connect();
+
+        socket.on('notify', (data) => {
+            console.log({ eventActionBy: data.event.actionBy._id, userId: localStorage.getItem('userId') });
+            console.log({ eventWorkspace: data.event.workspace, workspaceId: localStorage.getItem('workspaceId') });
+            console.log(data.allAssigneeIds);
+            if (data.allAssigneeIds.includes(localStorage.getItem('userId'))) {
+                if (data.event.actionBy._id !== localStorage.getItem('userId') && data.event.workspace === localStorage.getItem('workspaceId')) {
+                    toast({
+                        title: `Update`,
+                        description: data.event.message,
+                        duration: 10000,
+                        status: 'info',
+                        isClosable: true,
+                        position: 'bottom-right',
+                    });
+                }
+            }
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
 
     const { data: userGroups, refetch: refetchUserGroups } = useGetUserGroupsQuery(null);
     const [_userGroup, setUserGroup] = useState({ name: '', workspace: '', permissions: emptyPermissions });
