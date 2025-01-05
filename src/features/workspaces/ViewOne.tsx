@@ -70,9 +70,6 @@ const ViewOne = () => {
         socket.connect();
 
         socket.on('notify', (data) => {
-            console.log({ eventActionBy: data.event.actionBy._id, userId: localStorage.getItem('userId') });
-            console.log({ eventWorkspace: data.event.workspace, workspaceId: localStorage.getItem('workspaceId') });
-            console.log(data.allAssigneeIds);
             if (data.allAssigneeIds.includes(localStorage.getItem('userId'))) {
                 if (data.event.actionBy._id !== localStorage.getItem('userId') && data.event.workspace === localStorage.getItem('workspaceId')) {
                     toast({
@@ -134,19 +131,6 @@ const ViewOne = () => {
             }
         }
     };
-
-    useEffect(() => {
-        // console.log({ workspace });
-    }, [workspace]);
-
-    // const findUserGroup = () => {
-    //     const ug = userGroups?.find((item: any) => {
-    //         return item.users.includes(localStorage.getItem('userId'));
-    //     });
-
-    //     console.log(ug);
-    //     setUserGroup(ug);
-    // };
 
     const [newLinkItems, setNewLinkItems] = useState(linkItems);
 

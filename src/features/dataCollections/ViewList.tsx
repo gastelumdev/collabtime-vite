@@ -105,7 +105,6 @@ const ViewList = ({ active = true }: { allowed?: boolean; active: boolean }) => 
         const socket = io(import.meta.env.VITE_API_URL);
         socket.connect();
         socket.on('update views', () => {
-            console.log('UPDATE VIEWS');
             refetchViews();
         });
 

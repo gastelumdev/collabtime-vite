@@ -584,6 +584,11 @@ export const api = createApi({
             query: () => ({
                 url: `/workspaces/${localStorage.getItem("workspaceId")}/events`,
             })
+        }),
+        getUnreadEvents: builder.query<TEvent[], null>({
+            query: () => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/unreadEvents`,
+            })
         })
     })
 })
@@ -668,4 +673,5 @@ export const {
     useUpdateUserGroupMutation,
     useDeleteUserGroupMutation,
     useGetEventsQuery,
+    useGetUnreadEventsQuery,
 } = api

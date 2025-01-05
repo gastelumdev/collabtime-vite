@@ -189,18 +189,7 @@ const SidebarContent = ({ linkItems, onClose, isOpen, ...rest }: SidebarProps) =
                                             );
                                         })}
                                         <MenuDivider />
-                                        {/* <MenuItem
-                                            as={'a'}
-                                            icon={<AddIcon />}
-                                            fontSize={'14px'}
-                                            color={bgColor}
-                                            cursor={'pointer'}
-                                            onClick={() => {
-                                                console.log('Menu item clicked');
-                                            }}
-                                        > */}
                                         <Create addNewWorkspace={createWorkspace} workspaces={data} />
-                                        {/* </MenuItem> */}
                                     </MenuList>
                                 </Menu>
                             </Box>
