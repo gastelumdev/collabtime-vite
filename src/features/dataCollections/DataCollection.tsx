@@ -5,7 +5,7 @@ import {
     useDeleteRowMutation,
     useGetColumnsQuery,
     useGetRowsQuery,
-    useGetUserQuery,
+    // useGetUserQuery,
     useReorderColumnsMutation,
     useUpdateColumnMutation,
     useUpdateRowMutation,
@@ -64,7 +64,7 @@ const DataCollection = ({
 }) => {
     const { dataCollectionId } = useParams();
 
-    const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
+    // const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
 
     const { data: columns, isFetching: columnsAreFetching } = useGetColumnsQuery(dataCollectionId || appModel || '');
     const [updateColumn] = useUpdateColumnMutation();
@@ -82,16 +82,16 @@ const DataCollection = ({
         isLoading,
     } = useGetRowsQuery({ dataCollectionId: dataCollectionId || dcId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
     // const [updateRow] = useUpdateRowMutation();
-    const [permissions, setPermissions] = useState<number>();
+    // const [permissions, setPermissions] = useState<number>();
     const [windowWidthOffset, setWindowWidthOffset] = useState((window.innerWidth > 990 ? 265 : 7) + (dataCollectionView ? 48 : 0));
 
     useEffect(() => {
         refetch();
     }, [rowsProp]);
 
-    useEffect(() => {
-        getPermissions();
-    }, [user]);
+    // useEffect(() => {
+    //     getPermissions();
+    // }, [user]);
 
     const setOffset = useCallback(() => {
         setWindowWidthOffset(window.innerWidth > 990 ? 265 : 5);
@@ -105,13 +105,13 @@ const DataCollection = ({
         };
     }, []);
 
-    const getPermissions = () => {
-        for (const workspace of user?.workspaces || []) {
-            if (workspace.id == localStorage.getItem('workspaceId')) {
-                setPermissions(workspace.permissions);
-            }
-        }
-    };
+    // const getPermissions = () => {
+    //     for (const workspace of user?.workspaces || []) {
+    //         if (workspace.id == localStorage.getItem('workspaceId')) {
+    //             setPermissions(workspace.permissions);
+    //         }
+    //     }
+    // };
 
     const handleColumnUpdate = useCallback((column: any) => {
         updateColumn(column);
@@ -140,7 +140,7 @@ const DataCollection = ({
                 reorderColumns={handleReorderColumns}
                 columnsAreFetching={columnsAreFetching}
                 showDoneRows={showDoneRows}
-                allowed={(permissions || 0) > 1}
+                allowed={true}
                 isFetching={isFetching}
                 updateRow={updateRow}
                 deleteRow={deleteRow}

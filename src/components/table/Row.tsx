@@ -248,6 +248,7 @@ const Row = ({
     };
 
     const handleAcknowledgeClick = () => {
+        console.log('Acknowledge click');
         handleChange({ ...row, acknowledged: !row.acknowledged });
     };
 

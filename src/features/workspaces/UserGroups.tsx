@@ -157,6 +157,7 @@ const UserGroups = () => {
     }, [views]);
 
     useEffect(() => {
+        console.log('Use Effect executed');
         const column: any = allViewsColumns.find((item: any) => {
             return item?._id === currentViewColumnPermissions.column;
         });
@@ -171,6 +172,8 @@ const UserGroups = () => {
 
     useEffect(() => {
         if (activeButtonName === 'Create' && userGroups !== undefined) {
+            console.log('Create is active');
+            console.log({ userGroups });
             // Find the first user group
             const userGroup: any = userGroups?.find((_ug: any) => {
                 return true;
@@ -341,7 +344,9 @@ const UserGroups = () => {
             dataCollections: newCurrentDataCollections,
         }));
 
-        handleUpdateUserGroup({ ...currentPermissions, dataCollections: newCurrentDataCollections });
+        if (activeButtonName !== 'Create') {
+            handleUpdateUserGroup({ ...currentPermissions, dataCollections: newCurrentDataCollections });
+        }
     };
 
     const handleViewCheck = (viewId: string, type: string, permissionName: string, value: string) => {
@@ -550,7 +555,7 @@ const UserGroups = () => {
                                             resetPermissions();
                                         }}
                                         size="sm"
-                                        isDisabled={formError || nameError}
+                                        isDisabled={formError || nameError || newUserGroupName === ''}
                                     >
                                         Save
                                     </PrimaryButton>
@@ -614,7 +619,19 @@ const UserGroups = () => {
                             <DrawerColumn w={w} title={'User Group Name'}>
                                 <Flex>
                                     <Box>
-                                        <Text>{activeButtonName === 'Create' ? 'User Group Name' : activeButtonName}</Text>
+                                        <Box mb={'12px'} fontSize={'12px'}>
+                                            {activeButtonName === 'Create' ? (
+                                                <Text>
+                                                    Create an new user group by entering a name and selecting the actions the users withing this group are
+                                                    allowed to perform and then click save.
+                                                </Text>
+                                            ) : (
+                                                <Text>
+                                                    Toggle the actions the users withing this group are allowed to perform. Changes are automatically saved.
+                                                </Text>
+                                            )}
+                                        </Box>
+                                        <Text fontSize={'14px'}>{activeButtonName === 'Create' ? 'User Group Name' : activeButtonName}</Text>
                                         {activeButtonName == 'Create' ? (
                                             <>
                                                 <Input
@@ -632,6 +649,10 @@ const UserGroups = () => {
                                                         } else {
                                                             setNameError(false);
                                                         }
+
+                                                        if (event.target.value === '') {
+                                                            setNameError(true);
+                                                        }
                                                         setNewUserGroupName(event.target.value);
                                                     }}
                                                     isInvalid={nameError}
@@ -640,7 +661,9 @@ const UserGroups = () => {
                                             </>
                                         ) : null}
                                         <Text color="red" fontSize={'12px'} visibility={nameError ? 'visible' : 'hidden'}>
-                                            {`A user group named ${newUserGroupName} already exists.`}
+                                            {newUserGroupName === '' && nameError
+                                                ? `User group name cannot be empty`
+                                                : `A user group named ${newUserGroupName} already exists.`}
                                         </Text>
                                     </Box>
                                     <Spacer />
