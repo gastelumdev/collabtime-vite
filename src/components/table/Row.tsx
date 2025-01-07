@@ -535,13 +535,16 @@ const Row = ({
 
                                     let isFilteredColumn = false;
 
-                                    const filterNames = Object.keys(dataCollectionView.filters);
+                                    if (dataCollectionView) {
+                                        const filterNames = Object.keys(dataCollectionView.filters);
 
-                                    if (filterNames.includes(column.name)) {
-                                        isFilteredColumn = true;
-                                        allowed = true;
-                                        editable = true;
+                                        if (filterNames.includes(column.name)) {
+                                            isFilteredColumn = true;
+                                            allowed = true;
+                                            editable = true;
+                                        }
                                     }
+
                                     return (
                                         <div
                                             key={columnIndex}
