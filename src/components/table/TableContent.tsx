@@ -416,6 +416,8 @@ const TableContent = ({
         >
             <ViewportList viewportRef={ref} items={currentRows} overscan={25}>
                 {(row, rowIndex) => {
+                    const isLast = rowIndex === rows.length - 1 && row.isEmpty;
+                    if (isLast && !permissions.rows.create) return null;
                     return (
                         <Box key={row._id}>
                             <div className="item">
@@ -443,6 +445,7 @@ const TableContent = ({
                                         permissions={permissions}
                                         isArchives={isArchives}
                                         active={active}
+                                        isLast={isLast}
                                     />
                                 </div>
                                 <div></div>

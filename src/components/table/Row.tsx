@@ -46,6 +46,7 @@ const Row = ({
     permissions = null,
     isArchives = false,
     active = true,
+    isLast = false,
 }: {
     row: any;
     rowIndex: number;
@@ -69,6 +70,7 @@ const Row = ({
     permissions?: any;
     isArchives?: boolean;
     active?: boolean;
+    isLast?: boolean;
 }) => {
     // const rowsData = useMemo(
     //     () => [
@@ -248,7 +250,6 @@ const Row = ({
     };
 
     const handleAcknowledgeClick = () => {
-        console.log('Acknowledge click');
         handleChange({ ...row, acknowledged: !row.acknowledged });
     };
 
@@ -280,7 +281,11 @@ const Row = ({
     return (
         <>
             {row.isVisible && showRow ? (
-                <Box bgColor={row.parentRowId ? '#f5faff' : row.isParent ? '#ebf5ff' : 'inherit'}>
+                <Box
+                    bgColor={row.parentRowId ? '#f5faff' : row.isParent ? '#ebf5ff' : 'inherit'}
+                    // border={dataCollectionView && isLast ? '1px solid #E2E8F0' : 'none'}
+                    mt={isLast ? 'none' : 'none'}
+                >
                     <div
                         className="drop-indicator-container"
                         onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, row.position)}
@@ -319,7 +324,7 @@ const Row = ({
                                         : 'table-row content'
                                 }
                                 style={{
-                                    gridTemplateColumns: `${hasCheckboxOptions ? '220px' : '170px'} ${gridTemplateColumns}`,
+                                    gridTemplateColumns: `${hasCheckboxOptions ? '220px' : isLast ? '170px' : '170px'} ${gridTemplateColumns}`,
                                 }}
                                 // draggable={allowed && isDraggable}
                                 onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, row.position)}
@@ -329,75 +334,78 @@ const Row = ({
                                 onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
                                 onDrop={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
                             >
-                                <span style={{ borderRight: '1px solid #edf2f7', width: !hasCheckboxOptions ? '150px' : '220px' }}>
-                                    <Flex>
-                                        {isDraggable && dataCollectionPermissions.rows.reorder && appModel === null ? (
-                                            <Box
-                                                id={`reorder-handle-${rowIndex}`}
-                                                w={'15px'}
-                                                h={'30px'}
-                                                bgColor={'#24a2f0'}
-                                                cursor={allowed && isDraggable && dataCollectionPermissions.rows.reorder && !isArchives ? 'move' : 'default'}
-                                                draggable={allowed && isDraggable && dataCollectionPermissions.rows.reorder && !isArchives}
-                                                onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, row.position)}
-                                                onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, row.position)}
-                                                // onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
-                                                onDragEnter={(event: React.DragEvent<HTMLDivElement>) => handleDragEnter(event)}
-                                                onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
-                                                // onDrop={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
-                                                style={{ backgroundColor: row.parentRowId ? '#9fdaff' : '#24a2f0' }}
-                                            ></Box>
-                                        ) : null}
-                                        {hasCheckboxOptions && appModel === null ? (
-                                            <Box mt={'6px'} ml={'14px'}>
-                                                <Checkbox
-                                                    mr={'1px'}
-                                                    isChecked={checkedRowIds.includes(row._id)}
-                                                    onChange={handleDeleteCheckboxChange}
-                                                    disabled={!dataCollectionPermissions.rows.subrows && !dataCollectionPermissions.rows.delete}
-                                                />
-                                            </Box>
-                                        ) : null}
-                                        <Box pt={'6px'}>
-                                            <EditRow row={row} columns={columns} handleChange={editRowOnChange} allowed={allowed} />
-                                        </Box>
-                                        {dataCollectionPermissions.notes.view ? (
+                                <span style={{ borderRight: '1px solid #edf2f7', width: !hasCheckboxOptions ? '170px' : '220px' }}>
+                                    {isLast ? null : (
+                                        <Flex>
+                                            {isDraggable && dataCollectionPermissions.rows.reorder && appModel === null ? (
+                                                <Box
+                                                    id={`reorder-handle-${rowIndex}`}
+                                                    w={'15px'}
+                                                    h={'30px'}
+                                                    bgColor={'#24a2f0'}
+                                                    cursor={
+                                                        allowed && isDraggable && dataCollectionPermissions.rows.reorder && !isArchives ? 'move' : 'default'
+                                                    }
+                                                    draggable={allowed && isDraggable && dataCollectionPermissions.rows.reorder && !isArchives}
+                                                    onDragStart={(event: React.DragEvent<HTMLDivElement>) => handleDragStart(event, row.position)}
+                                                    onDragOver={(event: React.DragEvent<HTMLDivElement>) => handleDragOver(event, row.position)}
+                                                    // onDragEnd={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
+                                                    onDragEnter={(event: React.DragEvent<HTMLDivElement>) => handleDragEnter(event)}
+                                                    onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
+                                                    // onDrop={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
+                                                    style={{ backgroundColor: row.parentRowId ? '#9fdaff' : '#24a2f0' }}
+                                                ></Box>
+                                            ) : null}
+                                            {hasCheckboxOptions && appModel === null ? (
+                                                <Box mt={'6px'} ml={'14px'}>
+                                                    <Checkbox
+                                                        mr={'1px'}
+                                                        isChecked={checkedRowIds.includes(row._id)}
+                                                        onChange={handleDeleteCheckboxChange}
+                                                        disabled={!dataCollectionPermissions.rows.subrows && !dataCollectionPermissions.rows.delete}
+                                                    />
+                                                </Box>
+                                            ) : null}
                                             <Box pt={'6px'}>
-                                                <NoteModal
-                                                    row={row}
-                                                    updateRow={editRowOnChange}
-                                                    // rowCallUpdate={rowCallUpdate}
-                                                    allowed={dataCollectionPermissions.notes.create}
+                                                <EditRow row={row} columns={columns} handleChange={editRowOnChange} allowed={allowed} />
+                                            </Box>
+                                            {dataCollectionPermissions.notes.view ? (
+                                                <Box pt={'6px'}>
+                                                    <NoteModal
+                                                        row={row}
+                                                        updateRow={editRowOnChange}
+                                                        // rowCallUpdate={rowCallUpdate}
+                                                        allowed={dataCollectionPermissions.notes.create}
+                                                    />
+                                                </Box>
+                                            ) : null}
+                                            <Box pt={'7px'} ml={'10px'} cursor={dataCollectionPermissions.reminders.view ? 'pointer' : 'default'}>
+                                                <RemindersDrawer row={row} handleChange={editRowOnChange} allowed={dataCollectionPermissions.reminders.view} />
+                                            </Box>
+                                            <Box
+                                                pt={'7px'}
+                                                ml={'10px'}
+                                                onClick={allowed ? handleAcknowledgeClick : () => {}}
+                                                cursor={allowed ? 'pointer' : 'default'}
+                                            >
+                                                <Text fontSize={'15px'} color={row.acknowledged && allowed ? '#16b2fc' : '#cccccc'}>
+                                                    <FaRegSquareCheck />
+                                                </Text>
+                                            </Box>
+                                            <Box pt={'7px'} ml={'10px'} cursor={'pointer'}>
+                                                <UploadModal
+                                                    rowDocuments={row.docs}
+                                                    getDocs={getDocs}
+                                                    getUpdatedDoc={getUpdatedDoc}
+                                                    removeDoc={removeDoc}
+                                                    permissions={dataCollectionPermissions}
                                                 />
                                             </Box>
-                                        ) : null}
-                                        <Box pt={'7px'} ml={'10px'} cursor={dataCollectionPermissions.reminders.view ? 'pointer' : 'default'}>
-                                            <RemindersDrawer row={row} handleChange={editRowOnChange} allowed={dataCollectionPermissions.reminders.view} />
-                                        </Box>
-                                        <Box
-                                            pt={'7px'}
-                                            ml={'10px'}
-                                            onClick={allowed ? handleAcknowledgeClick : () => {}}
-                                            cursor={allowed ? 'pointer' : 'default'}
-                                        >
-                                            <Text fontSize={'15px'} color={row.acknowledged && allowed ? '#16b2fc' : '#cccccc'}>
-                                                <FaRegSquareCheck />
-                                            </Text>
-                                        </Box>
-                                        <Box pt={'7px'} ml={'10px'} cursor={'pointer'}>
-                                            <UploadModal
-                                                rowDocuments={row.docs}
-                                                getDocs={getDocs}
-                                                getUpdatedDoc={getUpdatedDoc}
-                                                removeDoc={removeDoc}
-                                                permissions={dataCollectionPermissions}
-                                            />
-                                        </Box>
-                                        <Box pt={'6px'} ml={'10px'} cursor={'pointer'}>
-                                            <ClearRow row={row} columns={columns} handleChange={handleChange} />
-                                        </Box>
-                                        {/* {row.position} */}
-                                        {/* {row.isParent ? (
+                                            <Box pt={'6px'} ml={'10px'} cursor={'pointer'}>
+                                                <ClearRow row={row} columns={columns} handleChange={handleChange} />
+                                            </Box>
+                                            {/* {row.position} */}
+                                            {/* {row.isParent ? (
                                             <Button
                                                 variant={'unstyled'}
                                                 h={'20px'}
@@ -412,7 +420,8 @@ const Row = ({
                                                 <Text>{row.showSubrows ? <ChevronDownIcon /> : <ChevronRightIcon />}</Text>
                                             </Button>
                                         ) : null} */}
-                                    </Flex>
+                                        </Flex>
+                                    )}
                                 </span>
                                 {columns.map((column: any, columnIndex: number) => {
                                     let value = row?.values[column?.name];
@@ -518,6 +527,21 @@ const Row = ({
                                     if (column.autoIncremented && row.isEmpty) {
                                         textColor = 'lightgray';
                                     }
+
+                                    if (dataCollectionView && isLast) {
+                                        allowed = false;
+                                        editable = false;
+                                    }
+
+                                    let isFilteredColumn = false;
+
+                                    const filterNames = Object.keys(dataCollectionView.filters);
+
+                                    if (filterNames.includes(column.name)) {
+                                        isFilteredColumn = true;
+                                        allowed = true;
+                                        editable = true;
+                                    }
                                     return (
                                         <div
                                             key={columnIndex}
@@ -538,6 +562,7 @@ const Row = ({
                                                     onChange={onChange}
                                                     allowed={allowed}
                                                     fontWeight={fontWeight}
+                                                    light={dataCollectionView && isLast && !isFilteredColumn}
                                                 />
                                             ) : column?.type === 'people' ? (
                                                 <PeopleMenu

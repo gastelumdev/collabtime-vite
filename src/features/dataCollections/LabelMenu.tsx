@@ -19,12 +19,23 @@ interface IProps {
     border?: string | null;
     fontWeight?: string;
     fontSize?: string;
+    light?: boolean;
     // label?: string;
     // bgColor?: string;
     // options: { value: string; label: string; color: string }[] | undefined;
 }
 
-const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false, border = null, fontWeight = 'normal', fontSize = '13px' }: IProps) => {
+const LabelMenu = ({
+    columnName,
+    labels,
+    value = '',
+    onChange,
+    allowed = false,
+    border = null,
+    fontWeight = 'normal',
+    fontSize = '13px',
+    light = false,
+}: IProps) => {
     const { onClose } = useDisclosure();
     // const [updateRow] = useUpdateRowMutation();
 
@@ -34,9 +45,6 @@ const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false, 
     const [options, setOptions] = useState<ILabel[] | undefined>([]);
 
     const [active, setActive] = useState<boolean>(false);
-
-    // console.log(`${columnName} rendered`);
-    // console.info(`${columnName} rendered`);
 
     useEffect(() => {
         let bgColor: string = '';
@@ -61,7 +69,6 @@ const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false, 
 
     const handleLabelClick = (label: ILabel) => {
         // updateRow({ ...row, values: { ...row.values, [columnName]: label.value } });
-        // console.log({ ...row, values: { ...row.values, [columnName]: label.value } });
 
         setLabelValue(label.value);
         setLabelColor(label.color);
@@ -93,7 +100,7 @@ const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false, 
                                 h={'29px'}
                                 fontSize={fontSize}
                                 pb={'3px'}
-                                bgColor={labelColor}
+                                bgColor={light ? 'gray' : labelColor}
                                 color={labelColor == 'white' ? 'black' : getTextColor(labelColor)}
                                 borderRadius={'0'}
                                 fontWeight={fontWeight}
@@ -144,13 +151,12 @@ const LabelMenu = ({ columnName, labels, value = '', onChange, allowed = false, 
                     }}
                     onKeyDown={(event: React.KeyboardEvent<HTMLButtonElement>) => {
                         if (event.key === 'Enter') {
-                            console.log('Enter key pressed');
                             setActive(true);
                         }
                     }}
                 >
                     <Text
-                        backgroundColor={labelColor}
+                        backgroundColor={light ? '#e6e6e6' : labelColor}
                         color={getTextColor(labelColor)}
                         // h={'100%'}
                         h={'29px'}
