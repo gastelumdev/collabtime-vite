@@ -565,7 +565,7 @@ const Row = ({
                                                     onChange={onChange}
                                                     allowed={allowed}
                                                     fontWeight={fontWeight}
-                                                    light={dataCollectionView && isLast && !isFilteredColumn}
+                                                    light={(dataCollectionView && isLast && !isFilteredColumn) || (!dataCollectionView && row.isEmpty)}
                                                 />
                                             ) : column?.type === 'people' ? (
                                                 <PeopleMenu
