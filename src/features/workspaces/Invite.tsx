@@ -157,7 +157,6 @@ const Invite = ({}: InviteProps) => {
     };
 
     const handleSubmit = () => {
-        console.log(newWorkspace);
         inviteTeamMember(newWorkspace as TWorkspace);
         setSelectedOptions([]);
         // onClose();

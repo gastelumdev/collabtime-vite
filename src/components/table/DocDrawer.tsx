@@ -76,7 +76,6 @@ const DocDrawer = ({ getDocs, documents }: IProps) => {
                             });
 
                             if (documentNames.includes(event.target.value)) {
-                                console.log({ documentNames, createdDocName });
                                 setIsError(true);
                             } else {
                                 setIsError(false);

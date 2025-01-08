@@ -84,7 +84,6 @@ const ImportDrawer = ({ columns, handleImportRows, isFetching, isLoading }: IPro
         if (f) {
             fileReader.onload = function (event) {
                 const csvOutput: any = event.target?.result;
-                console.log({ csvOutput });
                 csvFileToArray(csvOutput);
             };
 

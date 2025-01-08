@@ -32,7 +32,6 @@ const Edit = ({ dataCollection, updateDataCollection }: IProps) => {
     }, [dataCollection]);
 
     const editData = async () => {
-        console.log(data);
         updateDataCollection({ ...data, userGroupAccess });
         onClose();
     };
@@ -53,8 +52,6 @@ const Edit = ({ dataCollection, updateDataCollection }: IProps) => {
                 return null;
             }
         });
-
-        console.log(dataCollectionNames);
 
         if (dataCollectionNames?.includes(value)) {
             setIsError(true);
@@ -123,13 +120,11 @@ const Edit = ({ dataCollection, updateDataCollection }: IProps) => {
                                                     setUserGroupAccess((prev) => {
                                                         return [...prev, ug.name] as any;
                                                     });
-                                                    console.log(userGroupAccess);
                                                 } else {
                                                     const filteredUserGroupAccess: any = userGroupAccess.filter((item: any) => {
                                                         return item !== ug.name;
                                                     });
                                                     setUserGroupAccess(filteredUserGroupAccess);
-                                                    console.log(userGroupAccess);
                                                 }
                                             }}
                                         >

@@ -115,31 +115,6 @@ const UserGroups = () => {
 
     const [allViewsColumns, setAllViewsColumns] = useState([]);
     const [labels, setLabels] = useState([]);
-    // const [chosenLabels, setChosenLabels] = useState([]);
-
-    useEffect(
-        () => {
-            // console.log({ views });
-            // console.log({ userGroups });
-            // console.log({ currentPermissions });
-            // console.log({ currentDataCollectionPermissions });
-            // console.log({ currentColumnPermissions });
-            // console.log({ columns });
-            // console.log({ currentViewPermissions });
-            // console.log({ currentViewColumnPermissions });
-            // console.log({ viewColumns });
-        },
-        [
-            // userGroups,
-            // currentPermissions,
-            // currentDataCollectionPermissions,
-            // currentColumnPermissions,
-            // columns,
-            // currentViewPermissions,
-            // currentViewColumnPermissions,
-            // viewColumns,
-        ]
-    );
 
     useEffect(() => {
         if (views !== undefined) {
@@ -151,13 +126,11 @@ const UserGroups = () => {
                 }
             }
 
-            // console.log(viewsColumns);
             setAllViewsColumns(viewsColumns);
         }
     }, [views]);
 
     useEffect(() => {
-        console.log('Use Effect executed');
         const column: any = allViewsColumns.find((item: any) => {
             return item?._id === currentViewColumnPermissions.column;
         });
@@ -172,8 +145,6 @@ const UserGroups = () => {
 
     useEffect(() => {
         if (activeButtonName === 'Create' && userGroups !== undefined) {
-            console.log('Create is active');
-            console.log({ userGroups });
             // Find the first user group
             const userGroup: any = userGroups?.find((_ug: any) => {
                 return true;
@@ -375,7 +346,9 @@ const UserGroups = () => {
             views: newCurrentViews,
         }));
 
-        handleUpdateUserGroup({ ...currentPermissions, views: newCurrentViews });
+        if (activeButtonName !== 'Create') {
+            handleUpdateUserGroup({ ...currentPermissions, views: newCurrentViews });
+        }
     };
 
     const handleColumnRowsCheck = (permissionName: string, value: string) => {
@@ -413,7 +386,9 @@ const UserGroups = () => {
         const newCurrentPermissions = { ...currentPermissions, dataCollections: newCurrentDataCollections };
         setCurrentPermissions(newCurrentPermissions);
 
-        handleUpdateUserGroup(newCurrentPermissions);
+        if (activeButtonName !== 'Create') {
+            handleUpdateUserGroup(newCurrentPermissions);
+        }
     };
 
     const handleViewColumnRowsCheck = (permissionName: string, value: string) => {
@@ -450,8 +425,9 @@ const UserGroups = () => {
 
         const newCurrentPermissions = { ...currentPermissions, views: newCurrentViews };
         setCurrentPermissions(newCurrentPermissions);
-
-        handleUpdateUserGroup(newCurrentPermissions);
+        if (activeButtonName !== 'Create') {
+            handleUpdateUserGroup(newCurrentPermissions);
+        }
     };
 
     const handleViewColumnLabelsCheck = (labelTitle: never, permissionLabels: any) => {
@@ -504,7 +480,9 @@ const UserGroups = () => {
         const newCurrentPermissions = { ...currentPermissions, views: newCurrentViews };
         setCurrentPermissions(newCurrentPermissions);
 
-        handleUpdateUserGroup(newCurrentPermissions);
+        if (activeButtonName !== 'Create') {
+            handleUpdateUserGroup(newCurrentPermissions);
+        }
     };
 
     const resetPermissions = () => {
@@ -631,7 +609,9 @@ const UserGroups = () => {
                                                 </Text>
                                             )}
                                         </Box>
-                                        <Text fontSize={'14px'}>{activeButtonName === 'Create' ? 'User Group Name' : activeButtonName}</Text>
+                                        <Text fontSize={'14px'} mb={'5px'}>
+                                            {activeButtonName === 'Create' ? 'User Group Name' : activeButtonName}
+                                        </Text>
                                         {activeButtonName == 'Create' ? (
                                             <>
                                                 <Input
@@ -1081,12 +1061,9 @@ const UserGroups = () => {
                                         <Select
                                             size={'sm'}
                                             onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
-                                                console.log(currentPermissions);
                                                 const viewPermissions: any = currentPermissions?.views.find((v: any) => {
-                                                    console.log(v.name, event.target.value);
                                                     return v.name === event.target.value;
                                                 });
-                                                console.log(viewPermissions);
                                                 setCurrentViewPermissions(viewPermissions);
                                                 setCurrentViewColumnPermissions(viewPermissions.permissions.columns[0]);
                                                 setViewColumns(viewPermissions.permissions.columns);
@@ -1461,7 +1438,6 @@ const Users = () => {
             const newOriginalUserGroup = {
                 ...originalUserGroup,
                 users: originalUserGroup.users.filter((item: any) => {
-                    console.log(item);
                     return item !== user._id;
                 }),
             };

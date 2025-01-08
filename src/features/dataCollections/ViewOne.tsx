@@ -118,9 +118,6 @@ const ViewOne = () => {
         socket.connect();
 
         socket.on('notify', (data) => {
-            console.log({ eventActionBy: data.event.actionBy._id, userId: localStorage.getItem('userId') });
-            console.log({ eventWorkspace: data.event.workspace, workspaceId: localStorage.getItem('workspaceId') });
-            console.log(data.allAssigneeIds);
             if (data.allAssigneeIds.includes(localStorage.getItem('userId'))) {
                 if (data.event.actionBy._id !== localStorage.getItem('userId') && data.event.workspace === localStorage.getItem('workspaceId')) {
                     toast({
@@ -380,7 +377,6 @@ const ViewOne = () => {
                 try {
                     return { ...item, isEmpty: false, values: array[index] };
                 } catch (error) {
-                    console.log(error);
                     return item;
                 }
             });

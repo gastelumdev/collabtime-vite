@@ -25,7 +25,6 @@ const SearchContent = ({ onClose, firstField }: IProps) => {
     // const [tagInputActive, setTagInputActive] = useState<boolean>(false);
 
     useEffect(() => {
-        console.log(content);
         setData(content);
     }, [content]);
 
@@ -47,8 +46,6 @@ const SearchContent = ({ onClose, firstField }: IProps) => {
         });
 
         const filteredWorkspaceTags = content.workspaces.filter((workspace: any) => {
-            console.log(workspace.tags);
-
             if (workspace.tags !== undefined) {
                 if (workspace.tags.length === 0) return false;
 
@@ -66,8 +63,6 @@ const SearchContent = ({ onClose, firstField }: IProps) => {
         });
 
         const filteredDataCollectionTags = content.dataCollections.filter((dataCollection: any) => {
-            console.log(dataCollection.tags);
-
             if (dataCollection.tags !== undefined) {
                 if (dataCollection.tags.length === 0) return false;
 
@@ -85,8 +80,6 @@ const SearchContent = ({ onClose, firstField }: IProps) => {
         });
 
         const filteredDocTags = content.docs.filter((doc: any) => {
-            console.log(doc.tags);
-
             if (doc.tags !== undefined) {
                 if (doc.tags.length === 0) return false;
 
@@ -102,8 +95,6 @@ const SearchContent = ({ onClose, firstField }: IProps) => {
             }
             return false;
         });
-
-        console.log({ filteredWorkspaceTags, filteredDataCollectionTags, filteredDocTags });
 
         setData({ workspaces: filteredWorkspaces, dataCollections: filteredDataCollections, docs: filteredDocs });
         setTagsData({ workspaces: filteredWorkspaceTags, dataCollections: filteredDataCollectionTags, docs: filteredDocTags, data: [] });

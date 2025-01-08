@@ -204,7 +204,6 @@ const Reference = ({
                                                     {rowsList.map((row: any, index: number) => {
                                                         if (refIds.includes(row._id)) return null;
                                                         if (row.values[rowKey] !== '') {
-                                                            // console.log({ refs });
                                                             return (
                                                                 <Box
                                                                     key={index}

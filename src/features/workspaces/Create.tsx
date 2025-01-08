@@ -135,7 +135,6 @@ const Create = ({ addNewWorkspace, workspaces }: IProps) => {
     // };
 
     const handleOnOpen = () => {
-        console.log('OPEN CLICK');
         onOpen();
     };
 
@@ -182,7 +181,6 @@ const Create = ({ addNewWorkspace, workspaces }: IProps) => {
                     placeholder={'Please select type of row app'}
                     // isDisabled={!appModelChecked}
                     onChange={(selectedOption: any) => {
-                        console.log(selectedOption.value);
                         setData({ ...data, type: selectedOption.value });
                     }}
                     options={[

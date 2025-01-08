@@ -17,7 +17,7 @@ const Row = ({ row, columns, rowIndex, onChange }: IRowProps) => {
             </td>
             {columns.map((column, columnIndex) => {
                 return (
-                    <td key={columnIndex} onClick={() => console.log(`${rowIndex}`)}>
+                    <td key={columnIndex}>
                         {column.type === 'text' ? (
                             <TextInput id={rowIndex} columnName={column.name} value={row.values[column.name]} onChange={onChange} />
                         ) : column.type === 'label' || column.type === 'priority' || column.type === 'status' ? (

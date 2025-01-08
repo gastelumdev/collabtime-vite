@@ -159,7 +159,6 @@ const UploadModal = ({ rowDocuments, getDocs, getUpdatedDoc, removeDoc, permissi
 
         setExistingFiles((prev) => {
             return prev?.filter((prevFile: any) => {
-                console.log({ prevFile, currentFile: document._id });
                 return prevFile._id !== document._id;
             });
         });

@@ -267,7 +267,6 @@ const DataCollectionTable = ({
         const socket = io(import.meta.env.VITE_API_URL);
         socket.connect();
         socket.on('update row', () => {
-            console.log('CALL FOR UPDATE ROW');
             rowCallUpdate(null);
             // setNotifications(callNotificationsUpdate(priority) as any);
         });
@@ -818,7 +817,6 @@ const DataCollectionTable = ({
                         )}
 
                         {rows?.map((row: any, index: number) => {
-                            console.log('ROW RENDERED');
                             return (
                                 <Tr key={index}>
                                     {(permissions || 0) > 1 ? (

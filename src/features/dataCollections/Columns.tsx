@@ -11,7 +11,6 @@ interface IProps {
     columnResizingOffset: number;
 }
 const Columns = ({ columns, rearangeColumns, headerHeight, minCellWidth, columnResizingOffset }: IProps) => {
-    console.log('COLUMNS RENDERED');
     const [currentColumns, setCurrentColumns] = useState(columns);
     const [headerRefs] = useState<any>([]);
     const [columnWidth, setColumnWidth] = useState('');
@@ -99,7 +98,6 @@ const Columns = ({ columns, rearangeColumns, headerHeight, minCellWidth, columnR
             const th: any = document.getElementById(String(activeIndex));
             th.children[0].children[1].style.opacity = '1';
 
-            console.log(th.offsetLeft);
             // set the width by getting the new position of the resize handle on the page minus the width of the sidebar
             // and additional left padding
             const width = e.clientX - columnResizingOffset - th.offsetLeft;
@@ -191,7 +189,6 @@ const Columns = ({ columns, rearangeColumns, headerHeight, minCellWidth, columnR
                                     onDragEnd={() => handleDragEnd()}
                                     onDrop={(event) => handleDrop(event, columnIndex)}
                                     onDragLeave={() => handleDragLeave(columnIndex)}
-                                    onClick={() => console.log('HEADER CLICKED')}
                                 >
                                     {column.name.toUpperCase().split('_').join(' ')}
                                 </div>

@@ -59,7 +59,6 @@ const ViewRef = ({ columns, rowData, value, allowed = false }: IProps) => {
 
     const onChange = useCallback(
         (columnName: string, value: string) => {
-            console.log(value);
             setRow({ ...row, values: { ...row.values, [columnName]: value } });
             updateRow({ ...row, values: { ...row.values, [columnName]: value } });
         },
@@ -67,7 +66,6 @@ const ViewRef = ({ columns, rowData, value, allowed = false }: IProps) => {
     );
 
     const handleUpdateRow = (row: any) => {
-        console.log(row);
         updateRow(row);
 
         setRow(row);

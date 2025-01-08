@@ -62,6 +62,7 @@ const View = ({
     const [updateDataCollectionViewNoRefetch] = useUpdateDataCollectionViewNoRefetchMutation();
     const { data } = useGetDataCollectionsQuery(null);
     const [viewPermissions, setViewPermissions] = useState(emptyViewPermissions);
+    const [showCreateRow, setShowCreateRow] = useState(true);
 
     useEffect(() => {
         refetchRows();
@@ -94,6 +95,14 @@ const View = ({
             refetchUserGroup();
         }
     }, [userGroup, dataCollectionView]);
+
+    useEffect(() => {
+        if (rows?.length === 1 && rows[0].isEmpty) {
+            setShowCreateRow(viewPermissions.rows.create);
+        } else {
+            setShowCreateRow(true);
+        }
+    }, [rows, viewPermissions, dataCollectionView]);
 
     return (
         <Box>
@@ -148,7 +157,7 @@ const View = ({
                     ) : null}
                 </Flex>
             </Box>
-            {rows && rows?.length > 0 ? (
+            {rows && showCreateRow ? (
                 <>
                     {workspace?.type === 'integration' && !['Thresholds'].includes(dataCollectionView.name) ? (
                         <Tabs>
@@ -161,6 +170,7 @@ const View = ({
                                     <Container maxW={'5xl'} mt={1}>
                                         <Flex flexWrap="wrap" gridGap={6} justify={'start'}>
                                             {rows.map((row: any) => {
+                                                if (row.isEmpty) return null;
                                                 let min_warning = row?.values['min_warning'];
                                                 let min_critical = row?.values['min_critical'];
                                                 let max_warning = row?.values['max_warning'];

@@ -536,7 +536,10 @@ const Row = ({
                                     let isFilteredColumn = false;
 
                                     if (dataCollectionView) {
-                                        const filterNames = Object.keys(dataCollectionView.filters);
+                                        let filterNames: string[] = [];
+                                        if (dataCollectionView.filters && dataCollectionView.filters !== undefined) {
+                                            filterNames = Object.keys(dataCollectionView.filters);
+                                        }
 
                                         if (filterNames.includes(column.name)) {
                                             isFilteredColumn = true;

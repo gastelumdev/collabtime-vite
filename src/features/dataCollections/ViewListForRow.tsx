@@ -95,12 +95,9 @@ const ViewListForRow = ({}: { allowed?: boolean }) => {
                                                 {userGroup.permissions.viewActions.view
                                                     ? dataCollections?.map((dc: any) => {
                                                           let viewDC = false;
-                                                          //   console.log(dc);
                                                           const dataCollectionPermissions: any = userGroup.permissions.dataCollections.find((item: any) => {
                                                               return item.dataCollection === dc.appModel || item.dataCollection === dc._id;
                                                           });
-                                                          console.log(dc.name);
-                                                          console.log(dataCollectionPermissions);
                                                           if (dataCollectionPermissions !== undefined) {
                                                               for (const permission of dataCollectionPermissions.permissions.columns) {
                                                                   if (permission.permissions.column.view) {
@@ -114,12 +111,8 @@ const ViewListForRow = ({}: { allowed?: boolean }) => {
                                                               dataCollection = dc;
                                                           }
 
-                                                          console.log(dataCollection);
-                                                          console.log(viewDC);
-
                                                           if (dataCollection !== null && viewDC) {
                                                               if (dataCollection.template == 'planner') {
-                                                                  console.log('Render Planner');
                                                                   return (
                                                                       <>
                                                                           <PlannerApp
@@ -133,7 +126,6 @@ const ViewListForRow = ({}: { allowed?: boolean }) => {
                                                               }
 
                                                               if (dataCollection.template == 'filtered') {
-                                                                  console.log('Render Filtered');
                                                                   return (
                                                                       <>
                                                                           <FilteredApp

@@ -26,7 +26,6 @@ const DocDrawer = ({ cell, addToCell = false, handleDocsChange, create = false, 
     const [editorValue, setEditorValue] = useState<string>('');
 
     const handleDocumentClick = async () => {
-        console.log({ createdDocName, editorValue });
         createOnClose();
         const documentCreated: any = await createDocument({
             workspace: localStorage.getItem('workspaceId') || '',

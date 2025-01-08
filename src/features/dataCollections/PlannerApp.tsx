@@ -164,7 +164,6 @@ const PlannerBoard = ({
                                     fontSize={'14px'}
                                     isChecked={row.values['status'] === 'Completed'}
                                     onChange={async (event: React.ChangeEvent<HTMLInputElement>) => {
-                                        console.log(event.target.checked);
                                         if (event.target.checked) {
                                             await updateRow({ ...row, values: { ...row.values, status: 'Completed' } });
                                         } else {
@@ -198,7 +197,6 @@ const PlannerBoard = ({
                                                 fontSize={'14px'}
                                                 isChecked={row.values['status'] === 'Completed'}
                                                 onChange={async (event: React.ChangeEvent<HTMLInputElement>) => {
-                                                    console.log(event.target.checked);
                                                     if (event.target.checked) {
                                                         await updateRow({ ...row, values: { ...row.values, status: 'Completed' } });
                                                     } else {
@@ -266,8 +264,6 @@ export const OneDataCollection = ({
         const dcPermissions = userGroup.permissions.dataCollections.find((item: any) => {
             return item.dataCollection === dataCollection.appModel || item.dataCollection === dataCollection._id;
         });
-
-        console.log(dcPermissions);
 
         setDataCollectionPermissions(dcPermissions.permissions);
     }, [rowsData, userGroup]);

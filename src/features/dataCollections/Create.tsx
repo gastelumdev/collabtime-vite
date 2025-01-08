@@ -74,8 +74,6 @@ const Create = ({ addNewDataCollection }: IProps) => {
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value, name } = event.target;
 
-        console.log(data);
-
         const dataCollectionNames = dataCollections?.map((dataCollection) => {
             if (!dataCollection.main) {
                 return '';
@@ -95,8 +93,6 @@ const Create = ({ addNewDataCollection }: IProps) => {
             setInputError(false);
         }
 
-        console.log(dataCollectionNames, value);
-
         if (dataCollectionNames?.includes(value)) {
             setIsError(true);
         } else {
@@ -110,7 +106,6 @@ const Create = ({ addNewDataCollection }: IProps) => {
     };
 
     const handleTemplateChange = (selectedOption: any) => {
-        console.log(data);
         setData({
             ...data,
             template: selectedOption.value,
@@ -269,7 +264,6 @@ const Create = ({ addNewDataCollection }: IProps) => {
                             placeholder={'Please select type of row app'}
                             isDisabled={!appModelChecked}
                             onChange={(selectedOption: any) => {
-                                console.log(selectedOption.value);
                                 setAppType(selectedOption.value);
 
                                 let primaryColumnName = '';

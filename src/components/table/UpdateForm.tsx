@@ -12,8 +12,6 @@ import PrimaryButton from '../Buttons/PrimaryButton';
 const UpdateForm = () => {
     const { id, dataCollectionId, rowId } = useParams();
     const navigate = useNavigate();
-    console.log({ id, dataCollectionId });
-    console.log(localStorage.getItem('workspaceId'));
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
     const { data: formData } = useGetFormDataQuery(dataCollectionId);
     const { data: rowData } = useGetRowQuery({ workspaceId: id, dataCollectionId, rowId });
@@ -29,7 +27,6 @@ const UpdateForm = () => {
     const [_, setPermissions] = useState<number>();
 
     useEffect(() => {
-        console.log(rowData);
         if (rowData === null) {
             navigate(`/workspaces/${id}/dataCollections/${dataCollectionId}/form`);
         }
@@ -52,26 +49,20 @@ const UpdateForm = () => {
 
     const onChange = useCallback(
         (columnName: string, value: string) => {
-            console.log(value);
             setRow({ ...row, values: { ...row.values, [columnName]: value } });
         },
         [row]
     );
 
     const onRefChange = (columnName: string, ref: any) => {
-        console.log(ref);
         const refs: any = [];
         if (row !== null && row.refs === undefined) {
-            console.log(row.refs);
             refs.push(ref);
-            console.log({ ...row, refs: { [columnName]: refs } });
             setRow({ ...row, refs: { [columnName]: refs } });
         } else {
             if (row !== null && row.refs[columnName] === undefined) {
-                console.log({ ...row, refs: { ...row.refs, [columnName]: [ref] } });
                 setRow({ ...row, refs: { ...row.refs, [columnName]: [ref] } });
             } else {
-                console.log({ ...row, refs: { ...row.refs, [columnName]: [...row.refs[columnName], ref] } });
                 setRow({ ...row, refs: { ...row.refs, [columnName]: [...row.refs[columnName], ref] } });
             }
         }
@@ -116,14 +107,12 @@ const UpdateForm = () => {
     }, [isError]);
 
     const updateData = async () => {
-        console.log(row);
         updateRow(row);
     };
     return (
         <>
             <Container>
                 <Card mt={'60px'}>
-                    <>{console.log(dataCollection)}</>
                     <CardHeader>
                         <Center>{dataCollection !== undefined ? dataCollection.name : null}</Center>
                         <Center>

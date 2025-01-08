@@ -45,7 +45,6 @@ const ResetRow = ({ row, columns, handleChange }: { row: TRow; columns: TColumn[
                                 }
 
                                 const newRow = { ...row, values, refs, isEmpty: true };
-                                console.log({ newRow });
 
                                 handleChange(newRow);
                                 onClose();

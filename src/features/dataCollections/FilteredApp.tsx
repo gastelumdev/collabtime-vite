@@ -38,11 +38,7 @@ const FilteredApp = ({
     );
 
     useEffect(() => {
-        console.log(rowsData);
-        console.log(row);
-        console.log(dataCollection);
         const filter = Object.keys(dataCollection.filters)[0];
-        console.log(filter);
         if (rowsData !== undefined) {
             const filteredData = rowsData?.filter((item: any) => {
                 if (item.refs !== undefined) {
@@ -61,7 +57,6 @@ const FilteredApp = ({
 
                 // return !item.isEmpty;
             });
-            console.log(filteredData);
             if (filteredData !== undefined) {
                 setData(filteredData as any);
             }
@@ -74,8 +69,6 @@ const FilteredApp = ({
         const dcPermissions = userGroup.permissions.dataCollections.find((item: any) => {
             return item.dataCollection === dataCollection.appModel || item.dataCollection === dataCollection._id;
         });
-
-        console.log(dcPermissions);
 
         setDataCollectionPermissions(dcPermissions.permissions);
     }, [rowsData, userGroup]);

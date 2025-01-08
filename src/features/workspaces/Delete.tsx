@@ -52,7 +52,6 @@ const Delete = ({ workspace, deleteWorkspace }: IProps) => {
                                 as={'a'}
                                 href={'/workspaces/' + redirectWorkspaceId}
                                 onClick={async () => {
-                                    console.log({ workspace });
                                     await deleteWorkspace(workspace?._id as string);
                                     onClose();
                                     localStorage.setItem('workspaceId', redirectWorkspaceId);

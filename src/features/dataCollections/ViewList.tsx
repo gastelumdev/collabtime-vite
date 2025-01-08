@@ -188,9 +188,6 @@ const ViewList = ({ active = true }: { allowed?: boolean; active: boolean }) => 
                                                     <TabPanel>
                                                         <Box mt={3}>
                                                             <Flex mb={'10px'}>
-                                                                {/* <Box>
-                                                    <Text fontSize={'20px'}>Views</Text>
-                                                </Box> */}
                                                                 <Spacer />
                                                                 <Box>
                                                                     {userGroup.permissions.viewActions.create ? (

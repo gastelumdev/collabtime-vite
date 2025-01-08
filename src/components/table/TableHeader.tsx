@@ -204,7 +204,6 @@ const TableHeader = ({
             // If the width is greater than minumum allowed header width, resize based on the width calculation
             // else set it to the minumum header width
             th.children[1].style.position = 'absolute';
-            console.log({ table });
 
             if (width > minCellWidth) {
                 th.children[1].style.left = `${width}px`;
@@ -465,7 +464,6 @@ const TableHeader = ({
                                     // onDragEnd={() => handleDragEnd()}
                                     // onDrop={(event) => handleDrop(event, columnIndex)}
                                     // onDragLeave={() => handleDragLeave(columnIndex)}
-                                    // onClick={() => console.log('HEADER CLICKED')}
                                 >
                                     {/* {dataCollectionPermissions.columnActions.update || dataCollectionPermissions.columnActions.delete ? (
                                         <ColumnMenu

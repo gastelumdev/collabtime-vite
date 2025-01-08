@@ -81,8 +81,6 @@ const Table = ({ headers, rows, headerHeight = '30px', minCellWidth, columnResiz
                       };
             })
         );
-
-        console.log(currentRows[id]);
     }, []);
 
     const rearangeColumns = useCallback(
@@ -97,8 +95,6 @@ const Table = ({ headers, rows, headerHeight = '30px', minCellWidth, columnResiz
             if (event.target.checked) {
                 setCheckedRows([...checkedRows, rowIndex]);
             } else {
-                console.log({ rowIndex, checkedRows });
-
                 setCheckedRows((prevRows) => prevRows.filter((index) => index !== rowIndex));
             }
         },
@@ -106,81 +102,9 @@ const Table = ({ headers, rows, headerHeight = '30px', minCellWidth, columnResiz
     );
 
     const handleDeleteItemClick = useCallback((rows: any[]) => {
-        console.log(rows);
         setCurrentRows((prevRows) => prevRows.filter((_, index) => !rows.includes(index)));
         setCheckedRows([]);
     }, []);
-
-    // *********************** REORDER ROWS **********************************************
-    // ***********************************************************************************
-    // const [draggedRowIndex, setDraggedRowIndex] = useState<number | null>(null);
-    // const handleDragStart = useCallback(
-    //     (rowIndex: number) => {
-    //         setDraggedRowIndex(rowIndex);
-    //     },
-    //     [draggedRowIndex]
-    // );
-
-    // const handleDragEnter = useCallback(
-    //     (event: any, rowIndex: number) => {
-    //         // dragItemRefs[rowIndex].current.style.backgroundColor = 'red';
-
-    //         event.preventDefault();
-    //         const tds = dragOverItemRefs[rowIndex].current.children;
-
-    //         for (const td of tds) {
-    //             console.log(td);
-    //             td.style.borderTop = '2px solid #1a73e8';
-    //         }
-    //     },
-    //     [draggedRowIndex]
-    // );
-
-    // const handleDragOver = useCallback(
-    //     (event: any) => {
-    //         event.preventDefault();
-    //     },
-    //     [draggedRowIndex]
-    // );
-
-    // const handleDrop = useCallback(
-    //     (event: any, rowIndex: number) => {
-    //         console.log(rowIndex);
-    //         // dragItemRefs[rowIndex].current.style.backgroundColor = '#f5f5f5';
-
-    //         const tds = dragOverItemRefs[rowIndex].current.children;
-
-    //         for (const td of tds) {
-    //             td.style.borderTop = '1px solid #e0e0e0';
-    //         }
-    //     },
-    //     [draggedRowIndex]
-    // );
-
-    // const handleDragEnd = useCallback(
-    //     (rowIndex: number) => {
-    //         // Set all headers back to white
-    //         // for (let i = 0; i < currentRows.length; i++) {
-
-    //         dragItemRefs[rowIndex].current.style.backgroundColor = '#f5f5f5';
-    //     },
-    //     [draggedRowIndex]
-    // );
-
-    // const handleDragLeave = useCallback(
-    //     (rowIndex: number) => {
-    //         // If the header being dragged is over a header other than it's self,
-    //         // turn it white
-
-    //         const tds = dragOverItemRefs[rowIndex].current.children;
-
-    //         for (const td of tds) {
-    //             console.log(td);
-    //             td.style.borderTop = '1px solid #e0e0e0';
-    //         }
-    //     },
-    //     [draggedRowIndex]
-    // );
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
     const [_, setDropIndex] = useState<number | null>(null);
     const [draggedRow, setDraggedRow] = useState<any | null>(null);
@@ -191,9 +115,7 @@ const Table = ({ headers, rows, headerHeight = '30px', minCellWidth, columnResiz
         (e: any, rowIndex: number) => {
             e;
             if (activeIndex === null) {
-                console.log('No active index');
             } else {
-                console.log(rowIndex);
                 setDropIndex(rowIndex);
             }
         },
@@ -203,7 +125,6 @@ const Table = ({ headers, rows, headerHeight = '30px', minCellWidth, columnResiz
     const handleMouseDown = useCallback(
         (e: any, rowIndex: number) => {
             e;
-            console.log(rowIndex);
             setActiveIndex(rowIndex);
             setMouseDown(true);
         },
@@ -212,10 +133,8 @@ const Table = ({ headers, rows, headerHeight = '30px', minCellWidth, columnResiz
     const handleMouseLeave = useCallback(
         (e: any) => {
             e;
-            console.log(dragging);
             if (!dragging && mouseDown) {
                 setDraggedRow(currentRows[activeIndex as number]);
-                // console.log(activeIndex);
                 setCurrentRows((prevItems) => prevItems.filter((_: any, index: number) => index !== activeIndex));
 
                 const relativeDiv = document.createElement('div');
@@ -231,16 +150,6 @@ const Table = ({ headers, rows, headerHeight = '30px', minCellWidth, columnResiz
                 th.children[0].appendChild(relativeDiv);
 
                 tableElement.current.box = th;
-
-                // // absoluteDiv.style.left = '20px';
-                // absoluteDiv.style.top = `${e.clientY - 200}px`;
-
-                // e.target.appendChild(relativeDiv);
-
-                // const tr: any = document.getElementById(`row-${activeIndex}`);
-                // tr.style.display = 'inline-block';
-                // console.log({ clientY: e.clientY, offset: tr.offsetTop });
-                // tr.style.transform = `translateY(${e.clientY - tr.offsetTop - 200}px)`;
                 setDragging(true);
             }
         },
@@ -251,8 +160,6 @@ const Table = ({ headers, rows, headerHeight = '30px', minCellWidth, columnResiz
         (e: any) => {
             // absoluteDiv.style.left = '20px';
             tableElement.current.style.top = `${e.clientY - 200}px`;
-
-            // console.log(activeIndex);
         },
         [activeIndex]
     );
@@ -264,7 +171,6 @@ const Table = ({ headers, rows, headerHeight = '30px', minCellWidth, columnResiz
 
     const handleMouseUp = useCallback(() => {
         // Set the column widths
-        console.log(activeIndex);
         // const tr: any = document.getElementById(`row-${activeIndex}`);
         // tr.style.display = 'table-row';
         // tr.style.transform = `translateY(${0}px)`;
@@ -305,7 +211,6 @@ const Table = ({ headers, rows, headerHeight = '30px', minCellWidth, columnResiz
                     />
                     <tbody>
                         {currentRows.map((row, rowIndex) => {
-                            console.log('ROWS RENDERED');
                             return (
                                 <tr
                                     key={rowIndex}
@@ -337,7 +242,7 @@ const Table = ({ headers, rows, headerHeight = '30px', minCellWidth, columnResiz
                                     </td>
                                     {currentColumns.map((column, columnIndex) => {
                                         return (
-                                            <td key={columnIndex} onClick={() => console.log(`${rowIndex}`)}>
+                                            <td key={columnIndex}>
                                                 {column.type === 'text' ? (
                                                     <TextInput id={rowIndex} columnName={column.name} value={row.values[column.name]} onChange={onChange} />
                                                 ) : column.type === 'label' || column.type === 'priority' || column.type === 'status' ? (

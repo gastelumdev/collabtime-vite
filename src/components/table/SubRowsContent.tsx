@@ -2,8 +2,6 @@ import { Box } from '@chakra-ui/react';
 import React, { memo, useCallback, useEffect, useState } from 'react';
 
 const SubRowsContent = ({ rows, columns, gridTemplateColumns, opened }: { rows: any[]; columns: any[]; gridTemplateColumns: string; opened: boolean }) => {
-    // console.log({ rows, columns, gridTemplateColumns, opened });
-
     const [overId, setOverId] = useState<number | null>(null);
     const [draggedId, setDraggedId] = useState<number | null>(null);
 
@@ -46,7 +44,6 @@ const SubRowsContent = ({ rows, columns, gridTemplateColumns, opened }: { rows: 
 
     const handleDragOver = useCallback(
         (event: React.DragEvent<HTMLDivElement>, rowIndex: number) => {
-            console.log(draggedId !== null);
             if (draggedId !== null) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -60,7 +57,6 @@ const SubRowsContent = ({ rows, columns, gridTemplateColumns, opened }: { rows: 
     const handleDragEnd = useCallback(
         (event: any) => {
             event;
-            console.log({ draggedId, overId });
             const newRows = [...rows];
             const [draggedRow] = newRows.splice(draggedId as number, 1);
             newRows.splice(overId as number, 0, draggedRow);
@@ -75,7 +71,6 @@ const SubRowsContent = ({ rows, columns, gridTemplateColumns, opened }: { rows: 
             {opened ? (
                 <div style={{ border: '1px solid #edf2f7', padding: '16px 10px', backgroundColor: '#f3f7fc' }}>
                     {rows.map((subrow: any, rowIndex) => {
-                        console.log(gridTemplateColumns);
                         return (
                             <div
                                 key={rowIndex}

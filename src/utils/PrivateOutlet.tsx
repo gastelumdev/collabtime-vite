@@ -17,7 +17,6 @@ export function PrivateOutlet({ redirectPath = '/login' }: PrivateOutletProps) {
         const socket = io(import.meta.env.VITE_API_URL);
         socket.connect();
         socket.on('update', (item: any) => {
-            console.log('UPDATE IO');
             if (item && item.userId !== localStorage.getItem('userId')) {
                 toast({
                     title: 'Notification',
@@ -44,7 +43,6 @@ export function PrivateOutlet({ redirectPath = '/login' }: PrivateOutletProps) {
         }
 
         socket.on(localStorage.getItem('userId') || '', (item) => {
-            console.log('FROM USER ID IO');
             if (item && item.userId !== localStorage.getItem('userId')) {
                 toast({
                     title: 'Notification',

@@ -67,20 +67,15 @@ const relocateSectionOfList = (arr: any, draggedId: number, overId: number) => {
 export const swapItems = (arr: any, draggedId: number, overId: number, numberOfItems: number) => {
   let result;
 
-  console.log(arr)
-
   if (draggedId <= overId) {
     for (let i = 0; i < numberOfItems; i++) {
       result = relocateSectionOfList(arr, draggedId - 1, overId - 1);
     }
   } else {
-    console.log("DraggedId is greater than OverId")
     for (let i = 0; i < numberOfItems; i++) {
       result = relocateSectionOfList(arr, draggedId - 1 + i, overId - 1 + i);
     }
   }
-
-  console.log(result)
 
   return result;
 }

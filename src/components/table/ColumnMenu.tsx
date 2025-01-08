@@ -49,10 +49,6 @@ const ColumnMenu = ({
     const [updateColumn, { isLoading: columnIsUpdating }] = useUpdateColumnMutation();
     const [columnPermissions, setColumnPermissions] = useState(emptyColumnPermissions);
 
-    // useEffect(() => {
-    //     console.log({ columnName: column.name, appModel, appModelIsNull: appModel === null });
-    // }, [appModel]);
-
     useEffect(() => {
         if (dataCollectionPermissions) {
             const columnPermissions = dataCollectionPermissions.columns.find((item: any) => {
@@ -137,7 +133,7 @@ const ColumnMenu = ({
                             {index !== 0 &&
                             dataCollectionView === null &&
                             dataCollectionPermissions &&
-                            (dataCollectionPermissions.columnActions.update || columnPermissions.column.update) &&
+                            dataCollectionPermissions.columnActions.update &&
                             appModel === null &&
                             !column.permanent ? (
                                 <Box>
