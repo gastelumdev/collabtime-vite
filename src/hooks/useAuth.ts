@@ -9,8 +9,4 @@ export const useAuth = () => {
 }
 
 export const usePermissions = () => {
-  const user = useSelector(selectCurrentUser);
-
-  if (localStorage.getItem("workspaceId")) {
-  }
 }
