@@ -84,6 +84,15 @@ const View = ({
     }, [rows]);
 
     useEffect(() => {
+        let currentRows = [];
+        if (dateFilteredRows.length > 0) {
+            currentRows = dateFilteredRows;
+        } else {
+            if (rows !== undefined) {
+                currentRows = rows;
+            }
+        }
+
         if (filterValue === '') {
             if (dateFilteredRows.length > 0) {
                 setRowsState(dateFilteredRows);
@@ -93,7 +102,7 @@ const View = ({
         } else {
             console.log(dateFilteredRows);
             const columns = dataCollectionView.columns;
-            const filteredRows = dateFilteredRows?.filter((row) => {
+            const filteredRows = currentRows?.filter((row) => {
                 if (row.isEmpty) return false;
                 for (const column of columns) {
                     const value = row.values[column.name];
@@ -312,33 +321,35 @@ const View = ({
                     userGroup?.permissions.viewActions.delete ||
                     viewPermissions.view.update ||
                     viewPermissions.view.delete ? (
-                        <Menu>
-                            <MenuButton>
-                                <Text fontSize={'24px'}>
-                                    <PiDotsThreeVerticalBold />
-                                </Text>
-                            </MenuButton>
-                            <MenuList fontSize={'14px'}>
-                                {userGroup.permissions.viewActions.update || viewPermissions.view.update ? (
-                                    <Create
-                                        dataCollections={data!}
-                                        view={dataCollectionView}
-                                        dataCollection={data?.find((dc) => {
-                                            return dc._id == dataCollectionView.dataCollection;
-                                        })}
-                                    />
-                                ) : null}
-                                {userGroup.permissions.viewActions.delete || viewPermissions.view.delete ? (
-                                    <MenuItem
-                                        onClick={() => {
-                                            deleteDataCollectionView(dataCollectionView._id);
-                                        }}
-                                    >
-                                        <Text>Delete View</Text>
-                                    </MenuItem>
-                                ) : null}
-                            </MenuList>
-                        </Menu>
+                        <Box ml={'8px'} mt={'5px'}>
+                            <Menu>
+                                <MenuButton>
+                                    <Text fontSize={'24px'}>
+                                        <PiDotsThreeVerticalBold />
+                                    </Text>
+                                </MenuButton>
+                                <MenuList fontSize={'14px'}>
+                                    {userGroup.permissions.viewActions.update || viewPermissions.view.update ? (
+                                        <Create
+                                            dataCollections={data!}
+                                            view={dataCollectionView}
+                                            dataCollection={data?.find((dc) => {
+                                                return dc._id == dataCollectionView.dataCollection;
+                                            })}
+                                        />
+                                    ) : null}
+                                    {userGroup.permissions.viewActions.delete || viewPermissions.view.delete ? (
+                                        <MenuItem
+                                            onClick={() => {
+                                                deleteDataCollectionView(dataCollectionView._id);
+                                            }}
+                                        >
+                                            <Text>Delete View</Text>
+                                        </MenuItem>
+                                    ) : null}
+                                </MenuList>
+                            </Menu>
+                        </Box>
                     ) : null}
                 </Flex>
             </Box>
