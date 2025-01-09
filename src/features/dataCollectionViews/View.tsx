@@ -17,6 +17,7 @@ import {
     Flex,
     Input,
     InputGroup,
+    InputLeftAddon,
     InputLeftElement,
     Menu,
     MenuButton,
@@ -100,37 +101,18 @@ const View = ({
                 setRowsState(rows);
             }
         } else {
-            console.log(dateFilteredRows);
             const columns = dataCollectionView.columns;
             const filteredRows = currentRows?.filter((row) => {
                 if (row.isEmpty) return false;
                 for (const column of columns) {
                     const value = row.values[column.name];
                     const refs = row.refs[column.name];
-                    // console.log(column.name);
-                    // console.log(value);
-                    // console.log(row.refs);
-                    // console.log(refs);
 
                     if (value !== undefined) {
                         if (typeof value === 'string') {
                             const lowerCaseValue = value.toLowerCase();
 
-                            // if (column.type === 'date') {
-                            //     const valueDate = new Date(value);
-                            //     const startDate = new Date(startDateFilterValue);
-                            //     const endDate = new Date(endDateFilterValue);
-
-                            //     if (startDateFilterValue !== '' && endDateFilterValue !== '') {
-                            //         if (valueDate > startDate && valueDate < endDate) {
-                            //             console.log(valueDate);
-                            //             return true;
-                            //         }
-                            //     }
-                            // }
-
                             if (filterValue !== '' && lowerCaseValue.startsWith(filterValue.toLowerCase())) {
-                                console.log(value);
                                 return true;
                             }
                         } else {
@@ -139,7 +121,6 @@ const View = ({
                                     const personObjectKeys = Object.keys(person);
                                     for (const key of personObjectKeys) {
                                         if (filterValue !== '' && person[key as string].toLowerCase().startsWith(filterValue.toLowerCase())) {
-                                            console.log('People');
                                             return true;
                                         }
                                     }
@@ -182,7 +163,6 @@ const View = ({
 
                         if (startDateFilterValue !== '' && endDateFilterValue !== '') {
                             if (valueDate > startDate && valueDate < endDate) {
-                                console.log(valueDate);
                                 return true;
                             }
                         }
@@ -237,7 +217,7 @@ const View = ({
     return (
         <Box>
             <Divider />
-            <Box pt={'25px'} pb={'4px'} mt={'20px'}>
+            <Box pt={'25px'} pb={'8px'}>
                 <Flex>
                     <Text fontSize={'20px'} className="dmsans-400">
                         <span>{dataCollectionView.name}</span>
@@ -256,34 +236,36 @@ const View = ({
                         <Flex>
                             <Box>
                                 <Flex>
-                                    <Box pt={'10px'} mr={'8px'}>
-                                        <Text>Start:</Text>
-                                    </Box>
-                                    <Input
-                                        type={'date'}
-                                        value={startDateFilterValue}
-                                        color={startDateFilterValue === '' ? 'gray.300' : 'default'}
-                                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                            setStartDateFilterValue(event.target.value);
-                                        }}
-                                        isDisabled={startDateFilterValue !== '' && endDateFilterValue !== '' && filterValue !== ''}
-                                    />
+                                    <InputGroup size={'sm'} mr={'8px'}>
+                                        <InputLeftAddon>Start</InputLeftAddon>
+                                        <Input
+                                            type={'date'}
+                                            size={'sm'}
+                                            value={startDateFilterValue}
+                                            color={startDateFilterValue === '' ? 'gray.300' : 'default'}
+                                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                setStartDateFilterValue(event.target.value);
+                                            }}
+                                            isDisabled={startDateFilterValue !== '' && endDateFilterValue !== '' && filterValue !== ''}
+                                        />
+                                    </InputGroup>
                                 </Flex>
                             </Box>
                             <Box>
                                 <Flex>
-                                    <Box pt={'10px'} mx={'8px'}>
-                                        <Text>End:</Text>
-                                    </Box>
-                                    <Input
-                                        type={'date'}
-                                        value={endDateFilterValue}
-                                        color={endDateFilterValue === '' ? 'gray.300' : 'default'}
-                                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                            setEndDateFilterValue(event.target.value);
-                                        }}
-                                        isDisabled={startDateFilterValue !== '' && endDateFilterValue !== '' && filterValue !== ''}
-                                    />
+                                    <InputGroup size={'sm'}>
+                                        <InputLeftAddon>End</InputLeftAddon>
+                                        <Input
+                                            type={'date'}
+                                            size={'sm'}
+                                            value={endDateFilterValue}
+                                            color={endDateFilterValue === '' ? 'gray.300' : 'default'}
+                                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                setEndDateFilterValue(event.target.value);
+                                            }}
+                                            isDisabled={startDateFilterValue !== '' && endDateFilterValue !== '' && filterValue !== ''}
+                                        />
+                                    </InputGroup>
                                 </Flex>
                             </Box>
                         </Flex>
@@ -291,10 +273,13 @@ const View = ({
                     <Box mx={'8px'}>
                         <InputGroup>
                             <InputLeftElement pointerEvents="none">
-                                <Search2Icon color="gray.300" />
+                                <Text>
+                                    <Search2Icon color="gray.300" mb={'10px'} fontSize={'14px'} />
+                                </Text>
                             </InputLeftElement>
                             <Input
                                 value={filterValue}
+                                size={'sm'}
                                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                                     if (startDateFilterValue === '' || endDateFilterValue === '') {
                                         setStartDateFilterValue('');
@@ -307,6 +292,7 @@ const View = ({
                     </Box>
                     <Box>
                         <Button
+                            size={'sm'}
                             onClick={() => {
                                 setFilterValue('');
                                 setStartDateFilterValue('');
