@@ -10,10 +10,14 @@ import {
 import { useEffect, useState } from 'react';
 import {
     Box,
+    Button,
     Center,
     Container,
     Divider,
     Flex,
+    Input,
+    InputGroup,
+    InputLeftElement,
     Menu,
     MenuButton,
     MenuItem,
@@ -34,6 +38,8 @@ import { useParams } from 'react-router-dom';
 import DeviceCard from '../../components/Cards/DeviceCard';
 import { LiaDoorOpenSolid, LiaMicrochipSolid, LiaTemperatureLowSolid } from 'react-icons/lia';
 import { RiRemoteControlFill } from 'react-icons/ri';
+import { Search2Icon } from '@chakra-ui/icons';
+import { TRow } from '../../types';
 
 const View = ({
     dataCollectionView,
@@ -61,12 +67,127 @@ const View = ({
     const [updateDataCollectionView] = useUpdateDataCollectionViewMutation();
     const [updateDataCollectionViewNoRefetch] = useUpdateDataCollectionViewNoRefetchMutation();
     const { data } = useGetDataCollectionsQuery(null);
+    const [rowsState, setRowsState] = useState(rows);
+    const [dateFilteredRows, setDateFilteredRows] = useState<TRow[]>([]);
     const [viewPermissions, setViewPermissions] = useState(emptyViewPermissions);
     const [showCreateRow, setShowCreateRow] = useState(true);
+    const [filterValue, setFilterValue] = useState('');
+    const [startDateFilterValue, setStartDateFilterValue] = useState('');
+    const [endDateFilterValue, setEndDateFilterValue] = useState('');
 
     useEffect(() => {
         refetchRows();
     }, []);
+
+    useEffect(() => {
+        setRowsState(rows);
+    }, [rows]);
+
+    useEffect(() => {
+        if (filterValue === '') {
+            if (dateFilteredRows.length > 0) {
+                setRowsState(dateFilteredRows);
+            } else {
+                setRowsState(rows);
+            }
+        } else {
+            console.log(dateFilteredRows);
+            const columns = dataCollectionView.columns;
+            const filteredRows = dateFilteredRows?.filter((row) => {
+                if (row.isEmpty) return false;
+                for (const column of columns) {
+                    const value = row.values[column.name];
+                    const refs = row.refs[column.name];
+                    // console.log(column.name);
+                    // console.log(value);
+                    // console.log(row.refs);
+                    // console.log(refs);
+
+                    if (value !== undefined) {
+                        if (typeof value === 'string') {
+                            const lowerCaseValue = value.toLowerCase();
+
+                            // if (column.type === 'date') {
+                            //     const valueDate = new Date(value);
+                            //     const startDate = new Date(startDateFilterValue);
+                            //     const endDate = new Date(endDateFilterValue);
+
+                            //     if (startDateFilterValue !== '' && endDateFilterValue !== '') {
+                            //         if (valueDate > startDate && valueDate < endDate) {
+                            //             console.log(valueDate);
+                            //             return true;
+                            //         }
+                            //     }
+                            // }
+
+                            if (filterValue !== '' && lowerCaseValue.startsWith(filterValue.toLowerCase())) {
+                                console.log(value);
+                                return true;
+                            }
+                        } else {
+                            if (column.type === 'people') {
+                                for (const person of value) {
+                                    const personObjectKeys = Object.keys(person);
+                                    for (const key of personObjectKeys) {
+                                        if (filterValue !== '' && person[key as string].toLowerCase().startsWith(filterValue.toLowerCase())) {
+                                            console.log('People');
+                                            return true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (refs !== undefined) {
+                        if (column.type === 'reference') {
+                            for (const ref of refs) {
+                                if (filterValue !== '' && ref.values[column.dataCollectionRefLabel].toLowerCase().startsWith(filterValue.toLowerCase())) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+                return false;
+            });
+
+            if (filteredRows !== undefined && filteredRows.length > 0) {
+                setRowsState(filteredRows);
+            } else {
+                setRowsState([]);
+            }
+        }
+    }, [rows, filterValue, dateFilteredRows]);
+
+    useEffect(() => {
+        const columns = dataCollectionView.columns;
+        if (startDateFilterValue !== '' && endDateFilterValue !== '') {
+            const filteredRows: TRow[] | undefined = rows?.filter((row) => {
+                for (const column of columns) {
+                    const value = row.values[column.name];
+                    if (column.type === 'date') {
+                        const valueDate = new Date(value);
+                        const startDate = new Date(startDateFilterValue);
+                        const endDate = new Date(endDateFilterValue);
+
+                        if (startDateFilterValue !== '' && endDateFilterValue !== '') {
+                            if (valueDate > startDate && valueDate < endDate) {
+                                console.log(valueDate);
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            });
+
+            if (filteredRows !== undefined && filteredRows.length > 0) {
+                setDateFilteredRows(filteredRows);
+                setRowsState(filteredRows);
+            }
+        }
+    }, [rows, startDateFilterValue, endDateFilterValue]);
 
     useEffect(() => {
         const socket = io(import.meta.env.VITE_API_URL);
@@ -122,7 +243,71 @@ const View = ({
                         </span>
                     </Text>
                     <Spacer />
-
+                    <Box>
+                        <Flex>
+                            <Box>
+                                <Flex>
+                                    <Box pt={'10px'} mr={'8px'}>
+                                        <Text>Start:</Text>
+                                    </Box>
+                                    <Input
+                                        type={'date'}
+                                        value={startDateFilterValue}
+                                        color={startDateFilterValue === '' ? 'gray.300' : 'default'}
+                                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                            setStartDateFilterValue(event.target.value);
+                                        }}
+                                        isDisabled={startDateFilterValue !== '' && endDateFilterValue !== '' && filterValue !== ''}
+                                    />
+                                </Flex>
+                            </Box>
+                            <Box>
+                                <Flex>
+                                    <Box pt={'10px'} mx={'8px'}>
+                                        <Text>End:</Text>
+                                    </Box>
+                                    <Input
+                                        type={'date'}
+                                        value={endDateFilterValue}
+                                        color={endDateFilterValue === '' ? 'gray.300' : 'default'}
+                                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                            setEndDateFilterValue(event.target.value);
+                                        }}
+                                        isDisabled={startDateFilterValue !== '' && endDateFilterValue !== '' && filterValue !== ''}
+                                    />
+                                </Flex>
+                            </Box>
+                        </Flex>
+                    </Box>
+                    <Box mx={'8px'}>
+                        <InputGroup>
+                            <InputLeftElement pointerEvents="none">
+                                <Search2Icon color="gray.300" />
+                            </InputLeftElement>
+                            <Input
+                                value={filterValue}
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                    if (startDateFilterValue === '' || endDateFilterValue === '') {
+                                        setStartDateFilterValue('');
+                                        setEndDateFilterValue('');
+                                    }
+                                    setFilterValue(event.target.value);
+                                }}
+                            />
+                        </InputGroup>
+                    </Box>
+                    <Box>
+                        <Button
+                            onClick={() => {
+                                setFilterValue('');
+                                setStartDateFilterValue('');
+                                setEndDateFilterValue('');
+                                setDateFilteredRows([]);
+                            }}
+                        >
+                            Clear
+                        </Button>
+                    </Box>
                     {userGroup.permissions.viewActions.update ||
                     userGroup?.permissions.viewActions.delete ||
                     viewPermissions.view.update ||
@@ -244,7 +429,7 @@ const View = ({
                                     <Box borderBottom={'1px solid #EDF2F7'}>
                                         <DataCollection
                                             showDoneRows={true}
-                                            rowsProp={rows}
+                                            rowsProp={rowsState}
                                             dataCollectionView={dataCollectionView}
                                             rowsAreDraggable={false}
                                             hasCheckboxOptions={false}
@@ -266,7 +451,7 @@ const View = ({
                         <Box borderBottom={'1px solid #EDF2F7'}>
                             <DataCollection
                                 showDoneRows={true}
-                                rowsProp={rows}
+                                rowsProp={rowsState}
                                 dataCollectionView={dataCollectionView}
                                 rowsAreDraggable={false}
                                 hasCheckboxOptions={false}

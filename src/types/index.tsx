@@ -158,6 +158,7 @@ export type TRow = {
     isParent?: boolean;
     fromView?: boolean;
     isEmpty?: boolean;
+    refs?: any;
 };
 
 export type TCell = {
