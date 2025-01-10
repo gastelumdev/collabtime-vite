@@ -106,7 +106,10 @@ const View = ({
                 if (row.isEmpty) return false;
                 for (const column of columns) {
                     const value = row.values[column.name];
-                    const refs = row.refs[column.name];
+                    let refs = [];
+                    if (row.refs !== undefined) {
+                        refs = row.refs[column.name];
+                    }
 
                     if (value !== undefined) {
                         if (typeof value === 'string') {
@@ -215,7 +218,7 @@ const View = ({
     }, [rows, viewPermissions, dataCollectionView]);
 
     return (
-        <Box>
+        <Box mb={'50px'}>
             <Divider />
             <Box pt={'25px'} pb={'8px'}>
                 <Flex>
@@ -351,7 +354,7 @@ const View = ({
                                 <TabPanel>
                                     <Container maxW={'5xl'} mt={1}>
                                         <Flex flexWrap="wrap" gridGap={6} justify={'start'}>
-                                            {rows.map((row: any) => {
+                                            {rowsState?.map((row: any) => {
                                                 if (row.isEmpty) return null;
                                                 let min_warning = row?.values['min_warning'];
                                                 let min_critical = row?.values['min_critical'];

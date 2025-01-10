@@ -5,6 +5,8 @@ import Row from './Row';
 // import { useUpdateRowMutation } from '../../app/services/api';
 import { Box } from '@chakra-ui/react';
 import { TRow } from '../../types';
+import { useGetOneWorkspaceQuery } from '../../app/services/api';
+import { useParams } from 'react-router-dom';
 
 interface IProps {
     rows: any[];
@@ -64,8 +66,10 @@ const TableContent = ({
     isArchives = false,
     active = true,
 }: IProps) => {
+    const { id } = useParams();
     const ref = useRef<HTMLDivElement | null>(null);
     const [gridTemplateColumns, setGridTemplateColumns] = useState('');
+    const { data: workspace } = useGetOneWorkspaceQuery(id as string);
 
     const [currentRows, setCurrentRows] = useState(rows);
 
@@ -417,7 +421,7 @@ const TableContent = ({
             <ViewportList viewportRef={ref} items={currentRows} overscan={25}>
                 {(row, rowIndex) => {
                     const isLast = rowIndex === rows.length - 1 && row.isEmpty;
-                    if (isLast && !permissions.rows.create) return null;
+                    if ((isLast && !permissions.rows.create) || (isLast && workspace?.type === 'integration')) return null;
                     return (
                         <Box key={row._id}>
                             <div className="item">

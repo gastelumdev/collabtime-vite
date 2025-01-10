@@ -201,7 +201,7 @@ const ViewList = ({ active = true }: { allowed?: boolean; active: boolean }) => 
                                                                 </Center>
                                                             ) : null}
                                                         </Box>
-                                                        <Box>
+                                                        <Box mb={'100px'}>
                                                             {/* {isFetchingViews ? (
                                                                 <Box>
                                                                     <Text>Is loading...</Text>
