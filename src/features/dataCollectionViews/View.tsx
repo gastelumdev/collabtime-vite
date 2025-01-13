@@ -39,7 +39,7 @@ import { useParams } from 'react-router-dom';
 import DeviceCard from '../../components/Cards/DeviceCard';
 import { LiaDoorOpenSolid, LiaMicrochipSolid, LiaTemperatureLowSolid } from 'react-icons/lia';
 import { RiRemoteControlFill } from 'react-icons/ri';
-import { Search2Icon } from '@chakra-ui/icons';
+import { CloseIcon, Search2Icon } from '@chakra-ui/icons';
 import { TRow } from '../../types';
 import './view.css';
 
@@ -219,6 +219,13 @@ const View = ({
         }
     }, [rows, viewPermissions, dataCollectionView]);
 
+    const resetSearch = () => {
+        setFilterValue('');
+        setStartDateFilterValue('');
+        setEndDateFilterValue('');
+        setDateFilteredRows([]);
+    };
+
     return (
         <Box mb={'50px'}>
             <Divider />
@@ -237,21 +244,19 @@ const View = ({
                         </span>
                     </Text>
                     <Spacer />
-                    <Button
-                        size={'sm'}
-                        mr={showSearch ? '8px' : '0px'}
-                        onClick={() => {
-                            setShowSearch(!showSearch);
-                        }}
-                    >
-                        {showSearch ? (
-                            <Text fontSize={'16px'} mb={'2px'}>
-                                x
-                            </Text>
-                        ) : (
-                            'Search'
-                        )}
-                    </Button>
+                    {!showSearch ? (
+                        <Button
+                            size={'sm'}
+                            variant={'outline'}
+                            pl={'20px'}
+                            leftIcon={<Search2Icon />}
+                            mr={showSearch ? '8px' : '0px'}
+                            onClick={() => {
+                                setShowSearch(!showSearch);
+                                resetSearch();
+                            }}
+                        ></Button>
+                    ) : null}
                     <Box className={`search-drawer ${!showSearch ? 'search-drawer__hide' : ''}`}>
                         <Flex>
                             <Box>
@@ -312,19 +317,29 @@ const View = ({
                                     />
                                 </InputGroup>
                             </Box>
-                            <Box>
+                            <Box mr={'8px'}>
                                 <Button
                                     size={'sm'}
                                     onClick={() => {
-                                        setFilterValue('');
-                                        setStartDateFilterValue('');
-                                        setEndDateFilterValue('');
-                                        setDateFilteredRows([]);
+                                        resetSearch();
                                     }}
                                 >
                                     Clear
                                 </Button>
                             </Box>
+                            {showSearch ? (
+                                <Button
+                                    size={'sm'}
+                                    variant={'outline'}
+                                    pl={'20px'}
+                                    color={'gray'}
+                                    leftIcon={<CloseIcon />}
+                                    // mr={showSearch ? '8px' : '0px'}
+                                    onClick={() => {
+                                        setShowSearch(!showSearch);
+                                    }}
+                                ></Button>
+                            ) : null}
                         </Flex>
                     </Box>
                     {userGroup.permissions.viewActions.update ||
