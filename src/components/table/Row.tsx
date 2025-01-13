@@ -401,9 +401,11 @@ const Row = ({
                                                     permissions={dataCollectionPermissions}
                                                 />
                                             </Box>
-                                            <Box pt={'6px'} ml={'10px'} cursor={'pointer'}>
-                                                <ClearRow row={row} columns={columns} handleChange={handleChange} />
-                                            </Box>
+                                            {dataCollectionPermissions.rows.delete ? (
+                                                <Box pt={'6px'} ml={'10px'} cursor={'pointer'}>
+                                                    <ClearRow row={row} columns={columns} handleChange={handleChange} />
+                                                </Box>
+                                            ) : null}
                                             {/* {row.position} */}
                                             {/* {row.isParent ? (
                                             <Button
