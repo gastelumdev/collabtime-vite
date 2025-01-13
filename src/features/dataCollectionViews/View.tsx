@@ -41,6 +41,7 @@ import { LiaDoorOpenSolid, LiaMicrochipSolid, LiaTemperatureLowSolid } from 'rea
 import { RiRemoteControlFill } from 'react-icons/ri';
 import { Search2Icon } from '@chakra-ui/icons';
 import { TRow } from '../../types';
+import './view.css';
 
 const View = ({
     dataCollectionView,
@@ -75,6 +76,7 @@ const View = ({
     const [filterValue, setFilterValue] = useState('');
     const [startDateFilterValue, setStartDateFilterValue] = useState('');
     const [endDateFilterValue, setEndDateFilterValue] = useState('');
+    const [showSearch, setShowSearch] = useState(false);
 
     useEffect(() => {
         refetchRows();
@@ -235,76 +237,95 @@ const View = ({
                         </span>
                     </Text>
                     <Spacer />
-                    <Box>
+                    <Button
+                        size={'sm'}
+                        mr={showSearch ? '8px' : '0px'}
+                        onClick={() => {
+                            setShowSearch(!showSearch);
+                        }}
+                    >
+                        {showSearch ? (
+                            <Text fontSize={'16px'} mb={'2px'}>
+                                x
+                            </Text>
+                        ) : (
+                            'Search'
+                        )}
+                    </Button>
+                    <Box className={`search-drawer ${!showSearch ? 'search-drawer__hide' : ''}`}>
                         <Flex>
                             <Box>
                                 <Flex>
-                                    <InputGroup size={'sm'} mr={'8px'}>
-                                        <InputLeftAddon>Start</InputLeftAddon>
-                                        <Input
-                                            type={'date'}
-                                            size={'sm'}
-                                            value={startDateFilterValue}
-                                            color={startDateFilterValue === '' ? 'gray.300' : 'default'}
-                                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                                setStartDateFilterValue(event.target.value);
-                                            }}
-                                            isDisabled={startDateFilterValue !== '' && endDateFilterValue !== '' && filterValue !== ''}
-                                        />
-                                    </InputGroup>
+                                    <Box>
+                                        <Flex>
+                                            <InputGroup size={'sm'} mr={'8px'}>
+                                                <InputLeftAddon>Start</InputLeftAddon>
+                                                <Input
+                                                    type={'date'}
+                                                    size={'sm'}
+                                                    value={startDateFilterValue}
+                                                    color={startDateFilterValue === '' ? 'gray.300' : 'default'}
+                                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                        setStartDateFilterValue(event.target.value);
+                                                    }}
+                                                    isDisabled={startDateFilterValue !== '' && endDateFilterValue !== '' && filterValue !== ''}
+                                                />
+                                            </InputGroup>
+                                        </Flex>
+                                    </Box>
+                                    <Box>
+                                        <Flex>
+                                            <InputGroup size={'sm'}>
+                                                <InputLeftAddon>End</InputLeftAddon>
+                                                <Input
+                                                    type={'date'}
+                                                    size={'sm'}
+                                                    value={endDateFilterValue}
+                                                    color={endDateFilterValue === '' ? 'gray.300' : 'default'}
+                                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                        setEndDateFilterValue(event.target.value);
+                                                    }}
+                                                    isDisabled={startDateFilterValue !== '' && endDateFilterValue !== '' && filterValue !== ''}
+                                                />
+                                            </InputGroup>
+                                        </Flex>
+                                    </Box>
                                 </Flex>
+                            </Box>
+                            <Box mx={'8px'}>
+                                <InputGroup>
+                                    <InputLeftElement pointerEvents="none">
+                                        <Text>
+                                            <Search2Icon color="gray.300" mb={'10px'} fontSize={'14px'} />
+                                        </Text>
+                                    </InputLeftElement>
+                                    <Input
+                                        value={filterValue}
+                                        size={'sm'}
+                                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                            if (startDateFilterValue === '' || endDateFilterValue === '') {
+                                                setStartDateFilterValue('');
+                                                setEndDateFilterValue('');
+                                            }
+                                            setFilterValue(event.target.value);
+                                        }}
+                                    />
+                                </InputGroup>
                             </Box>
                             <Box>
-                                <Flex>
-                                    <InputGroup size={'sm'}>
-                                        <InputLeftAddon>End</InputLeftAddon>
-                                        <Input
-                                            type={'date'}
-                                            size={'sm'}
-                                            value={endDateFilterValue}
-                                            color={endDateFilterValue === '' ? 'gray.300' : 'default'}
-                                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                                setEndDateFilterValue(event.target.value);
-                                            }}
-                                            isDisabled={startDateFilterValue !== '' && endDateFilterValue !== '' && filterValue !== ''}
-                                        />
-                                    </InputGroup>
-                                </Flex>
-                            </Box>
-                        </Flex>
-                    </Box>
-                    <Box mx={'8px'}>
-                        <InputGroup>
-                            <InputLeftElement pointerEvents="none">
-                                <Text>
-                                    <Search2Icon color="gray.300" mb={'10px'} fontSize={'14px'} />
-                                </Text>
-                            </InputLeftElement>
-                            <Input
-                                value={filterValue}
-                                size={'sm'}
-                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                    if (startDateFilterValue === '' || endDateFilterValue === '') {
+                                <Button
+                                    size={'sm'}
+                                    onClick={() => {
+                                        setFilterValue('');
                                         setStartDateFilterValue('');
                                         setEndDateFilterValue('');
-                                    }
-                                    setFilterValue(event.target.value);
-                                }}
-                            />
-                        </InputGroup>
-                    </Box>
-                    <Box>
-                        <Button
-                            size={'sm'}
-                            onClick={() => {
-                                setFilterValue('');
-                                setStartDateFilterValue('');
-                                setEndDateFilterValue('');
-                                setDateFilteredRows([]);
-                            }}
-                        >
-                            Clear
-                        </Button>
+                                        setDateFilteredRows([]);
+                                    }}
+                                >
+                                    Clear
+                                </Button>
+                            </Box>
+                        </Flex>
                     </Box>
                     {userGroup.permissions.viewActions.update ||
                     userGroup?.permissions.viewActions.delete ||

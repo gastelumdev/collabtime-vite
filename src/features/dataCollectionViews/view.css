@@ -1,0 +1,11 @@
+.search-drawer {
+    max-width: 700px;
+    display: block;
+    visibility: visible;
+    transition: max-width 1s, display 2s;
+}
+
+.search-drawer__hide {
+    max-width: 0;
+    display: none;
+}
