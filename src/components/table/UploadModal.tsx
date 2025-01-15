@@ -18,25 +18,32 @@ import {
     useDisclosure,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { useCreateDocumentMutation, useGetDocumentsQuery, useUploadDocsMutation, useUploadPersistedDocsMutation } from '../../app/services/api';
+import {
+    useCreateDocumentMutation,
+    // useDeleteDocumentMutation,
+    useGetDocumentsQuery,
+    useUploadDocsMutation,
+    useUploadPersistedDocsMutation,
+} from '../../app/services/api';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
 import { FaRegFileAlt, FaRegFileExcel, FaRegImage } from 'react-icons/fa';
 import { TDocument } from '../../types';
 import { RiAttachmentLine } from 'react-icons/ri';
-import { CloseIcon } from '@chakra-ui/icons';
+// import { CloseIcon } from '@chakra-ui/icons';
 import DocDrawer from './DocDrawer';
 import UpdateDocumentModal from './UpdateDocumentModal';
 import { emptyDataCollectionPermissions } from '../../features/workspaces/UserGroups';
+import DeleteFileAlert from '../../features/documents/DeleteFileAlert';
 
 interface IProps {
     rowDocuments: TDocument[];
     getDocs: any;
     getUpdatedDoc: any;
-    removeDoc: any;
+    removeDoc?: any;
     permissions?: any;
 }
 
-const UploadModal = ({ rowDocuments, getDocs, getUpdatedDoc, removeDoc, permissions = emptyDataCollectionPermissions }: IProps) => {
+const UploadModal = ({ rowDocuments, getDocs, getUpdatedDoc, permissions = emptyDataCollectionPermissions }: IProps) => {
     const { data: documents } = useGetDocumentsQuery(null);
     const { isOpen: uploadIsOpen, onOpen: uploadOnOpen, onClose: uploadOnClose } = useDisclosure();
 
@@ -176,19 +183,19 @@ const UploadModal = ({ rowDocuments, getDocs, getUpdatedDoc, removeDoc, permissi
         getUpdatedDoc(document);
     };
 
-    const handleRemoveDoc = (document: TDocument) => {
-        setCurrentFiles((prev) =>
-            prev.filter((prevDoc) => {
-                return prevDoc._id !== document._id;
-            })
-        );
+    // const handleRemoveDoc = (document: TDocument) => {
+    //     setCurrentFiles((prev) =>
+    //         prev.filter((prevDoc) => {
+    //             return prevDoc._id !== document._id;
+    //         })
+    //     );
 
-        setExistingFiles((prevDocs: any) => {
-            return [...prevDocs, document];
-        });
+    //     setExistingFiles((prevDocs: any) => {
+    //         return [...prevDocs, document];
+    //     });
 
-        removeDoc(document);
-    };
+    //     removeDoc(document);
+    // };
 
     return (
         <>
@@ -211,7 +218,7 @@ const UploadModal = ({ rowDocuments, getDocs, getUpdatedDoc, removeDoc, permissi
                     <RiAttachmentLine />
                 </Text>
             </Box>
-            <Modal isOpen={uploadIsOpen} onClose={uploadOnClose} size={'2xl'}>
+            <Modal isOpen={uploadIsOpen} onClose={uploadOnClose} size={'6xl'}>
                 <ModalOverlay onClick={handleUploadOnClose} />
                 <ModalContent>
                     <ModalCloseButton onClick={handleUploadOnClose} />
@@ -235,11 +242,13 @@ const UploadModal = ({ rowDocuments, getDocs, getUpdatedDoc, removeDoc, permissi
                                             </Box>
                                             <Spacer />
                                             {permissions.docs.delete ? (
-                                                <Box pt={'4px'} cursor={'pointer'} onClick={() => handleRemoveDoc(rowDoc)}>
-                                                    <Text fontSize={'10px'}>
-                                                        <CloseIcon />
-                                                    </Text>
-                                                </Box>
+                                                // <Box pt={'4px'} cursor={'pointer'} onClick={() => handleRemoveDoc(rowDoc)}>
+                                                //     <Text fontSize={'10px'}>
+                                                //         <CloseIcon />
+                                                //     </Text>
+
+                                                // </Box>
+                                                <DeleteFileAlert document={rowDoc} />
                                             ) : null}
                                         </Flex>
                                     );
@@ -258,7 +267,7 @@ const UploadModal = ({ rowDocuments, getDocs, getUpdatedDoc, removeDoc, permissi
                             <Divider mt={'20px'} mb={'20px'} />
                             <ModalBody>
                                 <Grid templateColumns={'50% 48%'} gap={3}>
-                                    <GridItem h={'160px'} border={'1px solid #edf1f6'} borderRadius={'5px'} p={'10px'}>
+                                    <GridItem h={'260px'} border={'1px solid #edf1f6'} borderRadius={'5px'} p={'10px'}>
                                         <Box>
                                             {createIsLoading ? <Progress size="xs" isIndeterminate /> : null}
                                             <Center>

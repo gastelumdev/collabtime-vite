@@ -72,11 +72,24 @@ const ViewOne = () => {
         socket.on('notify', (data) => {
             if (data.allAssigneeIds.includes(localStorage.getItem('userId'))) {
                 if (data.event.actionBy._id !== localStorage.getItem('userId') && data.event.workspace === localStorage.getItem('workspaceId')) {
+                    console.log(data);
                     toast({
                         title: `Update`,
                         description: data.event.message,
                         duration: 10000,
                         status: 'info',
+                        isClosable: true,
+                        position: 'bottom-right',
+                    });
+                }
+
+                if (data.event.type === 'error') {
+                    console.log(data);
+                    toast({
+                        title: `Update`,
+                        description: data.event.message,
+                        duration: 10000,
+                        status: 'error',
                         isClosable: true,
                         position: 'bottom-right',
                     });

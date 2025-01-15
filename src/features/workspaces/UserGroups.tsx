@@ -1462,6 +1462,7 @@ const Users = () => {
                         </Thead>
                         <Tbody>
                             {users?.map((user: any) => {
+                                console.log(user);
                                 let defaultUserGroupId = '';
                                 const defaultUserGroup = userGroups.find((item: any) => {
                                     return item.users.includes(user._id);

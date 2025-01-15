@@ -432,43 +432,53 @@ const Row = ({
                                     let max_warning = row?.values['max_warning'];
                                     let max_critical = row?.values['max_critical'];
 
+                                    // Get permissions for columns
                                     const columnsPermissions = dataCollectionPermissions.columns.find((item: any) => {
                                         return item.name === column?.name;
                                     });
 
+                                    // If not allowd to view this column dont show it
                                     if (columnsPermissions !== undefined && !columnsPermissions?.permissions.column.view) {
                                         return null;
                                     }
 
+                                    // Create an array of the columns the user has permissions for
                                     let labels = column?.labels.filter((label: any) => {
                                         if (columnsPermissions !== undefined) {
                                             return columnsPermissions.permissions.labels.includes(label.title);
                                         }
                                     });
-
+                                    // If there are no permissions for labels, show all labels
                                     if (labels !== undefined && labels.length === 0) {
                                         labels = column?.labels;
                                     }
 
+                                    // Editable is used for text inputs
                                     let editable = false;
+                                    // if it is not an app model and user has permission to update field set it editable
                                     if (columnsPermissions?.permissions.column.update && appModel === null) {
                                         editable = true;
+                                        // if it is an app model and it is not a primary column set it to editable
                                     } else if (appModel !== null && (column?.primary === undefined || !column?.primary)) {
                                         editable = true;
                                     }
-                                    if (column?.autoIncremented) {
+                                    // if the column values are auto incremented set editable to false
+                                    if (column?.autoIncremented && !row.isEmpty) {
                                         editable = false;
                                     }
 
+                                    // Allowed is used for permissions to an input
                                     let allowed = columnsPermissions === undefined || columnsPermissions?.permissions.column.update;
-
+                                    // if it is a data collection and is the primary column, set it as a link to redirect to row app
                                     let isCustomLink = column?.primary !== undefined ? column?.primary && dataCollectionView : false;
+                                    // used to set the text input to look and act disabled
+                                    // currently used for the integration rows
+                                    let isDisabled = false;
 
                                     let bgColor = 'default';
                                     let textColor = 'black';
                                     let fontWeight = 'semibold';
                                     let position = 'left';
-                                    let isDisabled = false;
 
                                     if (workspace?.type === 'integration') {
                                         position = 'center';
@@ -548,6 +558,11 @@ const Row = ({
                                             allowed = true;
                                             editable = true;
                                         }
+
+                                        if (row.isEmpty) {
+                                            allowed = true;
+                                            editable = true;
+                                        }
                                     }
 
                                     return (
@@ -606,7 +621,7 @@ const Row = ({
                                                     value={row.values !== undefined ? value : null}
                                                     onChange={onChange}
                                                     allowed={allowed || editable || (column?.autoIncremented !== undefined && !column?.autoIncremented)}
-                                                    isCustomLink={isCustomLink}
+                                                    isCustomLink={isCustomLink && !row.isEmpty}
                                                     bgColor={bgColor}
                                                     textColor={textColor}
                                                     fontWeight={fontWeight}
