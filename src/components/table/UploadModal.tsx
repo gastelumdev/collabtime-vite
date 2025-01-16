@@ -317,7 +317,7 @@ const UploadModal = ({ rowDocuments, getDocs, getUpdatedDoc, removeDoc, permissi
                             </Grid>
                         ) : null}
                         <Grid templateColumns={'50% 48%'} gap={3} mt={3}>
-                            <GridItem h={'500px'} p={'10px'}>
+                            <GridItem p={'10px'}>
                                 <Text fontWeight={'semibold'} mb={'10px'}>
                                     Uploads
                                 </Text>
