@@ -34,8 +34,9 @@ const DeleteFileAlert = ({ document, fromRow = false, handleRemoveDoc }: IProps)
     };
     return (
         <>
-            <Text p={'2px'} ml={'5px'} onClick={deleteOnOpen} cursor={'pointer'} color={'white'} fontSize={'14px'} _hover={{ color: 'white' }}>
+            <Text onClick={deleteOnOpen} cursor={'pointer'} color={'gray'} fontSize={'14px'} _hover={{ color: 'red' }}>
                 <FaRegTrashAlt />
+                {/* <CloseIcon /> */}
             </Text>
             <AlertDialog isOpen={deleteIsOpen} leastDestructiveRef={cancelRef} onClose={deleteOnClose}>
                 <AlertDialogOverlay>
