@@ -60,7 +60,7 @@ const PeopleMenu = ({ columnName, people, values = [], onChange, allowed = false
     };
 
     return (
-        <Box border={border ? border : 'none'}>
+        <Box border={border ? border : 'none'} px={'10px'}>
             {active && allowed ? (
                 <Box>
                     <Popover isOpen={active} onClose={handleClose}>
@@ -73,6 +73,8 @@ const PeopleMenu = ({ columnName, people, values = [], onChange, allowed = false
                                 // bgColor={labelColor}
                                 color={labels.length > 0 ? 'black' : 'lightgray'}
                                 borderRadius={'0'}
+                                overflow={'hidden'}
+                                textOverflow={'ellipsis'}
                                 fontWeight={fontWeight}
                                 variant={'unstyled'}
                                 _hover={{ bgColor: labelColor }}
@@ -145,6 +147,8 @@ const PeopleMenu = ({ columnName, people, values = [], onChange, allowed = false
                         h={'29px'}
                         fontSize={'12px'}
                         fontWeight={fontWeight}
+                        overflow={'hidden'}
+                        textOverflow={'ellipsis'}
                         onMouseDown={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
                             event;
                             setActive(true);
@@ -161,6 +165,8 @@ const PeopleMenu = ({ columnName, people, values = [], onChange, allowed = false
                             fontWeight={fontWeight}
                             textAlign={'center'}
                             paddingY={'4px'}
+                            overflow={'hidden'}
+                            textOverflow={'ellipsis'}
                             cursor={allowed ? 'pointer' : 'default'}
                             onMouseDown={(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
                                 event;
