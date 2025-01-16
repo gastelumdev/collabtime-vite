@@ -33,6 +33,7 @@ import { CloseIcon } from '@chakra-ui/icons';
 import DocDrawer from './DocDrawer';
 import UpdateDocumentModal from './UpdateDocumentModal';
 import { emptyDataCollectionPermissions } from '../../features/workspaces/UserGroups';
+import DeleteFileAlert from '../../features/documents/DeleteFileAlert';
 // import DeleteFileAlert from '../../features/documents/DeleteFileAlert';
 
 interface IProps {
@@ -242,13 +243,15 @@ const UploadModal = ({ rowDocuments, getDocs, getUpdatedDoc, removeDoc, permissi
                                             </Box>
                                             <Spacer />
                                             {permissions.docs.delete ? (
-                                                <Box pt={'4px'} cursor={'pointer'} onClick={() => handleRemoveDoc(rowDoc)}>
-                                                    <Text fontSize={'10px'}>
-                                                        <CloseIcon />
-                                                    </Text>
-                                                </Box>
-                                            ) : // <DeleteFileAlert document={rowDoc} />
-                                            null}
+                                                <>
+                                                    <Box pt={'4px'} cursor={'pointer'} onClick={() => handleRemoveDoc(rowDoc)}>
+                                                        <Text fontSize={'10px'}>
+                                                            <CloseIcon />
+                                                        </Text>
+                                                    </Box>
+                                                    <DeleteFileAlert document={rowDoc} fromRow={true} handleRemoveDoc={handleRemoveDoc} />
+                                                </>
+                                            ) : null}
                                         </Flex>
                                     );
                                 })

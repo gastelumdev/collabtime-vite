@@ -16,9 +16,11 @@ import { useRef } from 'react';
 
 interface IProps {
     document: TDocument;
+    fromRow?: boolean;
+    handleRemoveDoc?: any;
 }
 
-const DeleteFileAlert = ({ document }: IProps) => {
+const DeleteFileAlert = ({ document, fromRow = false, handleRemoveDoc }: IProps) => {
     const cancelRef = useRef<any>();
     const { isOpen: deleteIsOpen, onOpen: deleteOnOpen, onClose: deleteOnClose } = useDisclosure();
     const [deleteDocument] = useDeleteDocumentMutation();
@@ -26,12 +28,13 @@ const DeleteFileAlert = ({ document }: IProps) => {
     const handleDeleteDocument = (document: TDocument) => {
         console.log(document);
         deleteDocument(document);
+        if (fromRow) handleRemoveDoc(document);
         deleteOnClose();
         // setDuplicateFiles([]);
     };
     return (
         <>
-            <Text p={'2px'} ml={'5px'} onClick={deleteOnOpen} cursor={'pointer'} color={'rgb(123, 128, 154)'} fontSize={'14px'} _hover={{ color: 'red' }}>
+            <Text p={'2px'} ml={'5px'} onClick={deleteOnOpen} cursor={'pointer'} color={'white'} fontSize={'14px'} _hover={{ color: 'white' }}>
                 <FaRegTrashAlt />
             </Text>
             <AlertDialog isOpen={deleteIsOpen} leastDestructiveRef={cancelRef} onClose={deleteOnClose}>
