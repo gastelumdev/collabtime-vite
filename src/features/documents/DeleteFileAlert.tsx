@@ -8,11 +8,11 @@ import {
     Button,
     Text,
     useDisclosure,
-} from "@chakra-ui/react";
-import { FaRegTrashAlt } from "react-icons/fa";
-import { useDeleteDocumentMutation } from "../../app/services/api";
-import { TDocument } from "../../types";
-import { useRef } from "react";
+} from '@chakra-ui/react';
+import { FaRegTrashAlt } from 'react-icons/fa';
+import { useDeleteDocumentMutation } from '../../app/services/api';
+import { TDocument } from '../../types';
+import { useRef } from 'react';
 
 interface IProps {
     document: TDocument;
@@ -24,21 +24,14 @@ const DeleteFileAlert = ({ document }: IProps) => {
     const [deleteDocument] = useDeleteDocumentMutation();
 
     const handleDeleteDocument = (document: TDocument) => {
+        console.log(document);
         deleteDocument(document);
         deleteOnClose();
         // setDuplicateFiles([]);
     };
     return (
         <>
-            <Text
-                p={"2px"}
-                ml={"5px"}
-                onClick={deleteOnOpen}
-                cursor={"pointer"}
-                color={"rgb(123, 128, 154)"}
-                fontSize={"14px"}
-                _hover={{ color: "red" }}
-            >
+            <Text p={'2px'} ml={'5px'} onClick={deleteOnOpen} cursor={'pointer'} color={'rgb(123, 128, 154)'} fontSize={'14px'} _hover={{ color: 'red' }}>
                 <FaRegTrashAlt />
             </Text>
             <AlertDialog isOpen={deleteIsOpen} leastDestructiveRef={cancelRef} onClose={deleteOnClose}>

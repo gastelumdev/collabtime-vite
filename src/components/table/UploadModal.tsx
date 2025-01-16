@@ -29,11 +29,11 @@ import PrimaryButton from '../../components/Buttons/PrimaryButton';
 import { FaRegFileAlt, FaRegFileExcel, FaRegImage } from 'react-icons/fa';
 import { TDocument } from '../../types';
 import { RiAttachmentLine } from 'react-icons/ri';
-// import { CloseIcon } from '@chakra-ui/icons';
+import { CloseIcon } from '@chakra-ui/icons';
 import DocDrawer from './DocDrawer';
 import UpdateDocumentModal from './UpdateDocumentModal';
 import { emptyDataCollectionPermissions } from '../../features/workspaces/UserGroups';
-import DeleteFileAlert from '../../features/documents/DeleteFileAlert';
+// import DeleteFileAlert from '../../features/documents/DeleteFileAlert';
 
 interface IProps {
     rowDocuments: TDocument[];
@@ -43,7 +43,7 @@ interface IProps {
     permissions?: any;
 }
 
-const UploadModal = ({ rowDocuments, getDocs, getUpdatedDoc, permissions = emptyDataCollectionPermissions }: IProps) => {
+const UploadModal = ({ rowDocuments, getDocs, getUpdatedDoc, removeDoc, permissions = emptyDataCollectionPermissions }: IProps) => {
     const { data: documents } = useGetDocumentsQuery(null);
     const { isOpen: uploadIsOpen, onOpen: uploadOnOpen, onClose: uploadOnClose } = useDisclosure();
 
@@ -183,19 +183,19 @@ const UploadModal = ({ rowDocuments, getDocs, getUpdatedDoc, permissions = empty
         getUpdatedDoc(document);
     };
 
-    // const handleRemoveDoc = (document: TDocument) => {
-    //     setCurrentFiles((prev) =>
-    //         prev.filter((prevDoc) => {
-    //             return prevDoc._id !== document._id;
-    //         })
-    //     );
+    const handleRemoveDoc = (document: TDocument) => {
+        setCurrentFiles((prev) =>
+            prev.filter((prevDoc) => {
+                return prevDoc._id !== document._id;
+            })
+        );
 
-    //     setExistingFiles((prevDocs: any) => {
-    //         return [...prevDocs, document];
-    //     });
+        setExistingFiles((prevDocs: any) => {
+            return [...prevDocs, document];
+        });
 
-    //     removeDoc(document);
-    // };
+        removeDoc(document);
+    };
 
     return (
         <>
@@ -242,14 +242,13 @@ const UploadModal = ({ rowDocuments, getDocs, getUpdatedDoc, permissions = empty
                                             </Box>
                                             <Spacer />
                                             {permissions.docs.delete ? (
-                                                // <Box pt={'4px'} cursor={'pointer'} onClick={() => handleRemoveDoc(rowDoc)}>
-                                                //     <Text fontSize={'10px'}>
-                                                //         <CloseIcon />
-                                                //     </Text>
-
-                                                // </Box>
-                                                <DeleteFileAlert document={rowDoc} />
-                                            ) : null}
+                                                <Box pt={'4px'} cursor={'pointer'} onClick={() => handleRemoveDoc(rowDoc)}>
+                                                    <Text fontSize={'10px'}>
+                                                        <CloseIcon />
+                                                    </Text>
+                                                </Box>
+                                            ) : // <DeleteFileAlert document={rowDoc} />
+                                            null}
                                         </Flex>
                                     );
                                 })
