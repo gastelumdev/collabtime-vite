@@ -275,7 +275,7 @@ const UploadModal = ({ rowDocuments, getDocs, getUpdatedDoc, removeDoc, permissi
                                                 <Box maxH={'118px'} overflowY={duplicateFiles.length >= 5 ? 'scroll' : 'auto'}>
                                                     {documents?.map((document: TDocument, index) => {
                                                         return (
-                                                            <Box key={index} mb={'4px'}>
+                                                            <Box key={index} mb={'4px'} borderRadius={'md'}>
                                                                 {duplicateFiles.includes(document.filename) ? (
                                                                     <Flex border={'1px solid rgb(197, 200, 218)'} px={'8px'} py={'2px'}>
                                                                         <Box pt={'6px'} mr={'5px'} fontSize={'14px'}>
@@ -326,7 +326,7 @@ const UploadModal = ({ rowDocuments, getDocs, getUpdatedDoc, removeDoc, permissi
                                         currentFiles.map((rowDoc, index) => {
                                             if (rowDoc.type !== 'upload') return null;
                                             return (
-                                                <Flex bgColor={'white'} mb={'8px'} p={'12px'} key={index}>
+                                                <Flex bgColor={'white'} mb={'8px'} p={'12px'} key={index} boxShadow={'xs'}>
                                                     <Box pt={'6px'} mr={'5px'} fontSize={'34px'} marginRight={'20px'}>
                                                         <Text color={'rgb(123, 128, 154)'}>{getIcon(rowDoc.ext as string)}</Text>
                                                     </Box>
@@ -388,7 +388,7 @@ const UploadModal = ({ rowDocuments, getDocs, getUpdatedDoc, removeDoc, permissi
                                         currentFiles.map((rowDoc, index) => {
                                             if (rowDoc.type !== 'created') return null;
                                             return (
-                                                <Flex key={index} bgColor={'white'} mb={'8px'} p={'12px'}>
+                                                <Flex key={index} bgColor={'white'} mb={'8px'} p={'12px'} boxShadow={'xs'}>
                                                     <Box pt={'6px'} mr={'5px'} fontSize={'34px'} marginRight={'20px'}>
                                                         <Text color={'rgb(123, 128, 154)'}>{getIcon(rowDoc.ext as string)}</Text>
                                                     </Box>
