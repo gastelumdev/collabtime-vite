@@ -1,6 +1,6 @@
 import { Box, Text } from '@chakra-ui/react';
-import { useGetRowByIdQuery, useGetRowsQuery } from '../../app/services/api';
-import DataCollection from './DataCollection';
+import { useGetRowByIdQuery, useGetRowsQuery } from '../../../app/services/api';
+import DataCollection from '../DataCollection';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 

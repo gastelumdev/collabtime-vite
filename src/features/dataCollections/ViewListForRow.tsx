@@ -4,15 +4,17 @@ import {
     useGetOneWorkspaceQuery,
     useGetDataCollectionViewsQuery,
     useGetUserGroupsQuery,
+    useGetRowByIdQuery,
 } from '../../app/services/api';
 
-import { Box, Card, CardBody, Center, Container, Flex, Text } from '@chakra-ui/react';
+import { Box, Card, CardBody, Center, Container, Flex, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { emptyPermissions } from '../workspaces/UserGroups';
 import { io } from 'socket.io-client';
-import PlannerApp from './PlannerApp';
-import FilteredApp from './FilteredApp';
+import PlannerApp from './apps/PlannerApp';
+import FilteredApp from './apps/FilteredApp';
+import ResourcePlanningApp from './apps/ResourcePlanningApp';
 
 const ViewListForRow = ({}: { allowed?: boolean }) => {
     // const [data, setData] = useState<TDataCollection[]>(dataCollections);
@@ -22,6 +24,7 @@ const ViewListForRow = ({}: { allowed?: boolean }) => {
     const { data } = useGetDataCollectionsQuery(null);
     const { data: _dataCollectionViews, refetch: refetchViews } = useGetDataCollectionViewsQuery(null);
     const { data: workspace } = useGetOneWorkspaceQuery(localStorage.getItem('workspaceId') || '');
+    const { data: row, refetch: refetchRow } = useGetRowByIdQuery(rowId);
 
     const [permissions, setPermissions] = useState<number>();
 
@@ -137,6 +140,28 @@ const ViewListForRow = ({}: { allowed?: boolean }) => {
                                                                       </>
                                                                   );
                                                               }
+                                                          }
+                                                          console.log(workspace);
+                                                          if (workspace?.type === 'resource planning' && dc?._id === row?.dataCollection) {
+                                                              return (
+                                                                  <>
+                                                                      <Tabs>
+                                                                          <TabList>
+                                                                              <Tab>Project Details</Tab>
+                                                                          </TabList>
+                                                                          <TabPanels>
+                                                                              <TabPanel>
+                                                                                  <ResourcePlanningApp
+                                                                                      row={row}
+                                                                                      values={row.values}
+                                                                                      dataCollection={dc}
+                                                                                      refetchRow={refetchRow}
+                                                                                  />
+                                                                              </TabPanel>
+                                                                          </TabPanels>
+                                                                      </Tabs>
+                                                                  </>
+                                                              );
                                                           }
                                                           return null;
                                                       })

@@ -1,6 +1,5 @@
 import {
     Box,
-    Button,
     Center,
     Divider,
     Flex,
@@ -153,8 +152,19 @@ const Reference = ({
                 <>
                     <Box overflow={'hidden'}>
                         {allowed ? (
-                            <Box textAlign={'left'} overflow={'hidden'}>
-                                <Button
+                            <Box
+                                color={rows.length < 1 ? 'lightgray' : 'black'}
+                                // fontWeight={rows.length < 1 ? 'normal' : 'semibold'}
+                                fontWeight={'semibold'}
+                                textAlign={'left'}
+                                overflow={'hidden'}
+                                onClick={onOpen}
+                                h={'28px'}
+                                pt={'3px'}
+                                cursor={'pointer'}
+                                fontSize={'13px'}
+                            >
+                                {/* <Button
                                     size={'xs'}
                                     variant={'ghost'}
                                     color={rows.length < 1 ? 'lightgray' : 'black'}
@@ -162,7 +172,8 @@ const Reference = ({
                                     overflow={'hidden'}
                                     onClick={onOpen}
                                     pt={'6px'}
-                                >
+                                > */}
+                                <Text>
                                     {rows.length < 1
                                         ? `Choose ${dataCollection?.name}`
                                         : rows.map((row: any, index: number) => {
@@ -170,7 +181,8 @@ const Reference = ({
                                               return index === rows.length - 1 ? row.values[rowKey] : `${row.values[rowKey]}, `;
                                               //   return `${row.values[rowKey]} `;
                                           })}
-                                </Button>
+                                    {/* </Button> */}
+                                </Text>
                             </Box>
                         ) : (
                             <Text mt={'5px'}>

@@ -128,6 +128,7 @@ export type TColumn = {
     width?: string;
     autoIncremented?: boolean;
     autoIncrementPrefix?: string;
+    prefix?: string;
 };
 
 export interface INote {

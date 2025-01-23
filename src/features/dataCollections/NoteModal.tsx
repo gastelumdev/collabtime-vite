@@ -19,7 +19,6 @@ import {
 import { FaRegStickyNote } from 'react-icons/fa';
 import { CgAttachment } from 'react-icons/cg';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
-import { IconContext } from 'react-icons';
 import { formatTime } from '../../utils/helpers';
 import { useGetOneWorkspaceQuery, useGetUserQuery, useUploadDocsMutation, useUploadPersistedDocsMutation } from '../../app/services/api';
 import { io } from 'socket.io-client';
@@ -29,9 +28,10 @@ interface IProps {
     updateRow?: any;
     rowCallUpdate?: any;
     allowed?: boolean;
+    icon?: any;
 }
 
-const NoteModal = ({ row, updateRow, allowed = false }: IProps) => {
+const NoteModal = ({ row, updateRow, allowed = false, icon = null }: IProps) => {
     const { isOpen: notesIsOpen, onOpen: notesOnOpen, onClose: notesOnClose } = useDisclosure();
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
     const { data: workspace } = useGetOneWorkspaceQuery(localStorage.getItem('workspaceId') || '');
@@ -180,20 +180,15 @@ const NoteModal = ({ row, updateRow, allowed = false }: IProps) => {
     return (
         <>
             <Box ml={'10px'} pt={'1px'} onClick={handleOpen} cursor={'pointer'}>
-                <IconContext.Provider
+                {/* <IconContext.Provider
                     // value={{ color: data.notesList.length > 0 ? "#cccccc" : "#16b2fc", size: "16px" }}
                     value={{
                         color: row?.notesList.length < 1 ? '#cccccc' : hasUnreadItems ? '#ffa507' : '#16b2fc',
                         size: '15px',
                     }}
-                >
-                    <FaRegStickyNote
-                        style={{
-                            color: row?.notesList.length < 1 ? '#cccccc' : hasUnreadItems ? '#ffa507' : '#16b2fc',
-                            // size: '30px',
-                        }}
-                    />
-                </IconContext.Provider>
+                > */}
+                <Text color={row?.notesList.length < 1 ? '#cccccc' : hasUnreadItems ? '#ffa507' : '#16b2fc'}>{icon ? icon : <FaRegStickyNote />}</Text>
+                {/* </IconContext.Provider> */}
             </Box>
             <Modal isOpen={notesIsOpen} onClose={notesOnClose}>
                 <ModalOverlay />

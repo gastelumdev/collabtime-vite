@@ -72,6 +72,7 @@ const CreateColumn = ({
     const [showLabelForm, setShowLabelForm] = useState(false);
     const [showReferenceForm, setShowReferenceForm] = useState(false);
     const [showColumnNameSelection, setShowColumnNameSelection] = useState(false);
+    const [prefix, setPrefix] = useState('');
 
     const defaultLabels = [
         { title: 'Label 1', color: '#005796', default: true },
@@ -127,6 +128,7 @@ const CreateColumn = ({
                 includeInExport: true,
                 // position: columns[columns.length - 1].position + 1,
                 position: 0,
+                prefix,
             };
 
             // Set column name to a database friendly underscore naming
@@ -149,7 +151,7 @@ const CreateColumn = ({
 
     const handleUpdateColumn = async () => {
         if (!columnNameError) {
-            const updatedColumn = { ...column, name: columnName.toLowerCase().split(' ').join('_'), labels: labels, type: columnType };
+            const updatedColumn = { ...column, name: columnName.toLowerCase().split(' ').join('_'), labels: labels, type: columnType, prefix };
 
             await updateColumn(updatedColumn);
             addNewColumnToRows(updatedColumn);
@@ -185,6 +187,7 @@ const CreateColumn = ({
 
     const handleTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedOption = event.target.value;
+        console.log(selectedOption);
         setColumnType(selectedOption);
 
         if (selectedOption === 'label') {
@@ -589,6 +592,15 @@ const CreateColumn = ({
                             />
                             {showColumnNameSelection ? <ColumnSelection dataCollectionId={columnRef} handleSelectedColumn={handleSelectColumn} /> : null}
                         </>
+                    ) : null}
+                    {columnType === 'number' ? (
+                        <Input
+                            name={'prefix'}
+                            value={prefix}
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                setPrefix(event.target.value);
+                            }}
+                        />
                     ) : null}
                 </Stack>
                 <Flex mt={'20px'}>

@@ -565,6 +565,8 @@ const Row = ({
                                         }
                                     }
 
+                                    let prefix = column.prefix && column.prefix !== undefined ? column.prefix : '';
+
                                     return (
                                         <div
                                             key={columnIndex}
@@ -627,6 +629,7 @@ const Row = ({
                                                     fontWeight={fontWeight}
                                                     position={position}
                                                     isDisabled={isDisabled}
+                                                    prefix={prefix}
                                                 />
                                             )}
                                             {/* {value} */}

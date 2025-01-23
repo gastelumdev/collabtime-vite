@@ -18,6 +18,7 @@ import { TColumn } from '../../types';
 import { emptyDataCollectionPermissions, emptyViewPermissions } from '../workspaces/UserGroups';
 
 const DataCollection = ({
+    dataCollectionIdProp = null,
     showDoneRows = true,
     rowsProp,
     dataCollectionView = null,
@@ -40,6 +41,7 @@ const DataCollection = ({
     active = true,
 }: // userGroup,
 {
+    dataCollectionIdProp?: string | null;
     showDoneRows?: boolean;
     rowsProp: any;
     dataCollectionView?: any;
@@ -66,7 +68,7 @@ const DataCollection = ({
 
     // const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
 
-    const { data: columns, isFetching: columnsAreFetching } = useGetColumnsQuery(dataCollectionId || appModel || '');
+    const { data: columns, isFetching: columnsAreFetching } = useGetColumnsQuery(dataCollectionId || appModel || dataCollectionIdProp || '');
     const [updateColumn] = useUpdateColumnMutation();
     const [reorderColumns] = useReorderColumnsMutation();
 

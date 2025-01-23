@@ -1,8 +1,8 @@
-import { useGetRowsQuery, useUpdateRowMutation } from '../../app/services/api';
+import { useGetRowsQuery, useUpdateRowMutation } from '../../../app/services/api';
 
 import { Box, Card, CardHeader, Center, Checkbox, Container, Flex, Grid, GridItem, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import DataCollection from './DataCollection';
+import DataCollection from '../DataCollection';
 
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';

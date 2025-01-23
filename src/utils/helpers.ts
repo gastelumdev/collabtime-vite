@@ -44,12 +44,16 @@ const getMeridian = (hours: any) => {
   return "AM";
 };
 
-export const formatTime = (date: Date) => {
+export const formatTime = (date: Date, time: boolean = true) => {
   let newDate = new Date(date);
   let formattedDate = `${newDate.getMonth() + 1}/${newDate.getDate()}/${newDate.getFullYear()} ${formatHours(
     newDate.getHours()
   )}:${newDate.getUTCMinutes() > 9 ? "" : "0"}${newDate.getUTCMinutes()} ${getMeridian(newDate.getHours())}`;
-  return formattedDate
+
+  if (time) return formattedDate;
+
+  return formattedDate.split(' ')[0];
+
 };
 
 const relocateSectionOfList = (arr: any, draggedId: number, overId: number) => {

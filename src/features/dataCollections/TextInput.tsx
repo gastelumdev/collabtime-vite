@@ -38,6 +38,7 @@ interface ITextInputProps {
     position?: string;
     isDisabled?: boolean;
     inputType?: string;
+    prefix?: any;
 }
 
 const TextInput = ({
@@ -55,15 +56,24 @@ const TextInput = ({
     position = 'left',
     isDisabled = false,
     inputType = 'text',
+    prefix = null,
 }: ITextInputProps) => {
     const [active, setActive] = useState<boolean>(false);
     const [val, setVal] = useState<string>(value);
+    const [displayVal, setDisplayVal] = useState(value);
     const navigate = useNavigate();
 
     const fontSize = '13px';
 
     useEffect(() => {
         setVal(value);
+        setDisplayVal(value);
+        console.log(inputType);
+        if (inputType === 'number' && value !== undefined) {
+            let number = Number(value);
+            let numberToString = number.toLocaleString();
+            setDisplayVal(numberToString);
+        }
     }, [value]);
 
     const onTextChange = (v: string) => {
@@ -122,7 +132,7 @@ const TextInput = ({
                             size={'xs'}
                             isDisabled={isDisabled}
                         >
-                            {position === 'center' ? <Center>{val}</Center> : val}
+                            {`${prefix ? prefix : ''} ${position === 'center' ? <Center>{displayVal}</Center> : displayVal}`}
                         </Button>
                     ) : (
                         // <ProjectManagerApp val={val} type={type} rowId={id} />
@@ -149,7 +159,7 @@ const TextInput = ({
                             }}
                             isDisabled={isDisabled}
                         >
-                            {val}
+                            {displayVal}
                         </Button>
                     )}
                 </Box>
@@ -179,6 +189,7 @@ const TextInput = ({
                             {inputType === 'text' ? (
                                 <Input
                                     fontSize={'12px'}
+                                    fontWeight={'semibold'}
                                     value={val}
                                     // position={'absolute'}
                                     zIndex={1000000}
@@ -199,6 +210,7 @@ const TextInput = ({
                             ) : (
                                 <Input
                                     fontSize={'12px'}
+                                    fontWeight={'semibold'}
                                     value={val}
                                     type={'number'}
                                     placeholder={'0'}
