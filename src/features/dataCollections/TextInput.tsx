@@ -59,20 +59,23 @@ const TextInput = ({
     prefix = null,
 }: ITextInputProps) => {
     const [active, setActive] = useState<boolean>(false);
-    const [val, setVal] = useState<string>(value);
-    const [displayVal, setDisplayVal] = useState(value);
+    const [val, setVal] = useState<string>('');
+    const [displayVal, setDisplayVal] = useState('');
     const navigate = useNavigate();
 
     const fontSize = '13px';
 
     useEffect(() => {
-        setVal(value);
-        setDisplayVal(value);
-        console.log(inputType);
-        if (inputType === 'number' && value !== undefined) {
-            let number = Number(value);
-            let numberToString = number.toLocaleString();
-            setDisplayVal(numberToString);
+        if (value && value !== undefined) {
+            console.log(value);
+            setVal(value);
+            setDisplayVal(value);
+
+            if (inputType === 'number') {
+                let number = Number(value);
+                let numberToString = number.toLocaleString();
+                setDisplayVal(numberToString);
+            }
         }
     }, [value]);
 
@@ -159,7 +162,7 @@ const TextInput = ({
                             }}
                             isDisabled={isDisabled}
                         >
-                            {displayVal}
+                            {`${prefix ? prefix : ''} ${position === 'center' ? <Center>{displayVal}</Center> : displayVal}`}
                         </Button>
                     )}
                 </Box>
