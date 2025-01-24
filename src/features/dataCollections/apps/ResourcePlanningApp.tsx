@@ -50,7 +50,6 @@ const ResourcePlanningApp = ({ row, values, dataCollection, refetchRow }: { row:
                 if (dcPermissions !== undefined) {
                     // Set the user group and data collection
                     setUserGroup(ug);
-                    console.log(dcPermissions.permissions);
                     setDataCollectionPermissions(dcPermissions.permissions);
                 } else {
                     refetch();

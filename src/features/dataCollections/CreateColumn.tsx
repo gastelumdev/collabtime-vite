@@ -187,7 +187,6 @@ const CreateColumn = ({
 
     const handleTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedOption = event.target.value;
-        console.log(selectedOption);
         setColumnType(selectedOption);
 
         if (selectedOption === 'label') {

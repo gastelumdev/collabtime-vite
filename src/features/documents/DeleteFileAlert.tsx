@@ -26,7 +26,6 @@ const DeleteFileAlert = ({ document, fromRow = false, handleRemoveDoc }: IProps)
     const [deleteDocument] = useDeleteDocumentMutation();
 
     const handleDeleteDocument = (document: TDocument) => {
-        console.log(document);
         deleteDocument(document);
         if (fromRow) handleRemoveDoc(document);
         deleteOnClose();

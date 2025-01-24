@@ -141,7 +141,6 @@ const ViewListForRow = ({}: { allowed?: boolean }) => {
                                                                   );
                                                               }
                                                           }
-                                                          console.log(workspace);
                                                           if (workspace?.type === 'resource planning' && dc?._id === row?.dataCollection) {
                                                               return (
                                                                   <>

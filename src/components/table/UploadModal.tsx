@@ -118,9 +118,6 @@ const UploadModal = ({
                 }
             }
 
-            console.log(duplicateFilesCopy);
-            console.log(event.target.files);
-
             for (const file of event.target.files) {
                 if (duplicateFilesCopy.includes(file.name)) {
                     newFiles.push(file);

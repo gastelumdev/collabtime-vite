@@ -67,7 +67,6 @@ const TextInput = ({
 
     useEffect(() => {
         if (value && value !== undefined) {
-            console.log(value);
             setVal(value);
             setDisplayVal(value);
 
