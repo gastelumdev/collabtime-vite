@@ -36,6 +36,7 @@ interface IProps {
     permissions?: any;
     isArchives?: boolean;
     active?: boolean;
+    execute?: any;
 }
 
 const TableContent = ({
@@ -65,6 +66,7 @@ const TableContent = ({
     permissions = null,
     isArchives = false,
     active = true,
+    execute = null,
 }: IProps) => {
     const { id } = useParams();
     const ref = useRef<HTMLDivElement | null>(null);
@@ -370,10 +372,13 @@ const TableContent = ({
         setCurrentRows(finalRows);
     };
 
-    const handleChange = (row: any) => {
+    const handleChange = async (row: any) => {
         setCurrentRows((prev) => prev.map((prevRow) => (prevRow._id === row._id ? row : prevRow)));
         setRows((prev: any) => prev.map((prevRow: any) => (prevRow._id === row._id ? row : prevRow)));
         handleUpdateRowNoRender(row);
+        if (execute !== null) {
+            execute('refetchBom', row);
+        }
         // if (dataCollectionView) {
         //     refetchRows();
         // }
@@ -421,7 +426,12 @@ const TableContent = ({
             <ViewportList viewportRef={ref} items={currentRows} overscan={25}>
                 {(row, rowIndex) => {
                     const isLast = rowIndex === rows.length - 1 && row.isEmpty;
-                    if ((isLast && !permissions.rows.create) || (isLast && workspace?.type === 'integration')) return null;
+                    if (
+                        (isLast && !permissions.rows.create) ||
+                        (isLast && workspace?.type === 'integration') ||
+                        (row.isEmpty && workspace?.type === 'resource planning' && dataCollectionView.name === 'Bill of Materials')
+                    )
+                        return null;
                     return (
                         <Box key={row._id}>
                             <div className="item">

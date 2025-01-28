@@ -50,6 +50,7 @@ interface ITableProps {
     updateView?: any;
     updateViewColumns?: any;
     active?: boolean;
+    execute?: any;
 }
 
 const Table = ({
@@ -87,6 +88,7 @@ const Table = ({
     updateView,
     updateViewColumns,
     active = true,
+    execute = null,
 }: ITableProps) => {
     const dispatch = useAppDispatch();
     // const { dataCollectionId } = useParams();
@@ -193,6 +195,7 @@ const Table = ({
         async (row: any) => {
             if (dataCollectionView) {
                 updateRow({ ...row, fromView: true });
+                refetch();
             } else {
                 // We wait for the call to return new rows if it is the last row
                 const newRows: any = await updateRow(row);
@@ -739,6 +742,7 @@ const Table = ({
                 permissions={permissions}
                 isArchives={isArchives}
                 active={active}
+                execute={execute}
             />
             {/* <Box w={'100%'} h={'30px'}>
                 <Text ml={'10px'}>Add row</Text>

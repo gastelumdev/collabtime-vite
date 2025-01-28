@@ -45,14 +45,20 @@ import './view.css';
 
 const View = ({
     dataCollectionView,
+    rowsProp = null,
     userGroup = { name: '', workspace: '', users: [], permissions: emptyPermissions },
     refetchUserGroup,
     active = true,
+    showCreateRowProp = true,
+    execute = null,
 }: {
     dataCollectionView: any;
+    rowsProp?: any;
     userGroup: any;
     refetchUserGroup: any;
     active: boolean;
+    showCreateRowProp?: boolean;
+    execute?: any;
 }) => {
     const { id } = useParams();
     const { data: workspace } = useGetOneWorkspaceQuery(id as string);
@@ -63,6 +69,7 @@ const View = ({
         sort: 1,
         sortBy: 'createdAt',
         showEmptyRows: false,
+        showCreateRow: showCreateRowProp,
         filters: JSON.stringify(dataCollectionView.filters),
     });
     const [deleteDataCollectionView] = useDeleteDataCollectionViewMutation();
@@ -487,7 +494,7 @@ const View = ({
                         <Box borderBottom={'1px solid #EDF2F7'}>
                             <DataCollection
                                 showDoneRows={true}
-                                rowsProp={rowsState}
+                                rowsProp={rowsProp || rowsState}
                                 dataCollectionView={dataCollectionView}
                                 rowsAreDraggable={false}
                                 hasCheckboxOptions={false}
@@ -499,6 +506,7 @@ const View = ({
                                 updateView={updateDataCollectionView}
                                 updateViewNoRefetch={updateDataCollectionViewNoRefetch}
                                 active={active}
+                                execute={execute}
                                 // userGroup={userGroup}
                             />
                         </Box>

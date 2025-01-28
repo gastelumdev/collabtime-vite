@@ -7,7 +7,7 @@ import {
     useGetRowByIdQuery,
 } from '../../app/services/api';
 
-import { Box, Card, CardBody, Center, Container, Flex, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
+import { Box, Card, CardBody, Center, Container, Flex, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { emptyPermissions } from '../workspaces/UserGroups';
@@ -117,49 +117,37 @@ const ViewListForRow = ({}: { allowed?: boolean }) => {
                                                           if (dataCollection !== null && viewDC) {
                                                               if (dataCollection.template == 'planner') {
                                                                   return (
-                                                                      <>
-                                                                          <PlannerApp
-                                                                              dataCollection={dataCollection}
-                                                                              dataCollectionId={dataCollection._id as string}
-                                                                              appModel={dataCollection.appModel}
-                                                                              userGroup={userGroup}
-                                                                          />
-                                                                      </>
+                                                                      <PlannerApp
+                                                                          key={dc._id}
+                                                                          dataCollection={dataCollection}
+                                                                          dataCollectionId={dataCollection._id as string}
+                                                                          appModel={dataCollection.appModel}
+                                                                          userGroup={userGroup}
+                                                                      />
                                                                   );
                                                               }
 
                                                               if (dataCollection.template == 'filtered') {
                                                                   return (
-                                                                      <>
-                                                                          <FilteredApp
-                                                                              dataCollection={dataCollection}
-                                                                              dataCollectionId={dataCollection._id as string}
-                                                                              appModel={dataCollection.appModel}
-                                                                              userGroup={userGroup}
-                                                                          />
-                                                                      </>
+                                                                      <FilteredApp
+                                                                          key={dc._id}
+                                                                          dataCollection={dataCollection}
+                                                                          dataCollectionId={dataCollection._id as string}
+                                                                          appModel={dataCollection.appModel}
+                                                                          userGroup={userGroup}
+                                                                      />
                                                                   );
                                                               }
                                                           }
                                                           if (workspace?.type === 'resource planning' && dc?._id === row?.dataCollection) {
                                                               return (
-                                                                  <>
-                                                                      <Tabs>
-                                                                          <TabList>
-                                                                              <Tab>Project Details</Tab>
-                                                                          </TabList>
-                                                                          <TabPanels>
-                                                                              <TabPanel>
-                                                                                  <ResourcePlanningApp
-                                                                                      row={row}
-                                                                                      values={row.values}
-                                                                                      dataCollection={dc}
-                                                                                      refetchRow={refetchRow}
-                                                                                  />
-                                                                              </TabPanel>
-                                                                          </TabPanels>
-                                                                      </Tabs>
-                                                                  </>
+                                                                  <ResourcePlanningApp
+                                                                      key={dc._id}
+                                                                      project={row}
+                                                                      values={row.values}
+                                                                      dataCollection={dc}
+                                                                      refetchProject={refetchRow}
+                                                                  />
                                                               );
                                                           }
                                                           return null;

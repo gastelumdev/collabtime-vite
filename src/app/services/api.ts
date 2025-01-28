@@ -241,7 +241,7 @@ export const api = createApi({
         }),
         getRows: builder.query<any[], any>({
             query: (options) => ({
-                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${options.dataCollectionId}/rows?limit=${options.limit}&skip=${options.skip}&sort=${options.sort}&sortBy=${options.sortBy}&showEmptyRows=${options.showEmptyRows}&archived=${options.archived}&filters=${options.filters}`
+                url: `workspaces/${localStorage.getItem("workspaceId")}/dataCollections/${options.dataCollectionId}/rows?limit=${options.limit}&skip=${options.skip}&sort=${options.sort}&sortBy=${options.sortBy}&showEmptyRows=${options.showEmptyRows}&showCreateRow=${options.showCreateRow}&archived=${options.archived}&filters=${options.filters}`
             }),
             providesTags: ["Rows"],
             transformResponse: (rows: any) => {
@@ -589,6 +589,39 @@ export const api = createApi({
             query: () => ({
                 url: `/workspaces/${localStorage.getItem("workspaceId")}/unreadEvents`,
             })
+        }),
+        // RESOURCE PLANNING
+        getProject: builder.query<TRow[], string>({
+            query: (rowId) => ({
+                url: `rows/${rowId}`
+            })
+        }),
+        getBillOfMaterialsView: builder.query<any, any>({
+            query: () => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/billOfMaterialsView`
+            })
+        }),
+        getBillOfMaterialsParts: builder.query<any, any>({
+            query: (projectId) => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/project/${projectId}/getBillOfMaterialsParts`
+            })
+        }),
+        getParts: builder.query<any, any>({
+            query: () => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/parts`
+            })
+        }),
+        getPartsColumns: builder.query<any, any>({
+            query: () => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/partsColumns`
+            })
+        }),
+        updateBillOfMaterialsPartValues: builder.mutation<any, any>({
+            query: (body) => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/updateBillOfMaterialsPartValues`,
+                method: 'PUT',
+                body
+            })
         })
     })
 })
@@ -674,4 +707,10 @@ export const {
     useDeleteUserGroupMutation,
     useGetEventsQuery,
     useGetUnreadEventsQuery,
+    useGetProjectQuery,
+    useGetBillOfMaterialsViewQuery,
+    useGetPartsQuery,
+    useGetPartsColumnsQuery,
+    useUpdateBillOfMaterialsPartValuesMutation,
+    useGetBillOfMaterialsPartsQuery,
 } = api

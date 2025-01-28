@@ -39,6 +39,7 @@ const DataCollection = ({
     updateView,
     updateViewNoRefetch,
     active = true,
+    execute = null,
 }: // userGroup,
 {
     dataCollectionIdProp?: string | null;
@@ -63,6 +64,7 @@ const DataCollection = ({
     updateView?: any;
     updateViewNoRefetch?: any;
     active?: boolean;
+    execute?: any;
 }) => {
     const { dataCollectionId } = useParams();
 
@@ -166,6 +168,7 @@ const DataCollection = ({
                 updateView={updateView}
                 updateViewColumns={handleUpdateViewColumns}
                 active={active}
+                execute={execute}
             />
         </Box>
     );
