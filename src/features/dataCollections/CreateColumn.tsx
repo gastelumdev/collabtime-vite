@@ -298,7 +298,7 @@ const CreateColumn = ({
         onClose();
         setShowLabelForm(false);
         setColumnName('');
-        setColumnType('');
+        setColumnType('text');
         setLabels(defaultLabels);
         setLabelOptions(defaultLabel);
         setShowLabelForm(false);
