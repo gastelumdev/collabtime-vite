@@ -5,6 +5,7 @@ import { useGetColumnsQuery, useGetRowsQuery, useGetUserGroupsQuery, useUpdateRo
 import { emptyDataCollectionPermissions, emptyPermissions } from '../../workspaces/UserGroups';
 import ProjectDetails from './resourcePlanningAppComponents/ProjectDetails';
 import BillOfMaterials from './resourcePlanningAppComponents/BillOfMaterials';
+import PurchaseOrders from './resourcePlanningAppComponents/PurchaseOrders';
 
 const ResourcePlanningApp = ({
     project,
@@ -128,12 +129,22 @@ const ResourcePlanningApp = ({
         // refetchRows();
     };
 
+    const [refetchBom, setRefetchBom] = useState(true);
+
     return (
         <>
-            <Tabs>
+            <Tabs
+                onChange={(index: number) => {
+                    if (index === 2) {
+                        console.log('PO Tab clicked');
+                        setRefetchBom(!refetchBom);
+                    }
+                }}
+            >
                 <TabList>
                     <Tab>Project Details</Tab>
                     <Tab>Bill of Materials</Tab>
+                    <Tab isDisabled={project.values.proposal_status !== 'Approved'}>Purchase Orders</Tab>
                 </TabList>
                 <TabPanels>
                     <TabPanel>
@@ -155,6 +166,11 @@ const ResourcePlanningApp = ({
                     <TabPanel>
                         <BillOfMaterials project={project} handleChange={handleChange} userGroup={userGroup} refetchUserGroups={refetchUserGroups} />
                     </TabPanel>
+                    {project.values.proposal_status === 'Approved' ? (
+                        <TabPanel>
+                            <PurchaseOrders project={project} refetchBom={refetchBom} />
+                        </TabPanel>
+                    ) : null}
                 </TabPanels>
             </Tabs>
         </>

@@ -86,11 +86,13 @@ const TextInput = ({
     const handleBlur = (v: string) => {
         if (v === '') {
             if (value !== null && value !== '') {
+                console.log({ v, value });
                 onChange(columnName, v);
             }
         } else {
             onChange(columnName, v);
         }
+        setDisplayVal(v);
     };
 
     // useEffect(() => {

@@ -426,7 +426,6 @@ const Row = ({
                                     )}
                                 </span>
                                 {columns.map((column: any, columnIndex: number) => {
-                                    console.log(row);
                                     let value = row?.values[column?.name];
                                     let min_warning = row?.values['min_warning'];
                                     let min_critical = row?.values['min_critical'];

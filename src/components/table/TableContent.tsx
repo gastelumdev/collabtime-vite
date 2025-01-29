@@ -426,11 +426,9 @@ const TableContent = ({
             <ViewportList viewportRef={ref} items={currentRows} overscan={25}>
                 {(row, rowIndex) => {
                     const isLast = rowIndex === rows.length - 1 && row.isEmpty;
-                    if (
-                        (isLast && !permissions.rows.create) ||
-                        (isLast && workspace?.type === 'integration') ||
-                        (row.isEmpty && workspace?.type === 'resource planning' && dataCollectionView.name === 'Bill of Materials')
-                    )
+                    if ((isLast && !permissions.rows.create) || (isLast && workspace?.type === 'integration')) return null;
+
+                    if (dataCollectionView && row.isEmpty && workspace?.type === 'resource planning' && dataCollectionView.name === 'Bill of Materials')
                         return null;
                     return (
                         <Box key={row._id}>
