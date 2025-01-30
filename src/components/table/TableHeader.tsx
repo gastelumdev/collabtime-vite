@@ -101,7 +101,9 @@ const TableHeader = ({
 
                 for (let i = 0; i < currentColumns.length; i++) {
                     const th: any = document.getElementById(String(i));
-                    th.style.backgroundColor = 'white';
+                    if (th) {
+                        th.style.backgroundColor = 'white';
+                    }
                 }
                 // const th: any = document.getElementById(String(columnIndex));
                 // th.style.backgroundColor = '#f2f2f2';
@@ -114,7 +116,9 @@ const TableHeader = ({
         // Set all headers back to white
         for (let i = 0; i < currentColumns.length; i++) {
             const th: any = document.getElementById(String(i));
-            th.style.backgroundColor = 'white';
+            if (th) {
+                th.style.backgroundColor = 'white';
+            }
         }
 
         setDraggedColumnIndex(null);
@@ -127,7 +131,7 @@ const TableHeader = ({
             // turn it white
             if (draggedColumnIndex !== columnIndex) {
                 const th: any = document.getElementById(String(columnIndex));
-                th.style.backgroundColor = 'white';
+                if (th) th.style.backgroundColor = 'white';
             }
         },
         [draggedColumnIndex]
@@ -195,20 +199,21 @@ const TableHeader = ({
         (e: any) => {
             // On mouse move, change the opacity of the resize handle so that it is visible
             const th: any = document.getElementById(dataCollectionView ? `${dataCollectionView._id}-${activeColumn?._id}` : (activeColumn?._id as string));
-
             // set the width by getting the new position of the resize handle on the page minus the width of the sidebar
             // and additional left padding
             const table: any = document.getElementById(`data-collection-table${dataCollectionView ? `-${dataCollectionView._id}` : ''}`);
-            const width = e.clientX - columnResizingOffset - th.offsetLeft + Math.floor(table.scrollLeft);
+            if (th) {
+                const width = e.clientX - columnResizingOffset - th.offsetLeft + Math.floor(table.scrollLeft);
 
-            // If the width is greater than minumum allowed header width, resize based on the width calculation
-            // else set it to the minumum header width
-            th.children[1].style.position = 'absolute';
+                // If the width is greater than minumum allowed header width, resize based on the width calculation
+                // else set it to the minumum header width
+                th.children[1].style.position = 'absolute';
 
-            if (width > minCellWidth) {
-                th.children[1].style.left = `${width}px`;
-            } else {
-                th.children[1].style.left = `${minCellWidth}px`;
+                if (width > minCellWidth) {
+                    th.children[1].style.left = `${width}px`;
+                } else {
+                    th.children[1].style.left = `${minCellWidth}px`;
+                }
             }
 
             // Go through each column and if the column is the one being resized,
@@ -217,12 +222,15 @@ const TableHeader = ({
             const gridColumns = currentColumns.map((col, i) => {
                 const th: any = document.getElementById(dataCollectionView ? `${dataCollectionView._id}-${col?._id}` : (col?._id as string));
 
-                if (i === activeIndex) {
-                    const width = e.clientX - columnResizingOffset - th.offsetLeft + Math.floor(table.scrollLeft);
+                if (th) {
+                    if (i === activeIndex) {
+                        const width = e.clientX - columnResizingOffset - th.offsetLeft + Math.floor(table.scrollLeft);
 
-                    return width >= minCellWidth ? `${width}px` : `${minCellWidth}px`;
+                        return width >= minCellWidth ? `${width}px` : `${minCellWidth}px`;
+                    }
+                    return `${th.offsetWidth}px`;
                 }
-                return `${th.offsetWidth}px`;
+                return `${minCellWidth}px`;
             });
 
             setResizedWidth(gridColumns[activeIndex as number]);
@@ -270,7 +278,9 @@ const TableHeader = ({
 
             // Set the defaults of the handle
             const th: any = document.getElementById(dataCollectionView ? `${dataCollectionView._id}-${activeColumn?._id}` : (activeColumn?._id as string));
-            th.children[1].style.left = '100%';
+            if (th) {
+                th.children[1].style.left = '100%';
+            }
 
             startTransition(() => {
                 handleGridTemplateColumns(columnWidth);

@@ -7,7 +7,7 @@ import {
     // Text,
     Textarea,
 } from '@chakra-ui/react';
-import { memo, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // import { useGetDataCollectionViewsByRowIdQuery, useGetUserGroupsQuery } from '../../app/services/api';
 // import View from '../dataCollectionViews/View';
@@ -44,7 +44,7 @@ interface ITextInputProps {
 const TextInput = ({
     id,
     columnName,
-    value,
+    value = '',
     type = 'tableCell',
     onChange,
     allowed = false,
@@ -59,28 +59,29 @@ const TextInput = ({
     prefix = null,
 }: ITextInputProps) => {
     const [active, setActive] = useState<boolean>(false);
-    const [val, setVal] = useState<string>('');
+    // const [val, setVal] = useState<string>('');
     const [displayVal, setDisplayVal] = useState('');
     const navigate = useNavigate();
 
     const fontSize = '13px';
 
     useEffect(() => {
-        if (value && value !== undefined) {
-            setVal(value);
-            setDisplayVal(value);
+        if (columnName === 'column_2') console.log({ value, columnName });
+        // if (value && value !== undefined) {
+        // setVal(value);
+        setDisplayVal(value);
 
-            if (inputType === 'number') {
-                let number = Number(value);
-                let numberToString = number.toLocaleString();
-                setDisplayVal(numberToString);
-            }
+        if (inputType === 'number') {
+            let number = Number(value);
+            let numberToString = number.toLocaleString();
+            setDisplayVal(numberToString);
         }
+        // }
     }, [value]);
 
     const onTextChange = (v: string) => {
         // onChange(columnName, value);
-        setVal(v);
+        setDisplayVal(v);
     };
 
     const handleBlur = (v: string) => {
@@ -172,7 +173,7 @@ const TextInput = ({
                     {isTextarea ? (
                         <Textarea
                             fontSize={'12px'}
-                            value={val}
+                            value={displayVal}
                             position={'absolute'}
                             zIndex={1000000}
                             onBlur={() => setActive(!active)}
@@ -194,7 +195,7 @@ const TextInput = ({
                                 <Input
                                     fontSize={'12px'}
                                     fontWeight={'semibold'}
-                                    value={val}
+                                    value={displayVal}
                                     // position={'absolute'}
                                     zIndex={1000000}
                                     onBlur={() => setActive(!active)}
@@ -215,7 +216,7 @@ const TextInput = ({
                                 <Input
                                     fontSize={'12px'}
                                     fontWeight={'semibold'}
-                                    value={val}
+                                    value={displayVal}
                                     type={'number'}
                                     placeholder={'0'}
                                     // position={'absolute'}
@@ -309,4 +310,4 @@ const TextInput = ({
 //     );
 // };
 
-export default memo(TextInput);
+export default TextInput;

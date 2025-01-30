@@ -78,7 +78,7 @@ const TableContent = ({
     useEffect(() => {
         view;
         setCurrentRows(rows);
-    }, [rows]);
+    }, [rows, columns]);
 
     useEffect(() => {
         if (columnToSortBy !== null) {

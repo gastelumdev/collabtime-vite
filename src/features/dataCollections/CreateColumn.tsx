@@ -74,8 +74,8 @@ const CreateColumn = ({
     const [showColumnNameSelection, setShowColumnNameSelection] = useState(false);
     const [prefix, setPrefix] = useState('');
 
-    const defaultLabels = [
-        { title: 'Label 1', color: '#005796', default: true },
+    const defaultLabels: TLabel[] = [
+        // { title: 'Label 1', color: '#005796', default: true },
         // { title: 'Label 2', color: '#4FAD00' },
         // { title: 'Label 3', color: '#ffa507' },
     ];

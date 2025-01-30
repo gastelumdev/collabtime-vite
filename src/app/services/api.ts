@@ -213,7 +213,7 @@ export const api = createApi({
                 method: "POST",
                 body: column
             }),
-            invalidatesTags: ["Column", "UserGroup", "Rows"]
+            // invalidatesTags: ["Column", "UserGroup", "Rows"]
         }),
         updateColumn: builder.mutation<TColumn, TColumn>({
             query: (column) => ({
@@ -221,7 +221,7 @@ export const api = createApi({
                 method: "POST",
                 body: column
             }),
-            invalidatesTags: ["Column", "Rows", "UserGroup"],
+            // invalidatesTags: ["Column", "Rows", "UserGroup"],
         }),
         deleteColumn: builder.mutation<TColumn, TColumn>({
             query: (column) => ({
@@ -229,7 +229,7 @@ export const api = createApi({
                 method: "POST",
                 body: column,
             }),
-            invalidatesTags: ["Column", "UserGroup", "Rows"],
+            // invalidatesTags: ["Column", "UserGroup", "Rows"],
         }),
         reorderColumns: builder.mutation<TColumn[], any>({
             query: (columns) => ({
