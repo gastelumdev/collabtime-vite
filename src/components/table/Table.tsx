@@ -156,11 +156,10 @@ const Table = ({
 
     const rearangeColumns = useCallback(
         (columns: TColumn[]) => {
-            setColumns(
-                columns.map((column, index) => {
-                    return { ...column, position: index + 1 };
-                })
-            );
+            const newColumns: TColumn[] = columns.map((column, index) => {
+                return { ...column, position: index + 1 };
+            });
+            setColumns(newColumns);
         },
         [columns]
     );
