@@ -39,6 +39,7 @@ interface IProps {
     refetchPermissions?: any;
     isArchives?: boolean;
     updateView?: any;
+    handleModifyColumnNameInRows: any;
 }
 
 const TableHeader = ({
@@ -70,6 +71,7 @@ const TableHeader = ({
     refetchPermissions,
     isArchives = false,
     updateView,
+    handleModifyColumnNameInRows,
 }: IProps) => {
     const [currentColumns, setCurrentColumns] = useState(columns);
     // ******************* COLUMN REORDERING ******************************
@@ -144,6 +146,7 @@ const TableHeader = ({
             // Swap the columns
 
             if (draggedColumnIndex !== columnIndex) {
+                console.log(draggedColumnIndex);
                 const newColumns = [...currentColumns];
                 const [draggedColumn] = newColumns.splice(draggedColumnIndex as number, 1);
                 newColumns.splice(columnIndex, 0, draggedColumn);
@@ -168,6 +171,7 @@ const TableHeader = ({
                 } else {
                     updateBackendColumns(newColumns);
                 }
+                console.log(newColumnWidths);
             }
 
             setDraggedColumnIndex(null);
@@ -220,6 +224,7 @@ const TableHeader = ({
             // set the width by getting the new position of the resize handle on the page minus the width of the sidebar
             // and additional left padding, else return its current width
             const gridColumns = currentColumns.map((col, i) => {
+                if (col.isEmpty) return '';
                 const th: any = document.getElementById(dataCollectionView ? `${dataCollectionView._id}-${col?._id}` : (col?._id as string));
 
                 if (th) {
@@ -326,20 +331,17 @@ const TableHeader = ({
 
     const handleAddNewColumnToRows = useCallback(
         (column: TColumn) => {
-            setCurrentColumns([...currentColumns, column]);
+            // setCurrentColumns([...currentColumns, column]);
             addNewColumnToRows(column);
         },
         [addNewColumnToRows, currentColumns]
     );
 
-    const handleDeleteColumn = useCallback(
-        (column: any) => {
-            setCurrentColumns((prevColumns) => prevColumns.filter((prevColumn) => prevColumn._id !== column._id));
-            deleteColumn(column);
-            handleRemoveColumnFormRows(column);
-        },
-        [deleteColumn, currentColumns]
-    );
+    const handleDeleteColumn = (column: any) => {
+        // setCurrentColumns((prevColumns) => prevColumns.filter((prevColumn) => prevColumn._id !== column._id));
+        deleteColumn(column);
+        handleRemoveColumnFormRows(column);
+    };
 
     return (
         <div className="table-header">
@@ -364,6 +366,7 @@ const TableHeader = ({
                     {/* {isFetching ? <Spinner thickness="2px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="md" mt={'10px'} /> : null} */}
                 </span>
                 {currentColumns.map((column: any, columnIndex) => {
+                    if (column.isEmpty) return null;
                     if (dataCollectionPermissions) {
                         const columnsPermissions = dataCollectionPermissions.columns.find((item: any) => {
                             return item.name === column?.name;
@@ -454,6 +457,8 @@ const TableHeader = ({
                                         dataCollectionView={dataCollectionView}
                                         dataCollectionPermissions={dataCollectionPermissions}
                                         appModel={appModel}
+                                        handleSetColumns={handleSetColumns}
+                                        handleModifyColumnNameInRows={handleModifyColumnNameInRows}
                                     />
                                 </div>
                             ) : (
@@ -494,7 +499,7 @@ const TableHeader = ({
                                     )} */}
                                     <ColumnMenu
                                         column={column}
-                                        columns={columns}
+                                        columns={currentColumns}
                                         handleDeleteColumn={handleDeleteColumn}
                                         handleAddNewColumnToRows={handleAddNewColumnToRows}
                                         index={columnIndex}
@@ -503,6 +508,7 @@ const TableHeader = ({
                                         dataCollectionView={dataCollectionView}
                                         dataCollectionPermissions={dataCollectionPermissions}
                                         appModel={appModel}
+                                        handleModifyColumnNameInRows={handleModifyColumnNameInRows}
                                     />
                                 </div>
                             )}
@@ -534,13 +540,14 @@ const TableHeader = ({
                 >
                     {hasCreateColumn && dataCollectionPermissions && dataCollectionPermissions.columnActions.create && appModel == null && !isArchives ? (
                         <CreateColumn
-                            columns={columns}
+                            columns={currentColumns}
                             createColumn={createColumn}
                             addNewColumnToRows={handleAddNewColumnToRows}
                             columnIsUpdating={columnIsUpdating as boolean}
                             handleSetColumns={handleSetColumns}
                             columnsAreFetching={columnsAreFetching}
                             refetchPermissions={refetchPermissions}
+                            handleModifyColumnNameInRows={handleModifyColumnNameInRows}
                         />
                     ) : null}
                 </span>

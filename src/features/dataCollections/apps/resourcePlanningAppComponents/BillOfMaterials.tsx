@@ -47,11 +47,6 @@ const BillOfMaterials = ({ project, userGroup, refetchUserGroups }: { project: T
     const [partsState, setPartsState] = useState<any>(null);
     const [bomPartsState, setBomPartsState] = useState<any>(null);
 
-    // useEffect(() => {
-    //     console.log('RefetchBomParts');
-    //     refetchBomParts();
-    // }, [partsState]);
-
     useEffect(() => {
         if (billOfMaterialsView) {
             setView(billOfMaterialsView);
@@ -88,8 +83,6 @@ const BillOfMaterials = ({ project, userGroup, refetchUserGroups }: { project: T
 
     const execute = (callType: string, part: TRow) => {
         if (callType === 'refetchBom') {
-            console.log(callType);
-            console.log(bomPartsState);
             const newBomParts = bomPartsState.filter((item: TRow) => {
                 return item._id !== part._id;
             });
@@ -187,8 +180,6 @@ const BillOfMaterials = ({ project, userGroup, refetchUserGroups }: { project: T
                                                                                   }
                                                                                   return item;
                                                                               });
-
-                                                                              console.log(newParts);
 
                                                                               setPartsState(newParts);
                                                                           }

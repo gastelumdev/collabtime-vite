@@ -243,6 +243,7 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
                 <Box mt={'20px'} mb={'20px'}>
                     {columns?.length > 0
                         ? columns?.map((col: any, index: number) => {
+                              if (col.isEmpty) return null;
                               return (
                                   <Box key={index}>
                                       <Flex>
@@ -272,13 +273,6 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
                                               </FormLabel>
                                           </FormControl>
                                           <Spacer />
-                                          {/* {dataCollectionView.columns
-                                              .map((c: any) => {
-                                                  return c._id;
-                                              })
-                                              .includes(col._id) ? (
-                                              <Text>Something</Text>
-                                          ) : null} */}
                                       </Flex>
                                   </Box>
                               );

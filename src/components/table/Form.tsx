@@ -136,6 +136,7 @@ const Form = () => {
                     </CardHeader>
                     <CardBody>
                         {columns?.map((column: any, columnIndex: number) => {
+                            if (column.isEmpty) return null;
                             if (column.includeInForm) {
                                 return (
                                     <div

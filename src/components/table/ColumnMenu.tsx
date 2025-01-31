@@ -20,6 +20,7 @@ import CreateColumn from '../../features/dataCollections/CreateColumn';
 import { useUpdateColumnMutation } from '../../app/services/api';
 import { emptyColumnPermissions, emptyDataCollectionPermissions } from '../../features/workspaces/UserGroups';
 import { useEffect, useState } from 'react';
+// import { useParams } from 'react-router-dom';
 
 const ColumnMenu = ({
     column,
@@ -32,6 +33,8 @@ const ColumnMenu = ({
     dataCollectionView = null,
     dataCollectionPermissions = emptyDataCollectionPermissions,
     appModel = null,
+    handleSetColumns,
+    handleModifyColumnNameInRows,
 }: {
     column: any;
     columns: any;
@@ -43,9 +46,10 @@ const ColumnMenu = ({
     dataCollectionView?: any;
     dataCollectionPermissions?: any;
     appModel?: string | null;
+    handleSetColumns?: any;
+    handleModifyColumnNameInRows?: any;
 }) => {
     const { isOpen, onToggle, onClose } = useDisclosure();
-
     const [updateColumn, { isLoading: columnIsUpdating }] = useUpdateColumnMutation();
     const [columnPermissions, setColumnPermissions] = useState(emptyColumnPermissions);
 
@@ -61,7 +65,7 @@ const ColumnMenu = ({
         }
     }, [dataCollectionPermissions, column]);
 
-    const handleDeleteColumnClick = () => {
+    const handleDeleteColumnClick = async () => {
         handleDeleteColumn(column);
         onClose();
     };
@@ -143,6 +147,8 @@ const ColumnMenu = ({
                                         updateColumn={updateColumn}
                                         addNewColumnToRows={handleAddNewColumnToRows}
                                         columnIsUpdating={columnIsUpdating as boolean}
+                                        handleSetColumns={handleSetColumns}
+                                        handleModifyColumnNameInRows={handleModifyColumnNameInRows}
                                     />
                                 </Box>
                             ) : null}

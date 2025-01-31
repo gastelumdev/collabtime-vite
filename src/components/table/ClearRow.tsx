@@ -25,7 +25,6 @@ const ClearRow = ({ row, columns, handleChange }: { row: TRow; columns: TColumn[
                             onClick={() => {
                                 const values: any = {};
                                 const refs: any = {};
-                                console.log(columns);
                                 for (const column of columns) {
                                     if (column.type === 'label' || column.type === 'status' || column.type === 'priority') {
                                         const defaultColumn = column.labels?.find((item: { title: string; color: string; default: boolean }) => {

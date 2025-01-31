@@ -18,15 +18,12 @@ const PurchaseOrders = ({ project, refetchBom }: { project: TRow; refetchBom: bo
                 const vendor = bomPart.refs.vendor[0];
                 const vendorName = vendor.values.Name;
 
-                console.log(vendorName);
-
                 if (newPurchaseOrders[vendorName] === undefined) {
                     newPurchaseOrders = { ...newPurchaseOrders, [vendorName]: [bomPart] };
                 } else {
                     newPurchaseOrders = { ...newPurchaseOrders, [vendorName]: [...newPurchaseOrders[vendorName], bomPart] };
                 }
             }
-            console.log(newPurchaseOrders);
             setPurchaseOrders(newPurchaseOrders);
         }
     }, [bomParts, refetchBom]);
@@ -37,7 +34,6 @@ const PurchaseOrders = ({ project, refetchBom }: { project: TRow; refetchBom: bo
             </Heading>
             <Box w={'400px'}>
                 {Object.keys(purchaseOrders).map((po: any) => {
-                    console.log(po);
                     return (
                         <Flex>
                             <Text>{po}</Text>
