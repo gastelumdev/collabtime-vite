@@ -68,6 +68,7 @@ const ProjectDetails = ({
             </Flex>
             <SimpleGrid columns={{ sm: 1, md: 2, lg: 2, xl: 3 }} spacingX="40px">
                 {columns?.map((column: TColumn) => {
+                    if (column.isEmpty) return null;
                     let allowed = true;
                     let value = values[column.name];
                     let bgColor = 'white';

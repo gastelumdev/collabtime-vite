@@ -29,12 +29,18 @@ import { getTextColor } from '../../utils/helpers';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
 import { BsPlusCircle } from 'react-icons/bs';
 import { useParams } from 'react-router-dom';
-import { useGetColumnsQuery, useGetDataCollectionsQuery, useGetWorkspaceUsersQuery } from '../../app/services/api';
+import {
+    useCreateColumnMutation,
+    useGetColumnsQuery,
+    useGetDataCollectionsQuery,
+    useGetWorkspaceUsersQuery,
+    useUpdateColumnMutation,
+} from '../../app/services/api';
 import { FaUserPlus } from 'react-icons/fa6';
 
 interface TProps {
     column?: TColumn | null;
-    columns: TColumn[];
+    columns?: TColumn[];
     updateColumn?: any;
     createColumn?: any;
     columnIsUpdating: boolean;
@@ -42,24 +48,25 @@ interface TProps {
     handleSetColumns?: any;
     columnsAreFetching?: boolean;
     refetchPermissions?: any;
+    handleModifyColumnNameInRows: (column: TColumn, prevColumn: TColumn) => {};
 }
 
 const CreateColumn = ({
     column = null,
     columns,
-    updateColumn,
-    createColumn,
     columnIsUpdating = false,
     addNewColumnToRows,
     handleSetColumns,
     columnsAreFetching = false,
-    refetchPermissions,
+    handleModifyColumnNameInRows,
 }: TProps) => {
     const { id, dataCollectionId } = useParams();
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const { data: dataCollections } = useGetDataCollectionsQuery(null);
     const { data: workspaceUsers } = useGetWorkspaceUsersQuery(id as string);
+    const [updateColumn] = useUpdateColumnMutation();
+    const [createColumn] = useCreateColumnMutation();
 
     // const { data: columns } = useGetColumnsQuery(null);
     // const [createColumn] = useCreateColumnMutation();
@@ -88,6 +95,7 @@ const CreateColumn = ({
     const [labels, setLabels] = useState<TLabel[]>(defaultLabels);
     const [labelStyles, setLabelStyles] = useState<any>({});
     const [labelTitleError, setLabelTitleError] = useState<boolean>(false);
+    const [nextEmptyColumn, setNextEmptyColumn] = useState<TColumn | null>(null);
 
     useEffect(() => {
         if (column !== null) {
@@ -101,6 +109,10 @@ const CreateColumn = ({
     }, [column]);
 
     useEffect(() => {
+        findNextEmptyColumn();
+    }, [columns]);
+
+    useEffect(() => {
         for (const column of columns || []) {
             if (column.type === 'label') {
                 setLabelStyles({ ...labelStyles, [column.name]: '' });
@@ -109,14 +121,25 @@ const CreateColumn = ({
         setShowLabelForm(false);
     }, []);
 
+    const findNextEmptyColumn = () => {
+        const nextEmptyColumn = columns?.find((col: TColumn) => {
+            return col.isEmpty;
+        });
+
+        if (nextEmptyColumn) {
+            setNextEmptyColumn(nextEmptyColumn as TColumn);
+        }
+    };
+
     /**
      * Creates a new column
      * This should be replaced by RTK
      */
     const handleAddColumn = async () => {
-        if (!columnNameError) {
+        if (!columnNameError && nextEmptyColumn) {
             const newColumn: TColumn = {
-                dataCollection: dataCollectionId || '',
+                ...nextEmptyColumn,
+                dataCollection: nextEmptyColumn?.dataCollection || '',
                 name: columnName,
                 type: columnType,
                 permanent: false,
@@ -126,17 +149,15 @@ const CreateColumn = ({
                 people: [],
                 includeInForm: true,
                 includeInExport: true,
-                // position: columns[columns.length - 1].position + 1,
-                position: 0,
+                position: nextEmptyColumn?.position as number,
                 prefix,
+                isEmpty: false,
             };
 
             // Set column name to a database friendly underscore naming
             newColumn.name = newColumn.name.toLowerCase().split(' ').join('_');
 
-            handleSetColumns(newColumn);
             // const createdColumn = await createColumn(newColumn);
-
             await createColumn(newColumn);
             addNewColumnToRows(newColumn);
             setShowLabelForm(false);
@@ -145,21 +166,28 @@ const CreateColumn = ({
                 closeDrawer();
             }
 
-            refetchPermissions();
+            handleSetColumns(newColumn);
+            findNextEmptyColumn();
+
+            // refetchPermissions();
         }
     };
 
     const handleUpdateColumn = async () => {
         if (!columnNameError) {
-            const updatedColumn = { ...column, name: columnName.toLowerCase().split(' ').join('_'), labels: labels, type: columnType, prefix };
+            const updatedColumn = { ...column, name: columnName.toLowerCase().split(' ').join('_'), labels: labels, type: columnType, prefix } as TColumn;
 
             await updateColumn(updatedColumn);
-            addNewColumnToRows(updatedColumn);
+            // addNewColumnToRows(updatedColumn);
             setShowLabelForm(false);
             setShowReferenceForm(false);
             closeDrawer();
 
-            refetchPermissions();
+            handleSetColumns(updatedColumn);
+            handleModifyColumnNameInRows(updatedColumn, column as TColumn);
+            findNextEmptyColumn();
+
+            // refetchPermissions();
         }
     };
 
@@ -576,10 +604,13 @@ const CreateColumn = ({
                                 onChange={(selectedOption: any) => handleSelectDataCollection(selectedOption)}
                                 options={dataCollections
                                     ?.map((dataCollection: any) => {
-                                        return { value: dataCollection._id, label: dataCollection.name };
+                                        if (dataCollection.main) {
+                                            return { value: dataCollection._id, label: dataCollection.name };
+                                        }
+                                        return null;
                                     })
                                     .filter((dataCollection: any) => {
-                                        return dataCollection.value !== dataCollectionId;
+                                        return dataCollection && dataCollection.value !== dataCollectionId;
                                     })}
                                 styles={
                                     {
@@ -593,13 +624,19 @@ const CreateColumn = ({
                         </>
                     ) : null}
                     {columnType === 'number' ? (
-                        <Input
-                            name={'prefix'}
-                            value={prefix}
-                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                setPrefix(event.target.value);
-                            }}
-                        />
+                        <Box>
+                            {/* <Box> */}
+                            <Text mb={'5px'}>Prefix</Text>
+                            {/* </Box> */}
+                            <Input
+                                name={'prefix'}
+                                value={prefix}
+                                placeholder="ex. $"
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                    setPrefix(event.target.value);
+                                }}
+                            />
+                        </Box>
                     ) : null}
                 </Stack>
                 <Flex mt={'20px'}>
@@ -621,6 +658,20 @@ const CreateColumn = ({
 
 const ColumnSelection = ({ dataCollectionId, handleSelectedColumn }: { dataCollectionId: string; handleSelectedColumn: any }) => {
     const { data: columns } = useGetColumnsQuery(dataCollectionId);
+
+    const [columnsState, setColumnsState] = useState(
+        columns?.filter((item: TColumn) => {
+            return !item.isEmpty;
+        })
+    );
+
+    useEffect(() => {
+        setColumnsState(
+            columns?.filter((item: TColumn) => {
+                return !item.isEmpty;
+            })
+        );
+    }, [columns]);
     return (
         <>
             <ReactSelect
@@ -629,7 +680,7 @@ const ColumnSelection = ({ dataCollectionId, handleSelectedColumn }: { dataColle
                 placeholder="Please select the data collection that will be referenced"
                 onChange={(selectedOption: any) => handleSelectedColumn(selectedOption)}
                 options={
-                    columns?.map((column: any) => {
+                    columnsState?.map((column: any) => {
                         return { value: column.name, label: column.name };
                     })
                     // .filter((dataCollection: any) => {

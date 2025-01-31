@@ -136,6 +136,7 @@ const Edit = ({ dataCollection, updateDataCollection }: IProps) => {
                         </Box>
                         <Text>Filters</Text>
                         {columns?.map((col: any) => {
+                            if (col.isEmpty) return null;
                             return (
                                 <Card key={col.name} mb={'5px'}>
                                     <CardBody>

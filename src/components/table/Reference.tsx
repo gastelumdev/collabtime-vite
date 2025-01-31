@@ -65,7 +65,7 @@ const Reference = ({
     useEffect(() => {
         let rowKey = null;
         columns?.map((col: any) => {
-            if (col.name === column.dataCollectionRefLabel) {
+            if (!col.isEmpty && col.name === column.dataCollectionRefLabel) {
                 rowKey = col.name;
             }
         });

@@ -66,16 +66,13 @@ const TextInput = ({
     const fontSize = '13px';
 
     useEffect(() => {
-        if (columnName === 'column_2') console.log({ value, columnName });
-        // if (value && value !== undefined) {
-        // setVal(value);
         setDisplayVal(value);
 
-        if (inputType === 'number') {
-            let number = Number(value);
-            let numberToString = number.toLocaleString();
-            setDisplayVal(numberToString);
-        }
+        // if (inputType === 'number') {
+        //     let number = Number(value);
+        //     let numberToString = number.toLocaleString();
+        //     setDisplayVal(numberToString);
+        // }
         // }
     }, [value]);
 
@@ -87,7 +84,6 @@ const TextInput = ({
     const handleBlur = (v: string) => {
         if (v === '') {
             if (value !== null && value !== '') {
-                console.log({ v, value });
                 onChange(columnName, v);
             }
         } else {
@@ -136,8 +132,11 @@ const TextInput = ({
                             cursor={'default'}
                             size={'xs'}
                             isDisabled={isDisabled}
+                            onFocus={() => {
+                                setActive(true);
+                            }}
                         >
-                            {`${prefix ? prefix : ''} ${position === 'center' ? <Center>{displayVal}</Center> : displayVal}`}
+                            {`${prefix && value !== '' ? prefix : ''} ${position === 'center' ? <Center>{displayVal}</Center> : displayVal}`}
                         </Button>
                     ) : (
                         // <ProjectManagerApp val={val} type={type} rowId={id} />

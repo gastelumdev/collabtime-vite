@@ -269,21 +269,25 @@ const ViewOne = () => {
                 let values: any = {};
 
                 for (const column of columnsCopy || []) {
-                    if (column?.type === 'reference') {
-                        if (row.refs !== undefined && row.refs[column?.name] !== undefined) {
-                            const refs: any = row.refs[column?.name];
-                            let refsString = '';
-                            if (refs) {
-                                for (const ref of refs) {
-                                    refsString += `${ref.values[key]} `;
+                    if (!column.isEmpty) {
+                        if (column?.type === 'reference') {
+                            if (row.refs !== undefined && row.refs[column?.name] !== undefined) {
+                                const refs: any = row.refs[column?.name];
+                                let refsString = '';
+                                if (refs) {
+                                    for (const ref of refs) {
+                                        refsString += `${ref.values[key]} `;
+                                    }
+                                    values[column?.name] = refsString;
                                 }
-                                values[column?.name] = refsString;
+                            } else {
+                                values[column?.name] = '';
                             }
                         } else {
-                            values[column?.name] = '';
+                            if (row.values && row.values[column?.name] !== undefined) {
+                                values[column?.name] = row.values[column?.name];
+                            }
                         }
-                    } else {
-                        values[column?.name] = row.values[column?.name];
                     }
                 }
 
@@ -621,6 +625,7 @@ const ViewOne = () => {
 
                             <Box>
                                 {columns?.map((column: TColumn, index: number) => {
+                                    if (column.isEmpty) return null;
                                     let bgColor: string = '';
                                     const labels: any = column?.labels || [];
                                     const label: any = labels[0] || null;

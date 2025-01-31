@@ -3,7 +3,7 @@ import { useCallback, useState, memo } from 'react';
 import './Table.css';
 import TableContent from './TableContent';
 import TableHeader from './TableHeader';
-import { TColumn } from '../../types';
+import { TColumn, TRow } from '../../types';
 // import { useCreateColumnMutation, useDeleteColumnMutation } from '../../app/services/api';
 import { Box, Center, Flex, Spacer, Text } from '@chakra-ui/react';
 import { ArrowDownIcon, ArrowUpIcon, DeleteIcon } from '@chakra-ui/icons';
@@ -133,13 +133,16 @@ const Table = ({
         setRows(rowsData);
         setColumns(columnsData);
 
-        setGridTemplateColumns(
-            columnsData
-                .map((column) => {
+        const gtc = columnsData
+            .map((column) => {
+                if (!column.isEmpty) {
                     return column?.width !== undefined ? column?.width : '180px';
-                })
-                .join(' ')
-        );
+                }
+                return '';
+            })
+            .join(' ');
+
+        setGridTemplateColumns(gtc);
         localStorage.setItem('draggable', 'true');
     }, [rowsData, columnsData]);
 
@@ -363,56 +366,133 @@ const Table = ({
     //     reorderRows(rowIds);
     // }, []);
 
-    const handleAddNewColumnToRows = useCallback(
-        async (column: TColumn) => {
-            // createColumn(column);
-
-            setColumns([...columns, column]);
-            setRows((prev: any) =>
-                prev.map((row: any) => {
-                    return { ...row, values: { ...row.values, [column.name]: '' } };
-                })
-            );
-            setGridTemplateColumns(gridTemplateColumns + ' 180px');
-        },
-        [rows, columns]
-    );
-
-    const handleRemoveColumnFromRows = (column: any) => {
+    const handleAddNewColumnToRows = async (column: TColumn) => {
         setRows((prev: any) =>
             prev.map((row: any) => {
-                let refs = row.refs;
-                let newRefs = {};
+                return { ...row, values: { ...row.values, [column.name]: '' } };
+            })
+        );
+        setGridTemplateColumns(gridTemplateColumns + ' 180px');
+    };
 
-                if (refs !== undefined) {
-                    // delete refs[column.name];
+    const handleRemoveColumnFromRows = (column: any) => {
+        console.log(columns);
+        const newRows = rows.map((row: TRow) => {
+            let values = row.values;
+            let refs = row.refs;
 
-                    const refsKeys = Object.keys(refs);
+            const newValues: any = {};
+            const newRefs: any = {};
 
-                    for (const key of refsKeys) {
-                        if (key !== column.name) {
-                            const columnName: any = column.name;
-                            newRefs = { ...newRefs, [columnName]: refs[columnName] };
+            console.log(values);
+
+            for (const col of columns) {
+                if (!col.isEmpty) {
+                    if (col.name !== column.name) {
+                        if (values && values[col.name] !== undefined) {
+                            newValues[col.name as string] = values[col.name];
+                        }
+
+                        if (refs && refs[col.name] !== undefined) {
+                            newRefs[col.name] = refs[col.name];
                         }
                     }
                 }
+            }
 
-                return { ...row, refs: newRefs };
-            })
-        );
+            return { ...row, values: newValues, refs: newRefs };
+        });
+
+        setRows(newRows);
     };
 
-    const handleSetColumns = useCallback(
-        (column: any) => {
-            setColumns((prev) => [...prev, column]);
-            // createColumn(column);
-        },
-        [columns]
-    );
+    const handleModifyColumnNameInRows = (column: TColumn, prevColumn: TColumn) => {
+        const newRows = rows.map((row: TRow) => {
+            let values = row.values;
+            let refs = row.refs;
+
+            const newValues: any = {};
+            const newRefs: any = {};
+
+            console.log(values);
+
+            for (const col of columns) {
+                if (!col.isEmpty) {
+                    if (col.name === prevColumn.name) {
+                        if (values && values[col.name] !== undefined) {
+                            newValues[column.name] = values[col.name];
+                        }
+
+                        if (refs && refs[col.name] !== undefined) {
+                            newRefs[col.name] = refs[col.name];
+                        }
+                    } else {
+                        newValues[col.name] = values[col.name];
+                    }
+                }
+            }
+
+            return { ...row, values: newValues, refs: newRefs };
+        });
+
+        setRows(newRows);
+    };
+
+    const handleSetColumns = (column: any) => {
+        const repositionedColumns = columns.map((col: TColumn) => {
+            if (column._id !== col._id) {
+                return { ...col };
+            } else {
+                return { ...column };
+            }
+        });
+
+        const sortedColumns = repositionedColumns.sort((a: any, b: any) => {
+            if (a.position < b.position) return -1;
+            if (b.position > b.position) return 1;
+            return 0;
+        });
+        setColumns(sortedColumns);
+    };
 
     const handleDeleteColumn = useCallback(
         async (column: any) => {
-            setColumns((prev) => prev.filter((prevColumn) => prevColumn.name !== column.name));
+            let position = 1;
+            const repositionedColumns = columns.map((col: TColumn) => {
+                const newPosition = position;
+
+                if (column._id !== col._id) {
+                    position++;
+                    return { ...col, position: newPosition };
+                } else {
+                    const blankColumn = {
+                        ...column,
+                        name: `Column number ${position}`,
+                        position: 40,
+                        width: '180px',
+                        people: [],
+                        labels: [],
+                        dataCollectionRef: {},
+                        dataCollectionRefLabel: '',
+                        includeInForm: true,
+                        includeInExport: true,
+                        autoIncremented: false,
+                        autoIncrementPrefix: '',
+                        primary: false,
+                        prefix: null,
+                        isEmpty: true,
+                    };
+                    return blankColumn;
+                }
+            });
+
+            const sortedColumns = repositionedColumns.sort((a: any, b: any) => {
+                if (a.position < b.position) return -1;
+                if (b.position > b.position) return 1;
+                return 0;
+            });
+
+            setColumns(sortedColumns);
             await deleteColumn(column);
             // refetchUserGroups();
             // deleteValues(column);
@@ -711,6 +791,7 @@ const Table = ({
                 refetchPermissions={refetchPermissions}
                 isArchives={isArchives}
                 updateView={updateView}
+                handleModifyColumnNameInRows={handleModifyColumnNameInRows}
             />
             <TableContent
                 rows={rows || []}

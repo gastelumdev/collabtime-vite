@@ -129,6 +129,7 @@ export type TColumn = {
     autoIncremented?: boolean;
     autoIncrementPrefix?: string;
     prefix?: string;
+    isEmpty?: boolean;
 };
 
 export interface INote {

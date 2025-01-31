@@ -5,7 +5,6 @@ import {
     useDeleteRowsMutation,
     useUpdateRowMutation,
     useRowCallUpdateMutation,
-    useCreateColumnMutation,
     useDeleteTagMutation,
     useTagExistsMutation,
     useGetDataCollectionQuery,
@@ -63,7 +62,6 @@ import { createRowColorStyles } from './select.styles';
 import NoteModal from './NoteModal';
 import RenameColumn from './RenameColumn';
 import { TColumn, TRow, TTag } from '../../types';
-import CreateColumn from './CreateColumn';
 import { io } from 'socket.io-client';
 import { GoTag } from 'react-icons/go';
 import TagsModal from '../tags/TagsModal';
@@ -146,7 +144,7 @@ const DataCollectionTable = ({
     const { data: workspace } = useGetOneWorkspaceQuery(id || '');
     const { data: columns } = useGetColumnsQuery(dataCollectionId || '');
 
-    const [createColumn] = useCreateColumnMutation();
+    // const [createColumn] = useCreateColumnMutation();
     const [createRow] = useCreateRowMutation();
     const [updateRow] = useUpdateRowMutation();
     const [deleteMultipleRows] = useDeleteRowsMutation();
@@ -223,8 +221,6 @@ const DataCollectionTable = ({
         localStorage.setItem('dataCollectionId', dataCollectionId || '');
         // setData(rows as TRow[]);
     }, [rowsSuccess, rows]);
-
-    useEffect(() => {}, [columns]);
 
     /**
      * This converts data so that the react table can read it before the component
@@ -792,12 +788,12 @@ const DataCollectionTable = ({
                             })}
                             {(permissions || 0) > 1 ? (
                                 <Th>
-                                    <CreateColumn
+                                    {/* <CreateColumn
                                         columns={columns || []}
                                         createColumn={createColumn}
                                         columnIsUpdating={false}
                                         addNewColumnToRows={createColumn}
-                                    />
+                                    /> */}
                                 </Th>
                             ) : null}
                         </Tr>

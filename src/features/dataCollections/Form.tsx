@@ -135,6 +135,7 @@ const Form = () => {
                 <Card mt={'60px'}>
                     <CardBody>
                         {columns?.map((column: TColumn, index: number) => {
+                            if (column.isEmpty) return null;
                             const options: any = column.labels?.map((item) => {
                                 return {
                                     value: item.title,

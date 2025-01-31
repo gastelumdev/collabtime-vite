@@ -136,7 +136,6 @@ const ResourcePlanningApp = ({
             <Tabs
                 onChange={(index: number) => {
                     if (index === 2) {
-                        console.log('PO Tab clicked');
                         setRefetchBom(!refetchBom);
                     }
                 }}
