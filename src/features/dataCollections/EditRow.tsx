@@ -123,6 +123,7 @@ const EditRow = ({ columns, row, handleChange, allowed = false }: IProps) => {
             </Box>
             <PrimaryDrawer onClose={onClose} isOpen={isOpen} title={'Edit row'}>
                 {columns.map((column: any, columnIndex: number) => {
+                    if (column.isEmpty) return null;
                     return (
                         <div
                             key={columnIndex}
