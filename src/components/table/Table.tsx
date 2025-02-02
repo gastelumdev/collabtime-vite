@@ -150,30 +150,23 @@ const Table = ({
         setRows(newRows);
     }, []);
 
-    const handleSetGridTemplateColumns = useCallback(
-        (columnWidths: string) => {
-            setGridTemplateColumns(columnWidths);
-        },
-        [gridTemplateColumns]
-    );
+    const handleSetGridTemplateColumns = (columnWidths: string) => {
+        console.log(columnWidths);
+        setGridTemplateColumns(columnWidths);
+    };
 
-    const rearangeColumns = useCallback(
-        (columns: TColumn[]) => {
-            const newColumns: TColumn[] = columns.map((column, index) => {
-                return { ...column, position: index + 1 };
-            });
-            setColumns(newColumns);
-        },
-        [columns]
-    );
+    const rearangeColumns = (columns: TColumn[]) => {
+        const newColumns: TColumn[] = columns.map((column, index) => {
+            return { ...column, position: index + 1 };
+        });
+        console.log(newColumns);
+        setColumns(newColumns);
+    };
 
-    const updateBackendColumns = useCallback(
-        (columns: TColumn[]) => {
-            setColumns(columns);
-            reorderColumns(columns);
-        },
-        [rearangeColumns, setColumns]
-    );
+    const updateBackendColumns = (columns: TColumn[]) => {
+        // setColumns(columns);
+        reorderColumns(columns);
+    };
 
     const updateBackendColumnWidth = useCallback(
         async (column: TColumn) => {
@@ -384,8 +377,6 @@ const Table = ({
             const newValues: any = {};
             const newRefs: any = {};
 
-            console.log(values);
-
             for (const col of columns) {
                 if (!col.isEmpty) {
                     if (col.name !== column.name) {
@@ -439,6 +430,7 @@ const Table = ({
     };
 
     const handleSetColumns = (column: any) => {
+        console.log(columns);
         const repositionedColumns = columns.map((col: TColumn) => {
             if (column._id !== col._id) {
                 return { ...col };
