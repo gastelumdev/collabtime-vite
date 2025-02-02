@@ -133,7 +133,23 @@ const Table = ({
         setRows(rowsData);
         setColumns(columnsData);
 
-        const gtc = columnsData
+        // const gtc = columnsData
+        //     .map((column) => {
+        //         if (!column.isEmpty) {
+        //             return column?.width !== undefined ? column?.width : '180px';
+        //         }
+        //         return '';
+        //     })
+        //     .join(' ');
+
+        // setGridTemplateColumns(gtc);
+
+        updateGTCValuesFromColumns(columnsData);
+        localStorage.setItem('draggable', 'true');
+    }, [rowsData, columnsData]);
+
+    const updateGTCValuesFromColumns = (cols: TColumn[]) => {
+        const gtc = cols
             .map((column) => {
                 if (!column.isEmpty) {
                     return column?.width !== undefined ? column?.width : '180px';
@@ -142,9 +158,9 @@ const Table = ({
             })
             .join(' ');
 
+        console.log(gtc);
         setGridTemplateColumns(gtc);
-        localStorage.setItem('draggable', 'true');
-    }, [rowsData, columnsData]);
+    };
 
     const handleSetRows = useCallback((newRows: any[]) => {
         setRows(newRows);
@@ -365,7 +381,8 @@ const Table = ({
                 return { ...row, values: { ...row.values, [column.name]: '' } };
             })
         );
-        setGridTemplateColumns(gridTemplateColumns + ' 180px');
+
+        // setGridTemplateColumns(gridTemplateColumns + ' 180px');
     };
 
     const handleRemoveColumnFromRows = (column: any) => {
@@ -445,6 +462,8 @@ const Table = ({
             return 0;
         });
         setColumns(sortedColumns);
+
+        updateGTCValuesFromColumns(sortedColumns);
     };
 
     const handleDeleteColumn = useCallback(
@@ -485,6 +504,7 @@ const Table = ({
             });
 
             setColumns(sortedColumns);
+            updateGTCValuesFromColumns(sortedColumns);
             await deleteColumn(column);
             // refetchUserGroups();
             // deleteValues(column);
