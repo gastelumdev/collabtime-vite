@@ -425,7 +425,6 @@ const TableContent = ({
         >
             <ViewportList viewportRef={ref} items={currentRows} overscan={25}>
                 {(row, rowIndex) => {
-                    if (rowIndex === 0) console.log(row.values);
                     const isLast = rowIndex === rows.length - 1 && row.isEmpty;
                     if ((isLast && !permissions.rows.create) || (isLast && workspace?.type === 'integration')) return null;
 

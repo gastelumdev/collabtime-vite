@@ -146,7 +146,6 @@ const TableHeader = ({
             // Swap the columns
 
             if (draggedColumnIndex !== columnIndex) {
-                console.log(draggedColumnIndex);
                 const newColumns = [...currentColumns];
                 const [draggedColumn] = newColumns.splice(draggedColumnIndex as number, 1);
                 newColumns.splice(columnIndex, 0, draggedColumn);
@@ -349,7 +348,7 @@ const TableHeader = ({
                 className={`table-row header ${dataCollectionView ? `view-${dataCollectionView._id}` : ''}`}
                 style={{
                     // gridTemplateColumns: '220px ' + gridTemplateColumns + ' 100px',
-                    gridTemplateColumns: `${hasCheckboxOptions ? '220px' : '170px'} ${gridTemplateColumns} 100px`,
+                    gridTemplateColumns: `${hasCheckboxOptions ? '220px' : '170px'} ${gridTemplateColumns} 180px`,
                     position: 'sticky',
                     top: '0',
                     height: headerHeight,
