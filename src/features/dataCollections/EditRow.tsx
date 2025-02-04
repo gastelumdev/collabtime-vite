@@ -168,7 +168,7 @@ const EditRow = ({ columns, row, handleChange, allowed = false }: IProps) => {
                                 ) : column?.type === 'reference' ? (
                                     <Reference
                                         column={column !== undefined ? column : {}}
-                                        refs={row.refs && row.refs[column?.name] !== undefined ? row.refs[column?.name] : []}
+                                        refsProp={row.refs && row.refs[column?.name] !== undefined ? row.refs[column?.name] : []}
                                         onRefChange={onRefChange}
                                         onRemoveRef={onRemoveRef}
                                         allowed={allowed}

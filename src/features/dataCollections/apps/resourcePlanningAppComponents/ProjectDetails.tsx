@@ -122,7 +122,7 @@ const ProjectDetails = ({
                                 ) : column?.type === 'reference' ? (
                                     <Reference
                                         column={column !== undefined ? column : {}}
-                                        refs={project.refs && project.refs[column?.name] !== undefined ? project.refs[column?.name] : []}
+                                        refsProp={project.refs && project.refs[column?.name] !== undefined ? project.refs[column?.name] : []}
                                         onRefChange={onRefChange}
                                         onRemoveRef={onRemoveRef}
                                         allowed={allowed}

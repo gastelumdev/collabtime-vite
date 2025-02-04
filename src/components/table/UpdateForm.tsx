@@ -181,7 +181,7 @@ const UpdateForm = () => {
                                                                 .join(' ')}`}</Text>
                                                             <Reference
                                                                 column={column !== undefined ? column : {}}
-                                                                refs={
+                                                                refsProp={
                                                                     row && row.refs !== undefined && row.refs[column.name] !== undefined
                                                                         ? row.refs[column.name]
                                                                         : []
