@@ -1,6 +1,8 @@
 import {
     Box,
     Button,
+    Divider,
+    Flex,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -14,13 +16,19 @@ import {
     PopoverContent,
     PopoverTrigger,
     Portal,
+    Text,
     useDisclosure,
 } from '@chakra-ui/react';
 import CreateColumn from '../../features/dataCollections/CreateColumn';
 import { useUpdateColumnMutation } from '../../app/services/api';
 import { emptyColumnPermissions, emptyDataCollectionPermissions } from '../../features/workspaces/UserGroups';
 import { useEffect, useState } from 'react';
+import { BsSortAlphaDownAlt, BsSortAlphaUp } from 'react-icons/bs';
+import { PiTrashSimple } from 'react-icons/pi';
+import { tableFontColor } from '../../features/dataCollections/DataCollection';
 // import { useParams } from 'react-router-dom';
+
+const hoverColor = '#eff2f5';
 
 const ColumnMenu = ({
     column,
@@ -82,7 +90,7 @@ const ColumnMenu = ({
     return (
         <Popover isOpen={isOpen} onClose={onClose}>
             <PopoverTrigger>
-                <Button variant={'unstyled'} fontSize={'14px'} fontWeight={'medium'} h={'20px'} w={'100px'} color={'#666666'} onClick={onToggle}>
+                <Button variant={'unstyled'} fontSize={'14px'} fontWeight={'normal'} h={'20px'} w={'100px'} color={tableFontColor} onClick={onToggle}>
                     {`${column?.name[0].toUpperCase()}${column?.name.slice(1, column?.name.length).split('_').join(' ')}`}
                 </Button>
             </PopoverTrigger>
@@ -90,49 +98,45 @@ const ColumnMenu = ({
                 <PopoverContent>
                     <PopoverArrow />
                     <PopoverBody>
-                        {/* {index !== 0 ? (
-                            <>
-                                <Box onClick={sortByColumnAsc} textAlign={'left'} fontSize={'14px'} cursor={'pointer'} mb={'4px'}>
-                                    Sort ascending
-                                </Box>
-                                <Box onClick={sortByColumnDes} textAlign={'left'} fontSize={'14px'} cursor={'pointer'} mb={'4px'}>
-                                    Sort descending
-                                </Box>
-                                <Box>
-                                    <CreateColumn
-                                        column={column}
-                                        columns={columns}
-                                        updateColumn={updateColumn}
-                                        addNewColumnToRows={handleAddNewColumnToRows}
-                                        columnIsUpdating={columnIsUpdating as boolean}
-                                    />
-                                </Box>
-                                <Box>
-                                    <DeleteModal column={column} handleDeleteColumnClick={handleDeleteColumnClick} />
-                                </Box>
-                            </>
-                        ) : (
-                            <>
-                                <Box onClick={sortByColumnAsc} textAlign={'left'} fontSize={'14px'} cursor={'pointer'} mb={'4px'}>
-                                    Sort ascending
-                                </Box>
-                                <Box onClick={sortByColumnDes} textAlign={'left'} fontSize={'14px'} cursor={'pointer'} mb={'4px'}>
-                                    Sort descending
-                                </Box>
-                                {hasColumnOptions ? (
-                                    <Box w={'100%'} textAlign={'left'} fontSize={'14px'} cursor={'default'} color="lightgray">
-                                        Delete column
-                                    </Box>
-                                ) : null}
-                            </>
-                        )} */}
-
-                        <>
-                            <Box onClick={sortByColumnAsc} textAlign={'left'} fontSize={'14px'} cursor={'pointer'} mb={'4px'}>
-                                Sort ascending
+                        <Box px={'6px'}>
+                            <Box>
+                                <Text fontWeight={'semibold'}>Column Options</Text>
                             </Box>
-                            <Box onClick={sortByColumnDes} textAlign={'left'} fontSize={'14px'} cursor={'pointer'} mb={'4px'}>
-                                Sort descending
+                        </Box>
+                        <Divider mt={'6px'} mb={'6px'} />
+                        <Box>
+                            <Box
+                                onClick={sortByColumnAsc}
+                                textAlign={'left'}
+                                fontSize={'14px'}
+                                cursor={'pointer'}
+                                py={'3px'}
+                                px={'6px'}
+                                _hover={{ bgColor: hoverColor }}
+                            >
+                                <Flex>
+                                    <Text mr={'8px'} mt={'3px'}>
+                                        <BsSortAlphaUp />
+                                    </Text>
+                                    <Text>Sort ascending</Text>
+                                </Flex>
+                            </Box>
+
+                            <Box
+                                onClick={sortByColumnDes}
+                                textAlign={'left'}
+                                fontSize={'14px'}
+                                cursor={'pointer'}
+                                py={'3px'}
+                                px={'6px'}
+                                _hover={{ bgColor: hoverColor }}
+                            >
+                                <Flex>
+                                    <Text mr={'8px'} mt={'3px'}>
+                                        <BsSortAlphaDownAlt />
+                                    </Text>
+                                    <Text>Sort descending</Text>
+                                </Flex>
                             </Box>
                             {index !== 0 &&
                             dataCollectionView === null &&
@@ -140,7 +144,7 @@ const ColumnMenu = ({
                             dataCollectionPermissions.columnActions.update &&
                             appModel === null &&
                             !column.permanent ? (
-                                <Box>
+                                <Box textAlign={'left'} fontSize={'14px'} cursor={'pointer'} py={'3px'} px={'6px'} _hover={{ bgColor: hoverColor }}>
                                     <CreateColumn
                                         column={column}
                                         columns={columns}
@@ -158,11 +162,11 @@ const ColumnMenu = ({
                             (dataCollectionPermissions.columnActions.delete || columnPermissions.column.delete) &&
                             appModel === null &&
                             !column.permanent ? (
-                                <Box>
+                                <Box py={'3px'} px={'6px'} _hover={{ bgColor: hoverColor }}>
                                     <DeleteModal column={column} handleDeleteColumnClick={handleDeleteColumnClick} />
                                 </Box>
                             ) : null}
-                        </>
+                        </Box>
                     </PopoverBody>
                 </PopoverContent>
             </Portal>
@@ -179,9 +183,14 @@ function DeleteModal({ column, handleDeleteColumnClick }: { column: any; handleD
     };
     return (
         <>
-            <Box w={'100%'} mt={'4px'} textAlign={'left'} fontSize={'14px'} cursor={'pointer'} onClick={onOpen}>
-                Delete column
-            </Box>
+            <Flex>
+                <Text fontSize={'8px'} mr={'8px'} mt={'3px'}>
+                    <PiTrashSimple />
+                </Text>
+                <Box w={'100%'} textAlign={'left'} fontSize={'14px'} cursor={'pointer'} onClick={onOpen}>
+                    Delete column
+                </Box>
+            </Flex>
 
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />

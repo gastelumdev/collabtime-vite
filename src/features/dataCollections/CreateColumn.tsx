@@ -27,7 +27,6 @@ import Divider from '../../components/Divider/Divider';
 
 import { getTextColor } from '../../utils/helpers';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
-import { BsPlusCircle } from 'react-icons/bs';
 import { useParams } from 'react-router-dom';
 import {
     useCreateColumnMutation,
@@ -36,14 +35,16 @@ import {
     useGetWorkspaceUsersQuery,
     useUpdateColumnMutation,
 } from '../../app/services/api';
-import { FaUserPlus } from 'react-icons/fa6';
+import { FaRegSquarePlus, FaUserPlus } from 'react-icons/fa6';
+import { PiPencilSimple } from 'react-icons/pi';
+import { tableFontColor } from './DataCollection';
 
 interface TProps {
     column?: TColumn | null;
     columns?: TColumn[];
     updateColumn?: any;
     createColumn?: any;
-    columnIsUpdating: boolean;
+    columnIsUpdating?: boolean;
     addNewColumnToRows: any;
     handleSetColumns?: any;
     columnsAreFetching?: boolean;
@@ -51,22 +52,14 @@ interface TProps {
     handleModifyColumnNameInRows: (column: TColumn, prevColumn: TColumn) => {};
 }
 
-const CreateColumn = ({
-    column = null,
-    columns,
-    columnIsUpdating = false,
-    addNewColumnToRows,
-    handleSetColumns,
-    columnsAreFetching = false,
-    handleModifyColumnNameInRows,
-}: TProps) => {
+const CreateColumn = ({ column = null, columns, addNewColumnToRows, handleSetColumns, handleModifyColumnNameInRows }: TProps) => {
     const { id, dataCollectionId } = useParams();
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const { data: dataCollections } = useGetDataCollectionsQuery(null);
     const { data: workspaceUsers } = useGetWorkspaceUsersQuery(id as string);
     const [updateColumn] = useUpdateColumnMutation();
-    const [createColumn] = useCreateColumnMutation();
+    const [createColumn, { isLoading: isCreatingColumn }] = useCreateColumnMutation();
 
     // const { data: columns } = useGetColumnsQuery(null);
     // const [createColumn] = useCreateColumnMutation();
@@ -162,7 +155,7 @@ const CreateColumn = ({
             addNewColumnToRows(newColumn);
             setShowLabelForm(false);
             setShowReferenceForm(false);
-            if (!columnsAreFetching) {
+            if (!isCreatingColumn) {
                 closeDrawer();
             }
 
@@ -366,16 +359,30 @@ const CreateColumn = ({
         <>
             <Box>
                 {column !== null ? (
-                    <Box w={'100%'} textAlign={'left'} fontSize={'14px'} cursor={'pointer'} onClick={handleOnOpen}>
-                        Update column
-                    </Box>
+                    <Flex>
+                        <Text mr={'8px'} mt={'3px'}>
+                            <PiPencilSimple />
+                        </Text>
+                        <Box w={'100%'} onClick={handleOnOpen}>
+                            Update column
+                        </Box>
+                    </Flex>
                 ) : (
                     <Button onClick={handleOnOpen} variant={'unstyled'}>
-                        {column !== null ? 'Edit Column' : <BsPlusCircle size={'19px'} color={'gray'} />}
+                        {column !== null ? (
+                            'Edit Column'
+                        ) : (
+                            <Box color={'rgb(99, 99, 99)'} _hover={{ color: tableFontColor }} mt={'3px'}>
+                                <Text fontSize={'40px'}>
+                                    {/* <BsPlusCircle size={'17px'} color={'rgb(155, 155, 155)'} /> */}
+                                    <FaRegSquarePlus size={'18px'} />
+                                </Text>
+                            </Box>
+                        )}
                     </Button>
                 )}
             </Box>
-            <PrimaryDrawer isOpen={isOpen} onClose={closeDrawer} title={column !== null ? 'Update existing column' : 'Create a new column'}>
+            <PrimaryDrawer isOpen={isOpen} size={'lg'} onClose={closeDrawer} title={column !== null ? 'Update existing column' : 'Create a new column'}>
                 <Stack spacing="24px">
                     <Box>
                         <Flex>
@@ -449,20 +456,24 @@ const CreateColumn = ({
                                             </Text>
                                         ) : null}
                                     </HStack>
-                                    <Input
-                                        // ref={firstField}
-                                        id="labelName"
-                                        name="title"
-                                        value={labelOptions.title}
-                                        size={'sm'}
-                                        placeholder="Please enter label name"
-                                        onChange={handleLabelOptionsChange}
-                                    />
+                                    <Box mt={'6px'}>
+                                        <Input
+                                            // ref={firstField}
+                                            id="labelName"
+                                            name="title"
+                                            value={labelOptions.title}
+                                            size={'sm'}
+                                            placeholder="Please enter label name"
+                                            onChange={handleLabelOptionsChange}
+                                        />
+                                    </Box>
                                 </Box>
                                 <Box mb={'10px'} pt={'32px'}>
                                     {/* <Text mb={"5px"}>Label color</Text> */}
                                     <HStack>
-                                        <MdOutlineColorLens color={'rgb(123, 128, 154)'} />
+                                        <Text fontSize={'30px'}>
+                                            <MdOutlineColorLens size={'18px'} color={'rgb(101, 105, 129)'} />
+                                        </Text>
                                         <Box pt={'5px'}>
                                             <input
                                                 type={'color'}
@@ -486,28 +497,30 @@ const CreateColumn = ({
                             <Box>
                                 {labels.map((label: TLabel, index: number) => {
                                     return (
-                                        <Box key={index} bg={label.color} p={'5px'} m={'5px'}>
+                                        <Box key={index} bg={label.color} p={'8px'} px={'12px'} m={'5px'}>
                                             <Flex>
-                                                <Text mt={'5px'} mr={'10px'}>
+                                                <Text mt={'4px'} mr={'10px'}>
                                                     <AiOutlineClose color={getTextColor(label.color)} onClick={() => removeLabel(label)} />
                                                 </Text>
                                                 <Text color={getTextColor(label.color)} fontWeight={'semibold'}>
                                                     {label.title}
                                                 </Text>
                                                 {label.default ? (
-                                                    <Box pt={'4px'} ml={'16px'}>
-                                                        <Text color={'white'} fontSize={'12px'}>
+                                                    <Box mt={'1px'} ml={'16px'}>
+                                                        <Text color={'rgba(255, 255, 255, 0.61)'} fontSize={'12px'}>
                                                             Default
                                                         </Text>
                                                     </Box>
                                                 ) : null}
                                                 <Spacer />
                                                 {!label.default ? (
-                                                    <Box p={'4px'}>
+                                                    <Box>
                                                         <Box
                                                             // py={'3px'}
                                                             px={'8px'}
-                                                            _hover={{ cursor: 'pointer' }}
+                                                            py={'2px'}
+                                                            bgColor={'rgba(230, 230, 230, 0.12)'}
+                                                            _hover={{ cursor: 'pointer', bgColor: 'rgba(230, 230, 230, 0.16)' }}
                                                             onClick={() => setAsDefault(label)}
                                                         >
                                                             <Text fontSize={'12px'} color={'white'}>
@@ -519,8 +532,13 @@ const CreateColumn = ({
                                                 <Box px={'10px'}>
                                                     <Popover>
                                                         <PopoverTrigger>
-                                                            <Box px={'10px'}>
-                                                                <Text fontSize={'14px'} color={'white'} mt={'5px'}>
+                                                            <Box
+                                                                px={'5px'}
+                                                                py={'4px'}
+                                                                bgColor={'rgba(230, 230, 230, 0.12)'}
+                                                                _hover={{ cursor: 'pointer', bgColor: 'rgba(230, 230, 230, 0.16)' }}
+                                                            >
+                                                                <Text fontSize={'14px'} color={'white'}>
                                                                     <FaUserPlus />
                                                                 </Text>
                                                             </Box>
@@ -571,22 +589,36 @@ const CreateColumn = ({
                                                         </PopoverContent>
                                                     </Popover>
                                                 </Box>
-                                                <Box border={'2px solid lightgray'} w={'20px'} h={'20px'} mt={'2px'}>
-                                                    <input
-                                                        type={'color'}
-                                                        value={label.color}
-                                                        style={{ opacity: 0, display: 'block', width: '20px', height: '20px', border: 'none' }}
-                                                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                                            const newLabels = labels.map((item: TLabel) => {
-                                                                if (item.title === label.title) {
-                                                                    return { ...item, color: event.target.value };
-                                                                }
-                                                                return item;
-                                                            });
+                                                <Box bgColor={'rgba(230, 230, 230, 0.12)'} _hover={{ bgColor: 'rgba(230, 230, 230, 0.16)' }}>
+                                                    <Flex>
+                                                        <Text mr={'3px'} mt={'4px'} ml={'3px'}>
+                                                            <MdOutlineColorLens size={'15px'} color={'rgb(207, 210, 226)'} />
+                                                        </Text>
+                                                        <Box border={'2px solid lightgray'} w={'20px'} h={'20px'} mt={'1px'}>
+                                                            <input
+                                                                type={'color'}
+                                                                value={label.color}
+                                                                style={{
+                                                                    opacity: 0,
+                                                                    display: 'block',
+                                                                    width: '20px',
+                                                                    height: '20px',
+                                                                    border: 'none',
+                                                                    cursor: 'pointer',
+                                                                }}
+                                                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                                                    const newLabels = labels.map((item: TLabel) => {
+                                                                        if (item.title === label.title) {
+                                                                            return { ...item, color: event.target.value };
+                                                                        }
+                                                                        return item;
+                                                                    });
 
-                                                            setLabels(newLabels);
-                                                        }}
-                                                    />
+                                                                    setLabels(newLabels);
+                                                                }}
+                                                            />
+                                                        </Box>
+                                                    </Flex>
                                                 </Box>
                                             </Flex>
                                         </Box>
@@ -596,11 +628,12 @@ const CreateColumn = ({
                         </>
                     ) : null}
                     {showReferenceForm ? (
-                        <>
+                        <Box>
+                            <Text mb={'3px'}>Referenced Data Collection</Text>
                             <ReactSelect
                                 id="dataCollections"
                                 name="dataCollections"
-                                placeholder="Please select the data collection that will be referenced"
+                                placeholder="Ex. Customers"
                                 onChange={(selectedOption: any) => handleSelectDataCollection(selectedOption)}
                                 options={dataCollections
                                     ?.map((dataCollection: any) => {
@@ -621,7 +654,7 @@ const CreateColumn = ({
                                 }
                             />
                             {showColumnNameSelection ? <ColumnSelection dataCollectionId={columnRef} handleSelectedColumn={handleSelectColumn} /> : null}
-                        </>
+                        </Box>
                     ) : null}
                     {columnType === 'number' ? (
                         <Box>
@@ -642,12 +675,12 @@ const CreateColumn = ({
                 <Flex mt={'20px'}>
                     <Spacer />
                     {column !== null ? (
-                        <PrimaryButton onClick={handleUpdateColumn} isDisabled={columnNameError || columnName == '' || columnIsUpdating}>
-                            {columnIsUpdating ? <Spinner /> : 'UPDATE'}
+                        <PrimaryButton onClick={handleUpdateColumn} isDisabled={columnNameError || columnName == '' || isCreatingColumn}>
+                            {isCreatingColumn ? <Spinner /> : 'UPDATE'}
                         </PrimaryButton>
                     ) : (
-                        <PrimaryButton onClick={handleAddColumn} isDisabled={columnNameError || columnName == '' || columnIsUpdating}>
-                            {columnIsUpdating ? <Spinner /> : 'SAVE'}
+                        <PrimaryButton onClick={handleAddColumn} isDisabled={columnNameError || columnName == '' || isCreatingColumn}>
+                            {isCreatingColumn ? <Spinner /> : 'SAVE'}
                         </PrimaryButton>
                     )}
                 </Flex>
@@ -673,15 +706,19 @@ const ColumnSelection = ({ dataCollectionId, handleSelectedColumn }: { dataColle
         );
     }, [columns]);
     return (
-        <>
+        <Box mt={'20px'}>
+            <Text mb={'3px'}>Referenced Data Collection Column Name</Text>
             <ReactSelect
                 id="dataCollections"
                 name="dataCollections"
-                placeholder="Please select the data collection that will be referenced"
+                placeholder="ex. Customer name"
                 onChange={(selectedOption: any) => handleSelectedColumn(selectedOption)}
                 options={
                     columnsState?.map((column: any) => {
-                        return { value: column.name, label: column.name };
+                        return {
+                            value: column.name,
+                            label: `${column.name.split('_').join(' ').slice(0, 1).toUpperCase()}${column.name.split('_').join(' ').slice(1)}`,
+                        };
                     })
                     // .filter((dataCollection: any) => {
                     //     return dataCollection.value !== dataCollectionId;
@@ -695,7 +732,7 @@ const ColumnSelection = ({ dataCollectionId, handleSelectedColumn }: { dataColle
                     } as any
                 }
             />
-        </>
+        </Box>
     );
 };
 

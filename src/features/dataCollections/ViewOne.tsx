@@ -49,7 +49,7 @@ import Select from 'react-select';
 import LinkItems from '../../utils/linkItems';
 
 import SideBarLayout from '../../components/Layouts/SideBarLayout';
-import DataCollection from './DataCollection';
+import DataCollection, { tableFontColor } from './DataCollection';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
 import PrimaryDrawer from '../../components/PrimaryDrawer';
@@ -407,13 +407,11 @@ const ViewOne = () => {
                                         Data collection header
                                     */}
                                 <Flex>
-                                    <Box>
-                                        <Heading size={'sm'} mt={'5px'} mb={'4px'} color={'#666666'} fontWeight={'semibold'}>
+                                    <Box color={tableFontColor}>
+                                        <Heading fontSize={'20px'} mt={'5px'} mb={'4px'} fontWeight={'semibold'}>
                                             {!workspaceIsFetching ? `${workspace?.name} - ${dataCollection?.name}` : null}
                                         </Heading>
-                                        <Text fontSize={'sm'} color={'rgb(123, 128, 154)'}>
-                                            {dataCollection?.description}
-                                        </Text>
+                                        <Text fontSize={'sm'}>{dataCollection?.description}</Text>
                                     </Box>
                                     <Spacer />
                                     {/* 
@@ -425,7 +423,7 @@ const ViewOne = () => {
                                                 <MenuButton
                                                     as={Button}
                                                     size={'sm'}
-                                                    fontSize={'13px'}
+                                                    // fontSize={'13px'}
                                                     rightIcon={<ChevronDownIcon />}
                                                     w={'100px'}
                                                     bgColor={'#24a2f0'}
@@ -435,7 +433,7 @@ const ViewOne = () => {
                                                     }}
                                                     _active={{ bgColor: '#24a2f0' }}
                                                 >
-                                                    Options
+                                                    <Text fontSize={'13px'}>Options</Text>
                                                 </MenuButton>
                                                 <MenuList>
                                                     {/* <MenuItem

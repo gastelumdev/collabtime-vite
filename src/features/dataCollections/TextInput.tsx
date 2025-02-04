@@ -9,6 +9,7 @@ import {
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { cellBorderColor } from './DataCollection';
 // import { useGetDataCollectionViewsByRowIdQuery, useGetUserGroupsQuery } from '../../app/services/api';
 // import View from '../dataCollectionViews/View';
 // import { emptyPermissions } from '../workspaces/UserGroups';
@@ -116,7 +117,7 @@ const TextInput = ({
                     {!isCustomLink ? (
                         <Button
                             variant={'unstyled'}
-                            border={type === 'tableCell' ? 'none' : '1px solid #edf2f7'}
+                            border={type === 'tableCell' ? 'none' : `1px solid ${cellBorderColor}`}
                             borderRadius={'none'}
                             fontSize={fontSize}
                             fontWeight={fontWeight}
@@ -129,7 +130,7 @@ const TextInput = ({
                             w={'100%'}
                             h={'29px'}
                             textAlign={'left'}
-                            cursor={'default'}
+                            cursor={allowed ? 'text' : 'default'}
                             size={'xs'}
                             isDisabled={isDisabled}
                             onFocus={() => {
@@ -142,7 +143,7 @@ const TextInput = ({
                         // <ProjectManagerApp val={val} type={type} rowId={id} />
                         <Button
                             variant={'unstyled'}
-                            border={type === 'tableCell' ? 'none' : '1px solid #edf2f7'}
+                            border={type === 'tableCell' ? 'none' : `1px solid ${cellBorderColor}`}
                             borderRadius={'none'}
                             fontSize={fontSize}
                             fontWeight={fontWeight}
@@ -171,7 +172,7 @@ const TextInput = ({
                 <Box pos={'relative'}>
                     {isTextarea ? (
                         <Textarea
-                            fontSize={'12px'}
+                            fontSize={fontSize}
                             value={displayVal}
                             position={'absolute'}
                             zIndex={1000000}
@@ -192,15 +193,15 @@ const TextInput = ({
                         <>
                             {inputType === 'text' ? (
                                 <Input
-                                    fontSize={'12px'}
-                                    fontWeight={'semibold'}
+                                    fontSize={fontSize}
+                                    fontWeight={'normal'}
                                     value={displayVal}
                                     // position={'absolute'}
                                     zIndex={1000000}
                                     onBlur={() => setActive(!active)}
                                     bgColor={'white'}
                                     color={active ? 'black' : textColor}
-                                    size={'xs'}
+                                    size={'sm'}
                                     autoFocus={true}
                                     onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) => {
                                         // event.target.select();
@@ -213,8 +214,8 @@ const TextInput = ({
                                 />
                             ) : (
                                 <Input
-                                    fontSize={'12px'}
-                                    fontWeight={'semibold'}
+                                    fontSize={fontSize}
+                                    fontWeight={'normal'}
                                     value={displayVal}
                                     type={'number'}
                                     placeholder={'0'}
@@ -223,7 +224,7 @@ const TextInput = ({
                                     onBlur={() => setActive(!active)}
                                     bgColor={'white'}
                                     color={active ? 'black' : textColor}
-                                    size={'xs'}
+                                    size={'sm'}
                                     autoFocus={true}
                                     onFocus={(event: React.FocusEvent<HTMLInputElement, Element>) => {
                                         // event.target.select();

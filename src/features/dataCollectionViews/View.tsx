@@ -1,4 +1,4 @@
-import DataCollection from '../dataCollections/DataCollection';
+import DataCollection, { cellBorderColor } from '../dataCollections/DataCollection';
 import {
     useDeleteDataCollectionViewMutation,
     useGetDataCollectionsQuery,
@@ -469,7 +469,7 @@ const View = ({
                                     </Container>
                                 </TabPanel>
                                 <TabPanel>
-                                    <Box borderBottom={'1px solid #EDF2F7'}>
+                                    <Box borderBottom={`1px solid ${cellBorderColor}`}>
                                         <DataCollection
                                             showDoneRows={true}
                                             rowsProp={rowsState}
@@ -491,7 +491,7 @@ const View = ({
                             </TabPanels>
                         </Tabs>
                     ) : (
-                        <Box borderBottom={'1px solid #EDF2F7'}>
+                        <Box borderBottom={`1px solid ${cellBorderColor}`}>
                             <DataCollection
                                 showDoneRows={true}
                                 rowsProp={rowsProp || rowsState}

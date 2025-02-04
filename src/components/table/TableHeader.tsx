@@ -6,6 +6,7 @@ import ColumnMenu from './ColumnMenu';
 // import { useParams } from 'react-router-dom';
 // import { useGetUserGroupsQuery } from '../../app/services/api';
 import { emptyDataCollectionPermissions } from '../../features/workspaces/UserGroups';
+import { cellBorderColor } from '../../features/dataCollections/DataCollection';
 
 interface IProps {
     columns: any[];
@@ -170,7 +171,6 @@ const TableHeader = ({
                 } else {
                     updateBackendColumns(newColumns);
                 }
-                console.log(newColumnWidths);
             }
 
             setDraggedColumnIndex(null);
@@ -352,14 +352,14 @@ const TableHeader = ({
                     position: 'sticky',
                     top: '0',
                     height: headerHeight,
-                    borderBottom: '1px solid #edf2f7',
+                    borderBottom: `1px solid ${cellBorderColor}`,
                 }}
             >
                 <span
                     style={{
                         height: '39px',
                         padding: '0px 20px',
-                        borderRight: '1px solid #edf2f7',
+                        borderRight: `1px solid ${cellBorderColor}`,
                     }}
                 >
                     {/* {isFetching ? <Spinner thickness="2px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="md" mt={'10px'} /> : null} */}
@@ -393,7 +393,7 @@ const TableHeader = ({
                                 padding: '0px 20px',
                                 cursor: draggable ? 'grab' : 'default',
                                 zIndex: `${100 - columnIndex}`,
-                                backgroundColor: draggedColumnIndex === columnIndex ? '#edf2f7' : 'unset',
+                                backgroundColor: draggedColumnIndex === columnIndex ? 'rgb(197, 219, 236)' : 'unset',
                                 borderLeft:
                                     draggedColumnIndex !== null && dropColumnIndex === columnIndex && draggedColumnIndex >= columnIndex
                                         ? '3px solid #2d82eb'
@@ -403,7 +403,7 @@ const TableHeader = ({
                                 borderRight:
                                     draggedColumnIndex !== null && dropColumnIndex === columnIndex && draggedColumnIndex < columnIndex
                                         ? '3px solid #2d82eb'
-                                        : '1px solid #edf2f7',
+                                        : `1px solid ${cellBorderColor}`,
                             }}
                         >
                             {/* Reorder column box */}

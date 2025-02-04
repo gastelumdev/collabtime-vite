@@ -43,6 +43,7 @@ interface IProps {
     permissions?: any;
     Icon?: any;
     iconSize?: string;
+    allowed?: boolean;
 }
 
 const UploadModal = ({
@@ -53,6 +54,7 @@ const UploadModal = ({
     permissions = emptyDataCollectionPermissions,
     Icon = null,
     iconSize = '14px',
+    allowed = false,
 }: IProps) => {
     const { data: documents } = useGetDocumentsQuery(null);
     const { isOpen: uploadIsOpen, onOpen: uploadOnOpen, onClose: uploadOnClose } = useDisclosure();
@@ -70,6 +72,7 @@ const UploadModal = ({
     // const [fileInputIsEmpty, setFileInputIsEmpty] = useState(true);
 
     useEffect(() => {
+        console.log(rowDocuments);
         setCurrentFiles(rowDocuments);
     }, [rowDocuments]);
 
@@ -86,12 +89,12 @@ const UploadModal = ({
 
     const getIcon = (extension: string) => {
         const color = 'rgb(35, 148, 234)';
-        if (extension === 'jpg' || extension === 'png' || extension === 'jpeg') return <FaFileImage color={color} />;
-        if (extension === 'xlsx') return <FaFileExcel color={color} />;
-        if (extension === 'csv') return <FaFileCsv color={color} />;
-        if (extension === 'docx') return <FaFileWord color={color} />;
-        if (extension === 'pdf') return <FaFilePdf color={color} />;
-        return <FaFileAlt color={color} />;
+        if (extension === 'jpg' || extension === 'png' || extension === 'jpeg') return <FaFileImage color={color} size={'34px'} />;
+        if (extension === 'xlsx') return <FaFileExcel color={color} size={'34px'} />;
+        if (extension === 'csv') return <FaFileCsv color={color} size={'34px'} />;
+        if (extension === 'docx') return <FaFileWord color={color} size={'34px'} />;
+        if (extension === 'pdf') return <FaFilePdf color={color} size={'34px'} />;
+        return <FaFileAlt color={color} size={'34px'} />;
     };
 
     const handleUploadOnClose = () => {
@@ -236,7 +239,7 @@ const UploadModal = ({
                     setDuplicateFiles([]);
                 }}
             >
-                <Text color={currentFiles.length < 1 || !permissions.docs.view ? '#cccccc' : '#16b2fc'} fontSize={iconSize}>
+                <Text color={currentFiles.length < 1 || (!permissions.docs.view && !allowed) ? '#cccccc' : '#16b2fc'} fontSize={iconSize}>
                     {Icon ? Icon : <RiAttachmentLine />}
                 </Text>
             </Box>
@@ -249,7 +252,7 @@ const UploadModal = ({
                     </ModalHeader>
                     <ModalBody bgColor={'#f6f8fa'}>
                         <Container maxW={'container.xl'}>
-                            {permissions.docs.create ? (
+                            {permissions.docs.create || allowed ? (
                                 <Grid templateColumns={'50% 48%'} gap={3}>
                                     <GridItem h={'300px'} border={'1px solid rgb(226, 234, 243)'} borderRadius={'5px'} p={'10px'} pt={'30px'} bgColor={'white'}>
                                         <Box>
@@ -330,9 +333,10 @@ const UploadModal = ({
                                     <Text fontWeight={'semibold'} mb={'10px'}>
                                         Uploads
                                     </Text>
-                                    {currentFiles !== undefined && permissions.docs.view ? (
+                                    {currentFiles !== undefined && (permissions.docs.view || allowed) ? (
                                         currentFiles !== undefined && currentFiles.length > 0 ? (
                                             currentFiles.map((rowDoc, index) => {
+                                                console.log(rowDoc);
                                                 if (rowDoc.type !== 'upload') return null;
                                                 return (
                                                     <Flex bgColor={'white'} mb={'8px'} p={'12px'} key={index} boxShadow={'xs'}>
@@ -361,7 +365,7 @@ const UploadModal = ({
                                                             >{`Created by: ${rowDoc.createdBy.firstname} ${rowDoc.createdBy.lastname}`}</Text>
                                                         </Box>
                                                         <Spacer />
-                                                        {permissions.docs.delete ? (
+                                                        {permissions.docs.delete || allowed ? (
                                                             <Box pt={'14px'} pr={'8px'}>
                                                                 {/* <Box cursor={'pointer'} onClick={() => handleRemoveDoc(rowDoc)}>
                                                                 <Text fontSize={'10px'}>
@@ -392,14 +396,16 @@ const UploadModal = ({
                                     <Text fontWeight={'semibold'} mb={'10px'}>
                                         Documents
                                     </Text>
-                                    {currentFiles !== undefined && permissions.docs.view ? (
+                                    {currentFiles !== undefined && (permissions.docs.view || allowed) ? (
                                         currentFiles !== undefined && currentFiles.length > 0 ? (
                                             currentFiles.map((rowDoc, index) => {
                                                 if (rowDoc.type !== 'created') return null;
                                                 return (
                                                     <Flex key={index} bgColor={'white'} mb={'8px'} p={'12px'} boxShadow={'xs'}>
                                                         <Box pt={'6px'} mr={'5px'} fontSize={'34px'} marginRight={'20px'}>
-                                                            <Text color={'rgb(123, 128, 154)'}>{getIcon(rowDoc.ext as string)}</Text>
+                                                            <Text color={'rgb(123, 128, 154)'} fontSize={'lg'}>
+                                                                {getIcon(rowDoc.ext as string)}
+                                                            </Text>
                                                         </Box>
                                                         <Box>
                                                             <Box mb={'6px'} cursor={'pointer'}>
@@ -411,7 +417,7 @@ const UploadModal = ({
                                                             >{`Created by: ${rowDoc.createdBy.firstname} ${rowDoc.createdBy.lastname}`}</Text>
                                                         </Box>
                                                         <Spacer />
-                                                        {permissions.docs.delete ? (
+                                                        {permissions.docs.delete || allowed ? (
                                                             <Box pt={'14px'} pr={'8px'}>
                                                                 {/* <Box pt={'4px'} cursor={'pointer'} onClick={() => handleRemoveDoc(rowDoc)}>
                                                                 <Text fontSize={'10px'}>

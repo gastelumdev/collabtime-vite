@@ -71,10 +71,12 @@ const NoteModal = ({ row, updateRow, allowed = false, icon = null }: IProps) => 
     }, [row]);
 
     const setUnreadItems = () => {
-        for (const note of row.notesList || []) {
-            for (const people of note.people) {
-                if (people.email == user?.email) {
-                    setHasUnreadItems(true);
+        if (row) {
+            for (const note of row.notesList || []) {
+                for (const people of note.people) {
+                    if (people.email == user?.email) {
+                        setHasUnreadItems(true);
+                    }
                 }
             }
         }
@@ -196,7 +198,7 @@ const NoteModal = ({ row, updateRow, allowed = false, icon = null }: IProps) => 
                     <ModalHeader>Notes</ModalHeader>
                     <ModalCloseButton onClick={onClose} />
                     <ModalBody>
-                        {row.notesList.length > 0 ? (
+                        {row !== undefined && row.notesList.length > 0 ? (
                             row.notesList.map((note, index) => {
                                 return (
                                     <Box key={index} mb={'20px'} px={'6px'}>

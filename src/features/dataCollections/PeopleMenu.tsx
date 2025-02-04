@@ -1,4 +1,17 @@
-import { Box, Button, Checkbox, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text, useDisclosure } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    Checkbox,
+    Divider,
+    Heading,
+    Popover,
+    PopoverArrow,
+    PopoverBody,
+    PopoverContent,
+    PopoverTrigger,
+    Text,
+    useDisclosure,
+} from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { TRow, TUser } from '../../types';
 import { createPortal } from 'react-dom';
@@ -41,7 +54,10 @@ const PeopleMenu = ({ columnName, people, values = [], onChange, allowed = false
                 color: '#ffffff',
             };
         });
-        setLabels(values);
+        if (values) {
+            setLabels(values);
+        }
+
         setLabelColor('#ffffff');
         setOptions(cellOptions);
     }, []);
@@ -68,7 +84,7 @@ const PeopleMenu = ({ columnName, people, values = [], onChange, allowed = false
                             <Button
                                 w={'100%'}
                                 h={'29px'}
-                                fontSize={'12px'}
+                                fontSize={'13px'}
                                 pb={'3px'}
                                 // bgColor={labelColor}
                                 color={labels.length > 0 ? 'black' : 'lightgray'}
@@ -87,51 +103,59 @@ const PeopleMenu = ({ columnName, people, values = [], onChange, allowed = false
                             </Button>
                         </PopoverTrigger>
                         {createPortal(
-                            <PopoverContent>
+                            <PopoverContent w={'400px'} px={'10px'} py={'10px'} boxShadow={'md'}>
                                 <PopoverArrow />
                                 <PopoverBody>
-                                    {options?.map((label, index) => {
-                                        const splitPerson = label.label.split(' - ');
-                                        const email = splitPerson.pop();
-                                        const name = splitPerson[0];
-                                        const itsAssigned = isAssignedTo(email as string);
-                                        return (
-                                            <Box key={index} mb={'3px'} cursor={'pointer'}>
-                                                <Checkbox
-                                                    isChecked={itsAssigned}
-                                                    onChange={() => {
-                                                        let newValues: IValues[];
+                                    <Box mb={'10px'}>
+                                        <Heading size={'md'} fontWeight={'semibold'}>
+                                            Choose users
+                                        </Heading>
+                                    </Box>
+                                    <Divider mb={'10px'} />
+                                    <Box>
+                                        {options?.map((label, index) => {
+                                            const splitPerson = label.label.split(' - ');
+                                            const email = splitPerson.pop();
+                                            const name = splitPerson[0];
+                                            const itsAssigned = isAssignedTo(email as string);
+                                            return (
+                                                <Box key={index} mb={'3px'} cursor={'pointer'}>
+                                                    <Checkbox
+                                                        isChecked={itsAssigned}
+                                                        onChange={() => {
+                                                            let newValues: IValues[];
 
-                                                        if (isAssignedTo(email as string)) {
-                                                            newValues = labels.filter((label) => {
-                                                                return label.email !== email;
-                                                            });
-                                                            setLabels(newValues);
-                                                        } else {
-                                                            newValues = [...labels, { name, email: email as string }];
-                                                            setLabels(newValues);
-                                                        }
+                                                            if (isAssignedTo(email as string)) {
+                                                                newValues = labels.filter((label) => {
+                                                                    return label.email !== email;
+                                                                });
+                                                                setLabels(newValues);
+                                                            } else {
+                                                                newValues = [...labels, { name, email: email as string }];
+                                                                setLabels(newValues);
+                                                            }
 
-                                                        onChange(columnName, newValues);
-                                                    }}
-                                                >
-                                                    <Box
-                                                        bgColor={label.color}
-                                                        w={'100%'}
-                                                        fontSize={'12px'}
-                                                        fontWeight={fontWeight}
-                                                        textAlign={'left'}
-                                                        ml={'5px'}
+                                                            onChange(columnName, newValues);
+                                                        }}
                                                     >
-                                                        <Text color={'black'}>
-                                                            {name}
-                                                            <span style={{ color: 'gray' }}>{` ${email}`}</span>
-                                                        </Text>
-                                                    </Box>
-                                                </Checkbox>
-                                            </Box>
-                                        );
-                                    })}
+                                                        <Box
+                                                            bgColor={label.color}
+                                                            w={'100%'}
+                                                            fontSize={'12px'}
+                                                            fontWeight={fontWeight}
+                                                            textAlign={'left'}
+                                                            ml={'5px'}
+                                                        >
+                                                            <Text color={'black'}>
+                                                                {name}
+                                                                <span style={{ color: 'gray' }}>{` ${email}`}</span>
+                                                            </Text>
+                                                        </Box>
+                                                    </Checkbox>
+                                                </Box>
+                                            );
+                                        })}
+                                    </Box>
                                 </PopoverBody>
                             </PopoverContent>,
                             document.body
@@ -160,9 +184,10 @@ const PeopleMenu = ({ columnName, people, values = [], onChange, allowed = false
                         }}
                     >
                         <Text
-                            color={labels.length > 0 ? 'black' : 'lightgray'}
+                            color={labels && labels.length > 0 ? 'black' : 'lightgray'}
                             h={'29px'}
                             fontWeight={fontWeight}
+                            fontSize={'13px'}
                             textAlign={'center'}
                             paddingY={'4px'}
                             overflow={'hidden'}

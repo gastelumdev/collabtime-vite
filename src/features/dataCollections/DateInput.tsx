@@ -35,7 +35,7 @@ const DateInput = ({ value, columnName, onChange, allowed = false, border = null
     // };
 
     return (
-        <Box px={'20px'} pt={'3px'} border={border ? border : 'none'} h={'28px'}>
+        <Box px={'20px'} pt={'4px'} border={border ? border : 'none'} h={'28px'}>
             {/* <Box>{value !== '' || value === undefined ? '#1a202c' : 'lightgray'}</Box> */}
             {/* <Box>{value !== '' || value === undefined ? 'Nothing' : value}</Box> */}
             <Input

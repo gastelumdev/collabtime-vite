@@ -1,8 +1,10 @@
 import {
     Box,
     Center,
+    Container,
     Divider,
-    Flex,
+    Grid,
+    GridItem,
     HStack,
     Modal,
     ModalBody,
@@ -17,21 +19,25 @@ import {
 import { useEffect, useState } from 'react';
 import { useGetColumnsQuery, useGetDataCollectionQuery, useGetRowsQuery } from '../../app/services/api';
 import ViewRef from './ViewRef';
-import { CloseIcon } from '@chakra-ui/icons';
 import { TRow } from '../../types';
+import { FaCodeCompare } from 'react-icons/fa6';
 
 const Reference = ({
+    row = null,
     column,
-    refs,
+    refsProp,
     onRefChange,
     onRemoveRef,
     allowed = false,
+    fontWeight = 'normal',
 }: {
+    row?: any;
     column: any;
-    refs: any;
-    onRefChange: any;
-    onRemoveRef: any;
+    refsProp: any;
+    onRefChange?: any;
+    onRemoveRef?: any;
     allowed?: boolean;
+    fontWeight?: string;
 }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -42,24 +48,28 @@ const Reference = ({
         sort: 1,
         sortBy: 'createdAt',
     });
-    const { data: columns } = useGetColumnsQuery(column.dataCollectionRef._id !== undefined ? column.dataCollectionRef._id : column.dataCollectionRef);
+    const { data: columns, refetch: refetchColumns } = useGetColumnsQuery(
+        column.dataCollectionRef._id !== undefined ? column.dataCollectionRef._id : column.dataCollectionRef
+    );
     const { data: dataCollection } = useGetDataCollectionQuery(
         column.dataCollectionRef._id !== undefined ? column.dataCollectionRef._id : column.dataCollectionRef
     );
 
     const [rowKey, setRowKey] = useState<any>('');
-    const [rowsList, setRowsList] = useState<any>([]);
-    const [rows, setRows] = useState(refs || []);
+    const [availableRefs, setAvailableRefs] = useState<any>([]);
+    const [refs, setRefs] = useState(refsProp || []);
     const [refIds, setRefIds] = useState(
-        refs
-            ? refs.map((item: TRow) => {
+        refsProp
+            ? refsProp.map((item: TRow) => {
                   return item._id;
               })
             : []
     );
+    const [hoveredRefs, setHoveredRefs] = useState<string | null>(null);
 
     useEffect(() => {
         refetch();
+        refetchColumns();
     }, []);
 
     useEffect(() => {
@@ -80,21 +90,21 @@ const Reference = ({
     }, [rowsData, columns]);
 
     useEffect(() => {
-        setRows(refs || []);
-        if (refs) {
+        setRefs(refsProp || []);
+        if (refsProp) {
             setRefIds(
-                refs.map((item: TRow) => {
+                refsProp.map((item: TRow) => {
                     return item._id;
                 })
             );
         }
-    }, [refs]);
+    }, [refsProp]);
 
     useEffect(() => {
         if (rowsData === undefined) {
-            setRowsList([]);
+            setAvailableRefs([]);
         } else {
-            setRowsList(
+            setAvailableRefs(
                 rowsData?.filter((row: any) => {
                     return !row.isEmpty;
                 })
@@ -120,11 +130,11 @@ const Reference = ({
 
     const handleAddRow = (columnName: any, row: any) => {
         onRefChange(columnName, row);
-        setRows((prev: any) => {
+        setRefs((prev: any) => {
             return [...prev, row];
         });
-        setRowsList(
-            rowsList.filter((thisRow: any) => {
+        setAvailableRefs(
+            availableRefs.filter((thisRow: any) => {
                 return thisRow._id !== row._id;
             })
         );
@@ -132,13 +142,13 @@ const Reference = ({
 
     const handleRemoveRef = (columnName: any, ref: any) => {
         onRemoveRef(columnName, ref);
-        setRows((prev: any) =>
+        setRefs((prev: any) =>
             prev.filter((row: any) => {
                 return ref._id !== row._id;
             })
         );
 
-        setRowsList((prev: any) => {
+        setAvailableRefs((prev: any) => {
             return [...prev, ref];
         });
 
@@ -146,267 +156,206 @@ const Reference = ({
         //     return row.
         // })
     };
+
+    const handleOnOpen = () => {
+        const availableRefs = rowsData?.filter((item: TRow) => {
+            for (const selectedRef of refsProp) {
+                if (selectedRef._id === item._id) {
+                    return false;
+                }
+            }
+            return true;
+        });
+
+        setAvailableRefs(availableRefs);
+        onOpen();
+    };
     return (
-        <Center px={'10px'}>
+        <Center px={'10px'} onClick={handleOnOpen} cursor={'pointer'}>
             {dataCollection?.name !== undefined ? (
                 <>
                     <Box overflow={'hidden'}>
                         {allowed ? (
                             <Box
-                                color={rows.length < 1 ? 'lightgray' : 'black'}
+                                color={refs.length < 1 ? 'lightgray' : 'black'}
                                 // fontWeight={rows.length < 1 ? 'normal' : 'semibold'}
-                                fontWeight={'semibold'}
+                                fontWeight={fontWeight}
                                 textAlign={'left'}
                                 overflow={'hidden'}
-                                onClick={onOpen}
+                                onClick={handleOnOpen}
                                 h={'28px'}
-                                pt={'3px'}
+                                pt={'2px'}
                                 cursor={'pointer'}
                                 fontSize={'13px'}
                             >
-                                {/* <Button
-                                    size={'xs'}
-                                    variant={'ghost'}
-                                    color={rows.length < 1 ? 'lightgray' : 'black'}
-                                    fontSize={'12px'}
-                                    overflow={'hidden'}
-                                    onClick={onOpen}
-                                    pt={'6px'}
-                                > */}
                                 <Text>
-                                    {rows.length < 1
-                                        ? `Choose ${dataCollection?.name}`
-                                        : rows.map((row: any, index: number) => {
+                                    {refs.length < 1
+                                        ? row.isEmpty
+                                            ? ''
+                                            : `Choose ${dataCollection?.name}`
+                                        : refs.map((row: any, index: number) => {
                                               if (row.values[rowKey] === undefined) return null;
-                                              return index === rows.length - 1 ? row.values[rowKey] : `${row.values[rowKey]}, `;
-                                              //   return `${row.values[rowKey]} `;
+                                              return index === refs.length - 1 ? row.values[rowKey] : `${row.values[rowKey]}, `;
                                           })}
-                                    {/* </Button> */}
                                 </Text>
                             </Box>
                         ) : (
                             <Text mt={'5px'}>
-                                {rows.length < 1
+                                {refs.length < 1
                                     ? `Choose ${dataCollection?.name}`
-                                    : rows.map((row: any, index: number) => {
+                                    : refs.map((row: any, index: number) => {
                                           if (row.values[rowKey] === undefined) return null;
-                                          return index === rows.length - 1 ? row.values[rowKey] : `${row.values[rowKey]}, `;
-                                          //   return `${row.values[rowKey]} `;
+                                          return index === refs.length - 1 ? row.values[rowKey] : `${row.values[rowKey]}, `;
                                       })}
                             </Text>
                         )}
-                        <Modal onClose={onClose} size={'xl'} isOpen={isOpen}>
+                        <Modal onClose={onClose} size={'full'} isOpen={isOpen}>
                             <ModalOverlay />
-                            <ModalContent maxW="700px">
-                                <ModalHeader>
-                                    <Center>{`${dataCollection?.name}`}</Center>
+                            <ModalContent>
+                                <ModalHeader bgColor={'#f6f8fa'}>
+                                    <Text fontSize={'xl'}>{`${dataCollection?.name}`}</Text>
                                 </ModalHeader>
                                 <ModalCloseButton />
-                                <ModalBody pl={'10px'}>
-                                    <Box h={'600px'}>
-                                        <Flex>
-                                            <Box>
-                                                <Box mb={'5px'} mr={'14px'}>
-                                                    <Center>
-                                                        <Text fontSize={'14px'} fontWeight={'semibold'}>{`Select ${dataCollection?.name}`}</Text>
-                                                    </Center>
-                                                </Box>
-                                                <Divider />
-                                                <Box h={'570px'} w={'330px'} mt={'6px'} overflowY={'scroll'}>
-                                                    {rowsList.map((row: any, index: number) => {
-                                                        if (refIds.includes(row._id)) return null;
-                                                        if (row.values[rowKey] !== '') {
-                                                            return (
-                                                                <Box
-                                                                    key={index}
-                                                                    pl={'10px'}
-                                                                    pt={'2px'}
-                                                                    pb={'5px'}
-                                                                    cursor={'pointer'}
-                                                                    onClick={() => handleAddRow(column.name, row)}
-                                                                    overflow={'hidden'}
-                                                                    _hover={{ backgroundColor: '#3d96ee', color: 'white' }}
-                                                                >
-                                                                    <HStack>
-                                                                        {/* <Box
-                                                                            ml={'10px'}
-                                                                            pt={'2px'}
-                                                                            pr={'10px'}
-                                                                            onClick={() => handleRemoveRef(column.name, row)}
-                                                                            _hover={{ color: 'white' }}
+                                <ModalBody bgColor={'#f6f8fa'}>
+                                    <Container maxW={'container.lg'}>
+                                        <Grid templateColumns={'50% 48%'} gap={3}>
+                                            <GridItem h={'300px'} p={'10px'} pt={'30px'}>
+                                                <Box>
+                                                    <Box mb={'5px'}>
+                                                        <Text fontSize={'16px'} fontWeight={'semibold'}>{`Avalilable ${dataCollection?.name}`}</Text>
+                                                    </Box>
+                                                    <Box mb={'5px'}>
+                                                        <Text
+                                                            fontSize={'12px'}
+                                                            color={'gray'}
+                                                            fontWeight={'semibold'}
+                                                        >{`Select ${dataCollection?.name} to add them to Selected ${dataCollection?.name} column`}</Text>
+                                                    </Box>
+                                                    <Divider />
+                                                    <Box h={'570px'} w={'100%'} mt={'6px'} overflowY={'scroll'}>
+                                                        {availableRefs.map((row: any, index: number) => {
+                                                            if (row.isEmpty) return null;
+                                                            if (refIds.includes(row._id)) return null;
+                                                            if (row.values[rowKey] !== '') {
+                                                                return (
+                                                                    <Box
+                                                                        key={index}
+                                                                        // w={'330px'}
+                                                                        cursor={'pointer'}
+                                                                        onClick={() => handleAddRow(column.name, row)}
+                                                                        overflow={'hidden'}
+                                                                        bgColor={'white'}
+                                                                        mb={'8px'}
+                                                                        p={'3px'}
+                                                                        boxShadow={'xs'}
+                                                                    >
+                                                                        <HStack
+                                                                            p={'9px'}
+                                                                            _hover={{ bgColor: 'gray.100' }}
+                                                                            onMouseEnter={() => {
+                                                                                setHoveredRefs(row._id);
+                                                                            }}
+                                                                            onMouseLeave={() => {
+                                                                                setHoveredRefs(null);
+                                                                            }}
                                                                         >
-                                                                            <Text fontSize={'9px'} fontWeight={'semibold'} cursor={'pointer'} color={'gray'}>
-                                                                                <AddIcon />
-                                                                            </Text>
-                                                                        </Box> */}
-                                                                        <Box>
-                                                                            <Text
-                                                                                fontSize={'13px'}
-                                                                                overflow={'hidden'}
-                                                                                textOverflow={'ellipsis'}
-                                                                                fontWeight={'semibold'}
+                                                                            <Box
+                                                                                mr={'10px'}
+                                                                                ml={'5px'}
+                                                                                p={'8px'}
+                                                                                bgColor={'rgb(35, 148, 234)'}
+                                                                                borderRadius={'5px'}
                                                                             >
-                                                                                {row.values[rowKey]}
-                                                                            </Text>
-                                                                        </Box>
-                                                                    </HStack>
-                                                                </Box>
-                                                            );
-                                                        }
-                                                        return null;
-                                                    })}
+                                                                                <Text color={'rgb(255, 255, 255)'}>
+                                                                                    <FaCodeCompare size={'22px'} />
+                                                                                </Text>
+                                                                            </Box>
+                                                                            <Box>
+                                                                                <Text
+                                                                                    fontSize={'13px'}
+                                                                                    overflow={'hidden'}
+                                                                                    textOverflow={'ellipsis'}
+                                                                                    fontWeight={'semibold'}
+                                                                                    color={'gray.400'}
+                                                                                >
+                                                                                    {`${column.dataCollectionRefLabel}`}
+                                                                                </Text>
+                                                                                <Text
+                                                                                    overflow={'hidden'}
+                                                                                    textOverflow={'ellipsis'}
+                                                                                    fontWeight={'semibold'}
+                                                                                    fontSize={'15px'}
+                                                                                    color={'rgb(17, 72, 114)'}
+                                                                                >{`${row.values[rowKey]}`}</Text>
+                                                                            </Box>
+                                                                            <Spacer />
+                                                                            {/* <Box>
+                                                                                <Text
+                                                                                    fontSize={'16px'}
+                                                                                    fontWeight={'semibold'}
+                                                                                    color={hoveredRefs === row._id ? 'gray.400' : 'white'}
+                                                                                >
+                                                                                    Add
+                                                                                </Text>
+                                                                            </Box> */}
+                                                                        </HStack>
+                                                                    </Box>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        })}
+                                                    </Box>
                                                 </Box>
-                                            </Box>
-                                            <Box>
-                                                <Box mb={'5px'}>
-                                                    <Center>
-                                                        <Text fontSize={'14px'} fontWeight={'semibold'}>{`${dataCollection?.name}`}</Text>
-                                                    </Center>
-                                                </Box>
-                                                <Divider />
-                                                <Box h={'570px'} w={'330px'} mt={'6px'} overflowY={rows.length > 0 ? 'scroll' : 'hidden'}>
-                                                    {rows.length > 0 ? (
-                                                        rows.map((row: any, index: number) => {
-                                                            // return <Box>{row.values[rowKey]}</Box>;
-                                                            return (
-                                                                <Flex key={index}>
+                                            </GridItem>
+                                            <GridItem h={'300px'} p={'10px'} pt={'30px'}>
+                                                <Box>
+                                                    <Box mb={'5px'}>
+                                                        <Text fontSize={'16px'} fontWeight={'semibold'}>
+                                                            {`Selected ${dataCollection?.name}`}
+                                                        </Text>
+                                                    </Box>
+                                                    <Box mb={'5px'}>
+                                                        <Text
+                                                            fontSize={'12px'}
+                                                            color={'gray'}
+                                                            fontWeight={'semibold'}
+                                                        >{`Click on one of the ${dataCollection?.name} to view further`}</Text>
+                                                    </Box>
+                                                    <Divider />
+                                                    <Box h={'570px'} mt={'6px'} overflowY={refs.length > 0 ? 'scroll' : 'hidden'}>
+                                                        {refs.length > 0 ? (
+                                                            refs.map((row: any, index: number) => {
+                                                                // return <Box>{row.values[rowKey]}</Box>;
+                                                                return (
                                                                     <ViewRef
+                                                                        key={index}
                                                                         columns={columns !== undefined ? columns : []}
                                                                         rowData={row}
                                                                         value={row.values[rowKey]}
                                                                         allowed={allowed}
+                                                                        columnName={column.refer}
+                                                                        dataCollection={dataCollection}
+                                                                        column={column}
+                                                                        handleRemoveRef={handleRemoveRef}
+                                                                        hoveredRefs={hoveredRefs}
+                                                                        setHoveredRefs={setHoveredRefs}
                                                                     />
-                                                                    <Spacer />
-                                                                    {allowed ? (
-                                                                        <Box
-                                                                            ml={'10px'}
-                                                                            pt={'2px'}
-                                                                            pr={'10px'}
-                                                                            onClick={() => handleRemoveRef(column.name, row)}
-                                                                        >
-                                                                            <Text fontSize={'9px'} cursor={'pointer'} color={'gray'}>
-                                                                                <CloseIcon />
-                                                                            </Text>
-                                                                        </Box>
-                                                                    ) : null}
-                                                                </Flex>
-                                                            );
-                                                        })
-                                                    ) : (
-                                                        <Center>
-                                                            <Text fontSize={'12px'}>{`No ${dataCollection.name} selected.`}</Text>
-                                                        </Center>
-                                                    )}
+                                                                );
+                                                            })
+                                                        ) : (
+                                                            <Center>
+                                                                <Text fontSize={'12px'}>{`No ${dataCollection.name} selected.`}</Text>
+                                                            </Center>
+                                                        )}
+                                                    </Box>
                                                 </Box>
-                                            </Box>
-                                        </Flex>
-                                    </Box>
+                                            </GridItem>
+                                        </Grid>
+                                    </Container>
                                 </ModalBody>
                             </ModalContent>
                         </Modal>
                     </Box>
-                    {/* <Popover>
-                        {allowed ? (
-                            <PopoverTrigger>
-                                <Box textAlign={'left'} overflow={'hidden'}>
-                                    <Button size={'xs'} variant={'ghost'} color={rows.length < 1 ? 'lightgray' : 'gray'} fontSize={'12px'} overflow={'hidden'}>
-                                        {rows.length < 1
-                                            ? `Choose ${dataCollection?.name}`
-                                            : rows.map((row: any, index: number) => {
-                                                  if (row.values[rowKey] === undefined) return null;
-                                                  return index === rows.length - 1 ? row.values[rowKey] : `${row.values[rowKey]}, `;
-                                                  //   return `${row.values[rowKey]} `;
-                                              })}
-                                    </Button>
-                                </Box>
-                            </PopoverTrigger>
-                        ) : (
-                            <Text mt={'5px'}>
-                                {rows.length < 1
-                                    ? `Choose ${dataCollection?.name}`
-                                    : rows.map((row: any, index: number) => {
-                                          if (row.values[rowKey] === undefined) return null;
-                                          return index === rows.length - 1 ? row.values[rowKey] : `${row.values[rowKey]}, `;
-                                          //   return `${row.values[rowKey]} `;
-                                      })}
-                            </Text>
-                        )}
-                        {createPortal(
-                            <>
-                                <PopoverContent w={'600px'}>
-                                    <PopoverArrow />
-                                    <PopoverCloseButton />
-                                    <PopoverHeader>
-                                        <Text fontSize={'14px'}>{dataCollection?.name}</Text>
-                                    </PopoverHeader>
-                                    <PopoverBody>
-                                        <Box h={'200px'}>
-                                            <Flex>
-                                                <Box h={'200px'} w={'280px'} overflowY={'scroll'}>
-                                                    {rows.length > 0 ? (
-                                                        rows.map((row: any, index: number) => {
-                                                            // return <Box>{row.values[rowKey]}</Box>;
-                                                            return (
-                                                                <Flex key={index}>
-                                                                    <ViewRef
-                                                                        columns={columns !== undefined ? columns : []}
-                                                                        rowData={row}
-                                                                        value={row.values[rowKey]}
-                                                                        allowed={allowed}
-                                                                    />
-                                                                    <Spacer />
-                                                                    {allowed ? (
-                                                                        <Box
-                                                                            ml={'10px'}
-                                                                            pt={'2px'}
-                                                                            pr={'10px'}
-                                                                            onClick={() => handleRemoveRef(column.name, row)}
-                                                                        >
-                                                                            <Text fontSize={'9px'} cursor={'pointer'} color={'gray'}>
-                                                                                <CloseIcon />
-                                                                            </Text>
-                                                                        </Box>
-                                                                    ) : null}
-                                                                </Flex>
-                                                            );
-                                                        })
-                                                    ) : (
-                                                        <Center>
-                                                            <Text fontSize={'12px'}>{`No ${dataCollection.name} selected.`}</Text>
-                                                        </Center>
-                                                    )}
-                                                </Box>
-                                                <Box h={'200px'} overflowY={'scroll'}>
-                                                    {rowsList.map((row: any, index: number) => {
-                                                        if (row.values[rowKey] !== '') {
-                                                            return (
-                                                                <Box
-                                                                    key={index}
-                                                                    pl={'12px'}
-                                                                    pt={'2px'}
-                                                                    pb={'2px'}
-                                                                    cursor={'pointer'}
-                                                                    onClick={() => handleAddRow(column.name, row)}
-                                                                    overflow={'hidden'}
-                                                                    _hover={{ backgroundColor: 'lightgray' }}
-                                                                >
-                                                                    <Text fontSize={'13px'} overflow={'hidden'} textOverflow={'ellipsis'}>
-                                                                        {row.values[rowKey]}
-                                                                    </Text>
-                                                                </Box>
-                                                            );
-                                                        }
-                                                        return null;
-                                                    })}
-                                                </Box>
-                                            </Flex>
-                                        </Box>
-                                    </PopoverBody>
-                                </PopoverContent>
-                            </>,
-                            document.body
-                        )}
-                    </Popover> */}
                 </>
             ) : (
                 <Text>Does not exist.</Text>
