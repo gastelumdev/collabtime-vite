@@ -26,6 +26,11 @@
     font-style: normal;
 }
 
+* {
+    font-family: 'Figtree', serif;
+    font-size: 14px;
+}
+
 /* width */
 ::-webkit-scrollbar {
     width: 0px;

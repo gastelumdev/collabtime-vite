@@ -323,6 +323,8 @@ const TopNav = ({ sidebar = true, onOpen, leftContent, ...rest }: TopNavProps) =
                     icon={<FiMenu />}
                     color={'white'}
                     bgColor={topNavBgColor}
+                    border={'none'}
+                    _hover={{ bgColor: 'none' }}
                 />
                 <Spacer />
                 <Stack direction={'row'} spacing={6}>

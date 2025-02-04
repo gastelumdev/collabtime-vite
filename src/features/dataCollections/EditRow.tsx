@@ -10,6 +10,7 @@ import PeopleMenu from './PeopleMenu';
 import DateInput from './DateInput';
 import TextInput from './TextInput';
 import Reference from '../../components/table/Reference';
+import { cellBorderColor } from './DataCollection';
 
 interface IProps {
     cells?: TCell[];
@@ -131,7 +132,7 @@ const EditRow = ({ columns, row, handleChange, allowed = false }: IProps) => {
                             style={{
                                 whiteSpace: 'nowrap',
                                 fontSize: '12px',
-                                borderBottom: '1px solid #edf2f7',
+                                borderBottom: `1px solid ${cellBorderColor}`,
                             }}
                         >
                             <Box py={'15px'} h={'80px'}>

@@ -12,10 +12,14 @@ import {
     // useUpdateRowMutation,
 } from '../../app/services/api';
 import { useParams } from 'react-router-dom';
-import { Box, Progress } from '@chakra-ui/react';
+import { Box, Center, CircularProgress } from '@chakra-ui/react';
 import Table from '../../components/table/Table';
 import { TColumn } from '../../types';
 import { emptyDataCollectionPermissions, emptyViewPermissions } from '../workspaces/UserGroups';
+
+// This variable also needs to be changed in table.css
+export const cellBorderColor = 'rgb(240, 240, 240)';
+export const tableFontColor = 'rgb(36, 37, 41)';
 
 const DataCollection = ({
     dataCollectionIdProp = null,
@@ -70,7 +74,11 @@ const DataCollection = ({
 
     // const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
 
-    const { data: columns, isFetching: columnsAreFetching } = useGetColumnsQuery(dataCollectionId || appModel || dataCollectionIdProp || '');
+    const {
+        data: columns,
+        refetch: refetchColumns,
+        isFetching: columnsAreFetching,
+    } = useGetColumnsQuery(dataCollectionId || appModel || dataCollectionIdProp || '');
     const [updateColumn] = useUpdateColumnMutation();
     const [reorderColumns] = useReorderColumnsMutation();
 
@@ -92,6 +100,11 @@ const DataCollection = ({
     useEffect(() => {
         refetch();
     }, [rowsProp]);
+
+    useEffect(() => {
+        console.log('Refetch columns');
+        refetchColumns();
+    }, []);
 
     // useEffect(() => {
     //     getPermissions();
@@ -131,45 +144,51 @@ const DataCollection = ({
 
     return (
         <Box>
-            {dataCollectionView === null ? <Box h={'4px'}>{isFetching || isLoading ? <Progress size="xs" isIndeterminate /> : null}</Box> : null}
-            <Table
-                rowsData={rowsProp || rowsData || []}
-                columnsData={columns || dataCollectionView?.columns || []}
-                minCellWidth={120}
-                columnResizingOffset={windowWidthOffset}
-                createColumn={createColumn}
-                createColumnIsUpdating={createColumnIsUpdating}
-                deleteColumn={deleteColumn}
-                updateColumn={handleColumnUpdate}
-                reorderColumns={handleReorderColumns}
-                columnsAreFetching={columnsAreFetching}
-                showDoneRows={showDoneRows}
-                allowed={true}
-                isFetching={isFetching}
-                updateRow={updateRow}
-                deleteRow={deleteRow}
-                updateRowIsLoading={updateRowIsLoading}
-                refetch={refetch}
-                view={dataCollectionView ? true : false}
-                rowsAreDraggable={rowsAreDraggable}
-                hasCheckboxOptions={hasCheckboxOptions}
-                hasColumnOptions={hasColumnOptions}
-                hasCreateColumn={hasCreateColumn}
-                columnsAreDraggable={columnsAreDraggable}
-                dataCollectionView={dataCollectionView}
-                refetchRows={refetchRows}
-                hideEmptyRows={hideEmptyRows}
-                appModel={appModel}
-                dataCollectionPermissions={dataCollectionPermissions}
-                viewPermissions={viewPermissions}
-                refetchRowsForApp={refetchRowsForApp}
-                refetchPermissions={refetchPermissions}
-                isArchives={isArchives}
-                updateView={updateView}
-                updateViewColumns={handleUpdateViewColumns}
-                active={active}
-                execute={execute}
-            />
+            {/* {dataCollectionView === null ? <Box h={'4px'}>{isFetching || isLoading ? <Progress size="xs" isIndeterminate /> : null}</Box> : null} */}
+            {isFetching || isLoading || columnsAreFetching ? (
+                <Center>
+                    <CircularProgress isIndeterminate mb={'300px'} mt={'150px'} />
+                </Center>
+            ) : (
+                <Table
+                    rowsData={rowsProp || rowsData || []}
+                    columnsData={columns || dataCollectionView?.columns || []}
+                    minCellWidth={120}
+                    columnResizingOffset={windowWidthOffset}
+                    createColumn={createColumn}
+                    createColumnIsUpdating={createColumnIsUpdating}
+                    deleteColumn={deleteColumn}
+                    updateColumn={handleColumnUpdate}
+                    reorderColumns={handleReorderColumns}
+                    columnsAreFetching={columnsAreFetching}
+                    showDoneRows={showDoneRows}
+                    allowed={true}
+                    isFetching={isFetching}
+                    updateRow={updateRow}
+                    deleteRow={deleteRow}
+                    updateRowIsLoading={updateRowIsLoading}
+                    refetch={refetch}
+                    view={dataCollectionView ? true : false}
+                    rowsAreDraggable={rowsAreDraggable}
+                    hasCheckboxOptions={hasCheckboxOptions}
+                    hasColumnOptions={hasColumnOptions}
+                    hasCreateColumn={hasCreateColumn}
+                    columnsAreDraggable={columnsAreDraggable}
+                    dataCollectionView={dataCollectionView}
+                    refetchRows={refetchRows}
+                    hideEmptyRows={hideEmptyRows}
+                    appModel={appModel}
+                    dataCollectionPermissions={dataCollectionPermissions}
+                    viewPermissions={viewPermissions}
+                    refetchRowsForApp={refetchRowsForApp}
+                    refetchPermissions={refetchPermissions}
+                    isArchives={isArchives}
+                    updateView={updateView}
+                    updateViewColumns={handleUpdateViewColumns}
+                    active={active}
+                    execute={execute}
+                />
+            )}
         </Box>
     );
 };

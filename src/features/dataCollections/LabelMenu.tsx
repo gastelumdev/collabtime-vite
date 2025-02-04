@@ -99,8 +99,8 @@ const LabelMenu = ({
                                 w={'100%'}
                                 h={'29px'}
                                 fontSize={fontSize}
-                                pb={'3px'}
-                                bgColor={light ? 'gray' : labelColor}
+                                pb={'1px'}
+                                bgColor={light ? 'white' : labelColor}
                                 color={labelColor == 'white' ? 'black' : getTextColor(labelColor)}
                                 borderRadius={'0'}
                                 fontWeight={fontWeight}
@@ -156,10 +156,11 @@ const LabelMenu = ({
                     }}
                 >
                     <Text
-                        backgroundColor={light ? '#e6e6e6' : labelColor}
+                        backgroundColor={light ? 'none' : labelColor}
                         color={getTextColor(labelColor)}
                         // h={'100%'}
                         h={'29px'}
+                        fontSize={fontSize}
                         textAlign={'center'}
                         paddingY={'4px'}
                         // cursor={'pointer'}

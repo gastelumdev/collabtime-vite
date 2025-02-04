@@ -253,7 +253,12 @@ export const api = createApi({
         getRow: builder.query<any, any>({
             query: (params) => ({
                 url: `workspaces/${params.workspaceId}/dataCollections/${params.dataCollectionId}/row/${params.rowId}`,
-            })
+            }),
+            transformResponse: (rows: any) => {
+                return rows.map((row: any) => {
+                    return { ...row, checked: false, subRowsAreOpen: false }
+                })
+            },
         }),
         getRowById: builder.query<any, any>({
             query: (rowId) => ({

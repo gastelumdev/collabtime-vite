@@ -23,6 +23,7 @@ import { emptyDataCollectionPermissions } from '../../features/workspaces/UserGr
 import { useParams } from 'react-router-dom';
 import { useGetOneWorkspaceQuery } from '../../app/services/api';
 import ClearRow from './ClearRow';
+import { cellBorderColor, tableFontColor } from '../../features/dataCollections/DataCollection';
 // import { useParams } from 'react-router-dom';
 
 const Row = ({
@@ -221,12 +222,12 @@ const Row = ({
         const refs: any = [];
         if (row.refs === undefined) {
             refs.push(ref);
-            handleChange({ ...row, refs: { [columnName]: refs } });
+            handleChange({ ...row, isEmpty: false, refs: { [columnName]: refs } });
         } else {
             if (row.refs[columnName] === undefined) {
-                handleChange({ ...row, refs: { ...row.refs, [columnName]: [ref] } });
+                handleChange({ ...row, isEmpty: false, refs: { ...row.refs, [columnName]: [ref] } });
             } else {
-                handleChange({ ...row, refs: { ...row.refs, [columnName]: [...row.refs[columnName], ref] } });
+                handleChange({ ...row, isEmpty: false, refs: { ...row.refs, [columnName]: [...row.refs[columnName], ref] } });
             }
         }
 
@@ -313,7 +314,7 @@ const Row = ({
                             className="table-row-container"
                             style={{
                                 // backgroundColor: draggedId === rowIndex ? '#85bcff' : 'white',
-                                borderTop: '1px solid #edf2f7',
+                                borderTop: `1px solid ${cellBorderColor}`,
                                 // height: draggedId !== null && overId === rowIndex && draggedId >= rowIndex ? '26px' : '29px',
                             }}
                         >
@@ -334,8 +335,8 @@ const Row = ({
                                 onDragLeave={(event: React.DragEvent<HTMLDivElement>) => handleDragLeave(event)}
                                 onDrop={(event: React.DragEvent<HTMLDivElement>) => handleDragEnd(event)}
                             >
-                                <span style={{ borderRight: '1px solid #edf2f7', width: !hasCheckboxOptions ? '170px' : '220px' }}>
-                                    {isLast ? null : (
+                                <span style={{ borderRight: `1px solid ${cellBorderColor}`, width: !hasCheckboxOptions ? '170px' : '220px' }}>
+                                    {dataCollectionView && isLast ? null : (
                                         <Flex>
                                             {isDraggable && dataCollectionPermissions.rows.reorder && appModel === null ? (
                                                 <Box
@@ -428,14 +429,14 @@ const Row = ({
                                 {columns.map((column: any, columnIndex: number) => {
                                     if (column.isEmpty) return null;
                                     let value: any = '';
-                                    if (row.values[column?.name] !== undefined) {
+                                    if (row.values && row.values[column?.name] !== undefined) {
                                         value = row?.values[column?.name];
                                     }
 
-                                    let min_warning = row?.values['min_warning'];
-                                    let min_critical = row?.values['min_critical'];
-                                    let max_warning = row?.values['max_warning'];
-                                    let max_critical = row?.values['max_critical'];
+                                    let min_warning = row.values && row?.values['min_warning'];
+                                    let min_critical = row.values && row?.values['min_critical'];
+                                    let max_warning = row.values && row?.values['max_warning'];
+                                    let max_critical = row.values && row?.values['max_critical'];
 
                                     // Get permissions for columns
                                     const columnsPermissions = dataCollectionPermissions.columns.find((item: any) => {
@@ -468,12 +469,13 @@ const Row = ({
                                         editable = true;
                                     }
                                     // if the column values are auto incremented set editable to false
-                                    if (column?.autoIncremented && !row.isEmpty) {
+                                    if (column?.autoIncremented) {
                                         editable = false;
                                     }
 
                                     // Allowed is used for permissions to an input
-                                    let allowed = columnsPermissions === undefined || columnsPermissions?.permissions.column.update;
+                                    let allowed =
+                                        (columnsPermissions === undefined || columnsPermissions?.permissions.column.update) && !column.autoIncremented;
                                     // if it is a data collection and is the primary column, set it as a link to redirect to row app
                                     let isCustomLink = column?.primary !== undefined ? column?.primary && dataCollectionView : false;
                                     // used to set the text input to look and act disabled
@@ -481,8 +483,8 @@ const Row = ({
                                     let isDisabled = false;
 
                                     let bgColor = 'default';
-                                    let textColor = 'black';
-                                    let fontWeight = 'semibold';
+                                    let textColor = tableFontColor;
+                                    let fontWeight = 'normal';
                                     let position = 'left';
 
                                     if (workspace?.type === 'integration') {
@@ -522,7 +524,7 @@ const Row = ({
                                             }
                                         }
 
-                                        if (row.values[column?.name] === null) {
+                                        if (value === null) {
                                             isDisabled = true;
                                             bgColor = 'lightgray';
                                         }
@@ -538,7 +540,7 @@ const Row = ({
                                         }
                                     }
 
-                                    if (row.values[column?.name] === null || row.values[column?.name] === '') {
+                                    if (value === null || value === '') {
                                         textColor = 'lightgray';
                                     }
                                     if (column.autoIncremented && row.isEmpty) {
@@ -579,7 +581,7 @@ const Row = ({
                                             style={{
                                                 whiteSpace: 'nowrap',
                                                 fontSize: '12px',
-                                                borderBottom: '1px solid #edf2f7',
+                                                borderBottom: `1px solid ${cellBorderColor}`,
                                                 paddingLeft: row.parentRowId && columnIndex == 0 ? '20px' : '0px',
                                             }}
                                         >
@@ -614,11 +616,13 @@ const Row = ({
                                                 />
                                             ) : column?.type === 'reference' ? (
                                                 <Reference
+                                                    row={row}
                                                     column={column !== undefined ? column : {}}
-                                                    refs={row.refs && row.refs[column?.name] !== undefined ? row.refs[column?.name] : []}
+                                                    refsProp={row.refs && row.refs[column?.name] !== undefined ? row.refs[column?.name] : []}
                                                     onRefChange={onRefChange}
                                                     onRemoveRef={onRemoveRef}
                                                     allowed={allowed}
+                                                    fontWeight={fontWeight}
                                                 />
                                             ) : (
                                                 <TextInput

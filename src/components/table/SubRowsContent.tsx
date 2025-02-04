@@ -1,5 +1,6 @@
 import { Box } from '@chakra-ui/react';
 import React, { memo, useCallback, useEffect, useState } from 'react';
+import { cellBorderColor } from '../../features/dataCollections/DataCollection';
 
 const SubRowsContent = ({ rows, columns, gridTemplateColumns, opened }: { rows: any[]; columns: any[]; gridTemplateColumns: string; opened: boolean }) => {
     const [overId, setOverId] = useState<number | null>(null);
@@ -69,7 +70,7 @@ const SubRowsContent = ({ rows, columns, gridTemplateColumns, opened }: { rows: 
     return (
         <>
             {opened ? (
-                <div style={{ border: '1px solid #edf2f7', padding: '16px 10px', backgroundColor: '#f3f7fc' }}>
+                <div style={{ border: `1px solid ${cellBorderColor}`, padding: '16px 10px', backgroundColor: '#f3f7fc' }}>
                     {rows.map((subrow: any, rowIndex) => {
                         return (
                             <div
@@ -78,7 +79,7 @@ const SubRowsContent = ({ rows, columns, gridTemplateColumns, opened }: { rows: 
                                 className="table-row-container"
                                 style={{
                                     backgroundColor: draggedId === rowIndex ? '#85bcff' : 'white',
-                                    borderTop: '1px solid #edf2f7',
+                                    borderTop: `1px solid ${cellBorderColor}`,
                                 }}
                             >
                                 <div
