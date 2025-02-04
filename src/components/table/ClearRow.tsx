@@ -44,7 +44,9 @@ const ClearRow = ({ row, columns, handleChange }: { row: TRow; columns: TColumn[
                                     }
                                 }
 
-                                const newRow = { ...row, values, refs, isEmpty: true };
+                                console.log(values);
+
+                                const newRow = { ...row, values, refs, notesList: [], docs: [], reminders: [], acknowledged: false, isEmpty: true };
 
                                 handleChange(newRow);
                                 onClose();
