@@ -60,7 +60,7 @@ const PeopleMenu = ({ columnName, people, values = [], onChange, allowed = false
 
         setLabelColor('#ffffff');
         setOptions(cellOptions);
-    }, []);
+    }, [values]);
 
     const handleClose = () => {
         onClose();
