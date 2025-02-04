@@ -341,7 +341,7 @@ const TopNav = ({ sidebar = true, onOpen, leftContent, ...rest }: TopNavProps) =
                             }}
                         >
                             <Text size={'20px'} pt={1} color={'white'} fontSize={'22px'}>
-                                <LiaUserSolid />
+                                <LiaUserSolid size={'20px'} />
                             </Text>
                         </MenuButton>
                         <MenuList alignItems={'center'} zIndex={'10'}>
@@ -365,10 +365,10 @@ const TopNav = ({ sidebar = true, onOpen, leftContent, ...rest }: TopNavProps) =
                             </Center>
                             <br />
                             <MenuDivider />
-                            <MenuItem color={color} onClick={() => navigate('/resetPasswordRequest')}>
+                            <MenuItem color={'black'} onClick={() => navigate('/resetPasswordRequest')}>
                                 Reset Password
                             </MenuItem>
-                            <MenuItem onClick={logout} color={color}>
+                            <MenuItem onClick={logout} color={'black'}>
                                 Logout
                             </MenuItem>
                         </MenuList>
