@@ -21,7 +21,7 @@ const Search = () => {
                     <FaSearch />
                 </IconContext.Provider> */}
                 <Text color={'white'} fontSize={'20px'}>
-                    <LiaSearchSolid />
+                    <LiaSearchSolid size={'20px'} />
                 </Text>
             </MenuButton>
             <PrimaryDrawer title="Search" isOpen={isOpen} onClose={onClose} size="Full" initialFocusRef={firstField}>

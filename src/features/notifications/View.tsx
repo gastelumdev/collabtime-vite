@@ -29,7 +29,7 @@ const View = () => {
             <MenuButton bg={'#0f172a'} onClick={onOpen}>
                 {/* <BellIcon boxSize={5} color={'white'} /> */}
                 <Text color={'white'} fontSize={'20px'}>
-                    <LiaBell />
+                    <LiaBell size={'20px'} />
                 </Text>
             </MenuButton>
             <PrimaryDrawer title="Notifications" isOpen={isOpen} onClose={onClose} size="full">

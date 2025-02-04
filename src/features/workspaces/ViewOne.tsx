@@ -210,13 +210,15 @@ const ViewOne = () => {
                                                 {userGroup.permissions.workspace.update ||
                                                 userGroup.permissions.workspace.delete ||
                                                 userGroup.permissions.workspace.userGroups ? (
-                                                    <Box mt={'20px'} ml={'6px'}>
+                                                    <Box mt={'14px'} ml={'6px'}>
                                                         <Menu>
                                                             <MenuButton pt={'8px'} ml={'5px'}>
                                                                 {/* <PrimaryButton size="sm"> */}
-                                                                <Text fontSize={'20px'}>
-                                                                    <IoSettingsOutline />
-                                                                </Text>
+                                                                <Box bgColor={'rgb(35, 148, 234)'} p={'5px'} borderRadius={'5px'}>
+                                                                    <Text fontSize={'20px'} color={'white'}>
+                                                                        <IoSettingsOutline size={'18px'} />
+                                                                    </Text>
+                                                                </Box>
                                                                 {/* </PrimaryButton> */}
                                                             </MenuButton>
                                                             <MenuList fontSize={'13px'}>
