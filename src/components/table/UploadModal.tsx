@@ -72,7 +72,6 @@ const UploadModal = ({
     // const [fileInputIsEmpty, setFileInputIsEmpty] = useState(true);
 
     useEffect(() => {
-        console.log(rowDocuments);
         setCurrentFiles(rowDocuments);
     }, [rowDocuments]);
 
