@@ -13,7 +13,6 @@ import { clearCheckedRowIds } from '../../components/table/tableSlice';
 // import { useParams } from 'react-router-dom';
 import { emptyDataCollectionPermissions } from '../../features/workspaces/UserGroups';
 import { MdArchive } from 'react-icons/md';
-import { FaTrashAlt } from 'react-icons/fa';
 
 interface ITableProps {
     rowsData?: any[];
@@ -64,7 +63,7 @@ const Table = ({
     createColumn,
     createColumnIsUpdating,
     deleteColumn,
-    deleteRow,
+    // deleteRow,
     reorderColumns,
     columnsAreFetching = false,
     showDoneRows = true,
@@ -257,42 +256,42 @@ const Table = ({
         [numberOfDeleteItems, rows]
     );
 
-    const deleteItems = () => {
-        const rowsCopy = rows;
-        const parentIds: any = [];
+    // const deleteItems = () => {
+    //     const rowsCopy = rows;
+    //     const parentIds: any = [];
 
-        rowsCopy.map((row: any) => {
-            if (checkedRowIds.includes(row._id) && row.isParent) {
-                parentIds.push(row._id);
-            }
-        });
+    //     rowsCopy.map((row: any) => {
+    //         if (checkedRowIds.includes(row._id) && row.isParent) {
+    //             parentIds.push(row._id);
+    //         }
+    //     });
 
-        let position = 0;
+    //     let position = 0;
 
-        // let checkedParent: any = null;
+    //     // let checkedParent: any = null;
 
-        const filterRowsChecked = rowsCopy.filter((row: any) => !checkedRowIds.includes(row._id));
-        const filterSubrows = filterRowsChecked.filter((row: any) => !parentIds.includes(row.parentRowId));
-        const newRows = filterSubrows.map((row: any) => {
-            if (!checkedRowIds.includes(row._id)) {
-                position = position + 1;
-                return { ...row, position: position };
-            }
-            return row;
-        });
-        setRows(newRows);
+    //     const filterRowsChecked = rowsCopy.filter((row: any) => !checkedRowIds.includes(row._id));
+    //     const filterSubrows = filterRowsChecked.filter((row: any) => !parentIds.includes(row.parentRowId));
+    //     const newRows = filterSubrows.map((row: any) => {
+    //         if (!checkedRowIds.includes(row._id)) {
+    //             position = position + 1;
+    //             return { ...row, position: position };
+    //         }
+    //         return row;
+    //     });
+    //     setRows(newRows);
 
-        for (const row of rowsCopy) {
-            if (parentIds.includes(row.parentRowId)) {
-                deleteRow(row);
-            }
-            if (checkedRowIds.includes(row._id)) {
-                deleteRow(row);
-            }
-        }
-        setNumberOfDeleteItems(0);
-        dispatch(clearCheckedRowIds());
-    };
+    //     for (const row of rowsCopy) {
+    //         if (parentIds.includes(row.parentRowId)) {
+    //             deleteRow(row);
+    //         }
+    //         if (checkedRowIds.includes(row._id)) {
+    //             deleteRow(row);
+    //         }
+    //     }
+    //     setNumberOfDeleteItems(0);
+    //     dispatch(clearCheckedRowIds());
+    // };
 
     const archiveItems = () => {
         const rowsCopy = rows;
@@ -774,7 +773,7 @@ const Table = ({
                                 </Center>
                             </Box>
                         ) : null}
-                        {permissions.rows.delete ? (
+                        {/* {permissions.rows.delete ? (
                             <Box
                                 onClick={deleteItems}
                                 cursor={'pointer'}
@@ -792,7 +791,7 @@ const Table = ({
                                     <Text>Delete</Text>
                                 </Center>
                             </Box>
-                        ) : null}
+                        ) : null} */}
                     </Flex>
                 </Box>
             ) : null}

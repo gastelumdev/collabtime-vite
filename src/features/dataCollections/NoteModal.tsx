@@ -202,7 +202,7 @@ const NoteModal = ({ row, updateRow, allowed = false, icon = null }: IProps) => 
                 </Text>
                 {/* </IconContext.Provider> */}
             </Box>
-            <Modal isOpen={notesIsOpen} onClose={notesOnClose} size={'full'}>
+            <Modal isOpen={notesIsOpen} onClose={notesOnClose} size={'6xl'}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader bgColor={'#f6f8fa'}>
