@@ -52,6 +52,7 @@ interface ITableProps {
     updateViewColumns?: any;
     active?: boolean;
     execute?: any;
+    refetchColumns?: any;
 }
 
 const Table = ({
@@ -90,6 +91,7 @@ const Table = ({
     updateViewColumns,
     active = true,
     execute = null,
+    refetchColumns,
 }: ITableProps) => {
     const dispatch = useAppDispatch();
     // const { dataCollectionId } = useParams();
@@ -216,6 +218,7 @@ const Table = ({
                     });
 
                     refetch();
+                    refetchColumns();
                 }
             }
 
