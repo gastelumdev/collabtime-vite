@@ -159,6 +159,7 @@ const Table = ({
                 return '';
             })
             .join(' ');
+        console.log(gtc);
 
         setGridTemplateColumns(gtc);
     };

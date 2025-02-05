@@ -288,6 +288,7 @@ const TableHeader = ({
 
             startTransition(() => {
                 handleGridTemplateColumns(columnWidth);
+                handleSetColumns({ ...activeColumn, width: columnWidth });
             });
 
             // More defaults
