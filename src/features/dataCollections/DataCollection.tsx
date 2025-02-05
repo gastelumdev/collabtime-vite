@@ -183,6 +183,7 @@ const DataCollection = ({
                 updateViewColumns={handleUpdateViewColumns}
                 active={active}
                 execute={execute}
+                refetchColumns={refetchColumns}
             />
         </Box>
     );
