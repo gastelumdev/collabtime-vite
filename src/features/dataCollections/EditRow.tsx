@@ -4,7 +4,6 @@ import { Box, Flex, Spacer, Text, useDisclosure } from '@chakra-ui/react';
 import { TCell } from '../../types';
 import { RiEditBoxLine } from 'react-icons/ri';
 import { useGetUserQuery } from '../../app/services/api';
-import { IconContext } from 'react-icons';
 import LabelMenu from './LabelMenu';
 import PeopleMenu from './PeopleMenu';
 import DateInput from './DateInput';
@@ -117,10 +116,12 @@ const EditRow = ({ columns, row, handleChange, allowed = false }: IProps) => {
     );
     return (
         <>
-            <Box ml={'12px'} pb={'2px'} onClick={onOpen} cursor={'pointer'}>
-                <IconContext.Provider value={{ color: '#cccccc', size: '17px' }}>
-                    <RiEditBoxLine />
-                </IconContext.Provider>
+            <Box ml={'12px'} pb={'2px'} onClick={allowed ? onOpen : () => {}} cursor={allowed ? 'pointer' : 'default'}>
+                {/* <IconContext.Provider value={{ color: allowed ? '#cccccc' : '', size: '17px' }}> */}
+                <Text color={allowed ? 'gray.300' : 'gray.200'}>
+                    <RiEditBoxLine size={'17px'} />
+                </Text>
+                {/* </IconContext.Provider> */}
             </Box>
             <PrimaryDrawer onClose={onClose} isOpen={isOpen} title={'Edit row'}>
                 {columns.map((column: any, columnIndex: number) => {

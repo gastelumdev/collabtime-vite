@@ -8,9 +8,10 @@ interface IProps {
     allowed?: boolean;
     border?: string | null;
     fontWeight?: string;
+    isEmpty?: boolean;
 }
 
-const DateInput = ({ value, columnName, onChange, allowed = false, border = null, fontWeight = 'normal' }: IProps) => {
+const DateInput = ({ value, columnName, onChange, allowed = false, border = null, fontWeight = 'normal', isEmpty = false }: IProps) => {
     // const [updateCell] = useUpdateCellMutation();
     const [inputValue, setInputValue] = useState<string>('');
 
@@ -38,21 +39,23 @@ const DateInput = ({ value, columnName, onChange, allowed = false, border = null
         <Box px={'20px'} pt={'4px'} border={border ? border : 'none'} h={'28px'}>
             {/* <Box>{value !== '' || value === undefined ? '#1a202c' : 'lightgray'}</Box> */}
             {/* <Box>{value !== '' || value === undefined ? 'Nothing' : value}</Box> */}
-            <Input
-                value={inputValue}
-                fontWeight={fontWeight}
-                type="datetime-local"
-                size={'sm'}
-                variant={'unstyled'}
-                onChange={handleInputChange}
-                // onBlur={handleUpdateRowOnBlur}
-                isReadOnly={!allowed}
-                cursor={allowed ? 'text' : 'default'}
-                textOverflow={'ellipsis'}
-                fontSize={fontSize}
-                color={inputValue !== '' || inputValue === undefined ? '#1a202c' : 'lightgray'}
-                // placeholder="2000-01-01T12:00"
-            />
+            {isEmpty ? null : (
+                <Input
+                    value={inputValue}
+                    fontWeight={fontWeight}
+                    type="datetime-local"
+                    size={'sm'}
+                    variant={'unstyled'}
+                    onChange={handleInputChange}
+                    // onBlur={handleUpdateRowOnBlur}
+                    isReadOnly={!allowed}
+                    cursor={allowed ? 'text' : 'default'}
+                    textOverflow={'ellipsis'}
+                    fontSize={fontSize}
+                    color={inputValue !== '' || inputValue === undefined ? '#1a202c' : 'lightgray'}
+                    // placeholder="2000-01-01T12:00"
+                />
+            )}
         </Box>
     );
 };

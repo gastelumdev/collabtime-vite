@@ -2,11 +2,11 @@ import { RxReset } from 'react-icons/rx';
 import { TColumn, TRow } from '../../types';
 import { Box, Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useDisclosure } from '@chakra-ui/react';
 
-const ClearRow = ({ row, columns, handleChange }: { row: TRow; columns: TColumn[]; handleChange: any }) => {
+const ClearRow = ({ row, columns, handleChange, allowed = false }: { row: TRow; columns: TColumn[]; handleChange: any; allowed: boolean }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     return (
-        <Box onClick={onOpen}>
-            <Text color={row.isEmpty ? '#cccccc' : '#16b2fc'}>
+        <Box onClick={allowed ? onOpen : () => {}}>
+            <Text color={row.isEmpty ? 'gray.200' : '#16b2fc'}>
                 <RxReset />
             </Text>
             <Modal isOpen={isOpen} onClose={onClose}>

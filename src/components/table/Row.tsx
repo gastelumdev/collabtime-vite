@@ -358,17 +358,22 @@ const Row = ({
                                                 ></Box>
                                             ) : null}
                                             {hasCheckboxOptions && appModel === null ? (
-                                                <Box mt={'6px'} ml={'14px'}>
-                                                    <Checkbox
-                                                        mr={'1px'}
-                                                        isChecked={checkedRowIds.includes(row._id)}
-                                                        onChange={handleDeleteCheckboxChange}
-                                                        disabled={!dataCollectionPermissions.rows.subrows && !dataCollectionPermissions.rows.delete}
-                                                    />
+                                                <Box mt={'8px'} ml={'14px'}>
+                                                    <Box>
+                                                        <Checkbox
+                                                            // size={'sm'}
+                                                            isChecked={checkedRowIds.includes(row._id)}
+                                                            onChange={handleDeleteCheckboxChange}
+                                                            disabled={
+                                                                (!dataCollectionPermissions.rows.subrows && !dataCollectionPermissions.rows.delete) ||
+                                                                row.isEmpty
+                                                            }
+                                                        />
+                                                    </Box>
                                                 </Box>
                                             ) : null}
                                             <Box pt={'6px'}>
-                                                <EditRow row={row} columns={columns} handleChange={editRowOnChange} allowed={allowed} />
+                                                <EditRow row={row} columns={columns} handleChange={editRowOnChange} allowed={allowed && !row.isEmpty} />
                                             </Box>
                                             {dataCollectionPermissions.notes.view ? (
                                                 <Box pt={'6px'}>
@@ -376,20 +381,31 @@ const Row = ({
                                                         row={row}
                                                         updateRow={editRowOnChange}
                                                         // rowCallUpdate={rowCallUpdate}
-                                                        allowed={dataCollectionPermissions.notes.create}
+                                                        allowed={dataCollectionPermissions.notes.create && !row.isEmpty}
                                                     />
                                                 </Box>
                                             ) : null}
-                                            <Box pt={'7px'} ml={'10px'} cursor={dataCollectionPermissions.reminders.view ? 'pointer' : 'default'}>
-                                                <RemindersDrawer row={row} handleChange={editRowOnChange} allowed={dataCollectionPermissions.reminders.view} />
+                                            <Box
+                                                pt={'7px'}
+                                                ml={'10px'}
+                                                cursor={dataCollectionPermissions.reminders.view && !row.isEmpty ? 'pointer' : 'default'}
+                                            >
+                                                <RemindersDrawer
+                                                    row={row}
+                                                    handleChange={editRowOnChange}
+                                                    allowed={dataCollectionPermissions.reminders.view && !row.isEmpty}
+                                                />
                                             </Box>
                                             <Box
                                                 pt={'7px'}
                                                 ml={'10px'}
-                                                onClick={allowed ? handleAcknowledgeClick : () => {}}
-                                                cursor={allowed ? 'pointer' : 'default'}
+                                                onClick={allowed && !row.isEmpty ? handleAcknowledgeClick : () => {}}
+                                                cursor={allowed && !row.isEmpty ? 'pointer' : 'default'}
                                             >
-                                                <Text fontSize={'15px'} color={row.acknowledged && allowed ? '#16b2fc' : '#cccccc'}>
+                                                <Text
+                                                    fontSize={'15px'}
+                                                    color={allowed && !row.isEmpty ? (row.acknowledged ? '#16b2fc' : 'gray.300') : 'gray.200'}
+                                                >
                                                     <FaRegSquareCheck />
                                                 </Text>
                                             </Box>
@@ -400,11 +416,12 @@ const Row = ({
                                                     getUpdatedDoc={getUpdatedDoc}
                                                     removeDoc={removeDoc}
                                                     permissions={dataCollectionPermissions}
+                                                    allowed={!row.isEmpty}
                                                 />
                                             </Box>
                                             {dataCollectionPermissions.rows.delete ? (
-                                                <Box pt={'6px'} ml={'10px'} cursor={'pointer'}>
-                                                    <ClearRow row={row} columns={columns} handleChange={handleChange} />
+                                                <Box pt={'6px'} ml={'10px'} cursor={!row.isEmpty ? 'pointer' : 'default'}>
+                                                    <ClearRow row={row} columns={columns} handleChange={handleChange} allowed={!row.isEmpty} />
                                                 </Box>
                                             ) : null}
                                             {/* {row.position} */}
@@ -613,6 +630,7 @@ const Row = ({
                                                     onChange={onChange}
                                                     allowed={allowed}
                                                     fontWeight={fontWeight}
+                                                    isEmpty={row.isEmpty}
                                                 />
                                             ) : column?.type === 'reference' ? (
                                                 <Reference
