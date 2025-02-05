@@ -67,7 +67,7 @@ const TextInput = ({
     const fontSize = '13px';
 
     useEffect(() => {
-        setDisplayVal(value);
+        setDisplayVal(value === null ? '' : value);
 
         // if (inputType === 'number') {
         //     let number = Number(value);
