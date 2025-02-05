@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { INote, TRow } from '../../types';
 import {
     Box,
+    Container,
     Flex,
+    Grid,
+    GridItem,
     Input,
     Modal,
     ModalBody,
     ModalCloseButton,
     ModalContent,
-    ModalFooter,
     ModalHeader,
     ModalOverlay,
     Spacer,
@@ -35,6 +37,7 @@ const NoteModal = ({ row, updateRow, allowed = false, icon = null }: IProps) => 
     const { isOpen: notesIsOpen, onOpen: notesOnOpen, onClose: notesOnClose } = useDisclosure();
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
     const { data: workspace } = useGetOneWorkspaceQuery(localStorage.getItem('workspaceId') || '');
+    const messagesEndRef = useRef<any>(null);
 
     const [uploadDocs] = useUploadDocsMutation();
     const [uploadPersistedDocs] = useUploadPersistedDocsMutation();
@@ -165,7 +168,7 @@ const NoteModal = ({ row, updateRow, allowed = false, icon = null }: IProps) => 
             },
         ];
 
-        updateRow({ ...row, notesList: result });
+        await updateRow({ ...row, notesList: result });
 
         setNote({
             content: '',
@@ -176,12 +179,17 @@ const NoteModal = ({ row, updateRow, allowed = false, icon = null }: IProps) => 
             images: [],
         });
         setFiles([]);
-        notesOnClose();
+        scrollToBottom();
+        // notesOnClose();
+    };
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
     return (
         <>
-            <Box ml={'10px'} pt={'1px'} onClick={handleOpen} cursor={'pointer'}>
+            <Box ml={'10px'} pt={'1px'} onClick={allowed ? handleOpen : () => {}} cursor={allowed ? 'pointer' : 'default'}>
                 {/* <IconContext.Provider
                     // value={{ color: data.notesList.length > 0 ? "#cccccc" : "#16b2fc", size: "16px" }}
                     value={{
@@ -189,76 +197,114 @@ const NoteModal = ({ row, updateRow, allowed = false, icon = null }: IProps) => 
                         size: '15px',
                     }}
                 > */}
-                <Text color={row?.notesList.length < 1 ? '#cccccc' : hasUnreadItems ? '#ffa507' : '#16b2fc'}>{icon ? icon : <FaRegStickyNote />}</Text>
+                <Text color={!allowed ? 'gray.200' : row?.notesList.length < 1 ? 'gray.300' : hasUnreadItems ? '#ffa507' : '#16b2fc'}>
+                    {icon ? icon : <FaRegStickyNote />}
+                </Text>
                 {/* </IconContext.Provider> */}
             </Box>
-            <Modal isOpen={notesIsOpen} onClose={notesOnClose}>
+            <Modal isOpen={notesIsOpen} onClose={notesOnClose} size={'full'}>
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Notes</ModalHeader>
+                    <ModalHeader bgColor={'#f6f8fa'}>
+                        {' '}
+                        <Container maxW={'container.xl'}>{/* <Text fontSize={'18px'}>Notes</Text> */}</Container>
+                    </ModalHeader>
                     <ModalCloseButton onClick={onClose} />
-                    <ModalBody>
-                        {row !== undefined && row.notesList.length > 0 ? (
-                            row.notesList.map((note, index) => {
-                                return (
-                                    <Box key={index} mb={'20px'} px={'6px'}>
-                                        <Flex mb={'5px'}>
-                                            <Text fontSize={'14px'}>{`${note.owner} - `}</Text>
-                                            <Text ml={'3px'} fontSize={'12px'} pt={'2px'}>
-                                                {formatTime(new Date(note.createdAt))}
-                                            </Text>
-                                            <Spacer />
-                                            {(note.images || []).map((image, index) => {
-                                                if (image) {
-                                                    return (
-                                                        <a key={index} href={`${image}`} target="_blank">
-                                                            <Flex>
-                                                                <Text pt={'5px'} mr={'3px'}>
-                                                                    <CgAttachment color={'#16b2fc'} fontSize={'12px'} />
-                                                                </Text>
-                                                                <Text fontSize={'12px'} color={'#16b2fc'} mt={'2px'}>
-                                                                    Attachment
-                                                                </Text>
-                                                            </Flex>
-                                                        </a>
-                                                    );
-                                                }
-                                                return null;
-                                            })}
-                                        </Flex>
-                                        <Text fontSize={'14px'}>{note.content}</Text>
-                                    </Box>
-                                );
-                            })
-                        ) : (
-                            <Text mb={'20px'}>No notes.</Text>
-                        )}
-                        {allowed ? (
-                            <Box>
-                                <Textarea
-                                    value={note.content}
-                                    onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => handleNoteChange(event)}
-                                    placeholder={'Enter notes...'}
-                                    size={'sm'}
-                                    rows={10}
-                                />
-                                <Input
-                                    type="file"
-                                    accept="image/png, image/jpeg, image/jpg"
-                                    size={'md'}
-                                    p={'1px'}
-                                    mt={'6px'}
-                                    border={'none'}
-                                    onChange={handleFileChange}
-                                    // multiple
-                                />
-                            </Box>
-                        ) : null}
-                    </ModalBody>
+                    <ModalBody bgColor={'#f6f8fa'}>
+                        <Container maxW={'container.xl'}>
+                            <Grid templateColumns={'50% 48%'} gap={2}>
+                                <GridItem h={'80vh'} borderRadius={'5px'} py={'10px'}>
+                                    {allowed ? (
+                                        <Box pr={'30px'}>
+                                            <Box mb={'12px'}>
+                                                <Text fontWeight={'semibold'} fontSize={'16px'}>
+                                                    Enter a new note
+                                                </Text>
+                                            </Box>
+                                            <Textarea
+                                                value={note.content}
+                                                onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => handleNoteChange(event)}
+                                                placeholder={'Type it here'}
+                                                size={'sm'}
+                                                rows={10}
+                                                mb={'10px'}
+                                                bgColor={'white'}
+                                            />
+                                            <Flex>
+                                                <Input
+                                                    type="file"
+                                                    accept="image/png, image/jpeg, image/jpg"
+                                                    size={'md'}
+                                                    p={'1px'}
+                                                    border={'none'}
+                                                    onChange={handleFileChange}
+                                                    // multiple
+                                                />
 
-                    <ModalFooter>
-                        <PrimaryButton onClick={() => handleNoteClick()}>SAVE</PrimaryButton>
-                    </ModalFooter>
+                                                <Spacer />
+                                                <PrimaryButton onClick={() => handleNoteClick()}>POST</PrimaryButton>
+                                            </Flex>
+                                        </Box>
+                                    ) : null}
+                                </GridItem>
+                                <GridItem h={'300px'} p={'10px'}>
+                                    <Box mb={'12px'}>
+                                        <Text fontWeight={'semibold'} fontSize={'16px'}>
+                                            Notes
+                                        </Text>
+                                    </Box>
+                                    <Box h={'80vh'} overflowY={'scroll'} pr={'6px'}>
+                                        {row !== undefined && row.notesList.length > 0 ? (
+                                            row.notesList
+                                                .slice()
+                                                .reverse()
+                                                .map((note, index) => {
+                                                    return (
+                                                        <Box
+                                                            key={index}
+                                                            mb={'12px'}
+                                                            borderRadius={'5px'}
+                                                            bgColor={'white'}
+                                                            border={'1px solid rgb(226, 234, 243)'}
+                                                            py={'20px'}
+                                                            px={'30px'}
+                                                        >
+                                                            <Flex mb={'10px'} fontWeight={'semibold'} color={'gray.600'}>
+                                                                <Text fontSize={'14px'}>{`${note.owner} - `}</Text>
+                                                                <Text ml={'3px'} fontSize={'12px'} pt={'2px'}>
+                                                                    {formatTime(new Date(note.createdAt))}
+                                                                </Text>
+                                                                <Spacer />
+                                                                {(note.images || []).map((image, index) => {
+                                                                    if (image) {
+                                                                        return (
+                                                                            <a key={index} href={`${image}`} target="_blank">
+                                                                                <Flex>
+                                                                                    <Text pt={'5px'} mr={'3px'}>
+                                                                                        <CgAttachment color={'#16b2fc'} fontSize={'12px'} />
+                                                                                    </Text>
+                                                                                    <Text fontSize={'12px'} color={'#16b2fc'} mt={'2px'}>
+                                                                                        Attachment
+                                                                                    </Text>
+                                                                                </Flex>
+                                                                            </a>
+                                                                        );
+                                                                    }
+                                                                    return null;
+                                                                })}
+                                                            </Flex>
+                                                            <Text fontSize={'14px'}>{note.content}</Text>
+                                                        </Box>
+                                                    );
+                                                })
+                                        ) : (
+                                            <Text mb={'20px'}>Create this item's first note and view it here.</Text>
+                                        )}
+                                    </Box>
+                                </GridItem>
+                            </Grid>
+                        </Container>
+                    </ModalBody>
                 </ModalContent>
             </Modal>
         </>

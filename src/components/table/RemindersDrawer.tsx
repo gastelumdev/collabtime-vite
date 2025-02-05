@@ -142,7 +142,7 @@ const RemindersDrawer = ({ row, handleChange, allowed }: IProps) => {
             <Text
                 fontSize={'15px'}
                 onClick={allowed ? onOpen : () => {}}
-                color={row.reminders !== undefined && row.reminders.length > 0 && allowed ? '#16b2fc' : '#cccccc'}
+                color={allowed ? (row.reminders !== undefined && row.reminders.length > 0 ? '#16b2fc' : 'gray.300') : 'gray.200'}
             >
                 <FaRegBell />
             </Text>

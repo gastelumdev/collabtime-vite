@@ -190,7 +190,7 @@ const Reference = ({
                             >
                                 <Text>
                                     {refs.length < 1
-                                        ? row.isEmpty
+                                        ? row && row.isEmpty
                                             ? ''
                                             : `Choose ${dataCollection?.name}`
                                         : refs.map((row: any, index: number) => {

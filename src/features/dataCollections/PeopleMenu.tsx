@@ -68,8 +68,10 @@ const PeopleMenu = ({ columnName, people, values = [], onChange, allowed = false
     };
 
     const isAssignedTo = (email: string) => {
-        for (const personMap of labels) {
-            if (email === personMap.email) return true;
+        if (labels) {
+            for (const personMap of labels) {
+                if (email === personMap.email) return true;
+            }
         }
 
         return false;
@@ -87,7 +89,7 @@ const PeopleMenu = ({ columnName, people, values = [], onChange, allowed = false
                                 fontSize={'13px'}
                                 pb={'3px'}
                                 // bgColor={labelColor}
-                                color={labels.length > 0 ? 'black' : 'lightgray'}
+                                color={labels?.length > 0 ? 'black' : 'lightgray'}
                                 borderRadius={'0'}
                                 overflow={'hidden'}
                                 textOverflow={'ellipsis'}
@@ -95,11 +97,11 @@ const PeopleMenu = ({ columnName, people, values = [], onChange, allowed = false
                                 variant={'unstyled'}
                                 _hover={{ bgColor: labelColor }}
                             >
-                                {labels.length > 0
-                                    ? labels.map((label, index) => {
-                                          return `${label.name}${labels.length > 1 ? (index < labels.length - 1 ? ', ' : '') : ''}`;
+                                {labels?.length > 0
+                                    ? labels?.map((label, index) => {
+                                          return `${label.name}${labels?.length > 1 ? (index < labels?.length - 1 ? ', ' : '') : ''}`;
                                       })
-                                    : 'Select'}
+                                    : ''}
                             </Button>
                         </PopoverTrigger>
                         {createPortal(
@@ -126,7 +128,7 @@ const PeopleMenu = ({ columnName, people, values = [], onChange, allowed = false
                                                             let newValues: IValues[];
 
                                                             if (isAssignedTo(email as string)) {
-                                                                newValues = labels.filter((label) => {
+                                                                newValues = labels?.filter((label) => {
                                                                     return label.email !== email;
                                                                 });
                                                                 setLabels(newValues);
@@ -184,7 +186,7 @@ const PeopleMenu = ({ columnName, people, values = [], onChange, allowed = false
                         }}
                     >
                         <Text
-                            color={labels && labels.length > 0 ? 'black' : 'lightgray'}
+                            color={labels && labels?.length > 0 ? 'black' : 'lightgray'}
                             h={'29px'}
                             fontWeight={fontWeight}
                             fontSize={'13px'}
@@ -198,11 +200,11 @@ const PeopleMenu = ({ columnName, people, values = [], onChange, allowed = false
                                 setActive(true);
                             }}
                         >
-                            {Array.isArray(labels) && labels.length > 0
-                                ? labels.map((label, index) => {
-                                      return `${label.name}${labels.length > 1 ? (index < labels.length - 1 ? ', ' : '') : ''}`;
+                            {Array.isArray(labels) && labels?.length > 0
+                                ? labels?.map((label, index) => {
+                                      return `${label.name}${labels?.length > 1 ? (index < labels?.length - 1 ? ', ' : '') : ''}`;
                                   })
-                                : 'Select'}
+                                : ''}
                         </Text>
                     </Button>
                 </Box>

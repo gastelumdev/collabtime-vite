@@ -233,13 +233,17 @@ const UploadModal = ({
                 Upload files
             </MenuItem> */}
             <Box
-                cursor={'pointer'}
-                onClick={() => {
-                    uploadOnOpen();
-                    setDuplicateFiles([]);
-                }}
+                cursor={allowed ? 'pointer' : 'default'}
+                onClick={
+                    allowed
+                        ? () => {
+                              uploadOnOpen();
+                              setDuplicateFiles([]);
+                          }
+                        : () => {}
+                }
             >
-                <Text color={currentFiles.length < 1 || (!permissions.docs.view && !allowed) ? '#cccccc' : '#16b2fc'} fontSize={iconSize}>
+                <Text color={!permissions.docs.view || !allowed ? 'gray.200' : currentFiles.length < 1 ? 'gray.300' : '#16b2fc'} fontSize={iconSize}>
                     {Icon ? Icon : <RiAttachmentLine />}
                 </Text>
             </Box>
