@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
     useAcknowledgeRowMutation,
-    useGetBlankRowsMutation,
+    // useGetBlankRowsMutation,
     useGetColumnsQuery,
     useGetDataCollectionQuery,
     // useGetDataCollectionsQuery,
@@ -12,7 +12,7 @@ import {
     useSendFormMutation,
     useUpdateColumnMutation,
     useUpdateDataCollectionMutation,
-    useUpdateRowMutation,
+    // useUpdateRowMutation,
     // useUpdateRowNoTagMutation,
 } from '../../app/services/api';
 import {
@@ -54,14 +54,14 @@ import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
 import PrimaryDrawer from '../../components/PrimaryDrawer';
 import { cellColorStyles } from './select.styles';
-import { TColumn, TRow } from '../../types';
+import { TColumn } from '../../types';
 import LinksMenu from './LinksMenu';
 import { MdContentCopy } from 'react-icons/md';
-import { ChevronDownIcon, CloseIcon } from '@chakra-ui/icons';
-import { CSVLink } from 'react-csv';
+import { ChevronDownIcon, CloseIcon, RepeatClockIcon } from '@chakra-ui/icons';
+// import { CSVLink } from 'react-csv';
 import { useTypedSelector } from '../../hooks/store';
 // import { toggleShowDoneRows } from '../../components/table/tableSlice';
-import ImportDrawer from '../../components/table/ImportDrawer';
+// import ImportDrawer from '../../components/table/ImportDrawer';
 import { emptyDataCollectionPermissions, emptyPermissions } from '../workspaces/UserGroups';
 import { io } from 'socket.io-client';
 
@@ -72,7 +72,7 @@ const ViewOne = () => {
     // const dispatch = useAppDispatch();
 
     // const { onClose, onOpen, isOpen } = useDisclosure(); // For template modal
-    const { onClose: onCloseFormDrawer, onOpen: onOpenFormDrawer, isOpen: isOpenFormDrawer } = useDisclosure(); // For form modal
+    const { onClose: onCloseFormDrawer, onOpen: _onOpenFormDrawer, isOpen: isOpenFormDrawer } = useDisclosure(); // For form modal
     const toast = useToast();
 
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
@@ -82,16 +82,16 @@ const ViewOne = () => {
     const {
         data: rowsData,
         refetch,
-        isFetching: rowsAreFetching,
-        isLoading: rowsAreLoading,
+        // isFetching: rowsAreFetching,
+        // isLoading: rowsAreLoading,
     } = useGetRowsQuery({ dataCollectionId: dataCollectionId || '', limit: 0, skip: 0, sort: 1, sortBy: 'createdAt' });
 
     // const { data: dataCollections } = useGetDataCollectionsQuery(null);
     const { data: columnsData } = useGetColumnsQuery(localStorage.getItem('dataCollectionId') || '');
     const [updateColumn] = useUpdateColumnMutation();
-    const [updateRow] = useUpdateRowMutation();
+    // const [updateRow] = useUpdateRowMutation();
     // const [updatedRowNoTag] = useUpdateRowNoTagMutation();
-    const [getBlankRows] = useGetBlankRowsMutation();
+    // const [getBlankRows] = useGetBlankRowsMutation();
 
     const [updateDataCollection] = useUpdateDataCollectionMutation();
     const [sendForm] = useSendFormMutation();
@@ -108,7 +108,7 @@ const ViewOne = () => {
 
     const [recipientValue, setRecipientValue] = useState<string>('');
 
-    const [valuesForExport, setValuesForExport] = useState<any>('');
+    const [_valuesForExport, setValuesForExport] = useState<any>('');
 
     /**
      * Socket.io listening for update to refetch data
@@ -366,32 +366,32 @@ const ViewOne = () => {
      * Handles the import rows click
      * @param array
      */
-    const handleImportRows = async (array: any) => {
-        let numberOfRowsToCreate = 0;
-        if (rowsData !== undefined) {
-            if (rowsData?.length < array.length) {
-                numberOfRowsToCreate = array.length - rowsData?.length + 10;
-            }
-            const blankRowsRes: any = await getBlankRows({ numberOfRowsToCreate: numberOfRowsToCreate, dataCollectionId });
-            const blankRows = blankRowsRes.data;
+    // const handleImportRows = async (array: any) => {
+    //     let numberOfRowsToCreate = 0;
+    //     if (rowsData !== undefined) {
+    //         if (rowsData?.length < array.length) {
+    //             numberOfRowsToCreate = array.length - rowsData?.length + 10;
+    //         }
+    //         const blankRowsRes: any = await getBlankRows({ numberOfRowsToCreate: numberOfRowsToCreate, dataCollectionId });
+    //         const blankRows = blankRowsRes.data;
 
-            const newRows = [...rowsData, ...blankRows];
+    //         const newRows = [...rowsData, ...blankRows];
 
-            const filledRows = newRows.map((item: TRow, index: number) => {
-                try {
-                    return { ...item, isEmpty: false, values: array[index] };
-                } catch (error) {
-                    return item;
-                }
-            });
+    //         const filledRows = newRows.map((item: TRow, index: number) => {
+    //             try {
+    //                 return { ...item, isEmpty: false, values: array[index] };
+    //             } catch (error) {
+    //                 return item;
+    //             }
+    //         });
 
-            for (const row of filledRows) {
-                await updateRow(row);
-            }
+    //         for (const row of filledRows) {
+    //             await updateRow(row);
+    //         }
 
-            await refetch();
-        }
-    };
+    //         await refetch();
+    //     }
+    // };
 
     return (
         <>
@@ -436,18 +436,9 @@ const ViewOne = () => {
                                                     <Text fontSize={'13px'}>Options</Text>
                                                 </MenuButton>
                                                 <MenuList>
-                                                    {/* <MenuItem
-                                                        fontSize={'14px'}
-                                                        onClick={() => {
-                                                            dispatch(toggleShowDoneRows());
-                                                        }}
-                                                    >{`${showDoneRows ? 'Hide' : 'Show'} Done`}</MenuItem> */}
-                                                    <MenuItem fontSize={'14px'} onClick={onOpenFormDrawer}>
+                                                    {/* <MenuItem fontSize={'14px'} onClick={onOpenFormDrawer}>
                                                         Form
                                                     </MenuItem>
-                                                    {/* <MenuItem fontSize={'14px'} onClick={onOpen}>
-                                                        Template
-                                                    </MenuItem> */}
                                                     <MenuItem fontSize={'14px'}>
                                                         <CSVLink data={valuesForExport}>Export</CSVLink>
                                                     </MenuItem>
@@ -458,9 +449,10 @@ const ViewOne = () => {
                                                             isFetching={rowsAreFetching}
                                                             isLoading={rowsAreLoading}
                                                         />
-                                                    </MenuItem>
+                                                    </MenuItem> */}
                                                     <MenuItem
                                                         fontSize={'14px'}
+                                                        icon={<RepeatClockIcon />}
                                                         onClick={() => {
                                                             setShowArchived(!showArchived);
                                                         }}

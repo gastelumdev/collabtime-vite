@@ -409,7 +409,7 @@ const Row = ({
                                                     <FaRegSquareCheck />
                                                 </Text>
                                             </Box>
-                                            <Box pt={'7px'} ml={'10px'} cursor={'pointer'}>
+                                            <Box pt={'7px'} ml={'10px'}>
                                                 <UploadModal
                                                     rowDocuments={row.docs}
                                                     getDocs={getDocs}
