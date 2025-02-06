@@ -28,6 +28,7 @@ import { TDataCollection } from '../../types';
 import { useCreateDataCollectionViewsMutation, useGetWorkspaceColumnsQuery, useUpdateDataCollectionViewMutation } from '../../app/services/api';
 import { PiDotsThreeVerticalBold } from 'react-icons/pi';
 import { CloseIcon } from '@chakra-ui/icons';
+import { PiPencilSimple } from 'react-icons/pi';
 // import { FaLess } from 'react-icons/fa6';
 
 const Create = ({ dataCollections, view = null, dataCollection }: { dataCollections: TDataCollection[]; view?: any; dataCollection?: any }) => {
@@ -164,7 +165,7 @@ const Create = ({ dataCollections, view = null, dataCollection }: { dataCollecti
     return (
         <>
             {view ? (
-                <MenuItem onClick={handleOnOpen}>
+                <MenuItem icon={<PiPencilSimple />} onClick={handleOnOpen}>
                     <Text>Edit view</Text>
                 </MenuItem>
             ) : (

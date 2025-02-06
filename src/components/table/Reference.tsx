@@ -171,7 +171,7 @@ const Reference = ({
         onOpen();
     };
     return (
-        <Center px={'10px'} onClick={handleOnOpen} cursor={'pointer'}>
+        <Center px={'10px'} onClick={allowed ? handleOnOpen : () => {}} cursor={allowed ? 'pointer' : 'default'}>
             {dataCollection?.name !== undefined ? (
                 <>
                     <Box overflow={'hidden'}>

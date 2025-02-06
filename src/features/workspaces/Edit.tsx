@@ -3,6 +3,7 @@ import { Text, Flex, Input, Spacer, useDisclosure, MenuItem } from '@chakra-ui/r
 import { TWorkspace } from '../../types';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
 import PrimaryDrawer from '../../components/PrimaryDrawer';
+import { PiPencilSimple } from 'react-icons/pi';
 
 interface IProps {
     workspace: TWorkspace;
@@ -92,7 +93,9 @@ const Edit = ({ workspace, updateWorkspace, workspaces }: IProps) => {
     return (
         <>
             {/* <Button flex="1" variant="ghost" leftIcon={<AiOutlineEdit />} color={'#b3b8cf'} onClick={onOpen} zIndex={10}></Button> */}
-            <MenuItem onClick={onOpen}>Edit Workspace</MenuItem>
+            <MenuItem icon={<PiPencilSimple />} onClick={onOpen}>
+                Edit Workspace
+            </MenuItem>
             <PrimaryDrawer isOpen={isOpen} onClose={onClose} title="Edit workspace">
                 <Flex>
                     <Text pb={'5px'} color={'rgb(123, 128, 154)'} fontSize={'14px'}>

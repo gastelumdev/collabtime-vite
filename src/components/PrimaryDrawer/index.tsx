@@ -19,7 +19,7 @@ const PrimaryDrawer = ({ isOpen, onClose, title, size = 'md', initialFocusRef, c
                 <DrawerCloseButton onClick={onClose} />
                 <DrawerHeader fontSize={'16px'}>
                     {title}
-                    <Divider mt={'10px'} mb={'10px'} />
+                    <Divider mt={'10px'} />
                 </DrawerHeader>
                 <DrawerBody>{children}</DrawerBody>
             </DrawerContent>

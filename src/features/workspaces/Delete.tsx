@@ -12,6 +12,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { TWorkspace } from '../../types';
 import { useGetWorkspacesQuery } from '../../app/services/api';
+import { PiTrashSimple } from 'react-icons/pi';
 
 interface IProps {
     workspace: TWorkspace;
@@ -33,7 +34,9 @@ const Delete = ({ workspace, deleteWorkspace }: IProps) => {
     }, [workspaces]);
     return (
         <>
-            <MenuItem onClick={onOpen}>Delete Workspace</MenuItem>
+            <MenuItem icon={<PiTrashSimple />} onClick={onOpen}>
+                Delete Workspace
+            </MenuItem>
             <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
                 <AlertDialogOverlay>
                     <AlertDialogContent>

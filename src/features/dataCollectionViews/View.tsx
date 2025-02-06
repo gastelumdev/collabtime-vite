@@ -13,7 +13,6 @@ import {
     Button,
     Center,
     Container,
-    Divider,
     Flex,
     Input,
     InputGroup,
@@ -42,6 +41,7 @@ import { RiRemoteControlFill } from 'react-icons/ri';
 import { CloseIcon, Search2Icon } from '@chakra-ui/icons';
 import { TRow } from '../../types';
 import './view.css';
+import { PiTrashSimple } from 'react-icons/pi';
 
 const View = ({
     dataCollectionView,
@@ -235,11 +235,10 @@ const View = ({
 
     return (
         <Box mb={'50px'}>
-            <Divider />
             <Box pt={'25px'} pb={'8px'}>
                 <Flex>
                     <Text fontSize={'20px'} className="dmsans-400">
-                        <span>{dataCollectionView.name}</span>
+                        <span style={{ fontSize: '18px' }}>{dataCollectionView.name}</span>
                         <span style={{ marginLeft: '20px', fontSize: '12px', color: '#2B6CB0', fontWeight: 'bold' }}>
                             {dataCollectionView.public &&
                             (userGroup.permissions.viewActions.update ||
@@ -353,12 +352,21 @@ const View = ({
                     userGroup?.permissions.viewActions.delete ||
                     viewPermissions.view.update ||
                     viewPermissions.view.delete ? (
-                        <Box ml={'8px'} mt={'5px'}>
+                        <Box ml={'8px'}>
                             <Menu>
-                                <MenuButton>
-                                    <Text fontSize={'24px'}>
-                                        <PiDotsThreeVerticalBold />
-                                    </Text>
+                                <MenuButton
+                                    p={'3px'}
+                                    borderRadius={'4px'}
+                                    _hover={{ bgColor: 'gray.100' }}
+                                    borderWidth={'1px'}
+                                    borderStyle={'solid'}
+                                    borderColor={'gay.100'}
+                                >
+                                    <Box>
+                                        <Text>
+                                            <PiDotsThreeVerticalBold size={'20px'} />
+                                        </Text>
+                                    </Box>
                                 </MenuButton>
                                 <MenuList fontSize={'14px'}>
                                     {userGroup.permissions.viewActions.update || viewPermissions.view.update ? (
@@ -372,6 +380,7 @@ const View = ({
                                     ) : null}
                                     {userGroup.permissions.viewActions.delete || viewPermissions.view.delete ? (
                                         <MenuItem
+                                            icon={<PiTrashSimple />}
                                             onClick={() => {
                                                 deleteDataCollectionView(dataCollectionView._id);
                                             }}
@@ -469,7 +478,12 @@ const View = ({
                                     </Container>
                                 </TabPanel>
                                 <TabPanel>
-                                    <Box borderBottom={`1px solid ${cellBorderColor}`}>
+                                    <Box
+                                        borderBottom={`1px solid ${cellBorderColor}`}
+                                        boxShadow={'base'}
+                                        borderLeft={'6px solid rgb(36, 162, 240)'}
+                                        borderRadius={'7px'}
+                                    >
                                         <DataCollection
                                             showDoneRows={true}
                                             rowsProp={rowsState}
@@ -491,7 +505,7 @@ const View = ({
                             </TabPanels>
                         </Tabs>
                     ) : (
-                        <Box borderBottom={`1px solid ${cellBorderColor}`}>
+                        <Box borderBottom={`1px solid ${cellBorderColor}`} boxShadow={'base'} borderLeft={'6px solid rgb(36, 162, 240)'} borderRadius={'7px'}>
                             <DataCollection
                                 showDoneRows={true}
                                 rowsProp={rowsProp || rowsState}
