@@ -242,7 +242,10 @@ const UploadModal = ({
                         : () => {}
                 }
             >
-                <Text color={!permissions.docs.view && !allowed ? 'gray.200' : currentFiles.length < 1 ? 'gray.300' : '#16b2fc'} fontSize={iconSize}>
+                <Text
+                    color={!allowed ? 'gray.200' : permissions.docs.view || allowed ? (currentFiles.length < 1 ? 'gray.300' : '#16b2fc') : 'gray.200'}
+                    fontSize={iconSize}
+                >
                     {Icon ? Icon : <RiAttachmentLine />}
                 </Text>
             </Box>
