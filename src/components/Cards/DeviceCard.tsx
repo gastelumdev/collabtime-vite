@@ -15,7 +15,7 @@ const DeviceCard = ({ data, bgColor, fontColor, Icon }: { data: ISensorData; bgC
                 <Flex>
                     <Box>
                         <Text fontSize={'36px'}>
-                            <Icon />
+                            <Icon size={'36px'} />
                         </Text>
                     </Box>
                     <Box pt={'10px'} ml={'10px'}>
