@@ -591,6 +591,10 @@ const Row = ({
 
                                     let prefix = column.prefix && column.prefix !== undefined ? column.prefix : '';
 
+                                    // if (!row.isEmpty) {
+                                    //     console.log({ columnName: column.name, value });
+                                    // }
+
                                     return (
                                         <div
                                             key={columnIndex}

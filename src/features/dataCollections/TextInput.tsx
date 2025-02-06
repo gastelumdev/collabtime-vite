@@ -1,10 +1,10 @@
 import {
     Box,
     Button,
-    Center,
+    Flex,
     // ChakraProvider,
     Input,
-    // Text,
+    Text,
     Textarea,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
@@ -54,7 +54,7 @@ const TextInput = ({
     bgColor = 'white',
     textColor = 'black',
     fontWeight = 'normal',
-    position = 'left',
+    // position = 'left',
     isDisabled = false,
     inputType = 'text',
     prefix = null,
@@ -67,6 +67,7 @@ const TextInput = ({
     const fontSize = '13px';
 
     useEffect(() => {
+        // console.log(value);
         setDisplayVal(value === null ? '' : value);
 
         // if (inputType === 'number') {
@@ -137,7 +138,15 @@ const TextInput = ({
                                 setActive(true);
                             }}
                         >
-                            {`${prefix && value !== '' ? prefix : ''} ${position === 'center' ? <Center>{displayVal}</Center> : displayVal}`}
+                            {/* {`${prefix && value !== '' ? prefix : ''}` + `${position === 'center' ? <Center>{displayVal}</Center> : displayVal}`} */}
+                            <Flex fontSize={'9px'}>
+                                <Box>
+                                    <Text fontSize={fontSize}>{`${prefix && value !== '' ? prefix : ''}`}</Text>
+                                </Box>
+                                <Box>
+                                    <Text fontSize={fontSize}>{displayVal}</Text>
+                                </Box>
+                            </Flex>
                         </Button>
                     ) : (
                         // <ProjectManagerApp val={val} type={type} rowId={id} />
@@ -164,7 +173,14 @@ const TextInput = ({
                             }}
                             isDisabled={isDisabled}
                         >
-                            {`${prefix ? prefix : ''} ${position === 'center' ? <Center>{displayVal}</Center> : displayVal}`}
+                            <Flex fontSize={'9px'}>
+                                <Box>
+                                    <Text fontSize={fontSize}>{`${prefix && value !== '' ? prefix : ''}`}</Text>
+                                </Box>
+                                <Box>
+                                    <Text fontSize={fontSize}>{displayVal}</Text>
+                                </Box>
+                            </Flex>
                         </Button>
                     )}
                 </Box>
