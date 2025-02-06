@@ -13,7 +13,6 @@ import {
 } from '../../app/services/api';
 
 import { Avatar, AvatarGroup, Box, Container, Flex, Menu, MenuButton, MenuList, SimpleGrid, Spacer, Text, useToast } from '@chakra-ui/react';
-import { IoSettingsOutline } from 'react-icons/io5';
 
 import linkItems from '../../utils/linkItems';
 import { TUser } from '../../types';
@@ -29,6 +28,7 @@ import Delete from './Delete';
 import { bgColor } from '../../utils/colors';
 import '../../App.css';
 import UserGroups, { emptyPermissions } from './UserGroups';
+import { PiDotsThreeVerticalBold } from 'react-icons/pi';
 
 /**
  * This funcion renders a workspace when selected from the workspaces page
@@ -210,13 +210,13 @@ const ViewOne = () => {
                                                 {userGroup.permissions.workspace.update ||
                                                 userGroup.permissions.workspace.delete ||
                                                 userGroup.permissions.workspace.userGroups ? (
-                                                    <Box mt={'14px'} ml={'6px'}>
+                                                    <Box mt={'14px'} ml={'3px'}>
                                                         <Menu>
                                                             <MenuButton pt={'8px'} ml={'5px'}>
                                                                 {/* <PrimaryButton size="sm"> */}
                                                                 <Box bgColor={'rgb(35, 148, 234)'} p={'5px'} borderRadius={'5px'}>
                                                                     <Text fontSize={'20px'} color={'white'}>
-                                                                        <IoSettingsOutline size={'18px'} />
+                                                                        <PiDotsThreeVerticalBold size={'18px'} />
                                                                     </Text>
                                                                 </Box>
                                                                 {/* </PrimaryButton> */}

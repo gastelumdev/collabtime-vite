@@ -39,6 +39,7 @@ import {
 } from '../../app/services/api';
 import { useEffect, useState } from 'react';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
+import { PiUsers } from 'react-icons/pi';
 
 const w = '80vw';
 export const allPrivileges = {
@@ -511,7 +512,9 @@ const UserGroups = () => {
 
     return (
         <>
-            <MenuItem onClick={onOpen}>User Groups</MenuItem>
+            <MenuItem icon={<PiUsers />} onClick={onOpen}>
+                User Groups
+            </MenuItem>
             <PrimaryDrawer
                 onClose={onClose}
                 isOpen={isOpen}

@@ -9,7 +9,6 @@ import PeopleMenu from './PeopleMenu';
 import DateInput from './DateInput';
 import TextInput from './TextInput';
 import Reference from '../../components/table/Reference';
-import { cellBorderColor } from './DataCollection';
 
 interface IProps {
     cells?: TCell[];
@@ -133,57 +132,60 @@ const EditRow = ({ columns, row, handleChange, allowed = false }: IProps) => {
                             style={{
                                 whiteSpace: 'nowrap',
                                 fontSize: '12px',
-                                borderBottom: `1px solid ${cellBorderColor}`,
+                                marginBottom: '8px',
+                                // borderBottom: `1px solid ${cellBorderColor}`,
                             }}
                         >
-                            <Box py={'15px'} h={'80px'}>
+                            <Box h={'80px'}>
                                 <Text mb={'8px'} fontSize={'13px'}>{`${column?.name[0].toUpperCase()}${column?.name
                                     .slice(1, column?.name.length)
                                     .split('_')
                                     .join(' ')}`}</Text>
-                                {column?.type === 'label' || column?.type === 'priority' || column?.type === 'status' ? (
-                                    <LabelMenu
-                                        id={0}
-                                        labels={column?.labels}
-                                        columnName={column?.name}
-                                        value={rowState.values !== undefined ? rowState.values[column?.name] : null}
-                                        onChange={onChange}
-                                        allowed={allowed}
-                                    />
-                                ) : column?.type === 'people' ? (
-                                    <PeopleMenu
-                                        row={rowState}
-                                        columnName={column?.name}
-                                        people={column?.people}
-                                        values={rowState.values !== undefined ? rowState.values[column?.name] : null}
-                                        onChange={onChange}
-                                        allowed={allowed}
-                                    />
-                                ) : column?.type === 'date' ? (
-                                    <DateInput
-                                        value={rowState.values !== undefined ? rowState.values[column?.name] : null}
-                                        columnName={column?.name}
-                                        onChange={onChange}
-                                        allowed={allowed}
-                                    />
-                                ) : column?.type === 'reference' ? (
-                                    <Reference
-                                        column={column !== undefined ? column : {}}
-                                        refsProp={row.refs && row.refs[column?.name] !== undefined ? row.refs[column?.name] : []}
-                                        onRefChange={onRefChange}
-                                        onRemoveRef={onRemoveRef}
-                                        allowed={allowed}
-                                    />
-                                ) : (
-                                    <TextInput
-                                        id={rowState._id}
-                                        columnName={column?.name}
-                                        value={rowState.values !== undefined ? rowState.values[column?.name] : null}
-                                        type="form"
-                                        onChange={onChange}
-                                        allowed={allowed}
-                                    />
-                                )}
+                                <Box borderWidth={'1px'} borderStyle={'solid'} borderColor={'gray.200'} borderRadius={'2px'} h={'31px'}>
+                                    {column?.type === 'label' || column?.type === 'priority' || column?.type === 'status' ? (
+                                        <LabelMenu
+                                            id={0}
+                                            labels={column?.labels}
+                                            columnName={column?.name}
+                                            value={rowState.values !== undefined ? rowState.values[column?.name] : null}
+                                            onChange={onChange}
+                                            allowed={false}
+                                        />
+                                    ) : column?.type === 'people' ? (
+                                        <PeopleMenu
+                                            row={rowState}
+                                            columnName={column?.name}
+                                            people={column?.people}
+                                            values={rowState.values !== undefined ? rowState.values[column?.name] : null}
+                                            onChange={onChange}
+                                            allowed={false}
+                                        />
+                                    ) : column?.type === 'date' ? (
+                                        <DateInput
+                                            value={rowState.values !== undefined ? rowState.values[column?.name] : null}
+                                            columnName={column?.name}
+                                            onChange={onChange}
+                                            allowed={false}
+                                        />
+                                    ) : column?.type === 'reference' ? (
+                                        <Reference
+                                            column={column !== undefined ? column : {}}
+                                            refsProp={row.refs && row.refs[column?.name] !== undefined ? row.refs[column?.name] : []}
+                                            onRefChange={onRefChange}
+                                            onRemoveRef={onRemoveRef}
+                                            allowed={false}
+                                        />
+                                    ) : (
+                                        <TextInput
+                                            id={rowState._id}
+                                            columnName={column?.name}
+                                            value={rowState.values !== undefined ? rowState.values[column?.name] : null}
+                                            type="form"
+                                            onChange={onChange}
+                                            allowed={false}
+                                        />
+                                    )}
+                                </Box>
                                 {/* {row.values[column.name]} */}
                             </Box>
                         </div>

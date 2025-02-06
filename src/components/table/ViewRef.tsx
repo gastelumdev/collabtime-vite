@@ -8,7 +8,7 @@ import PeopleMenu from '../../features/dataCollections/PeopleMenu';
 import DateInput from '../../features/dataCollections/DateInput';
 import TextInput from '../../features/dataCollections/TextInput';
 import NoteModal from '../../features/dataCollections/NoteModal';
-import { Link, useParams } from 'react-router-dom';
+// import { Link, useParams } from 'react-router-dom';
 import UploadModal from './UploadModal';
 import Reference from './Reference';
 import { FaCodeCompare } from 'react-icons/fa6';
@@ -29,10 +29,10 @@ interface IProps {
     // handleChange?: any;
 }
 
-const borderColor = 'rgb(177, 177, 177)';
+// const borderColor = 'gray.600';
 
 const ViewRef = ({ columns, rowData, value, allowed = false, dataCollection, column, handleRemoveRef, setHoveredRefs }: IProps) => {
-    const { id } = useParams();
+    // const { id } = useParams();
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
@@ -170,13 +170,13 @@ const ViewRef = ({ columns, rowData, value, allowed = false, dataCollection, col
                         />
                     </Box>
                     <Spacer />
-                    <Box>
+                    {/* <Box>
                         <Text fontSize={'14px'} color={'#16b2fc'} fontWeight={'semibold'}>
                             <Link to={`/workspaces/${id}/dataCollections/${rowData.dataCollection}`} target="_blank">
                                 View collection
                             </Link>
                         </Text>
-                    </Box>
+                    </Box> */}
                 </Flex>
                 <Box>
                     {currentColumns.map((column: any, columnIndex: number) => {
@@ -195,7 +195,7 @@ const ViewRef = ({ columns, rowData, value, allowed = false, dataCollection, col
                                         .slice(1, column.name.length)
                                         .split('_')
                                         .join(' ')}`}</Text>
-                                    <Box border={`1px solid ${borderColor}`} borderRadius={'2px'} h={'31px'}>
+                                    <Box borderWidth={'1px'} borderStyle={'solid'} borderColor={'gray.200'} borderRadius={'2px'} h={'31px'}>
                                         {column.type === 'label' || column.type === 'priority' || column.type === 'status' ? (
                                             <LabelMenu
                                                 id={0}
