@@ -154,7 +154,6 @@ const Table = ({
         const gtc = cols
             .map((column) => {
                 if (!column.isEmpty) {
-                    console.log({ columnName: column.name, columnWidth: column?.width !== undefined ? column?.width : '180px' });
                     return column?.width !== undefined ? column?.width : '180px';
                 }
                 return '';
