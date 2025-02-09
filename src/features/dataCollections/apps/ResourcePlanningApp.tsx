@@ -141,12 +141,12 @@ const ResourcePlanningApp = ({
                 }}
             >
                 <TabList>
-                    <Tab>Project Details</Tab>
+                    {/* <Tab>Project Details</Tab> */}
                     <Tab>Bill of Materials</Tab>
                     <Tab isDisabled={project.values.proposal_status !== 'Approved'}>Purchase Orders</Tab>
                 </TabList>
                 <TabPanels>
-                    <TabPanel>
+                    {/* <TabPanel>
                         <ProjectDetails
                             projectState={projectState}
                             handleChange={handleChange}
@@ -161,7 +161,7 @@ const ResourcePlanningApp = ({
                             onRefChange={onRefChange}
                             onRemoveRef={onRemoveRef}
                         />
-                    </TabPanel>
+                    </TabPanel> */}
                     <TabPanel>
                         <BillOfMaterials project={project} handleChange={handleChange} userGroup={userGroup} refetchUserGroups={refetchUserGroups} />
                     </TabPanel>
