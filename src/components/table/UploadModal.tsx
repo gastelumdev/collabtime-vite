@@ -246,7 +246,7 @@ const UploadModal = ({
                     color={!allowed ? 'gray.200' : permissions.docs.view || allowed ? (currentFiles.length < 1 ? 'gray.300' : '#16b2fc') : 'gray.200'}
                     fontSize={iconSize}
                 >
-                    {Icon ? Icon : <RiAttachmentLine />}
+                    {Icon ? Icon : <RiAttachmentLine size={iconSize} />}
                 </Text>
             </Box>
             <Modal isOpen={uploadIsOpen} onClose={uploadOnClose} size={'full'}>

@@ -1,23 +1,23 @@
 // import { useEffect, useState } from 'react';
-import { TColumn, TRow, TUser } from '../../../../types';
+import { TColumn, TRow, TUser } from '../../../types';
 import { Box, Container, Flex, SimpleGrid, Text } from '@chakra-ui/react';
 // import { useGetColumnsQuery, useGetRowsQuery, useGetUserGroupsQuery, useUpdateRowMutation } from '../../../app/services/api';
 // import { emptyDataCollectionPermissions, emptyPermissions } from '../../workspaces/UserGroups';
-import NoteModal from '../../NoteModal';
+import NoteModal from '../NoteModal';
 import { FaRegFile } from 'react-icons/fa';
-import UploadModal from '../../../../components/table/UploadModal';
+import UploadModal from '../../../components/table/UploadModal';
 import { IoAttach } from 'react-icons/io5';
-import Reference from '../../../../components/table/Reference';
-import LabelMenu from '../../LabelMenu';
-import PeopleMenu from '../../PeopleMenu';
-import DateInput from '../../DateInput';
-import TextInput from '../../TextInput';
+import Reference from '../../../components/table/Reference';
+import LabelMenu from '../LabelMenu';
+import PeopleMenu from '../PeopleMenu';
+import DateInput from '../DateInput';
+import TextInput from '../TextInput';
 
-interface IProjectDetails {
-    projectState: TRow;
+interface IRowDetails {
+    rowState: TRow;
     handleChange: any;
     dataCollectionPermissions: any;
-    project: TRow;
+    row: TRow;
     getDocs: any;
     getUpdatedDoc: any;
     removeDoc: any;
@@ -28,11 +28,11 @@ interface IProjectDetails {
     onRemoveRef: any;
 }
 
-const ProjectDetails = ({
-    projectState,
+const RowDetails = ({
+    rowState,
     handleChange,
     dataCollectionPermissions,
-    project,
+    row,
     getDocs,
     getUpdatedDoc,
     removeDoc,
@@ -41,13 +41,13 @@ const ProjectDetails = ({
     onChange,
     onRefChange,
     onRemoveRef,
-}: IProjectDetails) => {
+}: IRowDetails) => {
     return (
         <Container maxW={{ sm: 'container.md', md: 'container.xl' }}>
             <Flex mb={'15px'}>
                 <Box pt={'2px'}>
                     <NoteModal
-                        row={projectState}
+                        row={rowState}
                         updateRow={handleChange}
                         // rowCallUpdate={rowCallUpdate}
                         allowed={dataCollectionPermissions.notes.create}
@@ -56,13 +56,14 @@ const ProjectDetails = ({
                 </Box>
                 <Box ml={'10px'} cursor={'pointer'}>
                     <UploadModal
-                        rowDocuments={project.docs}
+                        rowDocuments={row.docs}
                         getDocs={getDocs}
                         getUpdatedDoc={getUpdatedDoc}
                         removeDoc={removeDoc}
                         permissions={dataCollectionPermissions}
-                        Icon={<IoAttach />}
+                        Icon={<IoAttach size={'18px'} />}
                         iconSize={'20px'}
+                        allowed={true}
                     />
                 </Box>
             </Flex>
@@ -95,7 +96,7 @@ const ProjectDetails = ({
                                         id={rowIndex}
                                         labels={column.labels}
                                         columnName={column?.name}
-                                        value={project.values !== undefined ? value : null}
+                                        value={row.values !== undefined ? value : null}
                                         onChange={onChange}
                                         allowed={allowed}
                                         fontWeight={fontWeight}
@@ -103,17 +104,17 @@ const ProjectDetails = ({
                                     />
                                 ) : column?.type === 'people' ? (
                                     <PeopleMenu
-                                        row={project}
+                                        row={row}
                                         columnName={column?.name}
                                         people={column?.people as TUser[]}
-                                        values={project.values !== undefined ? value : null}
+                                        values={row.values !== undefined ? value : null}
                                         onChange={onChange}
                                         allowed={allowed}
                                         fontWeight={fontWeight}
                                     />
                                 ) : column?.type === 'date' ? (
                                     <DateInput
-                                        value={project.values !== undefined ? value : null}
+                                        value={row.values !== undefined ? value : null}
                                         columnName={column?.name}
                                         onChange={onChange}
                                         allowed={allowed}
@@ -122,20 +123,20 @@ const ProjectDetails = ({
                                 ) : column?.type === 'reference' ? (
                                     <Reference
                                         column={column !== undefined ? column : {}}
-                                        refsProp={project.refs && project.refs[column?.name] !== undefined ? project.refs[column?.name] : []}
+                                        refsProp={row.refs && row.refs[column?.name] !== undefined ? row.refs[column?.name] : []}
                                         onRefChange={onRefChange}
                                         onRemoveRef={onRemoveRef}
                                         allowed={allowed}
                                     />
                                 ) : (
                                     <TextInput
-                                        id={project._id}
+                                        id={row._id}
                                         columnName={column?.name}
                                         inputType={column?.type}
-                                        value={project.values !== undefined ? value : null}
+                                        value={row.values !== undefined ? value : null}
                                         onChange={onChange}
                                         allowed={allowed || editable || (column?.autoIncremented !== undefined && !column?.autoIncremented)}
-                                        isCustomLink={isCustomLink && !project.isEmpty}
+                                        isCustomLink={isCustomLink && !row.isEmpty}
                                         bgColor={bgColor}
                                         textColor={textColor}
                                         fontWeight={fontWeight}
@@ -153,4 +154,4 @@ const ProjectDetails = ({
     );
 };
 
-export default ProjectDetails;
+export default RowDetails;
