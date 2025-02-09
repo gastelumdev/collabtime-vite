@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react';
-import { TColumn, TDataCollection, TDocument, TRow } from '../../../types';
+import { TDataCollection, TRow } from '../../../types';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
-import { useGetColumnsQuery, useGetRowsQuery, useGetUserGroupsQuery, useUpdateRowMutation } from '../../../app/services/api';
+import { useGetRowsQuery, useGetUserGroupsQuery, useUpdateRowMutation } from '../../../app/services/api';
 import { emptyDataCollectionPermissions, emptyPermissions } from '../../workspaces/UserGroups';
-import ProjectDetails from './resourcePlanningAppComponents/ProjectDetails';
+// import ProjectDetails from './resourcePlanningAppComponents/ProjectDetails';
 import BillOfMaterials from './resourcePlanningAppComponents/BillOfMaterials';
 import PurchaseOrders from './resourcePlanningAppComponents/PurchaseOrders';
 
 const ResourcePlanningApp = ({
     project,
-    values,
     dataCollection,
     refetchProject,
 }: {
@@ -27,15 +26,15 @@ const ResourcePlanningApp = ({
         showEmptyRows: false,
         // filters: JSON.stringify(dataCollectionView.filters),
     });
-    const { data: columns } = useGetColumnsQuery(dataCollection._id as string);
+    // const { data: columns } = useGetColumnsQuery(dataCollection._id as string);
 
-    const [projectState, setProjectState] = useState(project);
+    const [_projectState, setProjectState] = useState(project);
 
     const [updateRow] = useUpdateRowMutation();
 
     const { data: userGroups, refetch: refetchUserGroups } = useGetUserGroupsQuery(null);
     const [userGroup, setUserGroup] = useState({ name: '', workspace: '', permissions: emptyPermissions });
-    const [dataCollectionPermissions, setDataCollectionPermissions] = useState(emptyDataCollectionPermissions);
+    const [_dataCollectionPermissions, setDataCollectionPermissions] = useState(emptyDataCollectionPermissions);
 
     useEffect(() => {
         if (userGroups !== undefined) {
@@ -70,63 +69,6 @@ const ResourcePlanningApp = ({
         setProjectState(project);
         await updateRow(project);
         refetchProject();
-    };
-
-    const getDocs = (documents: any[]) => {
-        handleChange({ ...project, docs: [...project.docs, ...documents] });
-    };
-
-    const getUpdatedDoc = (document: TDocument) => {
-        const newDocs: any = project.docs.map((rowDoc: any) => {
-            return rowDoc._id === document._id ? document : rowDoc;
-        });
-        handleChange({ ...project, docs: newDocs });
-    };
-
-    const removeDoc = (document: TDocument) => {
-        const newDocs: any = project.docs.filter((rowDoc: any) => {
-            return rowDoc._id !== document._id;
-        });
-
-        handleChange({ ...project, docs: newDocs });
-    };
-
-    const onRefChange = (columnName: string, ref: any) => {
-        const refs: any = [];
-        if (project.refs === undefined) {
-            refs.push(ref);
-            handleChange({ ...project, refs: { [columnName]: refs } });
-        } else {
-            if (project.refs[columnName] === undefined) {
-                handleChange({ ...project, refs: { ...project.refs, [columnName]: [ref] } });
-            } else {
-                handleChange({ ...project, refs: { ...project.refs, [columnName]: [...project.refs[columnName], ref] } });
-            }
-        }
-
-        // handleChange({ ...row, refs: {...row.refs, [columnName]: [...row.refs[columnName], row]} });
-    };
-
-    const onRemoveRef = (columnName: string, ref: any) => {
-        const rowCopy: any = project;
-        const refs: any = rowCopy.refs;
-        const refTarget: any = refs[columnName];
-
-        const filteredRefs = refTarget.filter((r: any) => {
-            return r._id !== ref._id;
-        });
-
-        handleChange({ ...project, refs: { ...project.refs, [columnName]: filteredRefs } });
-    };
-
-    const onChange = (columnName: string, value: string) => {
-        // if (columnName === 'status' && value === 'Done') {
-        //     setShowRow(false);
-        // } else {
-        //     setShowRow(true);
-        // }
-        handleChange({ ...project, values: { ...project.values, [columnName]: value }, isEmpty: false });
-        // refetchRows();
     };
 
     const [refetchBom, setRefetchBom] = useState(true);
