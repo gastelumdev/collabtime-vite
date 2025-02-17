@@ -44,8 +44,6 @@ const ClearRow = ({ row, columns, handleChange, allowed = false }: { row: TRow; 
                                     }
                                 }
 
-                                console.log(values);
-
                                 const newRow = { ...row, values, refs, notesList: [], docs: [], reminders: [], acknowledged: false, isEmpty: true };
 
                                 handleChange(newRow);

@@ -102,7 +102,6 @@ const DataCollection = ({
     }, [rowsProp]);
 
     useEffect(() => {
-        console.log('Refetch columns');
         refetchColumns();
     }, []);
 

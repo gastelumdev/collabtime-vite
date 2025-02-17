@@ -99,6 +99,7 @@ const ViewListForRow = ({}: { allowed?: boolean }) => {
                                                 <Tabs>
                                                     <TabList>
                                                         <Tab>Details</Tab>
+                                                        <Tab>Planner</Tab>
                                                         {userGroup.permissions.viewActions.view
                                                             ? dataCollections?.map((dc: any) => {
                                                                   let viewDC = false;
@@ -120,15 +121,15 @@ const ViewListForRow = ({}: { allowed?: boolean }) => {
                                                                       dataCollection = dc;
                                                                   }
 
-                                                                  if (dataCollection !== null && viewDC) {
-                                                                      if (dataCollection.template == 'planner') {
-                                                                          return <Tab>Planner</Tab>;
-                                                                      }
+                                                                  //   if (dataCollection !== null && viewDC) {
+                                                                  //       if (dataCollection.template == 'planner') {
+                                                                  //           return <Tab>Planner</Tab>;
+                                                                  //       }
 
-                                                                      if (dataCollection.template == 'filtered') {
-                                                                          return <Tab>Filtered</Tab>;
-                                                                      }
-                                                                  }
+                                                                  //       if (dataCollection.template == 'filtered') {
+                                                                  //           return <Tab>Filtered</Tab>;
+                                                                  //       }
+                                                                  //   }
                                                                   if (workspace?.type === 'resource planning' && dc?._id === row?.dataCollection) {
                                                                       return <Tab>Resource Planning</Tab>;
                                                                   }
@@ -141,12 +142,25 @@ const ViewListForRow = ({}: { allowed?: boolean }) => {
                                                             ? dataCollections?.map((dc: any) => {
                                                                   if (dc?._id === row?.dataCollection) {
                                                                       return (
-                                                                          <TabPanel>
+                                                                          <TabPanel key={dc?._id}>
                                                                               <MainApp
                                                                                   row={row}
                                                                                   values={row.values}
                                                                                   dataCollection={dc}
                                                                                   refetchRow={refetchRow}
+                                                                              />
+                                                                          </TabPanel>
+                                                                      );
+                                                                  }
+                                                                  if (dc?.name === 'Planner Tasks') {
+                                                                      return (
+                                                                          <TabPanel key={dc?._id}>
+                                                                              <PlannerApp
+                                                                                  key={dc._id}
+                                                                                  dataCollection={dc}
+                                                                                  dataCollectionId={dc?._id as string}
+                                                                                  appModel={dc.appModel}
+                                                                                  userGroup={userGroup}
                                                                               />
                                                                           </TabPanel>
                                                                       );
@@ -176,19 +190,19 @@ const ViewListForRow = ({}: { allowed?: boolean }) => {
                                                                   }
 
                                                                   if (dataCollection !== null && viewDC) {
-                                                                      if (dataCollection.template == 'planner') {
-                                                                          return (
-                                                                              <TabPanel>
-                                                                                  <PlannerApp
-                                                                                      key={dc._id}
-                                                                                      dataCollection={dataCollection}
-                                                                                      dataCollectionId={dataCollection._id as string}
-                                                                                      appModel={dataCollection.appModel}
-                                                                                      userGroup={userGroup}
-                                                                                  />
-                                                                              </TabPanel>
-                                                                          );
-                                                                      }
+                                                                      //   if (dataCollection.template == 'planner') {
+                                                                      //       return (
+                                                                      //           <TabPanel>
+                                                                      //               <PlannerApp
+                                                                      //                   key={dc._id}
+                                                                      //                   dataCollection={dataCollection}
+                                                                      //                   dataCollectionId={dataCollection._id as string}
+                                                                      //                   appModel={dataCollection.appModel}
+                                                                      //                   userGroup={userGroup}
+                                                                      //               />
+                                                                      //           </TabPanel>
+                                                                      //       );
+                                                                      //   }
 
                                                                       if (dataCollection.template == 'filtered') {
                                                                           return (

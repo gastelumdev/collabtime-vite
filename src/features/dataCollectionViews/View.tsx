@@ -440,6 +440,25 @@ const View = ({
                                                     value = Math.floor(value) + '\u00B0F';
                                                 }
 
+                                                if (row?.values.type === 'Humidity') {
+                                                    value = row?.values.humidity;
+
+                                                    if (value >= max_critical || value <= min_critical) {
+                                                        bgColor = 'red';
+                                                    }
+
+                                                    if (value >= max_warning && value < max_critical) {
+                                                        bgColor = 'orange';
+                                                    }
+
+                                                    if (value <= min_warning && value > min_critical) {
+                                                        bgColor = 'orange';
+                                                    }
+
+                                                    // value = row?.values.temperature.toFixed() + '\u00B0F';
+                                                    value = Math.floor(value) + '%';
+                                                }
+
                                                 if (row?.values.type === 'Door') {
                                                     value = row?.values.status;
                                                     icon = LiaDoorOpenSolid;
@@ -463,15 +482,13 @@ const View = ({
                                                 }
 
                                                 return (
-                                                    <>
-                                                        <DeviceCard
-                                                            key={row?.values.name}
-                                                            data={{ name: row?.values.name, type: row?.values.type, value, threshold_name }}
-                                                            bgColor={bgColor}
-                                                            fontColor={fontColor}
-                                                            Icon={icon}
-                                                        />
-                                                    </>
+                                                    <DeviceCard
+                                                        key={row?.values.name}
+                                                        data={{ name: row?.values.name, type: row?.values.type, value, threshold_name }}
+                                                        bgColor={bgColor}
+                                                        fontColor={fontColor}
+                                                        Icon={icon}
+                                                    />
                                                 );
                                             })}
                                         </Flex>

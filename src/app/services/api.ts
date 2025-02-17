@@ -627,6 +627,17 @@ export const api = createApi({
                 method: 'PUT',
                 body
             })
+        }),
+        // PLANNER APP
+        getPlannerTasks: builder.query<any, any>({
+            query: (params) => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/dataCollection/${params.dataCollectionId}/row/${params.rowId}`
+            })
+        }),
+        getPlannerBucketColumn: builder.query<any, any>({
+            query: (dataCollectionId) => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/dataCollection/${dataCollectionId}/bucketColumn`
+            })
         })
     })
 })
@@ -718,4 +729,6 @@ export const {
     useGetPartsColumnsQuery,
     useUpdateBillOfMaterialsPartValuesMutation,
     useGetBillOfMaterialsPartsQuery,
+    useGetPlannerTasksQuery,
+    useGetPlannerBucketColumnQuery,
 } = api

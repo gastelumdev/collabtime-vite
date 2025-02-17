@@ -1,4 +1,4 @@
-import { useGetRowsQuery, useUpdateRowMutation } from '../../../app/services/api';
+import { useGetPlannerBucketColumnQuery, useGetPlannerTasksQuery, useUpdateRowMutation } from '../../../app/services/api';
 
 import { Box, Card, CardHeader, Center, Checkbox, Container, Flex, Grid, GridItem, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
@@ -8,6 +8,8 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import { useParams } from 'react-router-dom';
+import { TLabel } from '../../../types';
 
 function renderEventContent(eventInfo: any) {
     return (
@@ -35,27 +37,30 @@ const PlannerApp = ({
     appModel: string;
     userGroup: any;
 }) => {
-    const {
-        data: rowsData,
-        refetch,
-        // isFetching: rowsAreFetching,
-        // isLoading: rowsAreLoading,
-    } = useGetRowsQuery({
-        dataCollectionId: dataCollectionId || '',
-        limit: 0,
-        skip: 0,
-        sort: 1,
-        sortBy: 'createdAt',
-        filters: JSON.stringify(dataCollection.filters),
-    });
+    // const {
+    //     data: rowsData,
+    //     refetch,
+    //     // isFetching: rowsAreFetching,
+    //     // isLoading: rowsAreLoading,
+    // } = useGetRowsQuery({
+    //     dataCollectionId: dataCollectionId || '',
+    //     limit: 0,
+    //     skip: 0,
+    //     sort: 1,
+    //     sortBy: 'createdAt',
+    //     showCreateRow: true,
+    //     filters: JSON.stringify(dataCollection.filters),
+    // });
+    const { rowId } = useParams();
+    const { data: plannerTasks, refetch: refetchPlannerTasks } = useGetPlannerTasksQuery({ dataCollectionId, rowId });
     useEffect(() => {
         setTimeout(function () {
             window.dispatchEvent(new Event('resize'));
         }, 1000);
-    }, [rowsData]);
+    }, [plannerTasks]);
     return (
         <Box key={dataCollection.name} mb={'30px'}>
-            <Text fontSize={'xl'}>{`${dataCollection.name} ${dataCollection.appType}`}</Text>
+            {/* <Text fontSize={'xl'}>{`${dataCollection.name} ${dataCollection.appType}`}</Text> */}
             <Tabs
                 onChange={() => {
                     setTimeout(function () {
@@ -76,8 +81,8 @@ const PlannerApp = ({
                                 dataCollectionId={dataCollection._id as string}
                                 appModel={dataCollection.appModel}
                                 userGroup={userGroup}
-                                rowsData={rowsData}
-                                refetchRowsForApp={refetch}
+                                rowsData={plannerTasks}
+                                refetchRowsForApp={refetchPlannerTasks}
                             />
                         </Box>
                     </TabPanel>
@@ -88,8 +93,8 @@ const PlannerApp = ({
                                 dataCollectionId={dataCollection._id as string}
                                 appModel={dataCollection.appModel}
                                 userGroup={userGroup}
-                                rowsData={rowsData}
-                                refetchRowsForApp={refetch}
+                                rowsData={plannerTasks}
+                                refetchRowsForApp={refetchPlannerTasks}
                             />
                         </Box>
                     </TabPanel>
@@ -101,8 +106,8 @@ const PlannerApp = ({
                                     dataCollectionId={dataCollection._id as string}
                                     appModel={dataCollection.appModel}
                                     userGroup={userGroup}
-                                    rowsData={rowsData}
-                                    refetchRowsForApp={refetch}
+                                    rowsData={plannerTasks}
+                                    refetchRowsForApp={refetchPlannerTasks}
                                 />
                             </Container>
                         </Box>
@@ -115,7 +120,7 @@ const PlannerApp = ({
 
 const PlannerBoard = ({
     // dataCollection,
-    // dataCollectionId,
+    dataCollectionId,
     // appModel,
     // userGroup,
     rowsData,
@@ -142,7 +147,12 @@ const PlannerBoard = ({
     //     filters: JSON.stringify(dataCollection.filters),
     // });
 
-    const bucketNames = ['Initiation Todos', 'Engineering and Design', 'Ops', 'Job Closeout'];
+    // const { data: columns, refetch: refetchColumns, isFetching: columnsAreFetching } = useGetColumnsQuery(dataCollectionId || '');
+    const { data: bucketColumn } = useGetPlannerBucketColumnQuery(dataCollectionId);
+
+    // const bucketNames = ['Initiation Todos', 'Engineering and Design', 'Ops', 'Job Closeout'];
+
+    useEffect(() => {}, [bucketColumn]);
 
     const [updateRow] = useUpdateRowMutation();
 
@@ -221,8 +231,8 @@ const PlannerBoard = ({
     return (
         <>
             <Grid templateRows={'repeat(1, 1fr)'} templateColumns={'repeat(4, 1fr)'}>
-                {bucketNames.map((bucketName: string) => {
-                    return <BucketGridItem key={bucketName} bucketName={bucketName} />;
+                {bucketColumn?.labels.map((bucketLabel: TLabel) => {
+                    return <BucketGridItem key={bucketLabel.title} bucketName={bucketLabel.title} />;
                 })}
             </Grid>
         </>
@@ -276,6 +286,7 @@ export const OneDataCollection = ({
             appModel={appModel}
             dataCollectionPermissions={dataCollectionPermissions}
             refetchRowsForApp={refetchRowsForApp}
+            dataCollectionIdProp={dataCollectionId}
         />
     );
 };
@@ -311,7 +322,7 @@ const CalendarPanel = ({
         <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             initialView="dayGridMonth"
-            weekends={false}
+            weekends={true}
             // dateClick={(e) => handleDateClick(e)}
             events={events}
             eventContent={renderEventContent}

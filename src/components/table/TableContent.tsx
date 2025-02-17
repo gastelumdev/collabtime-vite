@@ -375,7 +375,6 @@ const TableContent = ({
     const handleChange = async (row: any) => {
         setCurrentRows((prev) => prev.map((prevRow) => (prevRow._id === row._id ? row : prevRow)));
         setRows((prev: any) => prev.map((prevRow: any) => (prevRow._id === row._id ? row : prevRow)));
-        console.log(row);
         handleUpdateRowNoRender(row);
         if (execute !== null) {
             execute('refetchBom', row);

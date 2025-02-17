@@ -127,6 +127,7 @@ const BillOfMaterials = ({ project, userGroup, refetchUserGroups }: { project: T
                                             <Tr>
                                                 <Th maxW={'80px'}>Units</Th>
                                                 {partsColumns?.map((column: TColumn) => {
+                                                    if (column.isEmpty) return null;
                                                     return <Th key={column._id}>{column.name.split('_').join(' ')}</Th>;
                                                 })}
                                             </Tr>
@@ -187,6 +188,7 @@ const BillOfMaterials = ({ project, userGroup, refetchUserGroups }: { project: T
                                                                   />
                                                               </Td>
                                                               {partsColumns?.map((column: TColumn) => {
+                                                                  if (column.isEmpty) return null;
                                                                   let value = part.values[column.name];
                                                                   let prefix = '';
 

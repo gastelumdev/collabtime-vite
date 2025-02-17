@@ -83,3 +83,7 @@ export const swapItems = (arr: any, draggedId: number, overId: number, numberOfI
 
   return result;
 }
+
+export const cToF = (value: number) => {
+  return ((value * (9 / 5)) + 32)
+}

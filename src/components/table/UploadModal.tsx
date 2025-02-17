@@ -342,7 +342,6 @@ const UploadModal = ({
                                     {currentFiles !== undefined && (permissions.docs.view || allowed) ? (
                                         currentFiles !== undefined && currentFiles.length > 0 ? (
                                             currentFiles.map((rowDoc, index) => {
-                                                console.log(rowDoc);
                                                 if (rowDoc.type !== 'upload') return null;
                                                 return (
                                                     <Flex bgColor={'white'} mb={'8px'} p={'12px'} key={index} boxShadow={'xs'}>
