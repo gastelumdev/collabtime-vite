@@ -129,7 +129,6 @@ const CreateColumn = ({ column = null, columns, addNewColumnToRows, handleSetCol
      * This should be replaced by RTK
      */
     const handleAddColumn = async () => {
-        console.log(workspaceUsers);
         if (!columnNameError && nextEmptyColumn) {
             const newColumn: TColumn = {
                 ...nextEmptyColumn,

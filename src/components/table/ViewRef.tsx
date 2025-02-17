@@ -48,7 +48,6 @@ const ViewRef = ({ columns, rowData, value, allowed = false, dataCollection, col
     }, []);
 
     useEffect(() => {
-        console.log(rowFetched);
         setRow(rowFetched);
     }, [rowFetched]);
 
@@ -183,7 +182,7 @@ const ViewRef = ({ columns, rowData, value, allowed = false, dataCollection, col
                         if (column.isEmpty) return null;
 
                         if (row) {
-                            console.log(row.values[column.name]);
+                            // console.log(row.values[column.name]);
                         } else {
                             return null;
                         }

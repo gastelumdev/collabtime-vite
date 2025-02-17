@@ -493,6 +493,10 @@ const Row = ({
                                     // Allowed is used for permissions to an input
                                     let allowed =
                                         (columnsPermissions === undefined || columnsPermissions?.permissions.column.update) && !column.autoIncremented;
+
+                                    // if (!row.isEmpty) {
+                                    //     console.log({ columnName: column.name, allowed: !column.autoIncremented });
+                                    // }
                                     // if it is a data collection and is the primary column, set it as a link to redirect to row app
                                     let isCustomLink = column?.primary !== undefined ? column?.primary && dataCollectionView : false;
                                     // used to set the text input to look and act disabled
@@ -590,10 +594,6 @@ const Row = ({
                                     }
 
                                     let prefix = column.prefix && column.prefix !== undefined ? column.prefix : '';
-
-                                    // if (!row.isEmpty) {
-                                    //     console.log({ columnName: column.name, value });
-                                    // }
 
                                     return (
                                         <div

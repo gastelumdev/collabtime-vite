@@ -285,8 +285,6 @@ const TableHeader = ({
             if (th) {
                 th.children[1].style.left = '100%';
             }
-
-            console.log(resizedWidth);
             startTransition(() => {
                 handleGridTemplateColumns(columnWidth);
                 handleSetColumns({ ...activeColumn, width: resizedWidth });

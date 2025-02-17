@@ -162,7 +162,6 @@ const Table = ({
                 return item !== '';
             })
             .join(' ');
-        console.log(gtc);
 
         setGridTemplateColumns(gtc);
     };
@@ -400,7 +399,6 @@ const Table = ({
     };
 
     const handleRemoveColumnFromRows = (column: any) => {
-        console.log(columns);
         const newRows = rows.map((row: TRow) => {
             let values = row.values;
             let refs = row.refs;
@@ -436,8 +434,6 @@ const Table = ({
             const newValues: any = {};
             const newRefs: any = {};
 
-            console.log(values);
-
             for (const col of columns) {
                 if (!col.isEmpty) {
                     if (col.name === prevColumn.name) {
@@ -461,7 +457,6 @@ const Table = ({
     };
 
     const handleSetColumns = (column: any) => {
-        console.log(columns);
         const repositionedColumns = columns.map((col: TColumn) => {
             if (column._id !== col._id) {
                 return { ...col };
