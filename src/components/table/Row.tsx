@@ -581,7 +581,8 @@ const Row = ({
                                             filterNames = Object.keys(dataCollectionView.filters);
                                         }
 
-                                        if (filterNames.includes(column.name)) {
+                                        if (filterNames.includes(column.name) && allowed) {
+                                            console.log({ columnName: column.name });
                                             isFilteredColumn = true;
                                             allowed = true;
                                             editable = true;
@@ -594,6 +595,13 @@ const Row = ({
                                     }
 
                                     let prefix = column.prefix && column.prefix !== undefined ? column.prefix : '';
+
+                                    if (!row.isEmpty) {
+                                        console.log(column.name);
+                                        console.log(allowed);
+                                        console.log(editable);
+                                        console.log(column?.autoIncremented !== undefined && !column?.autoIncremented);
+                                    }
 
                                     return (
                                         <div
@@ -653,7 +661,7 @@ const Row = ({
                                                     inputType={column?.type}
                                                     value={row.values !== undefined ? value : null}
                                                     onChange={onChange}
-                                                    allowed={allowed || editable || (column?.autoIncremented !== undefined && !column?.autoIncremented)}
+                                                    allowed={(allowed || editable) && column?.autoIncremented !== undefined && !column?.autoIncremented}
                                                     isCustomLink={isCustomLink && !row.isEmpty}
                                                     bgColor={bgColor}
                                                     textColor={textColor}
