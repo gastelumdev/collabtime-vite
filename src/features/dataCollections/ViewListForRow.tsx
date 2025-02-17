@@ -102,24 +102,24 @@ const ViewListForRow = ({}: { allowed?: boolean }) => {
                                                         <Tab>Planner</Tab>
                                                         {userGroup.permissions.viewActions.view
                                                             ? dataCollections?.map((dc: any) => {
-                                                                  let viewDC = false;
-                                                                  const dataCollectionPermissions: any = userGroup.permissions.dataCollections.find(
-                                                                      (item: any) => {
-                                                                          return item.dataCollection === dc.appModel || item.dataCollection === dc._id;
-                                                                      }
-                                                                  );
-                                                                  if (dataCollectionPermissions !== undefined) {
-                                                                      for (const permission of dataCollectionPermissions.permissions.columns) {
-                                                                          if (permission.permissions.column.view) {
-                                                                              viewDC = true;
-                                                                          }
-                                                                      }
-                                                                  }
+                                                                  //   let viewDC = false;
+                                                                  //   const dataCollectionPermissions: any = userGroup.permissions.dataCollections.find(
+                                                                  //       (item: any) => {
+                                                                  //           return item.dataCollection === dc.appModel || item.dataCollection === dc._id;
+                                                                  //       }
+                                                                  //   );
+                                                                  //   if (dataCollectionPermissions !== undefined) {
+                                                                  //       for (const permission of dataCollectionPermissions.permissions.columns) {
+                                                                  //           if (permission.permissions.column.view) {
+                                                                  //               viewDC = true;
+                                                                  //           }
+                                                                  //       }
+                                                                  //   }
 
-                                                                  let dataCollection = null;
-                                                                  if (dc.inParentToDisplay == rowId || dc.template == 'filtered') {
-                                                                      dataCollection = dc;
-                                                                  }
+                                                                  //   let dataCollection = null;
+                                                                  //   if (dc.inParentToDisplay == rowId || dc.template == 'filtered') {
+                                                                  //       dataCollection = dc;
+                                                                  //   }
 
                                                                   //   if (dataCollection !== null && viewDC) {
                                                                   //       if (dataCollection.template == 'planner') {
