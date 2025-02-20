@@ -201,6 +201,10 @@ const View = ({
             refetchRows();
         });
 
+        socket.on('mqtt', () => {
+            refetchRows();
+        });
+
         return () => {
             socket.disconnect();
         };
