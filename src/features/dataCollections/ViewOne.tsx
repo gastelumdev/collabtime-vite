@@ -132,6 +132,10 @@ const ViewOne = () => {
             }
         });
 
+        socket.on('mqtt', () => {
+            refetch();
+        });
+
         return () => {
             socket.disconnect();
         };
