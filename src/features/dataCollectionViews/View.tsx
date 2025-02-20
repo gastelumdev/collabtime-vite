@@ -201,7 +201,7 @@ const View = ({
             refetchRows();
         });
 
-        socket.on('mqtt', () => {
+        socket.on(`mqtt/${id}`, () => {
             refetchRows();
         });
 
