@@ -132,7 +132,7 @@ const ViewOne = () => {
             }
         });
 
-        socket.on('mqtt', () => {
+        socket.on(`mqtt/${id}`, () => {
             refetch();
         });
 
