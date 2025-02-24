@@ -561,6 +561,11 @@ const Row = ({
                                         }
                                     }
 
+                                    if (id === '67b6589d47933e9ec21d22ae') {
+                                        if (row.values.type === 'Digital Input' && column.name === 'status') {
+                                            allowed = false;
+                                        }
+                                    }
                                     if (value === null || value === '') {
                                         textColor = 'lightgray';
                                     }

@@ -6,6 +6,7 @@ import {
     useGetRowsQuery,
     useUpdateDataCollectionViewMutation,
     useUpdateDataCollectionViewNoRefetchMutation,
+    useUpdateRowMutation,
 } from '../../app/services/api';
 import { useEffect, useState } from 'react';
 import {
@@ -42,6 +43,7 @@ import { CloseIcon, Search2Icon } from '@chakra-ui/icons';
 import { TRow } from '../../types';
 import './view.css';
 import { PiTrashSimple } from 'react-icons/pi';
+import PointCard from '../dataCollections/apps/controlByWebAppComponents/PointCard';
 
 const View = ({
     dataCollectionView,
@@ -75,6 +77,7 @@ const View = ({
     const [deleteDataCollectionView] = useDeleteDataCollectionViewMutation();
     const [updateDataCollectionView] = useUpdateDataCollectionViewMutation();
     const [updateDataCollectionViewNoRefetch] = useUpdateDataCollectionViewNoRefetchMutation();
+    const [updateRow] = useUpdateRowMutation();
     const { data } = useGetDataCollectionsQuery(null);
     const [rowsState, setRowsState] = useState(rows);
     const [dateFilteredRows, setDateFilteredRows] = useState<TRow[]>([]);
@@ -494,6 +497,50 @@ const View = ({
                                                         Icon={icon}
                                                     />
                                                 );
+                                            })}
+                                        </Flex>
+                                    </Container>
+                                </TabPanel>
+                                <TabPanel>
+                                    <Box
+                                        borderBottom={`1px solid ${cellBorderColor}`}
+                                        boxShadow={'base'}
+                                        borderLeft={'6px solid rgb(36, 162, 240)'}
+                                        borderRadius={'7px'}
+                                    >
+                                        <DataCollection
+                                            showDoneRows={true}
+                                            rowsProp={rowsState}
+                                            dataCollectionView={dataCollectionView}
+                                            rowsAreDraggable={false}
+                                            hasCheckboxOptions={false}
+                                            hasColumnOptions={false}
+                                            columnsAreDraggable={true}
+                                            hasCreateColumn={false}
+                                            refetchRows={refetchRows}
+                                            viewPermissions={viewPermissions}
+                                            updateView={updateDataCollectionView}
+                                            updateViewNoRefetch={updateDataCollectionViewNoRefetch}
+                                            active={active}
+                                            // userGroup={userGroup}
+                                        />
+                                    </Box>
+                                </TabPanel>
+                            </TabPanels>
+                        </Tabs>
+                    ) : workspace?._id == '67b6589d47933e9ec21d22ae' ? (
+                        <Tabs>
+                            <TabList>
+                                <Tab>Board</Tab>
+                                <Tab>List</Tab>
+                            </TabList>
+                            <TabPanels>
+                                <TabPanel>
+                                    <Container maxW={'5xl'} mt={1}>
+                                        <Flex flexWrap="wrap" gridGap={6} justify={'start'}>
+                                            {rowsState?.map((row: TRow) => {
+                                                if (row.isEmpty) return null;
+                                                return <PointCard row={row} values={row.values} updateRow={updateRow} />;
                                             })}
                                         </Flex>
                                     </Container>
