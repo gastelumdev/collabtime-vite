@@ -411,7 +411,7 @@ const View = ({
                             </TabList>
                             <TabPanels>
                                 <TabPanel>
-                                    <Container maxW={'5xl'} mt={1}>
+                                    <Container maxW={{ base: '5xl', sm: 'sm' }} mt={1}>
                                         <Flex flexWrap="wrap" gridGap={6} justify={'start'}>
                                             {rowsState?.map((row: any) => {
                                                 if (row.isEmpty) return null;
@@ -535,8 +535,8 @@ const View = ({
                                 <Tab>List</Tab>
                             </TabList>
                             <TabPanels>
-                                <TabPanel>
-                                    <Container maxW={'5xl'} mt={1}>
+                                <TabPanel px={0}>
+                                    <Container maxW={'5xl'} mt={1} px={{ sm: 0 }}>
                                         <Flex flexWrap="wrap" gridGap={6} justify={'start'}>
                                             {rowsState?.map((row: TRow) => {
                                                 if (row.isEmpty) return null;
