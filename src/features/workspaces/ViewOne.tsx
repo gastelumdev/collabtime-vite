@@ -164,11 +164,11 @@ const ViewOne = () => {
                 <SideBarLayout linkItems={newLinkItems}>
                     <Box>
                         <Flex minH={'100vh'} bg={'#f6f8fa'}>
-                            <Container maxW={'full'} mt={{ base: 4, sm: 0 }}>
-                                <SimpleGrid spacing={6} columns={{ base: 1, sm: 2 }} pb={'30px'} mt={'18px'}>
+                            <Container maxW={'full'} mt={{ base: 0, sm: 0 }}>
+                                <SimpleGrid spacing={1} columns={{ base: 1, sm: 2 }} pb={'10px'} mt={'0px'}>
                                     <Flex>
-                                        <Box pt={workspace?.description === '' ? '30px' : '10px'} pl={'5px'}>
-                                            <Text fontSize={'22px'} color={bgColor} mb={'3px'} className="dmsans-600">
+                                        <Box pt={workspace?.description === '' ? '10px' : '10px'} pl={'5px'}>
+                                            <Text fontSize={'22px'} color={bgColor} pl={'10px'} pt={'10px'} className="dmsans-600">
                                                 {workspace?.name}
                                             </Text>
                                             <Text fontSize={'14px'} color={'#64758E'} className="dmsans-400">
