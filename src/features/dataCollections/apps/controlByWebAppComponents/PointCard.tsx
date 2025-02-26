@@ -7,7 +7,7 @@ import { IoIosSwitch } from 'react-icons/io';
 const PointCard = ({ row, values, updateRow }: { row: TRow; values: any; updateRow: any }) => {
     return (
         <Box
-            w={{ base: 'full', md: '46%' }}
+            w={{ base: 'full', md: '49%' }}
             border={'1px solid rgba(204, 209, 211, 0.75)'}
             borderRadius={'4px'}
             // boxShadow={'base'}

@@ -542,41 +542,49 @@ const View = ({
                                     <TabPanel px={0}>
                                         <Box>
                                             <Container maxW={'5xl'} mt={1} px={{ sm: 0 }}>
-                                                <Box mb={'20px'}>
-                                                    <Text fontSize={'20px'} fontWeight={'semibold'} mb={'6px'}>
-                                                        Relay Outputs
-                                                    </Text>
-                                                    <Flex flexWrap="wrap" gridGap={3} justify={'start'}>
-                                                        {rowsState?.map((row: TRow) => {
-                                                            if (row.isEmpty || row.values.type !== 'Relay Output') return null;
+                                                <Box
+                                                    bgColor={'rgb(215, 223, 224)'}
+                                                    px={'30px'}
+                                                    pt={'20px'}
+                                                    boxShadow={'inner'}
+                                                    border={'1px solid rgb(218, 218, 218)'}
+                                                >
+                                                    <Box mb={'20px'}>
+                                                        <Text fontSize={'20px'} fontWeight={'semibold'} mb={'6px'}>
+                                                            Relay Outputs
+                                                        </Text>
+                                                        <Flex flexWrap="wrap" gridGap={3} justify={'start'}>
+                                                            {rowsState?.map((row: TRow) => {
+                                                                if (row.isEmpty || row.values.type !== 'Relay Output') return null;
 
-                                                            return <PointCard key={row?._id} row={row} values={row.values} updateRow={updateRow} />;
-                                                        })}
-                                                    </Flex>
-                                                </Box>
-                                                <Box mb={'20px'}>
-                                                    <Text fontSize={'20px'} fontWeight={'semibold'} mb={'6px'}>
-                                                        Digital Inputs
-                                                    </Text>
-                                                    <Flex flexWrap="wrap" gridGap={3} justify={'start'}>
-                                                        {rowsState?.map((row: TRow) => {
-                                                            if (row.isEmpty || row.values.type !== 'Digital Input') return null;
+                                                                return <PointCard key={row?._id} row={row} values={row.values} updateRow={updateRow} />;
+                                                            })}
+                                                        </Flex>
+                                                    </Box>
+                                                    <Box mb={'20px'}>
+                                                        <Text fontSize={'20px'} fontWeight={'semibold'} mb={'6px'}>
+                                                            Digital Inputs
+                                                        </Text>
+                                                        <Flex flexWrap="wrap" gridGap={3} justify={'start'}>
+                                                            {rowsState?.map((row: TRow) => {
+                                                                if (row.isEmpty || row.values.type !== 'Digital Input') return null;
 
-                                                            return <PointCard key={row?._id} row={row} values={row.values} updateRow={updateRow} />;
-                                                        })}
-                                                    </Flex>
-                                                </Box>
-                                                <Box mb={'20px'}>
-                                                    <Text fontSize={'20px'} fontWeight={'semibold'} mb={'6px'}>
-                                                        Registers
-                                                    </Text>
-                                                    <Flex flexWrap="wrap" gridGap={3} justify={'start'}>
-                                                        {rowsState?.map((row: TRow) => {
-                                                            if (row.isEmpty || row.values.type !== 'Register') return null;
+                                                                return <PointCard key={row?._id} row={row} values={row.values} updateRow={updateRow} />;
+                                                            })}
+                                                        </Flex>
+                                                    </Box>
+                                                    <Box mb={'20px'}>
+                                                        <Text fontSize={'20px'} fontWeight={'semibold'} mb={'6px'}>
+                                                            Registers
+                                                        </Text>
+                                                        <Flex flexWrap="wrap" gridGap={3} justify={'start'}>
+                                                            {rowsState?.map((row: TRow) => {
+                                                                if (row.isEmpty || row.values.type !== 'Register') return null;
 
-                                                            return <PointCard key={row?._id} row={row} values={row.values} updateRow={updateRow} />;
-                                                        })}
-                                                    </Flex>
+                                                                return <PointCard key={row?._id} row={row} values={row.values} updateRow={updateRow} />;
+                                                            })}
+                                                        </Flex>
+                                                    </Box>
                                                 </Box>
                                             </Container>
                                         </Box>
