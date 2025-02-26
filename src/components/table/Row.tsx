@@ -24,6 +24,7 @@ import { useParams } from 'react-router-dom';
 import { useGetOneWorkspaceQuery } from '../../app/services/api';
 import ClearRow from './ClearRow';
 import { cellBorderColor, tableFontColor } from '../../features/dataCollections/DataCollection';
+import { controlByWebSettings } from '../../features/dataCollections/apps/controlByWebAppComponents/controlByWebSettings';
 // import { useParams } from 'react-router-dom';
 
 const Row = ({
@@ -561,7 +562,7 @@ const Row = ({
                                         }
                                     }
 
-                                    if (id === '67b6589d47933e9ec21d22ae') {
+                                    if (id === controlByWebSettings.psId) {
                                         if (row.values.type === 'Digital Input' && column.name === 'status') {
                                             allowed = false;
                                         }

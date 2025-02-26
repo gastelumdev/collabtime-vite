@@ -29,6 +29,8 @@ import { bgColor } from '../../utils/colors';
 import '../../App.css';
 import UserGroups, { emptyPermissions } from './UserGroups';
 import { PiDotsThreeVerticalBold } from 'react-icons/pi';
+import GroupViewList from '../dataCollections/apps/controlByWebAppComponents/GroupViewList';
+import { controlByWebSettings } from '../dataCollections/apps/controlByWebAppComponents/controlByWebSettings';
 
 /**
  * This funcion renders a workspace when selected from the workspaces page
@@ -125,13 +127,19 @@ const ViewOne = () => {
 
     const { data: userGroups } = useGetUserGroupsQuery(null);
     const [userGroup, setUserGroup] = useState({ name: '', workspace: '', permissions: emptyPermissions });
+    const [access, setAccess] = useState(false);
 
     useEffect(() => {
         if (userGroups !== undefined) {
             const ug = userGroups?.find((item: any) => {
                 return item.users.includes(localStorage.getItem('userId'));
             });
-            setUserGroup(ug);
+
+            if (ug !== undefined) {
+                console.log(ug);
+                setUserGroup(ug);
+                setAccess(true);
+            }
         }
     }, [userGroups]);
 
@@ -158,6 +166,18 @@ const ViewOne = () => {
 
     if (isError) return <Navigate to={'/workspaces'} />;
 
+    const panasonicDashboard = () => {
+        console.log({ userGroup });
+        return (
+            <Box>
+                <GroupViewList />
+            </Box>
+        );
+    };
+
+    if (id === controlByWebSettings.psId && access && userGroup.name !== 'All Privileges') {
+        return panasonicDashboard();
+    }
     return (
         <>
             {workspace ? (
@@ -200,7 +220,7 @@ const ViewOne = () => {
                                                 })}
                                             </AvatarGroup>
                                         </Box>
-                                        {
+                                        {userGroup !== undefined ? (
                                             <>
                                                 {userGroup.permissions.workspace.invite ? (
                                                     <Box mt={'22px'}>
@@ -234,7 +254,9 @@ const ViewOne = () => {
                                                     </Box>
                                                 ) : null}
                                             </>
-                                        }
+                                        ) : (
+                                            <Text>No access</Text>
+                                        )}
                                     </Flex>
                                 </SimpleGrid>
                                 <Box>

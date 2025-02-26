@@ -7,6 +7,7 @@ import { Box } from '@chakra-ui/react';
 import { TRow } from '../../types';
 import { useGetOneWorkspaceQuery } from '../../app/services/api';
 import { useParams } from 'react-router-dom';
+import { controlByWebSettings } from '../../features/dataCollections/apps/controlByWebAppComponents/controlByWebSettings';
 
 interface IProps {
     rows: any[];
@@ -426,7 +427,7 @@ const TableContent = ({
             <ViewportList viewportRef={ref} items={currentRows} overscan={25}>
                 {(row, rowIndex) => {
                     const isLast = rowIndex === rows.length - 1 && row.isEmpty;
-                    if ((isLast && !permissions.rows.create) || (isLast && workspace?.type === 'integration') || (isLast && id === '67b6589d47933e9ec21d22ae'))
+                    if ((isLast && !permissions.rows.create) || (isLast && workspace?.type === 'integration') || (isLast && id === controlByWebSettings.psId))
                         return null;
 
                     console.log({ row });

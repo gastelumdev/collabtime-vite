@@ -524,6 +524,12 @@ export const api = createApi({
             }),
             providesTags: ["DataCollectionView"]
         }),
+        getDataCollectionViewById: builder.query<any, any>({
+            query: (dataCollectionViewId) => ({
+                url: `/workspaces/${localStorage.getItem("workspaceId")}/dataCollectionViews/${dataCollectionViewId}`,
+            }),
+            providesTags: ["DataCollectionView"]
+        }),
         createDataCollectionViews: builder.mutation<any, any>({
             query: (dataCollectionView) => ({
                 url: `/workspaces/${localStorage.getItem("workspaceId")}/dataCollectionViews`,
@@ -713,6 +719,7 @@ export const {
     useMarkAsReadMutation,
     useGetDataCollectionViewsQuery,
     useGetDataCollectionViewsByRowIdQuery,
+    useGetDataCollectionViewByIdQuery,
     useCreateDataCollectionViewsMutation,
     useUpdateDataCollectionViewMutation,
     useUpdateDataCollectionViewNoRefetchMutation,

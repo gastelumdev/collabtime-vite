@@ -17,6 +17,7 @@ import Form from './components/table/Form';
 import UpdateForm from './components/table/UpdateForm';
 import FormSuccess from './components/table/FormSuccess';
 import ViewListForRow from './features/dataCollections/ViewListForRow';
+import GroupViewList from './features/dataCollections/apps/controlByWebAppComponents/GroupViewList';
 // import DataCollectionWorkbench from './features/dataCollections/DataCollectionWorkbench';
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
                     <Route path="workspaces/:id/messageBoard/:status" element={<MessageBoard />} />
                     <Route path="workspaces/:id/dataCollections/:dataCollectionId/form/:rowId" element={<UpdateForm />} />
                     <Route path="workspaces/:id/viewRow/:rowId" element={<ViewListForRow />} />
+                    <Route path="workspaces/:id/view/:viewId" element={<GroupViewList />} />
                     {/* </Route> */}
                 </Route>
             </Routes>

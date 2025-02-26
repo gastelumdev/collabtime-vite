@@ -43,16 +43,22 @@ import Create from './Create';
 import { useEffect, useState } from 'react';
 import TagsModal from '../tags/TagsModal';
 import { TDataCollection, TTag } from '../../types';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import Delete from './Delete';
 // import Templates from './Templates';
 import CreateDataCollectionView from '../dataCollectionViews/Create';
 import View from '../dataCollectionViews/View';
 import { emptyPermissions } from '../workspaces/UserGroups';
 import { io } from 'socket.io-client';
+import { controlByWebSettings } from './apps/controlByWebAppComponents/controlByWebSettings';
+import { IconContext } from 'react-icons';
+import { FiDroplet } from 'react-icons/fi';
 
-const ViewList = ({ active = true }: { allowed?: boolean; active: boolean }) => {
+const ViewList = ({ active = true }: { allowed?: boolean; active?: boolean }) => {
     // const [data, setData] = useState<TDataCollection[]>(dataCollections);
+    const { id } = useParams();
+    const navigate = useNavigate();
+
     const { data: user } = useGetUserQuery(localStorage.getItem('userId') || '');
     const { data } = useGetDataCollectionsQuery(null);
     const { data: dataCollectionViews, refetch: refetchViews } = useGetDataCollectionViewsQuery(null);
@@ -201,38 +207,104 @@ const ViewList = ({ active = true }: { allowed?: boolean; active: boolean }) => 
                                                                 </Center>
                                                             ) : null}
                                                         </Box>
-                                                        <Box mb={'100px'}>
-                                                            {/* {isFetchingViews ? (
-                                                                <Box>
-                                                                    <Text>Is loading...</Text>
-                                                                </Box>
-                                                            ) : ( */}
+                                                        <Box mb={'100px'} mt={'30px'}>
                                                             <>
-                                                                {userGroup.permissions.viewActions.view
-                                                                    ? dataCollectionViews?.map((dcView: any) => {
-                                                                          const viewPermissions: any = userGroup.permissions.views.find((item: any) => {
-                                                                              return item.view === dcView._id;
-                                                                          });
+                                                                {userGroup.permissions.viewActions.view && id === controlByWebSettings.psId ? (
+                                                                    <Flex flexWrap="wrap" gridGap={6} justify={'start'}>
+                                                                        {dataCollectionViews?.map((dcView: any) => {
+                                                                            const viewPermissions: any = userGroup.permissions.views.find((item: any) => {
+                                                                                return item.view === dcView._id;
+                                                                            });
 
-                                                                          if (viewPermissions !== undefined) {
-                                                                              if (!viewPermissions.permissions.view.view) {
-                                                                                  return null;
-                                                                              }
-                                                                          }
+                                                                            if (viewPermissions !== undefined) {
+                                                                                if (!viewPermissions.permissions.view.view) {
+                                                                                    return null;
+                                                                                }
+                                                                            }
 
-                                                                          return (
-                                                                              <View
-                                                                                  key={dcView._id}
-                                                                                  dataCollectionView={dcView}
-                                                                                  userGroup={userGroup}
-                                                                                  refetchUserGroup={refetchUserGroups}
-                                                                                  active={active}
-                                                                              />
-                                                                          );
-                                                                      })
-                                                                    : null}
+                                                                            return (
+                                                                                <Box
+                                                                                    key={dcView._id}
+                                                                                    cursor={'pointer'}
+                                                                                    w={{ base: 'full', md: '32%' }}
+                                                                                    px={'14px'}
+                                                                                    pt={'12px'}
+                                                                                    pb={'16px'}
+                                                                                    mb={'10px'}
+                                                                                    bgColor={'rgb(0, 113, 141)'}
+                                                                                    //rgb(24, 119, 143)
+
+                                                                                    color={'white'}
+                                                                                    border={'1px solid rgba(223, 230, 233, 0.75)'}
+                                                                                    borderRadius={'4px'}
+                                                                                    boxShadow={'base'}
+                                                                                    _hover={{
+                                                                                        boxShadow: 'lg',
+                                                                                        bgColor: 'rgb(0, 96, 121)',
+                                                                                    }}
+                                                                                    onClick={() => {
+                                                                                        navigate(
+                                                                                            `/workspaces/${localStorage.getItem('workspaceId')}/view/${
+                                                                                                dcView._id
+                                                                                            }`
+                                                                                        );
+                                                                                    }}
+                                                                                >
+                                                                                    {/* <TbArrowBigLeftLinesFilled /> */}
+                                                                                    <Flex>
+                                                                                        <Box mr={'12px'} pt={'2px'}>
+                                                                                            <IconContext.Provider
+                                                                                                value={{
+                                                                                                    size: '40px',
+                                                                                                    color: 'white',
+                                                                                                }}
+                                                                                            >
+                                                                                                <Text>
+                                                                                                    <FiDroplet />
+                                                                                                </Text>
+                                                                                            </IconContext.Provider>
+                                                                                        </Box>
+                                                                                        <Box>
+                                                                                            <Text fontSize={'18px'} fontWeight={'semibold'}>
+                                                                                                {dcView.name}
+                                                                                            </Text>
+                                                                                            <Text
+                                                                                                fontSize={'10px'}
+                                                                                                fontWeight={'bold'}
+                                                                                                color={'whiteAlpha.800'}
+                                                                                            >
+                                                                                                {'ENABLED'}
+                                                                                            </Text>
+                                                                                        </Box>
+                                                                                    </Flex>
+                                                                                </Box>
+                                                                            );
+                                                                        })}
+                                                                    </Flex>
+                                                                ) : userGroup.permissions.viewActions.view ? (
+                                                                    dataCollectionViews?.map((dcView: any) => {
+                                                                        const viewPermissions: any = userGroup.permissions.views.find((item: any) => {
+                                                                            return item.view === dcView._id;
+                                                                        });
+
+                                                                        if (viewPermissions !== undefined) {
+                                                                            if (!viewPermissions.permissions.view.view) {
+                                                                                return null;
+                                                                            }
+                                                                        }
+
+                                                                        return (
+                                                                            <View
+                                                                                key={dcView._id}
+                                                                                dataCollectionView={dcView}
+                                                                                userGroup={userGroup}
+                                                                                refetchUserGroup={refetchUserGroups}
+                                                                                active={active}
+                                                                            />
+                                                                        );
+                                                                    })
+                                                                ) : null}
                                                             </>
-                                                            {/* )} */}
                                                         </Box>
                                                     </TabPanel>
                                                 ) : null}
